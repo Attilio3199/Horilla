@@ -149,7 +149,8 @@ class ContractFilter(FilterSet):
                 employee_id__employee_last_name__icontains=last_name
             )
         queryset = queryset | og_queryset.filter(contract_name__icontains=value)
-        return queryset
+        queryset = queryset | og_queryset.filter(employee_id__badge_id__icontains=value)
+        return queryset.distinct()
 
 
 class AllowanceFilter(FilterSet):
