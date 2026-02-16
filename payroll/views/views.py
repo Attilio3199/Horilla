@@ -5,6 +5,7 @@ This module is used to define the method for the path in the urls
 """
 
 import json
+import re
 from collections import defaultdict
 from datetime import date, datetime, timedelta
 from itertools import groupby
@@ -13,6 +14,7 @@ from urllib.parse import parse_qs
 import pandas as pd
 import pdfkit
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.db.models import ProtectedError, Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -1418,6 +1420,380 @@ def contract_export(request):
         form_class=ContractExportFieldForm,
         file_name="Contract_export",
     )
+
+
+@login_required
+@permission_required("payroll.add_contract")
+def contract_import_file(request):
+    """
+    Download import template for contracts.
+    """
+    columns = [
+        "Badge ID",
+        "Contract Status",
+        "Tipo Contratto",
+        "Contract Start Date",
+        "Contract End Date",
+        "Lun",
+        "Mar",
+        "Mer",
+        "Gio",
+        "Ven",
+        "Sab",
+        "Dom",
+    ]
+    data_frame = pd.DataFrame(columns=columns)
+
+    response = HttpResponse(content_type="application/ms-excel")
+    response["Content-Disposition"] = 'attachment; filename="contract_import_template.xlsx"'
+    data_frame.to_excel(response, index=False)
+    return response
+
+
+@login_required
+@hx_request_required
+@permission_required("payroll.add_contract")
+def contract_import(request):
+    """
+    Import contracts from CSV/Excel.
+    Supports multiple contracts per employee; unique row key is
+    (employee, contract_start_date, contract_end_date).
+    """
+
+    if request.method == "GET":
+        return render(request, "payroll/contract/contract_import.html")
+
+    def _normalize_header(header):
+        import unicodedata
+
+        normalized = unicodedata.normalize("NFKD", str(header))
+        normalized = normalized.encode("ascii", "ignore").decode("ascii")
+        normalized = normalized.strip().lower().replace("_", " ")
+        normalized = re.sub(r"[^a-z0-9]+", " ", normalized)
+        return " ".join(normalized.split())
+
+    def _map_import_headers(data_frame):
+        canonical_aliases = {
+            "Badge ID": ["badge id", "badge", "id badge"],
+            "Contract Status": ["contract status", "status", "stato"],
+            "Tipo Contratto": ["tipo contratto", "contract type", "tipo"],
+            "Contract Start Date": [
+                "contract start date",
+                "start date",
+                "data inizio",
+                "data inizio contratto",
+            ],
+            "Contract End Date": [
+                "contract end date",
+                "end date",
+                "data fine",
+                "data fine contratto",
+            ],
+            "Lun": ["lun", "lunedi", "monday"],
+            "Mar": ["mar", "martedi", "tuesday"],
+            "Mer": ["mer", "mercoledi", "wednesday"],
+            "Gio": ["gio", "giovedi", "thursday"],
+            "Ven": ["ven", "venerdi", "friday"],
+            "Sab": ["sab", "sabato", "saturday"],
+            "Dom": ["dom", "domenica", "sunday"],
+        }
+
+        alias_to_canonical = {}
+        for canonical, aliases in canonical_aliases.items():
+            alias_to_canonical[_normalize_header(canonical)] = canonical
+            for alias in aliases:
+                alias_to_canonical[_normalize_header(alias)] = canonical
+
+        rename_map = {}
+        for column in data_frame.columns:
+            normalized = _normalize_header(column)
+            canonical = alias_to_canonical.get(normalized)
+            if canonical:
+                rename_map[column] = canonical
+
+        if rename_map:
+            data_frame = data_frame.rename(columns=rename_map)
+        return data_frame
+
+    def _get_value(row, *keys):
+        for key in keys:
+            value = row.get(key)
+            if value is None:
+                continue
+            if isinstance(value, float) and pd.isna(value):
+                continue
+            text = str(value).strip()
+            if not text or text.lower() in {"nan", "none", "null"}:
+                continue
+            if text.startswith("'"):
+                text = text[1:].strip()
+            return text
+        return None
+
+    def _clean_badge(value):
+        if value is None:
+            return ""
+        text = str(value).strip()
+        if not text:
+            return ""
+        try:
+            float_val = float(text)
+            if float_val.is_integer():
+                return str(int(float_val))
+            return str(float_val)
+        except (TypeError, ValueError):
+            return text
+
+    def _parse_date(value):
+        if value is None:
+            return None
+        if isinstance(value, datetime):
+            return value.date()
+        if isinstance(value, date):
+            return value
+        if isinstance(value, float) and pd.isna(value):
+            return None
+
+        text = str(value).strip()
+        if not text or text.lower() in {"nan", "none", "null"}:
+            return None
+
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
+            try:
+                return datetime.strptime(text, "%Y-%m-%d").date()
+            except ValueError:
+                return None
+
+        parsed = pd.to_datetime(text, errors="coerce", dayfirst=False)
+        if pd.isna(parsed):
+            return None
+        return parsed.date()
+
+    def _parse_decimal(value, default=0):
+        if value is None:
+            return default
+        text = str(value).strip().replace(",", ".")
+        if not text:
+            return default
+        try:
+            return float(text)
+        except (TypeError, ValueError):
+            return default
+
+    def _parse_contract_status(value):
+        if not value:
+            return "draft"
+        normalized = str(value).strip().lower()
+        status_map = {
+            "draft": "draft",
+            "bozza": "draft",
+            "active": "active",
+            "attivo": "active",
+            "expired": "expired",
+            "scaduto": "expired",
+            "terminated": "terminated",
+            "terminato": "terminated",
+        }
+        return status_map.get(normalized, "draft")
+
+    def _parse_tipo_contratto(value):
+        if value is None:
+            return None
+        normalized = str(value).strip().lower()
+        if not normalized:
+            return None
+        tipo_map = {
+            "1": 1,
+            "tirocinanti": 1,
+            "2": 2,
+            "apprendistato": 2,
+            "3": 3,
+            "determinato": 3,
+            "4": 4,
+            "indeterminato": 4,
+            "5": 5,
+            "cocopro": 5,
+            "6": 6,
+            "gi group": 6,
+            "7": 7,
+            "infojobmetis": 7,
+            "8": 8,
+            "ranstad": 8,
+            "9": 9,
+            "voucher": 9,
+        }
+        return tipo_map.get(normalized)
+
+    file = request.FILES.get("file")
+    if not file:
+        return render(
+            request,
+            "payroll/contract/contract_import.html",
+            {"error_message": _("No file uploaded.")},
+        )
+
+    file_extension = file.name.split(".")[-1].lower()
+
+    try:
+        if file_extension == "csv":
+            data_frame = pd.read_csv(file)
+        elif file_extension in ["xls", "xlsx"]:
+            data_frame = pd.read_excel(file)
+        else:
+            return render(
+                request,
+                "payroll/contract/contract_import.html",
+                {
+                    "error_message": _(
+                        "Unsupported file format. Please upload a CSV or Excel file."
+                    )
+                },
+            )
+
+        data_frame = _map_import_headers(data_frame)
+        import_rows = data_frame.to_dict("records")
+
+        employees = Employee.objects.entire().all()
+        employees_by_badge = {
+            _clean_badge(emp.badge_id): emp for emp in employees if getattr(emp, "badge_id", None)
+        }
+
+        created_count = 0
+        updated_count = 0
+        error_list = []
+
+        for index, row in enumerate(import_rows, start=2):
+            badge = _clean_badge(_get_value(row, "Badge ID", "badge_id"))
+            employee_obj = employees_by_badge.get(badge) if badge else None
+
+            if not employee_obj:
+                error_list.append(
+                    {
+                        "row": index,
+                        "error": _("Employee not found for row {row}. Use Badge ID.").format(
+                            row=index
+                        ),
+                    }
+                )
+                continue
+
+            start_date_raw = _get_value(row, "Contract Start Date", "contract_start_date")
+            end_date_raw = _get_value(row, "Contract End Date", "contract_end_date")
+            start_date = _parse_date(start_date_raw)
+            end_date = _parse_date(end_date_raw)
+
+            if start_date_raw and not start_date:
+                error_list.append(
+                    {
+                        "row": index,
+                        "error": _(
+                            "Invalid Contract Start Date format for row {row}. Use YYYY-MM-DD."
+                        ).format(row=index),
+                    }
+                )
+                continue
+
+            if end_date_raw and not end_date:
+                error_list.append(
+                    {
+                        "row": index,
+                        "error": _(
+                            "Invalid Contract End Date format for row {row}. Use YYYY-MM-DD."
+                        ).format(row=index),
+                    }
+                )
+                continue
+
+            if not start_date:
+                error_list.append(
+                    {
+                        "row": index,
+                        "error": _("Contract Start Date is required for row {row}.").format(
+                            row=index
+                        ),
+                    }
+                )
+                continue
+
+            defaults = {
+                "contract_status": _parse_contract_status(
+                    _get_value(row, "Contract Status", "contract_status")
+                ),
+                "tipo_contratto": _parse_tipo_contratto(
+                    _get_value(row, "Tipo Contratto", "tipo_contratto")
+                ),
+                "lun": _parse_decimal(_get_value(row, "Lun", "lun"), default=0),
+                "mar": _parse_decimal(_get_value(row, "Mar", "mar"), default=0),
+                "mer": _parse_decimal(_get_value(row, "Mer", "mer"), default=0),
+                "gio": _parse_decimal(_get_value(row, "Gio", "gio"), default=0),
+                "ven": _parse_decimal(_get_value(row, "Ven", "ven"), default=0),
+                "sab": _parse_decimal(_get_value(row, "Sab", "sab"), default=0),
+                "dom": _parse_decimal(_get_value(row, "Dom", "dom"), default=0),
+            }
+
+            contract_obj, created = Contract.objects.get_or_create(
+                employee_id=employee_obj,
+                contract_start_date=start_date,
+                contract_end_date=end_date,
+                defaults=defaults,
+            )
+
+            if created:
+                created_count += 1
+                continue
+
+            changed = False
+            for field_name, field_value in defaults.items():
+                if getattr(contract_obj, field_name) != field_value:
+                    setattr(contract_obj, field_name, field_value)
+                    changed = True
+
+            if not changed:
+                continue
+
+            try:
+                contract_obj.save()
+                updated_count += 1
+            except ValidationError as e:
+                error_list.append(
+                    {
+                        "row": index,
+                        "error": str(e),
+                    }
+                )
+            except Exception as e:
+                error_list.append(
+                    {
+                        "row": index,
+                        "error": str(e),
+                    }
+                )
+
+        context = {
+            "created_count": created_count + updated_count,
+            "total_count": len(import_rows),
+            "error_count": len(error_list),
+            "model": _("Contracts"),
+            "path_info": None,
+        }
+        result = render_to_string("import_popup.html", context)
+        result += """
+                    <script>
+                        $('#objectCreateModalTarget').css('max-width', '410px');
+                    </script>
+                """
+        return HttpResponse(result)
+
+    except Exception as e:
+        error_message = _(
+            "Failed to read file. Please ensure it is a valid CSV or Excel file. : {}"
+        ).format(e)
+        messages.error(request, error_message)
+        return render(
+            request,
+            "payroll/contract/contract_import.html",
+            {"error_message": error_message},
+        )
 
 
 @login_required

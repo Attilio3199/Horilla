@@ -96,6 +96,7 @@ from employee.methods.methods import (
     bulk_update_personal_fields_import,
     error_data_template,
     get_ordered_badge_ids,
+    parse_optional_payroll_code_import,
     process_employee_records,
     set_initial_password,
     valid_import_file_headers,
@@ -2704,15 +2705,12 @@ def employee_import(request):
                 if categoria is not None:
                     employee.categoria_protetta = categoria
 
-                codice_paghe = get_value(
-                    employee_dict, "codice_paghe", "Codice Paghe"
+                codice_paghe = parse_optional_payroll_code_import(
+                    get_value(employee_dict, "codice_paghe", "Codice Paghe"),
+                    max_length=64,
                 )
-                if codice_paghe not in [None, ""]:
-                    codice_paghe = str(codice_paghe).strip()
-                    if codice_paghe.startswith("'"):
-                        codice_paghe = codice_paghe[1:].strip()
-                    if codice_paghe and codice_paghe.lower() not in {"nan", "none", "null"}:
-                        employee.codice_paghe = codice_paghe[:64]
+                if codice_paghe is not None:
+                    employee.codice_paghe = codice_paghe
 
                 is_active = parse_bool(
                     get_value(employee_dict, "is_active", "Is active", "È attivo")

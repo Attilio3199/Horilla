@@ -134,6 +134,12 @@ urlpatterns = [
         views.contract_bulk_delete,
         name="contract-bulk-delete",
     ),
+    path("contract-import", views.contract_import, name="contract-import"),
+    path(
+        "contract-import-file",
+        views.contract_import_file,
+        name="contract-import-file",
+    ),
     path("contract-select/", views.contract_select, name="contract-select"),
     path(
         "contract-select-filter/",

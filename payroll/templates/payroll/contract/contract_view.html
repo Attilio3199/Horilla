@@ -133,6 +133,19 @@
                                 <a
                                     href="#"
                                     class="oh-dropdown__link"
+                                    data-toggle="oh-modal-toggle"
+                                    data-target="#objectCreateModal"
+                                    hx-target="#objectCreateModalTarget"
+                                    hx-get="{%url 'contract-import' %}"
+                                    >{% trans "Import" %}</a
+                                >
+                            </li>
+                            {% endif %}
+                            {% if perms.payroll.add_contract %}
+                            <li class="oh-dropdown__item">
+                                <a
+                                    href="#"
+                                    class="oh-dropdown__link"
                                     id="employee-contract-export"
                                     data-toggle="oh-modal-toggle"
                                     data-target="#objectCreateModal"

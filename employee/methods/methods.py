@@ -225,6 +225,31 @@ def parse_optional_string_import(value, default=None, max_length=None):
     return text
 
 
+def parse_optional_payroll_code_import(value, default=None, max_length=64):
+    if value is None or (isinstance(value, float) and pd.isna(value)):
+        return default
+
+    if isinstance(value, bool):
+        text = str(value).strip()
+    elif isinstance(value, int):
+        text = str(value)
+    elif isinstance(value, float):
+        text = str(int(value)) if value.is_integer() else str(value)
+    else:
+        text = parse_optional_string_import(value, default=default, max_length=None)
+        if text is None:
+            return default
+        if re.fullmatch(r"[+-]?\d+\.0+", text):
+            text = str(int(float(text)))
+
+    text = text.strip()
+    if not text:
+        return default
+    if max_length is not None:
+        text = text[:max_length]
+    return text
+
+
 def dynamic_prefix_sort(item):
     """
     Sorts items based on a dynamic prefix length.
@@ -669,7 +694,7 @@ def bulk_create_employee_import(success_lists):
             categoria_protetta=parse_bool_import(
                 get_import_value(row, "Categoria Protetta")
             ),
-            codice_paghe=parse_optional_string_import(
+            codice_paghe=parse_optional_payroll_code_import(
                 get_import_value(row, "Codice Paghe", "codice_paghe", "Payroll Code"),
                 max_length=64,
             ),
@@ -790,7 +815,7 @@ def bulk_update_personal_fields_import(import_rows):
 
         updated_fields = []
 
-        codice_paghe_value = parse_optional_string_import(
+        codice_paghe_value = parse_optional_payroll_code_import(
             get_import_value(row, "Codice Paghe", "codice_paghe", "Payroll Code"),
             max_length=64,
         )

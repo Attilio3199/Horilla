@@ -153,6 +153,11 @@ class Contract(HorillaModel):
         (2, _("Apprendistato")),
         (3, _("Determinato")),
         (4, _("Indeterminato")),
+        (5, _("cocopro")),
+        (6, _("GI GROUP")),
+        (7, _("infojobmetis")),
+        (8, _("ranstad")),
+        (9, _("voucher")),
     )
     try:
         # Here would be not filing status model at the initial/empty db
