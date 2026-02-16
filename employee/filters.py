@@ -52,7 +52,7 @@ class EmployeeFilter(HorillaFilterSet):
     )
     employee_first_name = django_filters.CharFilter(lookup_expr="icontains")
     employee_last_name = django_filters.CharFilter(lookup_expr="icontains")
-    country = django_filters.CharFilter(lookup_expr="icontains")
+    domicilio_country = django_filters.CharFilter(lookup_expr="icontains")
     department = django_filters.CharFilter(
         field_name="employee_work_info__department_id__department",
         lookup_expr="icontains",
@@ -115,7 +115,7 @@ class EmployeeFilter(HorillaFilterSet):
             "email",
             "badge_id",
             "phone",
-            "country",
+            "domicilio_country",
             "gender",
             "is_active",
             "employee_work_info__job_position_id",

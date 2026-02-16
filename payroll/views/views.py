@@ -18,6 +18,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -86,14 +87,32 @@ def contract_create(request):
     """
     from payroll.forms.forms import ContractForm
 
-    form = ContractForm()
+    # Get employee_id from query params if provided
+    employee_id = request.GET.get('employee_id')
+    initial_data = {}
+    if employee_id:
+        initial_data['employee_id'] = employee_id
+    
+    next_url = request.GET.get("next")
+    form = ContractForm(initial=initial_data)
     if request.method == "POST":
+        next_url = request.POST.get("next")
+        if next_url and not url_has_allowed_host_and_scheme(
+            next_url, allowed_hosts={request.get_host()}
+        ):
+            next_url = None
         form = ContractForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, _("Contract Created"))
+            if next_url:
+                return redirect(next_url)
             return redirect(contract_view)
-    return render(request, "payroll/common/form.html", {"form": form})
+    return render(
+        request,
+        "payroll/common/form.html",
+        {"form": form, "next_url": next_url},
+    )
 
 
 @login_required
@@ -117,18 +136,27 @@ def contract_update(request, contract_id, **kwargs):
     if not contract:
         messages.info(request, _("The contract could not be found."))
         return redirect(contract_view)
+    next_url = request.GET.get("next")
     contract_form = ContractForm(instance=contract)
     if request.method == "POST":
+        next_url = request.POST.get("next")
+        if next_url and not url_has_allowed_host_and_scheme(
+            next_url, allowed_hosts={request.get_host()}
+        ):
+            next_url = None
         contract_form = ContractForm(request.POST, request.FILES, instance=contract)
         if contract_form.is_valid():
             contract_form.save()
             messages.success(request, _("Contract updated"))
+            if next_url:
+                return redirect(next_url)
             return redirect(contract_view)
     return render(
         request,
         "payroll/common/form.html",
         {
             "form": contract_form,
+            "next_url": next_url,
         },
     )
 

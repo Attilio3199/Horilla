@@ -36,9 +36,20 @@ class ContractForm(ModelForm):
         Meta class for additional options
         """
 
-        fields = "__all__"
-        exclude = [
-            "is_active",
+        fields = [
+            "employee_id",
+            "contract_name",
+            "contract_status",
+            "tipo_contratto",
+            "contract_start_date",
+            "contract_end_date",
+            "lun",
+            "mar",
+            "mer",
+            "gio",
+            "ven",
+            "sab",
+            "dom",
         ]
         model = Contract
 
@@ -52,6 +63,24 @@ class ContractForm(ModelForm):
                 "class": "oh-select",
             }
         )
+        self.fields["contract_name"].required = False
+        self.fields["contract_name"].label = _("Nota Contratto")
+        self.fields["contract_name"].widget = forms.Textarea(
+            attrs={
+                "class": "form-control",
+                "rows": 3,
+                "placeholder": _("Inserisci una Nota Contratto"),
+            }
+        )
+        
+        # Add date widgets with type="date"
+        self.fields["contract_start_date"].widget.attrs.update({"type": "date"})
+        self.fields["contract_end_date"].widget.attrs.update({"type": "date"})
+        
+        # Add select class for tipo_contratto dropdown
+        if "tipo_contratto" in self.fields:
+            self.fields["tipo_contratto"].widget.attrs.update({"class": "oh-select"})
+        
         if self.instance and self.instance.pk:
             dynamic_url = self.get_dynamic_hx_post_url(self.instance)
             self.fields["contract_status"].widget.attrs.update(
@@ -64,9 +93,10 @@ class ContractForm(ModelForm):
         first = PayrollGeneralSetting.objects.first()
         if first and self.instance.pk is None:
             self.initial["notice_period_in_days"] = first.notice_period
-        self.fields["contract_document"].widget.attrs[
-            "accept"
-        ] = ".jpg, .jpeg, .png, .pdf"
+        if "contract_document" in self.fields:
+            self.fields["contract_document"].widget.attrs[
+                "accept"
+            ] = ".jpg, .jpeg, .png, .pdf"
 
     def as_p(self):
         """

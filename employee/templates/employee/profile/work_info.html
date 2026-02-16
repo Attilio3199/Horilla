@@ -1,6 +1,16 @@
 {% load i18n %}
 <div class="oh-general__tab-target oh-profile-section mb-4 d-none" id="work" data-select2-id="select2-data-work">
     <div class="oh-profile-section__card" data-select2-id="select2-data-29-vht3">
+        <form action="" method="post">
+            {% csrf_token %}
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+            <div class="oh-input-group">
+                <label class="oh-label">{{work_form.work_area_type.label}}</label>
+                {{work_form.work_area_type}}
+            </div>
+            </div>
+        </div>
         <div class="row" data-select2-id="select2-data-27-19z8">
             <div class="col-12 col-sm-12 col-md-12 col-lg-6" data-select2-id="select2-data-26-o2rs">
             <div class="oh-input-group" data-select2-id="select2-data-25-5380">
@@ -8,10 +18,28 @@
                 {{work_form.job_position_id}}
             </div>
             </div>
-            <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+            <div class="col-12 col-sm-12 col-md-12 col-lg-6 work-area-sede-field" {% if work_form.work_area_type.value != 'SEDE' %}style="display:none"{% endif %}>
             <div class="oh-input-group">
-                <label class="oh-label">{% trans "Department" %}</label>
+                <label class="oh-label">{% trans "Codice Reparto" %}</label>
+                {{work_form.department_code}}
+            </div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-12 col-lg-6 work-area-sede-field" {% if work_form.work_area_type.value != 'SEDE' %}style="display:none"{% endif %}>
+            <div class="oh-input-group">
+                <label class="oh-label">{% trans "Reparto" %}</label>
                 {{work_form.department_id}}
+            </div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-12 col-lg-6 work-area-store-field" {% if work_form.work_area_type.value != 'NEGOZI' %}style="display:none"{% endif %}>
+            <div class="oh-input-group">
+                <label class="oh-label">{% trans "Codice Negozio" %}</label>
+                {{work_form.store_code}}
+            </div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-12 col-lg-6 work-area-store-field" {% if work_form.work_area_type.value != 'NEGOZI' %}style="display:none"{% endif %}>
+            <div class="oh-input-group">
+                <label class="oh-label">{% trans "Negozio" %}</label>
+                {{work_form.store_name}}
             </div>
             </div>
         </div>
@@ -74,20 +102,6 @@
         <div class="row">
             <div class="col-12 col-sm-12 col-md-12 col-lg-6">
             <div class="oh-input-group">
-                <label class="oh-label" for="startDate">{% trans "Joining Date" %}</label>
-                {{work_form.date_joining}}
-            </div>
-            </div>
-            <div class="col-12 col-sm-12 col-md-12 col-lg-6">
-            <div class="oh-input-group">
-                <label class="oh-label" for="endDate">{% trans "Contract End Date" %}</label>
-                {{work_form.contract_end_date}}
-            </div>
-        </div>
-        </div>
-        <div class="row">
-            <div class="col-12 col-sm-12 col-md-12 col-lg-6">
-            <div class="oh-input-group">
                 <label class="oh-label">{% trans "Basic Salary" %}</label>
                 {{work_form.basic_salary}}
             </div>
@@ -99,8 +113,79 @@
             </div>
             </div>
         </div>
-
-
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-12 col-lg-4">
+                <div class="oh-input-group">
+                    <label class="oh-label">{{work_form.export_payslip.label}}</label>
+                    {{work_form.export_payslip}}
+                </div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-12 col-lg-4">
+                <div class="oh-input-group">
+                    <label class="oh-label">{{work_form.mirror_payslip.label}}</label>
+                    {{work_form.mirror_payslip}}
+                </div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-12 col-lg-4">
+                <div class="oh-input-group">
+                    <label class="oh-label">{{work_form.premi.label}}</label>
+                    {{work_form.premi}}
+                </div>
+            </div>
+        </div>
+        <hr class="mt-5 mb-3" />
+        <div class="w-100 d-flex align-items-center justify-content-end">
+            <button type="submit" class="oh-btn oh-btn--secondary oh-btn--w-100-resp">
+                {% trans "Save" %}
+            </button>
+        </div>
         </form>
     </div>
     </div>
+
+<script>
+    (function () {
+        function getAreaValue() {
+            var areaField = document.getElementById("id_work_area_type");
+            if (!areaField) return "";
+            var value = (areaField.value || "").toString().trim().toUpperCase();
+            if (value === "SEDE" || value === "NEGOZI") {
+                return value;
+            }
+            var selectedOption = areaField.options[areaField.selectedIndex];
+            if (!selectedOption) return "";
+            var text = (selectedOption.text || "").toString().trim().toUpperCase();
+            if (text.indexOf("SEDE") !== -1) return "SEDE";
+            if (text.indexOf("NEGOZI") !== -1 || text.indexOf("NEGOZIO") !== -1) return "NEGOZI";
+            return "";
+        }
+
+        function toggleWorkAreaFields() {
+            var selected = getAreaValue();
+            var sedeFields = document.querySelectorAll('.work-area-sede-field');
+            var storeFields = document.querySelectorAll('.work-area-store-field');
+
+            sedeFields.forEach(function (el) {
+                el.style.display = selected === 'SEDE' ? '' : 'none';
+            });
+            storeFields.forEach(function (el) {
+                el.style.display = selected === 'NEGOZI' ? '' : 'none';
+            });
+        }
+
+        document.addEventListener('change', function (event) {
+            if (event.target && event.target.id === 'id_work_area_type') {
+                toggleWorkAreaFields();
+            }
+        });
+
+        if (window.jQuery) {
+            $(document).on('select2:select', '#id_work_area_type', toggleWorkAreaFields);
+        }
+
+        document.addEventListener('DOMContentLoaded', toggleWorkAreaFields);
+        setTimeout(toggleWorkAreaFields, 0);
+        setTimeout(toggleWorkAreaFields, 150);
+        setTimeout(toggleWorkAreaFields, 400);
+    })();
+</script>

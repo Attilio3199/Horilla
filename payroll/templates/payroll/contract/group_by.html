@@ -45,8 +45,8 @@
 										/>
 										</div>
 									</div>
-									<div class="oh-sticky-table__th">{% trans "Contract" %}</div>
 									<div class="oh-sticky-table__th">{% trans "Employee" %}</div>
+									<div class="oh-sticky-table__th">{% trans "Nota Contratto" %}</div>
 									<div class="oh-sticky-table__th">{% trans "Start Date" %}</div>
 									<div class="oh-sticky-table__th">{% trans "End Date" %}</div>
 									<div class="oh-sticky-table__th">{% trans "Wage Type" %}</div>
@@ -78,8 +78,8 @@
 										/>
 									</div>
 								</div>
-								<div class="oh-sticky-table__td">{{ contract.contract_name }}</div>
 								<div class="oh-sticky-table__td">{{ contract.employee_id }}</div>
+								<div class="oh-sticky-table__td">{{ contract.contract_name }}</div>
 								<div class="oh-sticky-table__td dateformat_changer">{{ contract.contract_start_date}}</div>
 								<div class="oh-sticky-table__td dateformat_changer">
 									{% if contract.contract_end_date %}{{ contract.contract_end_date}}{% endif %}

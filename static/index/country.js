@@ -686,9 +686,15 @@ s_a[251] =
 s_a[252] =
     "Bulawayo|Harare|ManicalandMashonaland Central|Mashonaland East|Mashonaland West|Masvingo|Matabeleland North|Matabeleland South|Midlands";
 
+function resolveSelectElement(elementOrId) {
+    if (!elementOrId) return null;
+    if (typeof elementOrId === "string") return document.getElementById(elementOrId);
+    return elementOrId;
+}
+
 function populateStates(countryElementId, stateElementId) {
-    var countryEl = document.getElementById(countryElementId);
-    var stateEl = document.getElementById(stateElementId);
+    var countryEl = resolveSelectElement(countryElementId);
+    var stateEl = resolveSelectElement(stateElementId);
 
     if (!countryEl || !stateEl) return;  // Prevents null access
     var selectedCountryIndex = countryEl.selectedIndex;
@@ -713,8 +719,8 @@ function populateStates(countryElementId, stateElementId) {
 
 
 function populateCountries(countryElementId, stateElementId) {
-    var countryEl = document.getElementById(countryElementId);
-    var stateEl = document.getElementById(stateElementId);
+    var countryEl = resolveSelectElement(countryElementId);
+    var stateEl = resolveSelectElement(stateElementId);
 
     if (!countryEl) return;
 
@@ -741,12 +747,44 @@ function populateCountries(countryElementId, stateElementId) {
             populateStates(countryElementId, stateElementId);
         };
     }
+    
+    // Apply Select2 AFTER populating if dropdown has country-dropdown class
+    if (countryEl.classList.contains('country-dropdown')) {
+        $(countryEl).select2();
+    }
+    if (stateEl && stateEl.classList.contains('country-dropdown')) {
+        $(stateEl).select2();
+    }
+}
+
+function findStateSelectForCountry(countrySelect, stateName) {
+    if (!countrySelect) return null;
+    var form = countrySelect.closest("form");
+    if (form) {
+        var stateInForm = form.querySelector('select[name="' + stateName + '"]');
+        if (stateInForm) return stateInForm;
+    }
+    return document.querySelector('select[name="' + stateName + '"]');
+}
+
+function populateCountriesByName(countryName, stateName) {
+    var countrySelects = document.querySelectorAll('select[name="' + countryName + '"]');
+    countrySelects.forEach(function (countrySelect) {
+        var stateSelect = stateName ? findStateSelectForCountry(countrySelect, stateName) : null;
+        populateCountries(countrySelect, stateSelect);
+    });
 }
 
 
 function initCountryStateDropdowns() {
-    populateCountries("id_country", "id_state");
+    populateCountries("id_domicilio_country", "id_domicilio_state");
     populateCountries("country", "state");
+    // Residenza country/state
+    populateCountries("id_residenza_country", "id_residenza_state");
+
+    // Fallback for dynamic/duplicate DOM fragments (HTMX/modal/forms)
+    populateCountriesByName("domicilio_country", "domicilio_state");
+    populateCountriesByName("residenza_country", "residenza_state");
 }
 
 document.addEventListener("DOMContentLoaded", function () {

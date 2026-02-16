@@ -51,6 +51,18 @@ def reporting_manager_validator(value):
     return value
 
 
+def validate_codice_fiscale(value):
+    """
+    Validator: codice fiscale must be exactly 16 alphanumeric characters.
+    """
+    import re as _re
+
+    if value and (len(value) != 16 or not _re.match(r'^[A-Za-z0-9]{16}$', value)):
+        raise ValidationError(
+            _("Il Codice Fiscale deve essere esattamente di 16 caratteri alfanumerici.")
+        )
+
+
 class Employee(models.Model):
     """
     Employee model
@@ -86,14 +98,64 @@ class Employee(models.Model):
     phone = models.CharField(
         max_length=25,
     )
-    address = models.TextField(max_length=200, blank=True, null=True)
-    country = models.CharField(max_length=100, blank=True, null=True)
-    state = models.CharField(max_length=100, null=True, blank=True)
-    city = models.CharField(max_length=30, null=True, blank=True)
-    zip = models.CharField(max_length=20, null=True, blank=True)
+    domicilio_address = models.TextField(max_length=200, blank=True, null=True)
+    domicilio_country = models.CharField(max_length=100, blank=True, null=True)
+    domicilio_state = models.CharField(max_length=100, null=True, blank=True)
+    domicilio_zip = models.CharField(max_length=20, null=True, blank=True)
+    domicilio_citta = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_("Domicilio Città")
+    )
+    docimicilio_provincia = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name=_("Domicilio Provincia"),
+    )
+    # --- Residenza ---
+    residenza_country = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name=_("Residenza Country")
+    )
+    residenza_state = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name=_("Residenza State")
+    )
+    residenza_address = models.TextField(
+        max_length=200, blank=True, null=True, verbose_name=_("Residenza Address")
+    )
+    residenza_zip = models.CharField(
+        max_length=20, blank=True, null=True, verbose_name=_("Residenza ZIP")
+    )
+    residenza_citta = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_("Residenza Città")
+    )
+    residenza_provincia = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name=_("Residenza Provincia")
+    )
+    # --- Dati Personali ---
     dob = models.DateField(null=True, blank=True)
     gender = models.CharField(
         max_length=10, null=True, choices=choice_gender, default="male"
+    )
+    nascita_citta = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_("Nascita Città")
+    )
+    nascita_provincia = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name=_("Nascita Provincia")
+    )
+    codice_fiscale = models.CharField(
+        max_length=16,
+        blank=True,
+        null=True,
+        verbose_name=_("Codice Fiscale"),
+        validators=[validate_codice_fiscale],
+    )
+    categoria_protetta = models.BooleanField(
+        default=False, verbose_name=_("Categoria Protetta")
+    )
+    codice_paghe = models.CharField(
+        max_length=64,
+        blank=True,
+        null=True,
+        verbose_name=_("Codice Paghe"),
     )
     qualification = models.CharField(max_length=50, blank=True, null=True)
     experience = models.IntegerField(null=True, blank=True)
@@ -598,10 +660,71 @@ class EmployeeTag(HorillaModel):
         return f"{self.title}"
 
 
+class DutyRole(HorillaModel):
+    """
+    Catalog of available duties (mansioni).
+    """
+
+    title = models.CharField(max_length=100, unique=True, verbose_name=_("Mansione"))
+
+    class Meta:
+        verbose_name = _("Duty Role")
+        verbose_name_plural = _("Duty Roles")
+
+    def __str__(self) -> str:
+        return self.title
+
+
+class EmployeeDutyHistory(HorillaModel):
+    """
+    Historical duties held by an employee.
+    """
+
+    employee_id = models.ForeignKey(
+        Employee,
+        on_delete=models.CASCADE,
+        related_name="duty_histories",
+        verbose_name=_("Employee"),
+    )
+    duty_role_id = models.ForeignKey(
+        DutyRole,
+        on_delete=models.PROTECT,
+        verbose_name=_("Mansione"),
+    )
+    start_date = models.DateField(verbose_name=_("DataInizioMansione"))
+    end_date = models.DateField(
+        blank=True, null=True, verbose_name=_("DataFineMansione")
+    )
+
+    objects = HorillaCompanyManager(
+        related_company_field="employee_id__employee_work_info__company_id"
+    )
+
+    class Meta:
+        verbose_name = _("Employee Duty History")
+        verbose_name_plural = _("Employee Duty Histories")
+        ordering = ["-start_date", "-id"]
+
+    def clean(self):
+        super().clean()
+        if self.end_date and self.end_date < self.start_date:
+            raise ValidationError(
+                {"end_date": _("DataFineMansione cannot be before DataInizioMansione.")}
+            )
+
+    def __str__(self) -> str:
+        return f"{self.employee_id} - {self.duty_role_id}"
+
+
 class EmployeeWorkInformation(models.Model):
     """
     EmployeeWorkInformation model
     """
+
+    WORK_AREA_CHOICES = (
+        ("SEDE", _("SEDE")),
+        ("NEGOZI", _("NEGOZI")),
+    )
 
     employee_id = models.OneToOneField(
         Employee,
@@ -665,6 +788,22 @@ class EmployeeWorkInformation(models.Model):
     tags = models.ManyToManyField(
         EmployeeTag, blank=True, verbose_name=_("Employee tag")
     )
+    work_area_type = models.CharField(
+        max_length=10,
+        choices=WORK_AREA_CHOICES,
+        blank=True,
+        null=True,
+        verbose_name=_("Work Area Type"),
+    )
+    department_code = models.CharField(
+        max_length=30, blank=True, null=True, verbose_name=_("Department Code")
+    )
+    store_code = models.CharField(
+        max_length=30, blank=True, null=True, verbose_name=_("Store Code")
+    )
+    store_name = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name=_("Store")
+    )
     location = models.CharField(
         max_length=50, null=True, blank=True, verbose_name=_("Work Location")
     )
@@ -694,6 +833,11 @@ class EmployeeWorkInformation(models.Model):
     salary_hour = models.IntegerField(
         null=True, blank=True, default=0, verbose_name=_("Salary Per Hour")
     )
+    export_payslip = models.BooleanField(default=False, verbose_name=_("Esporta Cedolino"))
+    mirror_payslip = models.BooleanField(
+        default=False, verbose_name=_("Cedolino Speculare")
+    )
+    premi = models.BooleanField(default=False, verbose_name=_("Premi"))
     additional_info = models.JSONField(null=True, blank=True)
     experience = models.FloatField(null=True, blank=True, default=0)
     history = HorillaAuditLog(
@@ -706,6 +850,27 @@ class EmployeeWorkInformation(models.Model):
 
     def __str__(self) -> str:
         return f"{self.employee_id} - {self.job_position_id}"
+
+    def clean(self):
+        super().clean()
+        errors = {}
+
+        if self.work_area_type == "SEDE":
+            if not self.department_id:
+                errors["department_id"] = _("Department is required when area is SEDE.")
+            if not self.department_code:
+                errors["department_code"] = _(
+                    "Department Code is required when area is SEDE."
+                )
+
+        if self.work_area_type == "NEGOZI":
+            if not self.store_code:
+                errors["store_code"] = _("Store Code is required when area is NEGOZI.")
+            if not self.store_name:
+                errors["store_name"] = _("Store is required when area is NEGOZI.")
+
+        if errors:
+            raise ValidationError(errors)
 
     def save(self, *args, **kwargs):
         self.full_clean()

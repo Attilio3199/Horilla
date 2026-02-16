@@ -723,9 +723,15 @@ def export_data(request, model, form_class, filter_class, file_name, perm=None):
                 data_export[verbose_name].append(value)
 
     data_frame = pd.DataFrame(data=data_export)
-    styled_data_frame = data_frame.style.applymap(
-        lambda x: "text-align: center", subset=pd.IndexSlice[:, :]
-    )
+    styler = data_frame.style
+    if hasattr(styler, "map"):
+        styled_data_frame = styler.map(
+            lambda x: "text-align: center", subset=pd.IndexSlice[:, :]
+        )
+    else:
+        styled_data_frame = styler.applymap(
+            lambda x: "text-align: center", subset=pd.IndexSlice[:, :]
+        )
 
     response = HttpResponse(content_type="application/ms-excel")
     response["Content-Disposition"] = f'attachment; filename="{file_name}"'

@@ -69,6 +69,39 @@ class CompanyMiddleware:
                 _("An employee related to this user's credentials does not exist."),
             )
             return redirect("login")
+
+        if request.user.is_superuser:
+            selected_company = request.session.get("selected_company", "all")
+            if selected_company == "all":
+                all_company = AllCompany()
+                request.session["selected_company"] = "all"
+                request.session["selected_company_instance"] = {
+                    "company": all_company.company,
+                    "icon": all_company.icon.url,
+                    "text": all_company.text,
+                    "id": all_company.id,
+                }
+            else:
+                company = Company.objects.filter(id=selected_company).first()
+                if company:
+                    request.session["selected_company"] = str(company.id)
+                    request.session["selected_company_instance"] = {
+                        "company": company.company,
+                        "icon": company.icon.url,
+                        "text": "Other Company",
+                        "id": company.id,
+                    }
+                else:
+                    all_company = AllCompany()
+                    request.session["selected_company"] = "all"
+                    request.session["selected_company_instance"] = {
+                        "company": all_company.company,
+                        "icon": all_company.icon.url,
+                        "text": all_company.text,
+                        "id": all_company.id,
+                    }
+            return
+
         user_company_id = getattr(
             getattr(user, "employee_work_info", None), "company_id", None
         )

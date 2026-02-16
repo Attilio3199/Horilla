@@ -18,46 +18,117 @@
         {{form.non_field_errors}}
       </div>
 
-      {% for field in form.visible_fields %}
+      <!-- Employee -->
+      <div class="col-12 col-md-6">
+        <div class="oh-label__info" for="id_employee_id">
+          <label class="oh-label required-star" for="id_employee_id">{% trans "Employee" %}</label>
+        </div>
+        {{ form.employee_id|add_class:"form-control" }}
+        {{form.employee_id.errors}}
+      </div>
 
-        {% if field.name != 'contract_status' %}
+      <!-- Tipo Contratto -->
+      <div class="col-12 col-md-6">
+        <div class="oh-label__info" for="id_tipo_contratto">
+          <label class="oh-label" for="id_tipo_contratto">{% trans "Tipo Contratto" %}</label>
+        </div>
+        {{ form.tipo_contratto|add_class:"form-control" }}
+        {{form.tipo_contratto.errors}}
+      </div>
 
-          {% if field.name == 'note' %}
-            <div class="col-12 col-md-12">
-              <div class="oh-label__info" for="id_{{ field.name }}">
-                <label class="oh-label {% if field.field.required %} required-star{% endif %}" for="id_{{ field.name }}">{% trans field.label %}</label>
-                {% if field.help_text != "" %}
-                <span class="oh-info mr-2" title = "{{ field.help_text|safe }}">
-                </span>
-                {% endif %}
-              </div>
-              {% if field.field.widget.input_type == "checkbox" %} {{ field.errors }}
-              <div class="oh-switch" style="width: 30px">
-                {{ field|add_class:"oh-switch__checkbox" }}
-              </div>
-              {% else %} {{ field|add_class:"form-control" }} {% endif %}
-              {{field.errors}}
-            </div>
-          {% else %}
-            <div class="col-12 col-md-6">
-              <div class="oh-label__info" for="id_{{ field.name }}">
-                <label class="oh-label {% if field.field.required %} required-star{% endif %}" for="id_{{ field.name }}">{% trans field.label %}</label>
-                {% if field.help_text != "" %}
-                <span class="oh-info mr-2" title = "{{ field.help_text|safe }}">
-                </span>
-                {% endif %}
-              </div>
-              {% if field.field.widget.input_type == "checkbox" %} {{ field.errors }}
-              <div class="oh-switch" style="width: 30px">
-                {{ field|add_class:"oh-switch__checkbox" }}
-              </div>
-              {% else %} {{ field|add_class:"form-control" }} {% endif %}
-              {{field.errors}}
-            </div>
-          {% endif %}
+      <!-- Data Inizio -->
+      <div class="col-12 col-md-6">
+        <div class="oh-label__info" for="id_contract_start_date">
+          <label class="oh-label required-star" for="id_contract_start_date">{% trans "Data Inizio" %}</label>
+        </div>
+        {{ form.contract_start_date|add_class:"form-control" }}
+        {{form.contract_start_date.errors}}
+      </div>
 
-        {% endif %}
+      <!-- Data Fine -->
+      <div class="col-12 col-md-6">
+        <div class="oh-label__info" for="id_contract_end_date">
+          <label class="oh-label" for="id_contract_end_date">{% trans "Data Fine" %}</label>
+        </div>
+        {{ form.contract_end_date|add_class:"form-control" }}
+        {{form.contract_end_date.errors}}
+      </div>
+
+      <!-- Ore settimanali -->
+      <div class="col-12">
+        <h6 class="mt-3 mb-2">{% trans "Ore Settimanali" %}</h6>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="oh-label__info" for="id_lun">
+          <label class="oh-label" for="id_lun">{% trans "Lunedì" %}</label>
+        </div>
+        {{ form.lun|add_class:"form-control" }}
+        {{form.lun.errors}}
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="oh-label__info" for="id_mar">
+          <label class="oh-label" for="id_mar">{% trans "Martedì" %}</label>
+        </div>
+        {{ form.mar|add_class:"form-control" }}
+        {{form.mar.errors}}
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="oh-label__info" for="id_mer">
+          <label class="oh-label" for="id_mer">{% trans "Mercoledì" %}</label>
+        </div>
+        {{ form.mer|add_class:"form-control" }}
+        {{form.mer.errors}}
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="oh-label__info" for="id_gio">
+          <label class="oh-label" for="id_gio">{% trans "Giovedì" %}</label>
+        </div>
+        {{ form.gio|add_class:"form-control" }}
+        {{form.gio.errors}}
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="oh-label__info" for="id_ven">
+          <label class="oh-label" for="id_ven">{% trans "Venerdì" %}</label>
+        </div>
+        {{ form.ven|add_class:"form-control" }}
+        {{form.ven.errors}}
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="oh-label__info" for="id_sab">
+          <label class="oh-label" for="id_sab">{% trans "Sabato" %}</label>
+        </div>
+        {{ form.sab|add_class:"form-control" }}
+        {{form.sab.errors}}
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="oh-label__info" for="id_dom">
+          <label class="oh-label" for="id_dom">{% trans "Domenica" %}</label>
+        </div>
+        {{ form.dom|add_class:"form-control" }}
+        {{form.dom.errors}}
+      </div>
+
+      <!-- Note Contratto -->
+      <div class="col-12 mt-3">
+        <div class="oh-label__info" for="id_contract_name">
+          <label class="oh-label" for="id_contract_name">{% trans "Nota Contratto" %}</label>
+        </div>
+        {{ form.contract_name|add_class:"form-control" }}
+        {{form.contract_name.errors}}
+      </div>
+
+      <!-- Hidden fields -->
+      {% for field in form.hidden_fields %}
+        {{ field }}
       {% endfor %}
+      
     </div>
 
     <div class="d-flex flex-row-reverse">

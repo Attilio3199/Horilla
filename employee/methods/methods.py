@@ -24,11 +24,19 @@ from base.models import (
     JobRole,
     WorkType,
 )
-from employee.models import Employee, EmployeeWorkInformation
+from employee.models import (
+    DutyRole,
+    Employee,
+    EmployeeBankDetails,
+    EmployeeDutyHistory,
+    EmployeeWorkInformation,
+)
 
 logger = logging.getLogger(__name__)
 
 is_postgres = connection.vendor == "postgresql"
+INT32_MIN = -(2**31)
+INT32_MAX = 2**31 - 1
 
 error_data_template = {
     field: []
@@ -129,11 +137,92 @@ def convert_nan(field, dicts):
     This method is returns None or field value
     """
     field_value = dicts.get(field)
-    try:
-        float(field_value)
+    if field_value is None:
         return None
-    except ValueError:
-        return field_value
+    if isinstance(field_value, float) and pd.isna(field_value):
+        return None
+    if isinstance(field_value, str):
+        stripped_value = field_value.strip()
+        if not stripped_value or stripped_value.lower() in {"nan", "none", "null"}:
+            return None
+        return stripped_value
+    return field_value
+
+
+def parse_bool_import(value):
+    if value is None or (isinstance(value, float) and pd.isna(value)):
+        return False
+    text = str(value).strip().lower()
+    return text in {"1", "true", "yes", "y", "si", "s", "sì", "vero", "x"}
+
+
+def get_import_value(row, *keys):
+    for key in keys:
+        if key in row:
+            value = convert_nan(key, row)
+            if value is not None:
+                return value
+    return None
+
+
+def parse_optional_int_import(value, default=None):
+    if value is None:
+        return default
+    normalized = str(value).strip()
+    if not normalized:
+        return default
+    if normalized.startswith("'"):
+        normalized = normalized[1:].strip()
+    if not normalized:
+        return default
+    normalized = normalized.replace("\u00a0", "").replace(" ", "")
+    try:
+        if "," in normalized and "." in normalized:
+            last_comma = normalized.rfind(",")
+            last_dot = normalized.rfind(".")
+            if last_comma > last_dot:
+                normalized = normalized.replace(".", "").replace(",", ".")
+            else:
+                normalized = normalized.replace(",", "")
+        elif "." in normalized:
+            if normalized.count(".") > 1:
+                normalized = normalized.replace(".", "")
+            else:
+                whole, fraction = normalized.split(".", 1)
+                if fraction.isdigit() and len(fraction) == 3 and whole.isdigit():
+                    normalized = f"{whole}{fraction}"
+        elif "," in normalized:
+            if normalized.count(",") > 1:
+                normalized = normalized.replace(",", "")
+            else:
+                whole, fraction = normalized.split(",", 1)
+                if fraction.isdigit() and len(fraction) == 3 and whole.isdigit():
+                    normalized = f"{whole}{fraction}"
+                else:
+                    normalized = normalized.replace(",", ".")
+        parsed = int(float(normalized))
+    except (TypeError, ValueError, OverflowError):
+        return default
+    if parsed < INT32_MIN or parsed > INT32_MAX:
+        return default
+    return parsed
+
+
+def parse_optional_string_import(value, default=None, max_length=None):
+    if value is None:
+        return default
+    text = str(value).strip()
+    if not text:
+        return default
+    if text.lower() in {"nan", "none", "null"}:
+        return default
+    if text.startswith("'"):
+        text = text[1:].strip()
+    if not text:
+        return default
+    if max_length is not None:
+        text = text[:max_length]
+    return text
 
 
 def dynamic_prefix_sort(item):
@@ -369,8 +458,13 @@ def process_employee_records(data_frame):
                 basic_salary_val = float(basic_salary)
                 if basic_salary_val <= 0:
                     raise ValueError
+                if basic_salary_val < INT32_MIN or basic_salary_val > INT32_MAX:
+                    raise OverflowError
             except (ValueError, TypeError):
                 errors["Basic Salary Error"] = "Basic salary must be a positive number."
+                save = False
+            except OverflowError:
+                errors["Basic Salary Error"] = "Basic salary is out of allowed range."
                 save = False
 
         if salary_hour not in [None, ""]:
@@ -378,10 +472,15 @@ def process_employee_records(data_frame):
                 salary_hour_val = float(salary_hour)
                 if salary_hour_val < 0:
                     raise ValueError
+                if salary_hour_val < INT32_MIN or salary_hour_val > INT32_MAX:
+                    raise OverflowError
             except (ValueError, TypeError):
                 errors["Salary Hour Error"] = (
                     "Salary hour must be a non-negative number."
                 )
+                save = False
+            except OverflowError:
+                errors["Salary Hour Error"] = "Salary hour is out of allowed range."
                 save = False
 
         # Final processing
@@ -459,19 +558,140 @@ def bulk_create_employee_import(success_lists):
         )
     }
 
-    employees_to_create = [
-        Employee(
+    employees_to_create = []
+    for row in success_lists:
+        if row["Email"] not in existing_users:
+            continue
+
+        dob_value = import_valid_date(
+            get_import_value(row, "Date of Birth", "dob", "Data di nascita"),
+            "Date of Birth",
+            {},
+            "Date of Birth Error",
+        )
+
+        marital_raw = str(
+            get_import_value(row, "Marital Status", "stato civile") or ""
+        ).strip().lower()
+        marital_map = {
+            "single": "single",
+            "married": "married",
+            "divorced": "divorced",
+            "celibe": "single",
+            "nubile": "single",
+            "coniugato": "married",
+            "coniugata": "married",
+            "divorziato": "divorced",
+            "divorziata": "divorced",
+        }
+        marital_status = marital_map.get(marital_raw) if marital_raw else None
+
+        employee = Employee(
             employee_user_id=existing_users[row["Email"]],
             badge_id=row["Badge ID"],
             employee_first_name=convert_nan("First Name", row),
             employee_last_name=convert_nan("Last Name", row),
             email=row["Email"],
             phone=row["Phone"],
-            gender=row.get("Gender", "").lower(),
+            gender=(row.get("Gender", "") or "").lower(),
+            domicilio_address=get_import_value(
+                row,
+                "domicilio_address",
+                "Address",
+                "indirizzo",
+                "Indirizzo_domicilio",
+            ),
+            domicilio_country=get_import_value(
+                row,
+                "domicilio_country",
+                "Country",
+                "paese",
+                "Country_domicilio",
+            ),
+            domicilio_state=get_import_value(
+                row,
+                "domicilio_state",
+                "State",
+                "provincia",
+                "Stato_domicilio",
+            ),
+            domicilio_zip=get_import_value(
+                row,
+                "domicilio_zip",
+                "Zip Code",
+                "zip",
+                "cap",
+                "Cap_domicilio",
+            ),
+            domicilio_citta=get_import_value(
+                row,
+                "domicilio_citta",
+                "Comune Domicilio",
+                "Comune_domicilio",
+                "City",
+                "citta",
+            ),
+            docimicilio_provincia=get_import_value(
+                row,
+                "docimicilio_provincia",
+                "Provincia Domicilio",
+                "Provincia_domicilio",
+            ),
+            residenza_country=get_import_value(
+                row, "residenza_country", "Residenza Country"
+            ),
+            residenza_state=get_import_value(
+                row, "residenza_state", "Residenza State"
+            ),
+            residenza_address=get_import_value(
+                row, "residenza_address", "Residenza Address"
+            ),
+            residenza_zip=get_import_value(
+                row,
+                "residenza_zip",
+                "Residenza ZIP",
+                "Residenza Zip",
+            ),
+            residenza_citta=get_import_value(
+                row, "residenza_citta", "Comune Residenza"
+            ),
+            residenza_provincia=get_import_value(
+                row, "residenza_provincia", "Provincia Residenza"
+            ),
+            dob=dob_value,
+            nascita_citta=get_import_value(
+                row, "nascita_citta", "Luogo di Nascita", "Comune di Nascita"
+            ),
+            nascita_provincia=get_import_value(
+                row, "nascita_provincia", "Provincia di Nascita"
+            ),
+            codice_fiscale=get_import_value(row, "Codice Fiscale"),
+            categoria_protetta=parse_bool_import(
+                get_import_value(row, "Categoria Protetta")
+            ),
+            codice_paghe=parse_optional_string_import(
+                get_import_value(row, "Codice Paghe", "codice_paghe", "Payroll Code"),
+                max_length=64,
+            ),
+            qualification=get_import_value(row, "Qualification", "Qualifica"),
+            experience=parse_optional_int_import(
+                get_import_value(row, "Experience", "Esperienza")
+            ),
+            marital_status=marital_status or "single",
+            children=parse_optional_int_import(get_import_value(row, "Children", "Figli")),
+            emergency_contact=get_import_value(
+                row, "Emergency Contact", "Contatto Emergenza"
+            ),
+            emergency_contact_name=get_import_value(
+                row, "Emergency Contact Name", "Nome Contatto Emergenza"
+            ),
+            emergency_contact_relation=get_import_value(
+                row,
+                "Emergency Contact Relation",
+                "Relazione Contatto Emergenza",
+            ),
         )
-        for row in success_lists
-        if row["Email"] in existing_users
-    ]
+        employees_to_create.append(employee)
 
     created_employees = []
     if employees_to_create:
@@ -481,6 +701,119 @@ def bulk_create_employee_import(success_lists):
             )
 
     return created_employees
+
+
+def bulk_create_bank_details_import(success_lists):
+    """
+    Creates or updates employee bank account number (IBAN/Account Number)
+    from import rows for corresponding employees.
+    """
+    cleaned_badges = []
+    normalized_emails = []
+    for row in success_lists:
+        badge = clean_badge_id(row.get("Badge ID"))
+        if badge:
+            cleaned_badges.append(badge)
+        email = str(row.get("Email", "")).strip().lower()
+        if email:
+            normalized_emails.append(email)
+
+    if not cleaned_badges and not normalized_emails:
+        return
+
+    employees = Employee.objects.entire().filter(
+        models.Q(badge_id__in=cleaned_badges) | models.Q(email__in=normalized_emails)
+    ).only("id", "badge_id", "email")
+    employee_by_badge = {
+        clean_badge_id(emp.badge_id): emp for emp in employees if emp.badge_id
+    }
+    employee_by_email = {
+        str(emp.email).strip().lower(): emp for emp in employees if emp.email
+    }
+
+    for row in success_lists:
+        badge_id = clean_badge_id(row.get("Badge ID"))
+        email = str(row.get("Email", "")).strip().lower()
+        employee_obj = employee_by_badge.get(badge_id) or employee_by_email.get(email)
+        if not employee_obj:
+            continue
+
+        account_number = get_import_value(
+            row,
+            "Account Number",
+            "account_number",
+            "IBAN",
+            "Numero Di Conto",
+        )
+        if account_number in [None, ""]:
+            continue
+
+        bank, _ = EmployeeBankDetails.objects.get_or_create(employee_id=employee_obj)
+        bank.account_number = str(account_number).strip()
+        bank.save(update_fields=["account_number"])
+
+
+def bulk_update_personal_fields_import(import_rows):
+    """
+    Updates personal fields that must be imported also for already existing employees.
+    Currently updates:
+    - Employee.codice_paghe
+    - EmployeeBankDetails.account_number (IBAN)
+    """
+    if not import_rows:
+        return
+
+    cleaned_badges = []
+    normalized_emails = []
+    for row in import_rows:
+        badge = clean_badge_id(get_import_value(row, "Badge ID", "badge_id"))
+        if badge:
+            cleaned_badges.append(badge)
+        email = str(get_import_value(row, "Email", "email") or "").strip().lower()
+        if email:
+            normalized_emails.append(email)
+
+    employees_qs = Employee.objects.entire().filter(
+        models.Q(badge_id__in=cleaned_badges) | models.Q(email__in=normalized_emails)
+    )
+    employees_by_badge = {
+        clean_badge_id(emp.badge_id): emp for emp in employees_qs if emp.badge_id
+    }
+    employees_by_email = {str(emp.email).strip().lower(): emp for emp in employees_qs if emp.email}
+
+    for row in import_rows:
+        badge = clean_badge_id(get_import_value(row, "Badge ID", "badge_id"))
+        email = str(get_import_value(row, "Email", "email") or "").strip().lower()
+        employee_obj = employees_by_badge.get(badge) or employees_by_email.get(email)
+        if not employee_obj:
+            continue
+
+        updated_fields = []
+
+        codice_paghe_value = parse_optional_string_import(
+            get_import_value(row, "Codice Paghe", "codice_paghe", "Payroll Code"),
+            max_length=64,
+        )
+        if codice_paghe_value is not None and employee_obj.codice_paghe != codice_paghe_value:
+            employee_obj.codice_paghe = codice_paghe_value
+            updated_fields.append("codice_paghe")
+
+        if updated_fields:
+            employee_obj.save(update_fields=updated_fields)
+
+        account_number = get_import_value(
+            row,
+            "Account Number",
+            "account_number",
+            "IBAN",
+            "Numero Di Conto",
+        )
+        if account_number not in [None, ""]:
+            bank, _ = EmployeeBankDetails.objects.get_or_create(employee_id=employee_obj)
+            account_number = str(account_number).strip()
+            if bank.account_number != account_number:
+                bank.account_number = account_number
+                bank.save(update_fields=["account_number"])
 
 
 def set_initial_password(employees):
@@ -753,6 +1086,11 @@ def bulk_create_work_info_import(success_lists):
     employee_types = set(row.get("Employee Type") for row in success_lists)
     shifts = set(row.get("Shift") for row in success_lists)
     companies = set(row.get("Company") for row in success_lists)
+    duty_titles = {
+        str(row.get("Mansione", "")).strip()
+        for row in success_lists
+        if str(row.get("Mansione", "")).strip()
+    }
 
     chunk_size = None if is_postgres else 999
     employee_qs = (
@@ -820,7 +1158,26 @@ def bulk_create_work_info_import(success_lists):
         comp.company: comp
         for comp in Company.objects.filter(company__in=companies).only("company")
     }
+    existing_duty_roles = {
+        role.title: role
+        for role in DutyRole.objects.filter(title__in=duty_titles).only("title")
+    }
+    new_duty_roles = [
+        DutyRole(title=title)
+        for title in duty_titles
+        if title not in existing_duty_roles
+    ]
+    if new_duty_roles:
+        DutyRole.objects.bulk_create(new_duty_roles, batch_size=None if is_postgres else 999)
+        existing_duty_roles.update(
+            {
+                role.title: role
+                for role in DutyRole.objects.filter(title__in=duty_titles).only("title")
+            }
+        )
+
     reporting_manager_dict = optimize_reporting_manager_lookup()
+    duty_histories_to_create = []
 
     for work_info in success_lists:
         badge_id = work_info["Badge ID"]
@@ -856,6 +1213,16 @@ def bulk_create_work_info_import(success_lists):
         company_obj = existing_companies.get(work_info.get("Company"))
         location = work_info.get("Location")
 
+        work_area_type = str(work_info.get("Work Area Type", "")).strip().upper()
+        if work_area_type not in {"SEDE", "NEGOZI"}:
+            work_area_type = None
+        department_code = convert_nan("Department Code", work_info)
+        store_code = convert_nan("Store Code", work_info)
+        store_name = convert_nan("Store", work_info)
+        export_payslip = parse_bool_import(work_info.get("Esporta Cedolino"))
+        mirror_payslip = parse_bool_import(work_info.get("Cedolino Speculare"))
+        premi = parse_bool_import(work_info.get("Premi"))
+
         # Parsing dates and salary
         date_joining = (
             work_info["Date Joining"]
@@ -868,16 +1235,35 @@ def bulk_create_work_info_import(success_lists):
             if not pd.isnull(work_info["Contract End Date"])
             else None
         )
-        basic_salary = (
-            convert_nan("Basic Salary", work_info)
-            if type(convert_nan("Basic Salary", work_info)) is int
-            else 0
+        basic_salary_raw = convert_nan("Basic Salary", work_info)
+        basic_salary = parse_optional_int_import(basic_salary_raw, default=0)
+
+        salary_hour_raw = convert_nan("Salary Hour", work_info)
+        salary_hour = parse_optional_int_import(salary_hour_raw, default=0)
+
+        mansione_title = str(work_info.get("Mansione", "")).strip()
+        duty_role_obj = existing_duty_roles.get(mansione_title) if mansione_title else None
+        duty_start_date = import_valid_date(
+            work_info.get("DataInizioMansione"),
+            "DataInizioMansione",
+            {},
+            "DataInizioMansione Error",
         )
-        salary_hour = (
-            convert_nan("Salary Hour", work_info)
-            if type(convert_nan("Salary Hour", work_info)) is int
-            else 0
+        duty_end_date = import_valid_date(
+            work_info.get("DataFineMansione"),
+            "DataFineMansione",
+            {},
+            "DataFineMansione Error",
         )
+        if duty_role_obj:
+            duty_histories_to_create.append(
+                {
+                    "employee": employee_obj,
+                    "duty_role": duty_role_obj,
+                    "start_date": duty_start_date or date_joining or datetime.today().date(),
+                    "end_date": duty_end_date,
+                }
+            )
 
         if employee_work_info is None:
             # Create a new instance
@@ -893,6 +1279,10 @@ def bulk_create_work_info_import(success_lists):
                 reporting_manager_id=reporting_manager_obj,
                 company_id=company_obj,
                 location=location,
+                work_area_type=work_area_type,
+                department_code=department_code,
+                store_code=store_code,
+                store_name=store_name,
                 date_joining=(
                     date_joining if not pd.isnull(date_joining) else datetime.today()
                 ),
@@ -901,6 +1291,9 @@ def bulk_create_work_info_import(success_lists):
                 ),
                 basic_salary=basic_salary,
                 salary_hour=salary_hour,
+                export_payslip=export_payslip,
+                mirror_payslip=mirror_payslip,
+                premi=premi,
             )
             new_work_info_list.append(employee_work_info)
         else:
@@ -915,6 +1308,10 @@ def bulk_create_work_info_import(success_lists):
             employee_work_info.reporting_manager_id = reporting_manager_obj
             employee_work_info.company_id = company_obj
             employee_work_info.location = location
+            employee_work_info.work_area_type = work_area_type
+            employee_work_info.department_code = department_code
+            employee_work_info.store_code = store_code
+            employee_work_info.store_name = store_name
             employee_work_info.date_joining = (
                 date_joining if not pd.isnull(date_joining) else datetime.today()
             )
@@ -923,6 +1320,9 @@ def bulk_create_work_info_import(success_lists):
             )
             employee_work_info.basic_salary = basic_salary
             employee_work_info.salary_hour = salary_hour
+            employee_work_info.export_payslip = export_payslip
+            employee_work_info.mirror_payslip = mirror_payslip
+            employee_work_info.premi = premi
             update_work_info_list.append(employee_work_info)
     if new_work_info_list:
         EmployeeWorkInformation.objects.bulk_create(
@@ -942,12 +1342,27 @@ def bulk_create_work_info_import(success_lists):
                 "reporting_manager_id",
                 "company_id",
                 "location",
+                "work_area_type",
+                "department_code",
+                "store_code",
+                "store_name",
                 "date_joining",
                 "contract_end_date",
                 "basic_salary",
                 "salary_hour",
+                "export_payslip",
+                "mirror_payslip",
+                "premi",
             ],
             batch_size=None if is_postgres else 999,
+        )
+
+    for duty in duty_histories_to_create:
+        EmployeeDutyHistory.objects.get_or_create(
+            employee_id=duty["employee"],
+            duty_role_id=duty["duty_role"],
+            start_date=duty["start_date"],
+            end_date=duty["end_date"],
         )
     if apps.is_installed("payroll"):
 

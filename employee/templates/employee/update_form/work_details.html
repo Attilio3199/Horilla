@@ -94,9 +94,133 @@
         </div>
       </form>
     </div>
+
+    <div class="oh-profile-section__card mt-4">
+      <h5 class="mb-3">{% trans "Storico Mansioni" %}</h5>
+
+      <div class="table-responsive mb-3">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>{% trans "Mansione" %}</th>
+              <th>{% trans "DataInizioMansione" %}</th>
+              <th>{% trans "DataFineMansione" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in duty_histories %}
+            <tr>
+              <td>{{ row.duty_role_id }}</td>
+              <td class="dateformat_changer">{{ row.start_date }}</td>
+              <td class="dateformat_changer">{{ row.end_date|default:_("In corso") }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="3" class="text-center">{% trans "Nessuna mansione registrata" %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <form method="post" action="">
+        {% csrf_token %}
+        <input type="hidden" name="form" value="duty-history" />
+        {{ duty_form.new_duty }}
+        <div class="row">
+          <div class="col-12 col-md-4">
+            <label class="oh-label">{{ duty_form.duty_role_id.label }}</label>
+            {{ duty_form.duty_role_id }}
+            {{ duty_form.duty_role_id.errors }}
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="oh-label">{{ duty_form.start_date.label }}</label>
+            {{ duty_form.start_date }}
+            {{ duty_form.start_date.errors }}
+          </div>
+          <div class="col-12 col-md-4 mt-2 mt-md-0">
+            <label class="oh-label">{{ duty_form.end_date.label }}</label>
+            {{ duty_form.end_date }}
+            {{ duty_form.end_date.errors }}
+          </div>
+        </div>
+
+        {% if duty_form.non_field_errors %}
+        <div class="mt-2 text-danger">{{ duty_form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="w-100 d-flex align-items-center justify-content-end mt-3">
+          <button type="submit" class="oh-btn oh-btn--secondary oh-btn--w-100-resp">
+            {% trans "Aggiungi Mansione" %}
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 <script>
+  function toggleWorkAreaFieldsGlobal() {
+    var areaField = document.getElementById("id_work_area_type");
+    if (!areaField) return;
+
+    var value = (areaField.value || "").toString().trim().toUpperCase();
+    if (value !== "SEDE" && value !== "NEGOZI") {
+      var selectedOption = areaField.options[areaField.selectedIndex];
+      var text = selectedOption
+        ? (selectedOption.text || "").toString().trim().toUpperCase()
+        : "";
+      if (text.indexOf("SEDE") !== -1) value = "SEDE";
+      else if (text.indexOf("NEGOZI") !== -1 || text.indexOf("NEGOZIO") !== -1)
+        value = "NEGOZI";
+    }
+
+    var sedeFields = document.querySelectorAll(".work-area-sede-field");
+    var storeFields = document.querySelectorAll(".work-area-store-field");
+
+    sedeFields.forEach(function (el) {
+      el.style.display = value === "SEDE" ? "" : "none";
+    });
+    storeFields.forEach(function (el) {
+      el.style.display = value === "NEGOZI" ? "" : "none";
+    });
+  }
+
+  document.addEventListener("change", function (event) {
+    if (event.target && event.target.id === "id_work_area_type") {
+      toggleWorkAreaFieldsGlobal();
+    }
+  });
+
+  if (window.jQuery) {
+    $(document).on("select2:select", "#id_work_area_type", toggleWorkAreaFieldsGlobal);
+    $(document).on("select2:close", "#id_work_area_type", toggleWorkAreaFieldsGlobal);
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(toggleWorkAreaFieldsGlobal, 0);
+    setTimeout(toggleWorkAreaFieldsGlobal, 120);
+    setTimeout(toggleWorkAreaFieldsGlobal, 350);
+
+    var dutySelect = document.getElementById("id_duty_role_id");
+    var hiddenNewDuty = document.getElementById("id_new_duty");
+    if (dutySelect && hiddenNewDuty) {
+      dutySelect.addEventListener("change", function () {
+        if (dutySelect.value !== "create") {
+          hiddenNewDuty.value = "";
+          return;
+        }
+
+        var dutyName = window.prompt("Inserisci la nuova mansione");
+        if (!dutyName || !dutyName.trim()) {
+          dutySelect.value = "";
+          hiddenNewDuty.value = "";
+          return;
+        }
+        hiddenNewDuty.value = dutyName.trim();
+      });
+    }
+  });
+
   function onDynamicCreate(value, id) {
     if (value === "create") {
       $(id).click();

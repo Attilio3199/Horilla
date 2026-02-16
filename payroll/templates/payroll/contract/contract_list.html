@@ -1,6 +1,18 @@
 {% load i18n %}
 {% load static %}
 {% include 'filter_tags.html' %}
+<style>
+  .payroll-contract-compact-table .oh-sticky-table__sd,
+  .payroll-contract-compact-table .oh-sticky-table__td,
+  .payroll-contract-compact-table .oh-sticky-table__th {
+    padding: 4px 6px !important;
+    font-size: 0.9rem;
+  }
+
+  .payroll-contract-compact-table .oh-btn-group .oh-btn {
+    padding: 2px 6px;
+  }
+</style>
 {% if messages %}
 <div class="oh-wrapper">
   {% for message in messages %}
@@ -27,11 +39,11 @@
   </div>
   <div id="contract-table" data-table-name="contracts_tab">
     <!-- start of sticky table  -->
-    <div class="oh-sticky-table">
+    <div class="oh-sticky-table payroll-contract-compact-table">
       <div class="oh-sticky-table__table">
         <div class="oh-sticky-table__thead">
           <div class="oh-sticky-table__tr">
-            <div class="oh-sticky-table__th" style="width: 10px; @media (max-width: 575.98px) { position: sticky; }">
+            <div class="oh-sticky-table__th" style="width: 28px; min-width: 28px; @media (max-width: 575.98px) { position: sticky; }">
               <div class="centered-div">
                 <input
                       type="checkbox"
@@ -41,30 +53,46 @@
                     />
               </div>
             </div>
-            <div class="oh-sticky-table__th">{% trans "Contract" %}</div>
-            <div data-cell-index="1" data-cell-title='{% trans "Employee" %}'
-              class="oh-sticky-table__th {% if request.sort_option.order == '-employee_id__employee_first_name' %}arrow-up {% elif request.sort_option.order == 'employee_id__employee_first_name' %}arrow-down {% else %} arrow-up-down {% endif %}"
-              hx-target="#payroll-contract-container" hx-get="{% url 'contract-filter' %}?{{pd}}&orderby=employee_id__employee_first_name"
-            >{% trans "Employee" %}</div>
-            <div data-cell-index="2" data-cell-title='{% trans "Start Date" %}'
-              class="oh-sticky-table__th {% if request.sort_option.order == '-contract_start_date' %}arrow-up {% elif request.sort_option.order == 'contract_start_date' %}arrow-down {% else %} arrow-up-down {% endif %}"
+            <div data-cell-index="1" data-cell-title='{% trans "Dipendente" %}'
+              class="oh-sticky-table__th" style="width: 120px; min-width: 120px;"
+            >{% trans "Dipendente" %}</div>
+            <div data-cell-index="2" data-cell-title='{% trans "Tipo Contratto" %}'
+              class="oh-sticky-table__th" style="width: 100px; min-width: 100px;"
+            >{% trans "Tipo Contratto" %}</div>
+            <div data-cell-index="3" data-cell-title='{% trans "Lun" %}'
+              class="oh-sticky-table__th" style="width: 34px; min-width: 34px;"
+            >{% trans "Lun" %}</div>
+            <div data-cell-index="4" data-cell-title='{% trans "Mar" %}'
+              class="oh-sticky-table__th" style="width: 34px; min-width: 34px;"
+            >{% trans "Mar" %}</div>
+            <div data-cell-index="5" data-cell-title='{% trans "Mer" %}'
+              class="oh-sticky-table__th" style="width: 34px; min-width: 34px;"
+            >{% trans "Mer" %}</div>
+            <div data-cell-index="6" data-cell-title='{% trans "Gio" %}'
+              class="oh-sticky-table__th" style="width: 34px; min-width: 34px;"
+            >{% trans "Gio" %}</div>
+            <div data-cell-index="7" data-cell-title='{% trans "Ven" %}'
+              class="oh-sticky-table__th" style="width: 34px; min-width: 34px;"
+            >{% trans "Ven" %}</div>
+            <div data-cell-index="8" data-cell-title='{% trans "Sab" %}'
+              class="oh-sticky-table__th" style="width: 34px; min-width: 34px;"
+            >{% trans "Sab" %}</div>
+            <div data-cell-index="9" data-cell-title='{% trans "Dom" %}'
+              class="oh-sticky-table__th" style="width: 34px; min-width: 34px;"
+            >{% trans "Dom" %}</div>
+            <div data-cell-index="10" data-cell-title='{% trans "OreSett" %}'
+              class="oh-sticky-table__th" style="width: 45px; min-width: 45px;"
+            >{% trans "OreSett" %}</div>
+            <div data-cell-index="11" data-cell-title='{% trans "Data Inizio" %}'
+              class="oh-sticky-table__th {% if request.sort_option.order == '-contract_start_date' %}arrow-up {% elif request.sort_option.order == 'contract_start_date' %}arrow-down {% else %} arrow-up-down {% endif %}" style="width: 78px; min-width: 78px;"
               hx-target="#payroll-contract-container" hx-get="{% url 'contract-filter' %}?{{pd}}&orderby=contract_start_date"
-            >{% trans "Start Date" %}</div>
-            <div data-cell-index="3" data-cell-title='{% trans "End Date" %}'
-              class="oh-sticky-table__th {% if request.sort_option.order == '-contract_end_date' %}arrow-up {% elif request.sort_option.order == 'contract_end_date' %}arrow-down {% else %} arrow-up-down {% endif %}"
+            >{% trans "Data Inizio" %}</div>
+            <div data-cell-index="12" data-cell-title='{% trans "Data Fine" %}'
+              class="oh-sticky-table__th {% if request.sort_option.order == '-contract_end_date' %}arrow-up {% elif request.sort_option.order == 'contract_end_date' %}arrow-down {% else %} arrow-up-down {% endif %}" style="width: 78px; min-width: 78px;"
               hx-target="#payroll-contract-container" hx-get="{% url 'contract-filter' %}?{{pd}}&orderby=contract_end_date"
-            >{% trans "End Date" %}</div>
-            <div data-cell-index="4" data-cell-title='{% trans "Wage Type" %}'
-              class="oh-sticky-table__th"
-            >{% trans "Wage Type" %}</div>
-            <div data-cell-index="5" data-cell-title='{% trans "Basic Salary" %}'
-              class="oh-sticky-table__th {% if request.sort_option.order == '-wage' %}arrow-up {% elif request.sort_option.order == 'wage' %}arrow-down {% else %} arrow-up-down {% endif %}"
-              hx-target="#payroll-contract-container" hx-get="{% url 'contract-filter' %}?{{pd}}&orderby=wage"
-            >{% trans "Basic Salary" %}</div>
-            <div data-cell-index="6" data-cell-title='{% trans "Filing Status" %}' class="oh-sticky-table__th">{% trans "Filing Status" %}</div>
-            <div data-cell-index="7" data-cell-title='{% trans "Status" %}' class="oh-sticky-table__th">{% trans "Status" %}</div>
+            >{% trans "Data Fine" %}</div>
             {% if perms.payroll.change_contract or perms.payroll.delete_contract %}
-              <div class="oh-sticky-table__th oh-sticky-table__right">{% trans "Actions" %}</div>
+              <div class="oh-sticky-table__th oh-sticky-table__right" style="width: 60px; min-width: 60px;">{% trans "Actions" %}</div>
             {% endif %}
           </div>
         </div>
@@ -74,7 +102,7 @@
             <div class="oh-sticky-table__sd  {% if contract.contract_status == "active" %} row-status--yellow
                 {% elif contract.contract_status == 'draft' %} row-status--purple
                 {% elif contract.contract_status == 'expired' %} row-status--red
-                {% elif contract.contract_status == 'terminated' %} row-status--black {% endif %}" onclick="event.stopPropagation()">
+                {% elif contract.contract_status == 'terminated' %} row-status--black {% endif %}" onclick="event.stopPropagation()" style="width: 28px; min-width: 28px;">
                 <div class="centered-div">
                   <input
                     type="checkbox"
@@ -85,41 +113,28 @@
                   />
                 </div>
             </div>
-            <div class="oh-sticky-table__td">{{ contract.contract_name }}</div>
-            <div data-cell-index="1" class="oh-sticky-table__td">{{ contract.employee_id }}</div>
-            <div data-cell-index="2" class="oh-sticky-table__td dateformat_changer">{{ contract.contract_start_date}}</div>
-            <div data-cell-index="3" class="oh-sticky-table__td dateformat_changer">
-              {% if contract.contract_end_date %}{{ contract.contract_end_date}}{% endif %}
+            <div data-cell-index="1" class="oh-sticky-table__td" style="width: 120px; min-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ contract.employee_id }}">
+              {{ contract.employee_id }}
             </div>
-            <div data-cell-index="4" class="oh-sticky-table__td">
-              {{ contract.get_wage_type_display}}
+            <div data-cell-index="2" class="oh-sticky-table__td" style="width: 100px; min-width: 100px;">
+              {% if contract.tipo_contratto %}{{ contract.get_tipo_contratto_display }}{% else %}N/A{% endif %}
             </div>
-            <div data-cell-index="5" class="oh-sticky-table__td">{{ contract.wage}}</div>
-            <div data-cell-index="6" class="oh-sticky-table__td">{{ contract.filing_status}}</div>
-            <!-- Future updation
-                <div data-cell-index="6" class="oh-sticky-table__td" onclick="event.stopPropagation();">
-                  <select name="filing_status" hx-trigger="change" hx-post="{% url 'update-contract-filing-status' contract.id %}" hx-target="#payroll-contract-container" hx-vals='{"view":"table"}' class="oh-table__editable-input w-100">
-                    {% for filing_status_id, filing_status_label in contract.FILING_STATUS_CHOICES %}
-                      <option value="{{ filing_status_id }}" {% if filing_status_id == contract.filing_status.id %}selected{% endif %}>{{ filing_status_label }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-            -->
-            {% if perms.payroll.change_contract %}
-              <div data-cell-index="7" class="oh-sticky-table__td" onclick="event.stopPropagation();">
-                <select name="status" hx-trigger="change" hx-post="{% url 'update-contract-status' contract.id %}?{{pd}}" hx-target="#payroll-contract-container" hx-vals='{"view":"table"}' class="oh-table__editable-input w-100" >
-                  {% for option in contract.CONTRACT_STATUS_CHOICES %}
-                  <option value="{{option.0}}"{% if option.0 == contract.contract_status %}selected{% endif %}>{{option.1}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            {% else %}
-              <div class="oh-sticky-table__td">
-                {{ contract.get_contract_status_display}}
-              </div>
-            {% endif %}
+            <div data-cell-index="3" class="oh-sticky-table__td" style="width: 34px; min-width: 34px; text-align: right;">{{ contract.lun|default:"0" }}</div>
+            <div data-cell-index="4" class="oh-sticky-table__td" style="width: 34px; min-width: 34px; text-align: right;">{{ contract.mar|default:"0" }}</div>
+            <div data-cell-index="5" class="oh-sticky-table__td" style="width: 34px; min-width: 34px; text-align: right;">{{ contract.mer|default:"0" }}</div>
+            <div data-cell-index="6" class="oh-sticky-table__td" style="width: 34px; min-width: 34px; text-align: right;">{{ contract.gio|default:"0" }}</div>
+            <div data-cell-index="7" class="oh-sticky-table__td" style="width: 34px; min-width: 34px; text-align: right;">{{ contract.ven|default:"0" }}</div>
+            <div data-cell-index="8" class="oh-sticky-table__td" style="width: 34px; min-width: 34px; text-align: right;">{{ contract.sab|default:"0" }}</div>
+            <div data-cell-index="9" class="oh-sticky-table__td" style="width: 34px; min-width: 34px; text-align: right;">{{ contract.dom|default:"0" }}</div>
+            <div data-cell-index="10" class="oh-sticky-table__td" style="width: 45px; min-width: 45px; text-align: right;">
+              {{ contract.lun|add:contract.mar|add:contract.mer|add:contract.gio|add:contract.ven|add:contract.sab|add:contract.dom|floatformat:1 }}
+            </div>
+            <div data-cell-index="11" class="oh-sticky-table__td" style="width: 78px; min-width: 78px;">{{ contract.contract_start_date|date:"d/m/Y" }}</div>
+            <div data-cell-index="12" class="oh-sticky-table__td" style="width: 78px; min-width: 78px;">
+              {% if contract.contract_end_date %}{{ contract.contract_end_date|date:"d/m/Y" }}{% else %}N/A{% endif %}
+            </div>
             {% if perms.payroll.change_contract or perms.payroll.delete_contract %}
-              <div class="oh-sticky-table__td oh-sticky-table__right">
+              <div class="oh-sticky-table__td oh-sticky-table__right" style="width: 60px; min-width: 60px;">
                 <div class="oh-btn-group">
                   {% if perms.payroll.change_contract %}
                     <a

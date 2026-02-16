@@ -72,95 +72,62 @@
         <div class="oh-modal__dialog-header pt-0">
             <div class="oh-timeoff-modal__stats-container mt-3 mb-3">
                 <div class="oh-timeoff-modal__stat">
-                    <span class="oh-timeoff-modal__stat-title">{% trans "Start Date" %}</span>
-                    <span class="oh-timeoff-modal__stat-count dateformat_changer">{{contract.contract_start_date}}</span>
+                    <span class="oh-timeoff-modal__stat-title">{% trans "Data Inizio" %}</span>
+                    <span class="oh-timeoff-modal__stat-count dateformat_changer">{{contract.contract_start_date|date:"d/m/Y"}}</span>
                 </div>
                 <div class="oh-timeoff-modal__stat" style="margin-left: 20px;">
-                    <span class="oh-timeoff-modal__stat-title">{% trans "End Date" %}</span>
-                    <span class="oh-timeoff-modal__stat-count dateformat_changer">{{contract.contract_end_date}}</span>
+                    <span class="oh-timeoff-modal__stat-title">{% trans "Data Fine" %}</span>
+                    <span class="oh-timeoff-modal__stat-count dateformat_changer">{{contract.contract_end_date|date:"d/m/Y"|default:"N/A"}}</span>
                 </div>
             </div>
             <div class="oh-timeoff-modal__stats-container mt-3 mb-3">
                 <div class="oh-timeoff-modal__stat">
-                    <span class="oh-timeoff-modal__stat-title">{% trans "Wage Type" %}</span>
-                    <span class="oh-timeoff-modal__stat-count">{{contract.get_wage_type_display}}</span>
+                    <span class="oh-timeoff-modal__stat-title">{% trans "Tipo Contratto" %}</span>
+                    <span class="oh-timeoff-modal__stat-count">{{contract.get_tipo_contratto_display|default:"N/A"}}</span>
+                </div>
+            </div>
+            
+            <!-- Ore Settimanali -->
+            <div class="mt-3 mb-2">
+                <h6>{% trans "Ore Settimanali" %}</h6>
+            </div>
+            <div class="oh-timeoff-modal__stats-container mt-3 mb-3">
+                <div class="oh-timeoff-modal__stat">
+                    <span class="oh-timeoff-modal__stat-title">{% trans "Lunedì" %}</span>
+                    <span class="oh-timeoff-modal__stat-count">{{contract.lun|default:"0"}}</span>
                 </div>
                 <div class="oh-timeoff-modal__stat" style="margin-left: 20px;">
-                    <span class="oh-timeoff-modal__stat-title">{% trans "Wage" %}</span>
-                    <span class="oh-timeoff-modal__stat-count">{{contract.wage}}</span>
+                    <span class="oh-timeoff-modal__stat-title">{% trans "Martedì" %}</span>
+                    <span class="oh-timeoff-modal__stat-count">{{contract.mar|default:"0"}}</span>
                 </div>
             </div>
             <div class="oh-timeoff-modal__stats-container mt-3 mb-3">
                 <div class="oh-timeoff-modal__stat">
-                    {% if contract.calculate_daily_leave_amount %}
-                        <span class="oh-timeoff-modal__stat-title">{% trans "Calculate Leave Amount" %}</span>
-                        <span class="oh-timeoff-modal__stat-count">{{contract.calculate_daily_leave_amount|yes_no}}</span>
-                    {% else %}
-                        <span class="oh-timeoff-modal__stat-title">{% trans "Deduction Amount For One Leave" %}</span>
-                        <span class="oh-timeoff-modal__stat-count">{{contract.deduction_for_one_leave_amount}}</span>
-                    {% endif %}
+                    <span class="oh-timeoff-modal__stat-title">{% trans "Mercoledì" %}</span>
+                    <span class="oh-timeoff-modal__stat-count">{{contract.mer|default:"0"}}</span>
                 </div>
                 <div class="oh-timeoff-modal__stat" style="margin-left: 20px;">
-                    <span class="oh-timeoff-modal__stat-title">{% trans "Deduct From Basic Pay" %}</span>
-                    <span class="oh-timeoff-modal__stat-count">{{contract.deduct_leave_from_basic_pay|yes_no}}</span>
+                    <span class="oh-timeoff-modal__stat-title">{% trans "Giovedì" %}</span>
+                    <span class="oh-timeoff-modal__stat-count">{{contract.gio|default:"0"}}</span>
                 </div>
             </div>
             <div class="oh-timeoff-modal__stats-container mt-3 mb-3">
                 <div class="oh-timeoff-modal__stat">
-                    <span class="oh-timeoff-modal__stat-title">{% trans "Department" %}</span>
-                    <span class="oh-timeoff-modal__stat-count">{{contract.department}}</span>
+                    <span class="oh-timeoff-modal__stat-title">{% trans "Venerdì" %}</span>
+                    <span class="oh-timeoff-modal__stat-count">{{contract.ven|default:"0"}}</span>
                 </div>
                 <div class="oh-timeoff-modal__stat" style="margin-left: 20px;">
-                    <span class="oh-timeoff-modal__stat-title">{% trans "Job Position" %}</span>
-                    <span class="oh-timeoff-modal__stat-count">{{contract.job_position}}</span>
+                    <span class="oh-timeoff-modal__stat-title">{% trans "Sabato" %}</span>
+                    <span class="oh-timeoff-modal__stat-count">{{contract.sab|default:"0"}}</span>
                 </div>
             </div>
             <div class="oh-timeoff-modal__stats-container mt-3 mb-3">
                 <div class="oh-timeoff-modal__stat">
-                    <span class="oh-timeoff-modal__stat-title">{% trans "Job Role" %}</span>
-                    <span class="oh-timeoff-modal__stat-count">{{contract.job_role}}</span>
-                </div>
-                <div class="oh-timeoff-modal__stat" style="margin-left: 20px;">
-                    <span class="oh-timeoff-modal__stat-title">{% trans "Shift" %}</span>
-                    <span class="oh-timeoff-modal__stat-count">{{contract.shift}}</span>
+                    <span class="oh-timeoff-modal__stat-title">{% trans "Domenica" %}</span>
+                    <span class="oh-timeoff-modal__stat-count">{{contract.dom|default:"0"}}</span>
                 </div>
             </div>
-            <div class="oh-timeoff-modal__stats-container mt-3 mb-3">
-                <div class="oh-timeoff-modal__stat">
-                    <span class="oh-timeoff-modal__stat-title">{% trans "Work Type" %}</span>
-                    <span class="oh-timeoff-modal__stat-count">{{contract.work_type}}</span>
-                </div>
-                <div class="oh-timeoff-modal__stat" style="margin-left: 20px;">
-                    <span class="oh-timeoff-modal__stat-title">{% trans "Filing Status" %}</span>
-                    <span class="oh-timeoff-modal__stat-count">{{contract.filing_status}}</span>
-                </div>
-            </div>
-            <div class="oh-timeoff-modal__stats-container mt-3 mb-3">
-                <div class="oh-timeoff-modal__stat">
-                    <span class="oh-timeoff-modal__stat-title">{% trans "Pay Frequency" %}</span>
-                    <span class="oh-timeoff-modal__stat-count">{{contract.get_pay_frequency_display}}</span>
-                </div>
-                <div class="oh-timeoff-modal__stat" style="margin-left: 20px;">
-                    <span class="oh-timeoff-modal__stat-title">{% trans "Document" %}</span>
-                    {% if contract.contract_document %}
-                        <a href="{{ contract.contract_document.url }}" target="_blank">{{ contract.contract_document.name }}</a>
-                    {% endif %}
-                </div>
-            </div>
-            {% if contract.note %}
-                <div class="mt-3 mb-5" style="width:100%;">
-                    <div class="oh-timeoff-modal__stat">
-                        <span class="oh-timeoff-modal__stat-title">{% trans "Note" %}</span>
-                        <span class="oh-timeoff-modal__stat-count">{{contract.note}} </span>
-                    </div>
-                </div>
-            {% endif %}
-            <div class="mt-3 mb-5" style="width:100%;">
-                <div class="oh-timeoff-modal__stat">
-                    <span class="oh-timeoff-modal__stat-title">{% trans "Status" %}</span>
-                    <span class="oh-timeoff-modal__stat-count">{{contract.get_contract_status_display}}</span>
-                </div>
-            </div>
+            
             {% if dashboard != "dashboard" and perms.payroll.delete_contract or perms.payroll.change_contract %}
                 <div class="oh-modal__button-container text-center">
                     <div class="oh-btn-group">

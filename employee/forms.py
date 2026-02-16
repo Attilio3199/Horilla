@@ -39,8 +39,10 @@ from employee.models import (
     Actiontype,
     BonusPoint,
     DisciplinaryAction,
+    DutyRole,
     Employee,
     EmployeeBankDetails,
+    EmployeeDutyHistory,
     EmployeeGeneralSetting,
     EmployeeNote,
     EmployeeTag,
@@ -205,37 +207,104 @@ class EmployeeForm(ModelForm):
     Form for Employee model
     """
 
+    account_number = forms.CharField(
+        max_length=50,
+        required=False,
+        label=_("IBAN"),
+        widget=forms.TextInput(attrs={"class": "oh-input w-100"}),
+    )
+
     class Meta:
         """
         Meta class to add the additional info
         """
 
         model = Employee
-        fields = "__all__"
-        exclude = (
-            "employee_user_id",
-            "additional_info",
-            "is_from_onboarding",
-            "is_directly_converted",
-            "is_active",
+        fields = (
+            # --- Dati Anagrafici ---
+            "badge_id",
+            "employee_first_name",
+            "employee_last_name",
+            "employee_profile",
+            "email",
+            "phone",
+            # Domicilio
+            "domicilio_country",
+            "domicilio_state",
+            "domicilio_address",
+            "domicilio_zip",
+            "domicilio_citta",
+            "docimicilio_provincia",
+            # Residenza
+            "residenza_country",
+            "residenza_state",
+            "residenza_address",
+            "residenza_zip",
+            "residenza_citta",
+            "residenza_provincia",
+            # --- Dati Personali ---
+            "dob",
+            "nascita_citta",
+            "nascita_provincia",
+            "gender",
+            "codice_fiscale",
+            "categoria_protetta",
+            "codice_paghe",
         )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["email"].widget.attrs["autocomplete"] = "email"
         self.fields["phone"].widget.attrs["autocomplete"] = "phone"
-        self.fields["address"].widget.attrs["autocomplete"] = "address"
-        if instance := kwargs.get("instance"):
-            # ----
-            # django forms not showing value inside the date, time html element.
-            # so here overriding default forms instance method to set initial value
-            # ----
-            initial = {}
-            if instance.dob is not None:
-                initial["dob"] = instance.dob.strftime("%H:%M")
-            kwargs["initial"] = initial
+        self.fields["domicilio_address"].widget.attrs["autocomplete"] = "address"
+        self.fields["domicilio_country"].label = _("domicilio_country")
+        self.fields["domicilio_state"].label = _("domicilio_state")
+        self.fields["domicilio_address"].label = _("domicilio_address")
+        self.fields["domicilio_zip"].label = _("domicilio_zip")
+        self.fields["domicilio_citta"].label = _("domicilio_citta")
+        self.fields["docimicilio_provincia"].label = _("docimicilio_provincia")
+        self.fields["residenza_country"].label = _("residenza_country")
+        self.fields["residenza_state"].label = _("residenza_state")
+        self.fields["residenza_address"].label = _("residenza_address")
+        self.fields["residenza_zip"].label = _("residenza_zip")
+        self.fields["residenza_citta"].label = _("residenza_citta")
+        self.fields["residenza_provincia"].label = _("residenza_provincia")
+        self.fields["nascita_citta"].label = _("nascita_citta")
+        self.fields["nascita_provincia"].label = _("nascita_provincia")
+
+        # Default "Italy" for country fields on new employees
+        if not self.instance or not self.instance.pk:
+            self.initial = {
+                "badge_id": self.get_next_badge_id(),
+                "domicilio_country": "Italy",
+                "residenza_country": "Italy",
+            }
         else:
-            self.initial = {"badge_id": self.get_next_badge_id()}
+            # Load initial values for existing employees
+            initial = {}
+            if self.instance.dob is not None:
+                initial["dob"] = self.instance.dob.strftime("%Y-%m-%d")
+            # Pre-fill account_number from bank details
+            if hasattr(self.instance, "employee_bank_details"):
+                try:
+                    initial["account_number"] = (
+                        self.instance.employee_bank_details.account_number or ""
+                    )
+                except EmployeeBankDetails.DoesNotExist:
+                    pass
+            self.initial.update(initial)
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        # Save account_number to EmployeeBankDetails
+        account_number = self.cleaned_data.get("account_number")
+        if commit and instance.pk:
+            bank_details, _created = EmployeeBankDetails.objects.get_or_create(
+                employee_id=instance
+            )
+            bank_details.account_number = account_number or bank_details.account_number
+            bank_details.save()
+        return instance
 
     def as_p(self, *args, **kwargs):
         context = {"form": self}
@@ -410,6 +479,31 @@ class EmployeeWorkInformationForm(ModelForm):
                             ("create", _("Create New {} ").format(translated_label))
                         ]
 
+        self.fields["work_area_type"].label = _("Dipartimento (SEDE/NEGOZI)")
+        self.fields["department_code"].label = _("Codice Reparto")
+        self.fields["department_id"].label = _("Reparto")
+        self.fields["store_code"].label = _("Codice Negozio")
+        self.fields["store_name"].label = _("Negozio")
+        self.fields["export_payslip"].label = _("Esporta Cedolino")
+        self.fields["mirror_payslip"].label = _("Cedolino Speculare")
+        self.fields["premi"].label = _("Premi")
+
+        select_fields = [
+            "work_area_type",
+            "department_id",
+            "job_position_id",
+            "job_role_id",
+            "shift_id",
+            "work_type_id",
+            "employee_type_id",
+            "reporting_manager_id",
+            "company_id",
+        ]
+        for field_name in select_fields:
+            if field_name in self.fields:
+                self.fields[field_name].widget.attrs["class"] = "oh-select oh-select-2"
+        self.fields["work_area_type"].widget.attrs["onchange"] = "toggleWorkAreaFieldsGlobal()"
+
     def clean(self):
         cleaned_data = super().clean()
         if "employee_id" in self.errors:
@@ -418,7 +512,7 @@ class EmployeeWorkInformationForm(ModelForm):
 
     def as_p(self, *args, **kwargs):
         context = {"form": self}
-        return render_to_string("employee/create_form/personal_info_as_p.html", context)
+        return render_to_string("employee/update_form/work_info_as_p.html", context)
 
 
 class EmployeeWorkInformationUpdateForm(ModelForm):
@@ -435,9 +529,39 @@ class EmployeeWorkInformationUpdateForm(ModelForm):
         fields = "__all__"
         exclude = ("employee_id",)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            widget_classes = visible.field.widget.attrs.get("class", "")
+            if "oh-select" not in widget_classes and hasattr(visible.field.widget, "input_type") and visible.field.widget.input_type == "checkbox":
+                visible.field.widget.attrs["class"] = widget_classes.strip()
+            elif "oh-select" not in widget_classes:
+                visible.field.widget.attrs["class"] = "oh-input w-100"
+            visible.field.widget.attrs["placeholder"] = visible.field.label
+
+        self.fields["work_area_type"].label = _("Dipartimento (SEDE/NEGOZI)")
+        self.fields["department_code"].label = _("Codice Reparto")
+        self.fields["department_id"].label = _("Reparto")
+        self.fields["store_code"].label = _("Codice Negozio")
+        self.fields["store_name"].label = _("Negozio")
+        self.fields["export_payslip"].label = _("Esporta Cedolino")
+        self.fields["mirror_payslip"].label = _("Cedolino Speculare")
+        self.fields["premi"].label = _("Premi")
+
+        self.fields["work_area_type"].widget.attrs["class"] = "oh-select oh-select-2"
+        self.fields["department_id"].widget.attrs["class"] = "oh-select oh-select-2"
+        self.fields["job_position_id"].widget.attrs["class"] = "oh-select oh-select-2"
+        self.fields["job_role_id"].widget.attrs["class"] = "oh-select oh-select-2"
+        self.fields["shift_id"].widget.attrs["class"] = "oh-select oh-select-2"
+        self.fields["work_type_id"].widget.attrs["class"] = "oh-select oh-select-2"
+        self.fields["employee_type_id"].widget.attrs["class"] = "oh-select oh-select-2"
+        self.fields["reporting_manager_id"].widget.attrs["class"] = "oh-select oh-select-2"
+        self.fields["company_id"].widget.attrs["class"] = "oh-select oh-select-2"
+        self.fields["work_area_type"].widget.attrs["onchange"] = "toggleWorkAreaFieldsGlobal()"
+
     def as_p(self, *args, **kwargs):
         context = {"form": self}
-        return render_to_string("employee/create_form/personal_info_as_p.html", context)
+        return render_to_string("employee/update_form/work_info_as_p.html", context)
 
 
 class EmployeeBankDetailsForm(ModelForm):
@@ -503,23 +627,96 @@ class EmployeeBankDetailsUpdateForm(ModelForm):
         return render_to_string("employee/update_form/bank_info_as_p.html", context)
 
 
+class EmployeeDutyHistoryForm(ModelForm):
+    new_duty = forms.CharField(required=False, widget=forms.HiddenInput())
+    duty_role_id = forms.ChoiceField(label=trans("Mansione"))
+
+    class Meta:
+        model = EmployeeDutyHistory
+        fields = ("duty_role_id", "start_date", "end_date")
+
+    def __init__(self, *args, user=None, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+        duty_choices = [("", _("---Choose Mansione---"))]
+        duty_choices += [
+            (str(role.id), role.title)
+            for role in DutyRole.objects.all().order_by("title")
+        ]
+        if self.user and self.user.is_superuser:
+            duty_choices.append(("create", _("+ Aggiungi Mansione")))
+
+        self.fields["duty_role_id"].choices = duty_choices
+        self.fields["start_date"].label = trans("DataInizioMansione")
+        self.fields["end_date"].label = trans("DataFineMansione")
+
+        self.fields["duty_role_id"].widget.attrs["class"] = "oh-select oh-select-2"
+        self.fields["new_duty"].widget.attrs["class"] = "oh-input w-100"
+
+    def clean(self):
+        cleaned_data = super().clean()
+        duty_role_value = (cleaned_data.get("duty_role_id") or "").strip()
+        new_duty = (cleaned_data.get("new_duty") or "").strip()
+
+        if not duty_role_value:
+            raise forms.ValidationError(_("Select a mansione."))
+
+        if duty_role_value == "create":
+            if not (self.user and self.user.is_superuser):
+                raise forms.ValidationError(_("Only superuser can add a new mansione."))
+            if not new_duty:
+                raise forms.ValidationError(
+                    _("Enter a mansione name to create a new enum value.")
+                )
+            duty_role, _ = DutyRole.objects.get_or_create(title=new_duty)
+            cleaned_data["duty_role_id"] = duty_role
+            return cleaned_data
+
+        duty_role = DutyRole.objects.filter(id=duty_role_value).first()
+        if not duty_role:
+            raise forms.ValidationError(_("Invalid mansione selected."))
+
+        cleaned_data["duty_role_id"] = duty_role
+
+        return cleaned_data
+
+
 excel_columns = [
+    ("id", trans("Employee ID")),
     ("badge_id", trans("Badge ID")),
+    ("employee_user_id", trans("User")),
     ("employee_first_name", trans("First Name")),
     ("employee_last_name", trans("Last Name")),
+    ("employee_profile", trans("Profile Image")),
     ("email", trans("Email")),
     ("phone", trans("Phone")),
     ("experience", trans("Experience")),
     ("gender", trans("Gender")),
     ("dob", trans("Date of Birth")),
-    ("country", trans("Country")),
-    ("state", trans("State")),
-    ("city", trans("City")),
-    ("address", trans("Address")),
-    ("zip", trans("Zip Code")),
+    ("domicilio_country", trans("domicilio_country")),
+    ("domicilio_state", trans("domicilio_state")),
+    ("domicilio_address", trans("domicilio_address")),
+    ("domicilio_zip", trans("domicilio_zip")),
+    ("domicilio_citta", trans("domicilio_citta")),
+    ("docimicilio_provincia", trans("docimicilio_provincia")),
+    ("residenza_country", trans("residenza_country")),
+    ("residenza_state", trans("residenza_state")),
+    ("residenza_address", trans("residenza_address")),
+    ("residenza_zip", trans("residenza_zip")),
+    ("residenza_citta", trans("residenza_citta")),
+    ("residenza_provincia", trans("residenza_provincia")),
+    ("nascita_citta", trans("nascita_citta")),
+    ("nascita_provincia", trans("nascita_provincia")),
+    ("codice_fiscale", trans("Codice Fiscale")),
+    ("categoria_protetta", trans("Categoria Protetta")),
+    ("codice_paghe", trans("Codice Paghe")),
+    ("qualification", trans("Qualification")),
     ("marital_status", trans("Marital Status")),
     ("children", trans("Children")),
     ("is_active", trans("Is active")),
+    ("additional_info", trans("Additional Info")),
+    ("is_from_onboarding", trans("Is From Onboarding")),
+    ("is_directly_converted", trans("Is Directly Converted")),
     ("emergency_contact", trans("Emergency Contact")),
     ("emergency_contact_name", trans("Emergency Contact Name")),
     ("emergency_contact_relation", trans("Emergency Contact Relation")),
@@ -532,15 +729,22 @@ excel_columns = [
     ("employee_work_info__work_type_id", trans("Work Type")),
     ("employee_work_info__reporting_manager_id", trans("Reporting Manager")),
     ("employee_work_info__employee_type_id", trans("Employee Type")),
+    ("employee_work_info__work_area_type", trans("Dipartimento (SEDE/NEGOZI)")),
+    ("employee_work_info__department_code", trans("Codice Reparto")),
+    ("employee_work_info__store_code", trans("Codice Negozio")),
+    ("employee_work_info__store_name", trans("Negozio")),
     ("employee_work_info__location", trans("Location")),
     ("employee_work_info__date_joining", trans("Date Joining")),
     ("employee_work_info__basic_salary", trans("Basic Salary")),
     ("employee_work_info__salary_hour", trans("Salary Hour")),
     ("employee_work_info__contract_end_date", trans("Contract End Date")),
     ("employee_work_info__company_id", trans("Company")),
+    ("employee_work_info__export_payslip", trans("Esporta Cedolino")),
+    ("employee_work_info__mirror_payslip", trans("Cedolino Speculare")),
+    ("employee_work_info__premi", trans("Premi")),
     ("employee_bank_details__bank_name", trans("Bank Name")),
     ("employee_bank_details__branch", trans("Branch")),
-    ("employee_bank_details__account_number", trans("Account Number")),
+    ("employee_bank_details__account_number", trans("IBAN")),
     ("employee_bank_details__any_other_code1", trans("Bank Code #1")),
     ("employee_bank_details__any_other_code2", trans("Bank Code #2")),
     ("employee_bank_details__country", trans("Bank Country")),
@@ -576,12 +780,19 @@ class EmployeeExportExcelForm(forms.Form):
             "employee_work_info__work_type_id",
             "employee_work_info__reporting_manager_id",
             "employee_work_info__employee_type_id",
+            "employee_work_info__work_area_type",
+            "employee_work_info__department_code",
+            "employee_work_info__store_code",
+            "employee_work_info__store_name",
             "employee_work_info__location",
             "employee_work_info__date_joining",
             "employee_work_info__basic_salary",
             "employee_work_info__salary_hour",
             "employee_work_info__contract_end_date",
             "employee_work_info__company_id",
+            "employee_work_info__export_payslip",
+            "employee_work_info__mirror_payslip",
+            "employee_work_info__premi",
         ],
     )
 

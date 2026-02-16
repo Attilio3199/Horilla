@@ -147,6 +147,13 @@ class Contract(HorillaModel):
         ("expired", _("Expired")),
         ("terminated", _("Terminated")),
     )
+
+    TIPO_CONTRATTO_CHOICES = (
+        (1, _("Tirocinanti")),
+        (2, _("Apprendistato")),
+        (3, _("Determinato")),
+        (4, _("Indeterminato")),
+    )
     try:
         # Here would be not filing status model at the initial/empty db
         FILING_STATUS_CHOICES = [("", _("None"))] + list(
@@ -156,7 +163,10 @@ class Contract(HorillaModel):
         pass
 
     contract_name = models.CharField(
-        max_length=250, help_text=_("Contract Title."), verbose_name=_("Contract")
+        max_length=250,
+        blank=True,
+        help_text=_("Contract note."),
+        verbose_name=_("Contract"),
     )
     employee_id = models.ForeignKey(
         Employee,
@@ -260,6 +270,70 @@ class Contract(HorillaModel):
         blank=True,
         default=0,
         verbose_name=_("Deduction For One Leave Amount"),
+    )
+
+    # Italian contract fields
+    tipo_contratto = models.IntegerField(
+        choices=TIPO_CONTRATTO_CHOICES,
+        null=True,
+        blank=True,
+        verbose_name=_("Tipo Contratto"),
+    )
+    lun = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        default=0,
+        verbose_name=_("Lunedì"),
+    )
+    mar = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        default=0,
+        verbose_name=_("Martedì"),
+    )
+    mer = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        default=0,
+        verbose_name=_("Mercoledì"),
+    )
+    gio = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        default=0,
+        verbose_name=_("Giovedì"),
+    )
+    ven = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        default=0,
+        verbose_name=_("Venerdì"),
+    )
+    sab = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        default=0,
+        verbose_name=_("Sabato"),
+    )
+    dom = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        default=0,
+        verbose_name=_("Domenica"),
     )
 
     note = models.TextField(null=True, blank=True, max_length=255)

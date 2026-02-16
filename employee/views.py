@@ -72,6 +72,7 @@ from employee.forms import (
     BulkUpdateFieldForm,
     EmployeeBankDetailsForm,
     EmployeeBankDetailsUpdateForm,
+    EmployeeDutyHistoryForm,
     EmployeeExportExcelForm,
     EmployeeForm,
     EmployeeGeneralSettingPrefixForm,
@@ -82,6 +83,7 @@ from employee.forms import (
     excel_columns,
 )
 from employee.methods.methods import (
+    bulk_create_bank_details_import,
     bulk_create_department_import,
     bulk_create_employee_import,
     bulk_create_employee_types,
@@ -91,6 +93,7 @@ from employee.methods.methods import (
     bulk_create_user_import,
     bulk_create_work_info_import,
     bulk_create_work_types,
+    bulk_update_personal_fields_import,
     error_data_template,
     get_ordered_badge_ids,
     process_employee_records,
@@ -101,6 +104,7 @@ from employee.models import (
     BonusPoint,
     Employee,
     EmployeeBankDetails,
+    EmployeeDutyHistory,
     EmployeeGeneralSetting,
     EmployeeNote,
     EmployeeTag,
@@ -258,9 +262,11 @@ def self_info_update(request):
     user = request.user
     employee = Employee.objects.filter(employee_user_id=user).first()
     badge_id = employee.badge_id
+    work_instance = EmployeeWorkInformation.objects.filter(employee_id=employee).first()
     bank_form = EmployeeBankDetailsForm(
         instance=EmployeeBankDetails.objects.filter(employee_id=employee).first()
     )
+    work_form = EmployeeWorkInformationUpdateForm(instance=work_instance)
     form = EmployeeForm(instance=Employee.objects.filter(employee_user_id=user).first())
     if request.POST:
         if request.POST.get("employee_first_name") is not None:
@@ -273,6 +279,16 @@ def self_info_update(request):
                     instance.badge_id = badge_id
                 instance.save()
                 messages.success(request, _("Profile updated."))
+        elif request.POST.get("job_position_id") is not None:
+            work_form = EmployeeWorkInformationUpdateForm(
+                request.POST, instance=work_instance
+            )
+            if work_form.is_valid():
+                work_info = work_form.save(commit=False)
+                work_info.employee_id = employee
+                work_info.save()
+                work_form.save_m2m()
+                messages.success(request, _("Work information updated."))
         elif request.POST.get("any_other_code1") is not None:
             instance = EmployeeBankDetails.objects.filter(employee_id=employee).first()
             bank_form = EmployeeBankDetailsForm(request.POST, instance=instance)
@@ -287,6 +303,7 @@ def self_info_update(request):
         {
             "form": form,
             "bank_form": bank_form,
+            "work_form": work_form,
         },
     )
 
@@ -1126,10 +1143,10 @@ def view_employee_bulk_update(request):
                     for field in update_fields:
                         try:
                             field_obj = Employee._meta.get_field(field)
-                            if field_obj.name in ("country", "state"):
-                                if not "country" in update_fields:
-                                    fields.append("country")
-                                    widgets["country"] = Select(
+                            if field_obj.name in ("domicilio_country", "domicilio_state"):
+                                if not "domicilio_country" in update_fields:
+                                    fields.append("domicilio_country")
+                                    widgets["domicilio_country"] = Select(
                                         attrs={"required": True}
                                     )
                                 fields.append(field)
@@ -1486,6 +1503,10 @@ def employee_view_update(request, obj_id, **kwargs):
         bank_form = EmployeeBankDetailsForm(
             instance=EmployeeBankDetails.objects.filter(employee_id=employee).first()
         )
+        duty_form = EmployeeDutyHistoryForm(user=request.user)
+        duty_histories = EmployeeDutyHistory.objects.filter(
+            employee_id=employee
+        ).select_related("duty_role_id")
         if request.POST:
             if request.POST.get("form") == "personal":
                 form = EmployeeForm(request.POST, instance=employee)
@@ -1535,6 +1556,17 @@ def employee_view_update(request, obj_id, **kwargs):
                     instance.employee_id = employee
                     instance.save()
                     messages.success(request, _("Employee bank details updated."))
+            elif request.POST.get("form") == "duty-history":
+                duty_form = EmployeeDutyHistoryForm(request.POST, user=request.user)
+                if duty_form.is_valid():
+                    duty_history = duty_form.save(commit=False)
+                    duty_history.employee_id = employee
+                    duty_history.save()
+                    messages.success(request, _("Employee mansione history updated."))
+                    duty_form = EmployeeDutyHistoryForm(user=request.user)
+                duty_histories = EmployeeDutyHistory.objects.filter(
+                    employee_id=employee
+                ).select_related("duty_role_id")
         return render(
             request,
             "employee/update_form/form_view.html",
@@ -1543,6 +1575,8 @@ def employee_view_update(request, obj_id, **kwargs):
                 "form": form,
                 "work_form": work_form,
                 "bank_form": bank_form,
+                "duty_form": duty_form,
+                "duty_histories": duty_histories,
                 "work_info_history": work_info_history,
             },
         )
@@ -2458,52 +2492,298 @@ def employee_import(request):
     This method is used to create employee and corresponding user.
     """
     if request.method == "POST":
-        file = request.FILES["file"]
-        # Read the Excel file into a Pandas DataFrame
-        data_frame = pd.read_excel(file)
-        # Convert the DataFrame to a list of dictionaries
+        file = request.FILES.get("file")
+        if not file:
+            return HttpResponse(
+                """
+                <div class='alert-danger p-3 border-rounded'>
+                    No file uploaded.
+                </div>
+                """
+            )
+
+        file_extension = file.name.split(".")[-1].lower()
+        if file_extension == "csv":
+            data_frame = pd.read_csv(file)
+        else:
+            data_frame = pd.read_excel(file)
+
         employee_dicts = data_frame.to_dict("records")
-        # Create or update Employee objects from the list of dictionaries
+
+        def get_value(row, *keys):
+            for key in keys:
+                value = row.get(key)
+                if value is None:
+                    continue
+                if isinstance(value, float) and pd.isna(value):
+                    continue
+                if str(value).strip() == "":
+                    continue
+                return value
+            return None
+
+        def parse_bool(value):
+            if value is None:
+                return None
+            text = str(value).strip().lower()
+            if text in {"1", "true", "yes", "y", "si", "s", "x"}:
+                return True
+            if text in {"0", "false", "no", "n"}:
+                return False
+            return None
+
+        def parse_date(value):
+            if value is None:
+                return None
+            try:
+                return pd.to_datetime(value, errors="coerce").date()
+            except Exception:
+                return None
+
         error_list = []
+        created_count = 0
+        updated_count = 0
+
         for employee_dict in employee_dicts:
             try:
-                phone = employee_dict["phone"]
-                email = employee_dict["email"]
-                employee_full_name = employee_dict["employee_full_name"]
-                existing_user = User.objects.filter(username=email).first()
-                if existing_user is None:
+                phone = get_value(employee_dict, "phone", "Phone", "Telefono")
+                email = get_value(employee_dict, "email", "Email")
+
+                employee_full_name = get_value(
+                    employee_dict, "employee_full_name", "Employee Full Name"
+                )
+                employee_first_name = get_value(
+                    employee_dict,
+                    "employee_first_name",
+                    "First Name",
+                    "Nome",
+                )
+                employee_last_name = get_value(
+                    employee_dict,
+                    "employee_last_name",
+                    "Last Name",
+                    "Cognome",
+                )
+
+                if (not employee_first_name) and employee_full_name:
                     employee_first_name = employee_full_name
                     employee_last_name = ""
-                    if " " in employee_full_name:
-                        (
-                            employee_first_name,
-                            employee_last_name,
-                        ) = employee_full_name.split(" ", 1)
+                    if " " in str(employee_full_name):
+                        employee_first_name, employee_last_name = str(
+                            employee_full_name
+                        ).split(" ", 1)
 
-                    user = User.objects.create_user(
+                if not email or not phone or not employee_first_name:
+                    raise ValueError("Missing required columns: email, phone, first name")
+
+                email = str(email).strip().lower()
+                existing_user = User.objects.filter(username=email).first()
+                if existing_user is None:
+                    existing_user = User.objects.create_user(
                         username=email,
                         email=email,
                         password=str(phone).strip(),
                         is_superuser=False,
                     )
-                    employee = Employee()
-                    employee.employee_user_id = user
-                    employee.employee_first_name = employee_first_name
-                    employee.employee_last_name = employee_last_name
-                    employee.email = email
-                    employee.phone = phone
-                    employee.save()
-            except Exception:
-                error_list.append(employee_dict)
-        return HttpResponse(
-            """
-    <div class='alert-success p-3 border-rounded'>
-        Employee data has been imported successfully.
-    </div>
 
+                employee = Employee.objects.entire().filter(email=email).first()
+                is_new = employee is None
+                if is_new:
+                    employee = Employee(email=email)
+
+                if employee.employee_user_id is None:
+                    employee.employee_user_id = existing_user
+
+                employee.employee_first_name = str(employee_first_name).strip()
+                employee.employee_last_name = (
+                    str(employee_last_name).strip() if employee_last_name else ""
+                )
+                employee.phone = str(phone).strip()
+                employee.badge_id = get_value(employee_dict, "badge_id", "Badge ID")
+
+                employee.domicilio_country = get_value(
+                    employee_dict,
+                    "domicilio_country",
+                    "country",
+                    "Country",
+                    "Paese",
+                    "Country_domicilio",
+                )
+                employee.domicilio_state = get_value(
+                    employee_dict,
+                    "domicilio_state",
+                    "state",
+                    "State",
+                    "Stato_domicilio",
+                )
+                employee.domicilio_address = get_value(
+                    employee_dict,
+                    "domicilio_address",
+                    "address",
+                    "Address",
+                    "Indirizzo",
+                    "Indirizzo_domicilio",
+                )
+                employee.domicilio_zip = get_value(
+                    employee_dict,
+                    "domicilio_zip",
+                    "zip",
+                    "Zip Code",
+                    "CAP",
+                    "Cap_domicilio",
+                )
+                employee.domicilio_citta = get_value(
+                    employee_dict,
+                    "domicilio_citta",
+                    "comune_domicilio",
+                    "Comune Domicilio",
+                    "Comune_domicilio",
+                )
+                employee.docimicilio_provincia = get_value(
+                    employee_dict,
+                    "docimicilio_provincia",
+                    "provincia_domicilio",
+                    "Provincia Domicilio",
+                    "Provincia_domicilio",
+                )
+
+                employee.residenza_country = get_value(
+                    employee_dict, "residenza_country", "Residenza Country"
+                )
+                employee.residenza_state = get_value(
+                    employee_dict, "residenza_state", "Residenza State"
+                )
+                employee.residenza_address = get_value(
+                    employee_dict, "residenza_address", "Residenza Address"
+                )
+                employee.residenza_zip = get_value(
+                    employee_dict, "residenza_zip", "Residenza ZIP"
+                )
+                employee.residenza_citta = get_value(
+                    employee_dict,
+                    "residenza_citta",
+                    "comune_residenza",
+                    "Comune Residenza",
+                )
+                employee.residenza_provincia = get_value(
+                    employee_dict,
+                    "residenza_provincia",
+                    "provincia_residenza",
+                    "Provincia Residenza",
+                )
+
+                employee.dob = parse_date(
+                    get_value(employee_dict, "dob", "Date of Birth", "Data di nascita")
+                )
+                employee.gender = (
+                    str(get_value(employee_dict, "gender", "Gender", "Sesso") or "")
+                    .strip()
+                    .lower()
+                    or employee.gender
+                )
+                employee.nascita_provincia = get_value(
+                    employee_dict,
+                    "nascita_provincia",
+                    "provincia_di_nascita",
+                    "Provincia di Nascita",
+                )
+                employee.nascita_citta = get_value(
+                    employee_dict,
+                    "nascita_citta",
+                    "comune_nascita",
+                    "Luogo di Nascita",
+                    "Comune di Nascita",
+                )
+                employee.codice_fiscale = get_value(
+                    employee_dict, "codice_fiscale", "Codice Fiscale"
+                )
+
+                categoria = parse_bool(
+                    get_value(employee_dict, "categoria_protetta", "Categoria Protetta")
+                )
+                if categoria is not None:
+                    employee.categoria_protetta = categoria
+
+                codice_paghe = get_value(
+                    employee_dict, "codice_paghe", "Codice Paghe"
+                )
+                if codice_paghe not in [None, ""]:
+                    codice_paghe = str(codice_paghe).strip()
+                    if codice_paghe.startswith("'"):
+                        codice_paghe = codice_paghe[1:].strip()
+                    if codice_paghe and codice_paghe.lower() not in {"nan", "none", "null"}:
+                        employee.codice_paghe = codice_paghe[:64]
+
+                is_active = parse_bool(
+                    get_value(employee_dict, "is_active", "Is active", "È attivo")
+                )
+                if is_active is not None:
+                    employee.is_active = is_active
+
+                employee.save()
+
+                iban = get_value(
+                    employee_dict,
+                    "account_number",
+                    "Account Number",
+                    "Numero Di Conto",
+                    "IBAN",
+                )
+                if iban:
+                    bank, _ = EmployeeBankDetails.objects.get_or_create(
+                        employee_id=employee
+                    )
+                    bank.account_number = str(iban).strip()
+                    bank.save()
+
+                if is_new:
+                    created_count += 1
+                else:
+                    updated_count += 1
+            except Exception as error:
+                employee_dict["import_error"] = str(error)
+                error_list.append(employee_dict)
+
+        error_count = len(error_list)
+        message_type = "alert-success" if error_count == 0 else "alert-warning"
+        return HttpResponse(
+            f"""
+    <div class='{message_type} p-3 border-rounded'>
+        Employee import completed. Created: {created_count}, Updated: {updated_count}, Errors: {error_count}.
+    </div>
     """
         )
-    data_frame = pd.DataFrame(columns=["employee_full_name", "email", "phone"])
+
+    data_frame = pd.DataFrame(
+        columns=[
+            "badge_id",
+            "employee_first_name",
+            "employee_last_name",
+            "email",
+            "phone",
+            "domicilio_country",
+            "domicilio_state",
+            "domicilio_address",
+            "domicilio_zip",
+            "domicilio_citta",
+            "docimicilio_provincia",
+            "residenza_country",
+            "residenza_state",
+            "residenza_address",
+            "residenza_zip",
+            "residenza_citta",
+            "residenza_provincia",
+            "dob",
+            "gender",
+            "nascita_citta",
+            "nascita_provincia",
+            "codice_fiscale",
+            "categoria_protetta",
+            "codice_paghe",
+            "is_active",
+            "IBAN",
+        ]
+    )
     # Export the DataFrame to an Excel file
     response = HttpResponse(content_type="application/ms-excel")
     response["Content-Disposition"] = 'attachment; filename="employee_template.xlsx"'
@@ -2557,29 +2837,14 @@ def work_info_import_file(request):
     """
     This method is used to return the excel file of import Employee instances
     """
-    data_frame = pd.DataFrame(
-        columns=[
-            "Badge ID",
-            "First Name",
-            "Last Name",
-            "Email",
-            "Phone",
-            "Gender",
-            "Department",
-            "Job Position",
-            "Job Role",
-            "Shift",
-            "Work Type",
-            "Reporting Manager",
-            "Employee Type",
-            "Location",
-            "Date Joining",
-            "Basic Salary",
-            "Salary Hour",
-            "Contract End Date",
-            "Company",
-        ]
-    )
+    export_labels = [str(label) for _, label in excel_columns]
+    extra_labels = ["Mansione", "DataInizioMansione", "DataFineMansione"]
+    columns = []
+    for label in export_labels + extra_labels:
+        if label not in columns:
+            columns.append(label)
+
+    data_frame = pd.DataFrame(columns=columns)
 
     response = HttpResponse(content_type="application/ms-excel")
     response["Content-Disposition"] = 'attachment; filename="work_info_template.xlsx"'
@@ -2595,6 +2860,116 @@ def work_info_import(request):
         return render(request, "employee/employee_import.html")
 
     if request.method == "POST":
+        def _normalize_header(header):
+            import re
+            import unicodedata
+
+            normalized = unicodedata.normalize("NFKD", str(header))
+            normalized = normalized.encode("ascii", "ignore").decode("ascii")
+            normalized = normalized.strip().lower().replace("_", " ")
+            normalized = re.sub(r"[^a-z0-9]+", " ", normalized)
+            return " ".join(normalized.split())
+
+        def _map_import_headers(data_frame):
+            canonical_aliases = {
+                "Badge ID": ["badge id", "id badge"],
+                "First Name": ["first name", "nome"],
+                "Last Name": ["last name", "cognome"],
+                "Phone": ["phone", "telefono"],
+                "Email": ["email"],
+                "Gender": ["gender", "sesso"],
+                "Department": ["department", "dipartimento"],
+                "Job Position": ["job position", "posizione lavoro"],
+                "Job Role": ["job role", "ruolo di lavoro"],
+                "Shift": ["shift", "maiusc"],
+                "Work Type": ["work type", "tipo di lavoro"],
+                "Reporting Manager": [
+                    "reporting manager",
+                    "gestore segnalazioni",
+                ],
+                "Employee Type": ["employee type", "tipo di dipendente"],
+                "Location": ["location", "posizione", "work location"],
+                "Date Joining": ["date joining", "data di iscrizione"],
+                "Basic Salary": ["basic salary", "stipendio base"],
+                "Salary Hour": ["salary hour", "stipendio per ora"],
+                "Contract End Date": [
+                    "contract end date",
+                    "data di fine contratto",
+                ],
+                "Company": ["company", "società", "societa"],
+                "Work Area Type": [
+                    "work area type",
+                    "dipartimento (sede/negozi)",
+                ],
+                "Department Code": ["department code", "codice reparto"],
+                "Store Code": ["store code", "codice negozio"],
+                "Store": ["store", "negozio"],
+                "Esporta Cedolino": ["esporta cedolino"],
+                "Cedolino Speculare": ["cedolino speculare"],
+                "Premi": ["premi"],
+                "Mansione": ["mansione"],
+                "DataInizioMansione": ["datainiziomansione"],
+                "DataFineMansione": ["datafinemansione"],
+                "Date of Birth": ["date of birth", "dob", "data di nascita"],
+                "domicilio_address": ["domicilio address", "address", "indirizzo"],
+                "domicilio_country": ["domicilio country", "country", "paese"],
+                "domicilio_state": ["domicilio state", "state", "provincia"],
+                "domicilio_zip": ["domicilio zip", "zip code", "zip", "cap"],
+                "domicilio_citta": ["domicilio citta", "comune domicilio", "city", "citta"],
+                "docimicilio_provincia": [
+                    "docimicilio provincia",
+                    "domicilio provincia",
+                    "provincia domicilio",
+                ],
+                "residenza_country": ["residenza country"],
+                "residenza_state": ["residenza state"],
+                "residenza_address": ["residenza address"],
+                "residenza_zip": ["residenza zip", "residenza cap"],
+                "residenza_citta": ["residenza citta", "comune residenza"],
+                "residenza_provincia": ["residenza provincia", "provincia residenza"],
+                "nascita_citta": ["nascita citta", "luogo di nascita", "comune di nascita"],
+                "nascita_provincia": ["nascita provincia", "provincia di nascita"],
+                "Codice Fiscale": ["codice fiscale"],
+                "Categoria Protetta": ["categoria protetta"],
+                "Codice Paghe": ["codice paghe"],
+                "Qualification": ["qualification", "qualifica"],
+                "Experience": ["experience", "esperienza"],
+                "Marital Status": ["marital status", "stato civile"],
+                "Children": ["children", "figli"],
+                "Emergency Contact": ["emergency contact", "contatto emergenza"],
+                "Emergency Contact Name": [
+                    "emergency contact name",
+                    "nome contatto emergenza",
+                ],
+                "Emergency Contact Relation": [
+                    "emergency contact relation",
+                    "relazione contatto emergenza",
+                ],
+                "Account Number": [
+                    "account number",
+                    "account_number",
+                    "iban",
+                    "numero di conto",
+                ],
+            }
+
+            alias_to_canonical = {}
+            for canonical, aliases in canonical_aliases.items():
+                alias_to_canonical[_normalize_header(canonical)] = canonical
+                for alias in aliases:
+                    alias_to_canonical[_normalize_header(alias)] = canonical
+
+            rename_map = {}
+            for column in data_frame.columns:
+                normalized = _normalize_header(column)
+                canonical = alias_to_canonical.get(normalized)
+                if canonical:
+                    rename_map[column] = canonical
+
+            if rename_map:
+                data_frame = data_frame.rename(columns=rename_map)
+            return data_frame
+
         file = request.FILES.get("file")
         if not file:
             error_message = _("No file uploaded.")
@@ -2622,6 +2997,9 @@ def work_info_import(request):
                     {"error_message": error_message},
                 )
 
+            data_frame = _map_import_headers(data_frame)
+            import_rows = data_frame.to_dict("records")
+
             valid, error_message = valid_import_file_headers(data_frame)
             if not valid:
                 return render(
@@ -2629,6 +3007,9 @@ def work_info_import(request):
                     "employee/employee_import.html",
                     {"error_message": error_message},
                 )
+
+            bulk_update_personal_fields_import(import_rows)
+
             success_list, error_list, created_count = process_employee_records(
                 data_frame
             )
@@ -2642,6 +3023,7 @@ def work_info_import(request):
                     bulk_create_work_types(success_list)
                     bulk_create_shifts(success_list)
                     bulk_create_employee_types(success_list)
+                    bulk_create_bank_details_import(success_list)
                     bulk_create_work_info_import(success_list)
                     thread = threading.Thread(
                         target=set_initial_password, args=(employees,)
