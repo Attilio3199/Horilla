@@ -83,7 +83,12 @@
     <div class="col-lg-6">
         <div class="oh-input__group">
             <label class="oh-label" for="id_docimicilio_provincia">{% trans "docimicilio_provincia" %}</label>
-            {{ form.docimicilio_provincia|add_class:'form-control' }}
+            <select name="docimicilio_provincia" id="id_docimicilio_provincia" class="w-100 country-dropdown"
+                data-selected="{{ form.docimicilio_provincia.value|default:'' }}">
+                {% if form.docimicilio_provincia.value %}
+                    <option value="{{ form.docimicilio_provincia.value }}" selected>{{ form.docimicilio_provincia.value }}</option>
+                {% endif %}
+            </select>
             {{ form.docimicilio_provincia.errors }}
         </div>
     </div>
@@ -136,7 +141,12 @@
     <div class="col-lg-6">
         <div class="oh-input__group">
             <label class="oh-label" for="id_residenza_provincia">{% trans "residenza_provincia" %}</label>
-            {{ form.residenza_provincia|add_class:'form-control' }}
+            <select name="residenza_provincia" id="id_residenza_provincia" class="w-100 country-dropdown"
+                data-selected="{{ form.residenza_provincia.value|default:'' }}">
+                {% if form.residenza_provincia.value %}
+                    <option value="{{ form.residenza_provincia.value }}" selected>{{ form.residenza_provincia.value }}</option>
+                {% endif %}
+            </select>
             {{ form.residenza_provincia.errors }}
         </div>
     </div>

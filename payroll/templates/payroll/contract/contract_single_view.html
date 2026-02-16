@@ -73,11 +73,13 @@
             <div class="oh-timeoff-modal__stats-container mt-3 mb-3">
                 <div class="oh-timeoff-modal__stat">
                     <span class="oh-timeoff-modal__stat-title">{% trans "Data Inizio" %}</span>
-                    <span class="oh-timeoff-modal__stat-count dateformat_changer">{{contract.contract_start_date|date:"d/m/Y"}}</span>
+                    <span class="oh-timeoff-modal__stat-count">{{ contract.contract_start_date|date:"d/m/Y" }}</span>
                 </div>
                 <div class="oh-timeoff-modal__stat" style="margin-left: 20px;">
                     <span class="oh-timeoff-modal__stat-title">{% trans "Data Fine" %}</span>
-                    <span class="oh-timeoff-modal__stat-count dateformat_changer">{{contract.contract_end_date|date:"d/m/Y"|default:"N/A"}}</span>
+                    <span class="oh-timeoff-modal__stat-count">
+                        {% if contract.contract_end_date %}{{ contract.contract_end_date|date:"d/m/Y" }}{% else %}N/A{% endif %}
+                    </span>
                 </div>
             </div>
             <div class="oh-timeoff-modal__stats-container mt-3 mb-3">

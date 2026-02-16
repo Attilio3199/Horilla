@@ -69,6 +69,15 @@
         }
 
         $(document).ready(function () {
+            if ($("#id_contract_start_date").length) {
+                $("#id_contract_start_date, #id_contract_end_date").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    showAnim: "fadeIn"
+                });
+            }
+
             $("[type=checkbox]").change(function (e) {
                 e.preventDefault();
                 toggleFunction();

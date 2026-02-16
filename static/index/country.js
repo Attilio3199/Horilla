@@ -757,6 +757,116 @@ function populateCountries(countryElementId, stateElementId) {
     }
 }
 
+var italy_provinces_by_region = {
+    "sicilia": ["Agrigento (AG)", "Caltanissetta (CL)", "Catania (CT)", "Enna (EN)", "Messina (ME)", "Palermo (PA)", "Ragusa (RG)", "Siracusa (SR)", "Trapani (TP)"],
+    "piemonte": ["Alessandria (AL)", "Asti (AT)", "Biella (BI)", "Cuneo (CN)", "Novara (NO)", "Torino (TO)", "Verbania (VB)", "Vercelli (VC)"],
+    "marche": ["Ancona (AN)", "Ascoli-Piceno (AP)", "Fermo (FM)", "Macerata (MC)", "Pesaro-Urbino (PU)"],
+    "valle daosta": ["Aosta (AO)"],
+    "abruzzo": ["L'Aquila (AQ)", "Chieti (CH)", "Pescara (PE)", "Teramo (TE)"],
+    "toscana": ["Arezzo (AR)", "Firenze (FI)", "Grosseto (GR)", "Livorno (LI)", "Lucca (LU)", "Massa-Carrara (MS)", "Pisa (PI)", "Pistoia (PT)", "Prato (PO)", "Siena (SI)"],
+    "campania": ["Avellino (AV)", "Benevento (BN)", "Caserta (CE)", "Napoli (NA)", "Salerno (SA)"],
+    "puglia": ["Bari (BA)", "Barletta-Andria-Trani (BT)", "Brindisi (BR)", "Foggia (FG)", "Lecce (LE)", "Taranto (TA)"],
+    "veneto": ["Belluno (BL)", "Padova (PD)", "Rovigo (RO)", "Treviso (TV)", "Venezia (VE)", "Verona (VR)", "Vicenza (VI)"],
+    "lombardia": ["Bergamo (BG)", "Brescia (BS)", "Como (CO)", "Cremona (CR)", "Lecco (LC)", "Lodi (LO)", "Mantova (MN)", "Milano (MI)", "Monza-Brianza (MB)", "Pavia (PV)", "Sondrio (SO)", "Varese (VA)"],
+    "emilia romagna": ["Bologna (BO)", "Ferrara (FE)", "Forli-Cesena (FC)", "Modena (MO)", "Parma (PR)", "Piacenza (PC)", "Ravenna (RA)", "Reggio-Emilia (RE)", "Rimini (RN)"],
+    "trentino alto adige": ["Bolzano (BZ)", "Trento (TN)"],
+    "sardegna": ["Cagliari (CA)", "Carbonia Iglesias (CI)", "Medio Campidano (VS)", "Nuoro (NU)", "Ogliastra (OG)", "Olbia Tempio (OT)", "Oristano (OR)", "Sassari (SS)"],
+    "molise": ["Campobasso (CB)", "Isernia (IS)"],
+    "lazio": ["Frosinone (FR)", "Latina (LT)", "Rieti (RI)", "Roma (Roma)", "Viterbo (VT)"],
+    "liguria": ["Genova (GE)", "Imperia (IM)", "La-Spezia (SP)", "Savona (SV)"],
+    "friuli venezia giulia": ["Gorizia (GO)", "Pordenone (PN)", "Trieste (TS)", "Udine (UD)"],
+    "umbria": ["Perugia (PG)", "Terni (TR)"],
+    "basilicata": ["Matera (MT)", "Potenza (PZ)"],
+    "calabria": ["Catanzaro (CZ)", "Cosenza (CS)", "Crotone (KR)", "Reggio-Calabria (RC)", "Vibo-Valentia (VV)"]
+};
+
+function normalizeProvinceRegion(value) {
+    return (value || "")
+        .toString()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9 ]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function provincesForRegion(regionName) {
+    var normalized = normalizeProvinceRegion(regionName);
+    if (!normalized) return [];
+    var direct = italy_provinces_by_region[normalized];
+    if (direct) return direct;
+    if (normalized === "valle d aosta") return italy_provinces_by_region["valle daosta"] || [];
+    if (normalized === "trentino alto adige sudtirol" || normalized === "trentino alto adige sudtirol") {
+        return italy_provinces_by_region["trentino alto adige"] || [];
+    }
+    return [];
+}
+
+function setProvinceSelectOptions(countryEl, stateEl, provinceEl) {
+    countryEl = resolveSelectElement(countryEl);
+    stateEl = resolveSelectElement(stateEl);
+    provinceEl = resolveSelectElement(provinceEl);
+    if (!countryEl || !stateEl || !provinceEl) return;
+
+    function refresh() {
+        var selectedBefore = provinceEl.value || provinceEl.getAttribute("data-selected") || "";
+        var country = (countryEl.value || "").trim().toLowerCase();
+        var provinces = [];
+
+        provinceEl.length = 0;
+        provinceEl.options[0] = new Option("Select Provincia", "");
+
+        if (country === "italy") {
+            provinces = provincesForRegion(stateEl.value);
+        }
+
+        if (provinces.length) {
+            provinces.forEach(function (province) {
+                var option = new Option(province, province);
+                if (selectedBefore && selectedBefore === province) {
+                    option.selected = true;
+                }
+                provinceEl.options[provinceEl.length] = option;
+            });
+        } else if (selectedBefore) {
+            var currentOption = new Option(selectedBefore, selectedBefore, true, true);
+            provinceEl.options[provinceEl.length] = currentOption;
+        }
+
+        provinceEl.setAttribute("data-selected", provinceEl.value || "");
+        if (provinceEl.classList.contains("country-dropdown")) {
+            $(provinceEl).trigger("change.select2");
+        }
+    }
+
+    if (provinceEl.dataset.provinceBound !== "1") {
+        countryEl.addEventListener("change", refresh);
+        stateEl.addEventListener("change", refresh);
+        provinceEl.dataset.provinceBound = "1";
+    }
+    refresh();
+}
+
+function findSelectByNameInForm(anchorEl, selectName) {
+    if (!anchorEl) return null;
+    var form = anchorEl.closest("form");
+    if (form) {
+        var inForm = form.querySelector('select[name="' + selectName + '"]');
+        if (inForm) return inForm;
+    }
+    return document.querySelector('select[name="' + selectName + '"]');
+}
+
+function setProvinceSelectByName(countryName, stateName, provinceName) {
+    var countrySelects = document.querySelectorAll('select[name="' + countryName + '"]');
+    countrySelects.forEach(function (countrySelect) {
+        var stateSelect = findSelectByNameInForm(countrySelect, stateName);
+        var provinceSelect = findSelectByNameInForm(countrySelect, provinceName);
+        setProvinceSelectOptions(countrySelect, stateSelect, provinceSelect);
+    });
+}
+
 function findStateSelectForCountry(countrySelect, stateName) {
     if (!countrySelect) return null;
     var form = countrySelect.closest("form");
@@ -785,6 +895,12 @@ function initCountryStateDropdowns() {
     // Fallback for dynamic/duplicate DOM fragments (HTMX/modal/forms)
     populateCountriesByName("domicilio_country", "domicilio_state");
     populateCountriesByName("residenza_country", "residenza_state");
+
+    setProvinceSelectOptions("id_domicilio_country", "id_domicilio_state", "id_docimicilio_provincia");
+    setProvinceSelectOptions("id_residenza_country", "id_residenza_state", "id_residenza_provincia");
+
+    setProvinceSelectByName("domicilio_country", "domicilio_state", "docimicilio_provincia");
+    setProvinceSelectByName("residenza_country", "residenza_state", "residenza_provincia");
 }
 
 document.addEventListener("DOMContentLoaded", function () {

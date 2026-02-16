@@ -22,14 +22,30 @@ from payroll.models.models import (
 )
 
 
+DATE_INPUT_FORMATS = ["%d/%m/%Y", "%d-%m-%Y", "%d.%m.%Y", "%Y-%m-%d"]
+
+
 class ContractForm(ModelForm):
     """
     ContactForm
     """
 
     verbose_name = _("Contract")
-    contract_start_date = forms.DateField()
-    contract_end_date = forms.DateField(required=False)
+    contract_start_date = forms.DateField(
+        input_formats=DATE_INPUT_FORMATS,
+        widget=forms.DateInput(
+            format="%d/%m/%Y",
+            attrs={"type": "text", "placeholder": "DD/MM/YYYY"},
+        ),
+    )
+    contract_end_date = forms.DateField(
+        required=False,
+        input_formats=DATE_INPUT_FORMATS,
+        widget=forms.DateInput(
+            format="%d/%m/%Y",
+            attrs={"type": "text", "placeholder": "DD/MM/YYYY"},
+        ),
+    )
 
     class Meta:
         """
@@ -73,9 +89,27 @@ class ContractForm(ModelForm):
             }
         )
         
-        # Add date widgets with type="date"
-        self.fields["contract_start_date"].widget.attrs.update({"type": "date"})
-        self.fields["contract_end_date"].widget.attrs.update({"type": "date"})
+        self.fields["contract_start_date"].input_formats = DATE_INPUT_FORMATS
+        self.fields["contract_end_date"].input_formats = DATE_INPUT_FORMATS
+        self.fields["contract_start_date"].widget.format = "%d/%m/%Y"
+        self.fields["contract_end_date"].widget.format = "%d/%m/%Y"
+        self.fields["contract_start_date"].widget.input_type = "text"
+        self.fields["contract_end_date"].widget.input_type = "text"
+        self.fields["contract_start_date"].widget.attrs.update(
+            {"placeholder": "DD/MM/YYYY", "autocomplete": "off"}
+        )
+        self.fields["contract_end_date"].widget.attrs.update(
+            {"placeholder": "DD/MM/YYYY", "autocomplete": "off"}
+        )
+
+        if self.instance and self.instance.contract_start_date:
+            self.initial["contract_start_date"] = self.instance.contract_start_date.strftime(
+                "%d/%m/%Y"
+            )
+        if self.instance and self.instance.contract_end_date:
+            self.initial["contract_end_date"] = self.instance.contract_end_date.strftime(
+                "%d/%m/%Y"
+            )
         
         # Add select class for tipo_contratto dropdown
         if "tipo_contratto" in self.fields:
@@ -190,11 +224,29 @@ class DashboardExport(Form):
     ]
     start_date = forms.DateField(
         required=False,
-        widget=forms.DateInput(attrs={"type": "date", "class": "oh-input w-100"}),
+        input_formats=DATE_INPUT_FORMATS,
+        widget=forms.DateInput(
+            format="%d/%m/%Y",
+            attrs={
+                "type": "text",
+                "class": "oh-input w-100",
+                "placeholder": "DD/MM/YYYY",
+                "autocomplete": "off",
+            },
+        ),
     )
     end_date = forms.DateField(
         required=False,
-        widget=forms.DateInput(attrs={"type": "date", "class": "oh-input w-100"}),
+        input_formats=DATE_INPUT_FORMATS,
+        widget=forms.DateInput(
+            format="%d/%m/%Y",
+            attrs={
+                "type": "text",
+                "class": "oh-input w-100",
+                "placeholder": "DD/MM/YYYY",
+                "autocomplete": "off",
+            },
+        ),
     )
     employees = forms.ChoiceField(
         required=False,

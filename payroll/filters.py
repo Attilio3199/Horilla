@@ -27,6 +27,24 @@ from payroll.models.models import (
 )
 
 
+DATE_INPUT_FORMATS = ["%d/%m/%Y", "%d-%m-%Y", "%d.%m.%Y", "%Y-%m-%d"]
+
+
+def _apply_ddmmyyyy_date_format(form, field_names):
+    for field_name in field_names:
+        field = form.fields.get(field_name)
+        if field and isinstance(field.widget, forms.DateInput):
+            field.input_formats = DATE_INPUT_FORMATS
+            field.widget.input_type = "text"
+            field.widget.format = "%d/%m/%Y"
+            field.widget.attrs.update(
+                {
+                    "placeholder": "DD/MM/YYYY",
+                    "autocomplete": "off",
+                }
+            )
+
+
 class ContractFilter(FilterSet):
     """
     Filter set class for Contract model
@@ -93,6 +111,17 @@ class ContractFilter(FilterSet):
 
     def __init__(self, data=None, queryset=None, *, request=None, prefix=None):
         super().__init__(data=data, queryset=queryset, request=request, prefix=prefix)
+        _apply_ddmmyyyy_date_format(
+            self.form,
+            [
+                "contract_start_date",
+                "contract_end_date",
+                "contract_start_date_from",
+                "contract_start_date_till",
+                "contract_end_date_from",
+                "contract_end_date_till",
+            ],
+        )
         for field in self.form.fields.keys():
             self.form.fields[field].widget.attrs["id"] = f"{uuid.uuid4()}"
 
@@ -392,6 +421,17 @@ class PayslipFilter(FilterSet):
 
     def __init__(self, data=None, queryset=None, *, request=None, prefix=None):
         super().__init__(data=data, queryset=queryset, request=request, prefix=prefix)
+        _apply_ddmmyyyy_date_format(
+            self.form,
+            [
+                "start_date",
+                "end_date",
+                "start_date_from",
+                "start_date_till",
+                "end_date_from",
+                "end_date_till",
+            ],
+        )
         for field in self.form.fields.keys():
             self.form.fields[field].widget.attrs["id"] = f"{uuid.uuid4()}"
 
@@ -421,6 +461,10 @@ class LoanAccountFilter(FilterSet):
             "employee_id__employee_work_info__job_position_id",
             "employee_id__employee_work_info__reporting_manager_id",
         ]
+
+    def __init__(self, data=None, queryset=None, *, request=None, prefix=None):
+        super().__init__(data=data, queryset=queryset, request=request, prefix=prefix)
+        _apply_ddmmyyyy_date_format(self.form, ["provided_date"])
 
 
 class ReimbursementFilter(FilterSet):
