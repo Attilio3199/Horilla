@@ -78,11 +78,17 @@ class DocumentForm(ModelForm):
         exclude = ["title", "document_request_id", "status", "reject_reason", "is_active", "upload_date"]
         widgets = {
             "employee_id": forms.HiddenInput(),
+            "document_date": forms.DateInput(
+                attrs={"type": "date", "class": "oh-input w-100"}
+            ),
             "start_date": forms.DateInput(
                 attrs={"type": "date", "class": "oh-input w-100"}
             ),
             "expiry_date": forms.DateInput(
                 attrs={"type": "date", "class": "oh-input w-100"}
+            ),
+            "notes": forms.Textarea(
+                attrs={"class": "oh-input w-100", "rows": 3, "placeholder": _("Note aggiuntive...")}
             ),
         }
 
@@ -125,11 +131,17 @@ class DocumentUpdateForm(ModelForm):
             "upload_date",
         ]
         widgets = {
+            "document_date": forms.DateInput(
+                attrs={"type": "date", "class": "oh-input w-100"}
+            ),
             "start_date": forms.DateInput(
                 attrs={"type": "date", "class": "oh-input w-100"}
             ),
             "expiry_date": forms.DateInput(
                 attrs={"type": "date", "class": "oh-input w-100"}
+            ),
+            "notes": forms.Textarea(
+                attrs={"class": "oh-input w-100", "rows": 3, "placeholder": _("Note aggiuntive...")}
             ),
         }
 

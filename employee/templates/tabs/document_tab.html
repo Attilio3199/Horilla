@@ -1,242 +1,211 @@
 {% load i18n %} {% load static %}
-<style>
 
-</style>
-<div class="oh-btn-group p-3 justify-content-end">
-	<div>
-		<button
-			class="oh-btn oh-btn--secondary"
-			data-toggle="oh-modal-toggle"
-			data-target="#objectCreateModal"
-			hx-get="{% url 'document-create' emp_id %}"
-			hx-target="#objectCreateModalTarget"
-			onclick="event.preventDefault()"
-
-		>
-			<ion-icon name="add-sharp" class="mr-2"></ion-icon>{% trans "Create" %}
-		</button>
-	</div>
-</div>
-{% if documents %}
-	<div class="mt-2">
-		{% for document in documents %}
-			<div id="document{{document.id}}">
-				<div class="oh-user_permission-list_item accordion exclude-accordion-style"  hx-get='{% url "view-file" document.id %}'
-					 hx-target="#viewFile" data-toggle="oh-modal-toggle" data-target="#viewFileModal" >
-					<div class="oh-user_permission-list_profile  {% if document.status == "approved" %}row-status--yellow {% elif document.status == 'rejected' %}row-status--red {% elif document.status == 'requested' %}row-status--blue{% endif %}">
-						<div class="oh-navbar__user-photo oh-user_permission--profile">
-							{% if document.document %}
-								{% if document.status == "approved" %}
-									<span
-										class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2 file-upload"
-										onclick="event.stopPropagation()"
-										title="Approved"
-									>
-									<ion-icon name="checkmark"></ion-icon>
-								{% elif document.status == 'rejected' %}
-									<span
-										class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2 file-upload"
-										onclick="event.stopPropagation()"
-										title="Rejected"
-									>
-										<ion-icon name="alert"></ion-icon>
-									</span>
-								{% else %}
-								<span
-										class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2 file-upload"
-										onclick="event.stopPropagation()"
-										title="Uploaded"
-									>
-									<ion-icon name="image-outline"></ion-icon>
-								</span>
-								{% endif %}
-							{% else %}
-								<span
-									class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2 file-upload"
-									hx-get="{% url 'file-upload' document.id %}"
-									hx-target="#objectCreateModalTarget"
-									data-document-id="{{ document.id }}"
-									data-toggle="oh-modal-toggle"
-									data-target="#objectCreateModal"
-									onclick="event.stopPropagation()"
-									title="Upload File"
-								>
-									<ion-icon
-										class="md hydrated"
-										name="add-outline"
-										role="img"
-										aria-label="add outline"
-									></ion-icon>
-								</span>
-							{% endif %}
-						</div>
-						<div class="oh-feedback-card__name-container ms-1 title_form">
-						<span class="oh-card__title oh-card__title--sm fw-bold me-1">
-							{{ document.category.name|default:document.title|default:"—" }}
-							{% if document.subcategory %}
-								<small class="text-muted fw-normal">/ {{ document.subcategory.name }}</small>
-							{% endif %}
-						</span>
-						<span class="oh-text--light" title="{{ document.document_request_id.description }}">
-							{{ document.document_request_id.description|truncatechars:60 }}
-						</span>
-						{% if document.start_date %}
-							<span class="oh-text--light">
-								{% trans "Data Inizio" %}: {{ document.start_date|date:"d/m/Y" }}
-							</span>
-						{% endif %}
-						{% if document.upload_date %}
-							<span class="oh-text--light">
-								{% trans "Caricato il" %}: {{ document.upload_date|date:"d/m/Y H:i" }}
-							</span>
-						{% endif %}
-					</div>
-					</div>
-					<div class="oh-btn-group">
-							{% if perms.horilla_document.change_documentrequest %}
-								{% if document.status == "approved" %}
-								<a class="oh-btn oh-btn--success w-100 oh-btn--disabled"  onclick="event.stopPropagation()">
-									<ion-icon class="me-1" name="checkmark-outline"></ion-icon>
-								</a>
-								<a
-									type="submit"
-									hx-get="{% url 'document-reject' document.id %}"
-									hx-target="#rejectFileForm"
-									data-toggle="oh-modal-toggle"
-									data-target="#rejectFileModal"
-									title="{% trans 'Reject' %}"
-									class="oh-btn oh-btn--danger w-100"
-									onclick="event.stopPropagation()"
-								>
-									<ion-icon class="me-1" name="close-circle-outline"></ion-icon>
-								</a>
-								{% else %}
-								<a
-									type="submit"
-									hx-get="{% url 'document-approve' document.id %}"
-									hx-target="#viewFile"
-									title="{% trans 'Approve' %}"
-									class="oh-btn oh-btn--success w-100"
-									onclick="event.stopPropagation()"
-								>
-									<ion-icon class="me-1" name="checkmark-outline"></ion-icon>
-								</a>
-								<a class="oh-btn oh-btn--danger w-100 oh-btn--disabled"  onclick="event.stopPropagation()">
-									<ion-icon class="me-1" name="close-circle-outline"></ion-icon>
-								</a>
-								{% endif %}
-							{% endif %}
-						{% if not document.document_request_id or perms.horilla_document.change_documentrequest %}
-							<form hx-confirm="{% trans 'Are you sure you want to delete this Document Request?' %}"
-								hx-post="{% url 'document-delete' document.id %}"
-								hx-target="#document{{document.id}}"
-								hx-swap="outerHTML"
-								hx-on-htmx-after-request="setTimeout(() => { reloadMessage(); }, 300);"
-								onclick="event.stopPropagation()"
-								>
-								{% csrf_token %}
-								<button
-									type="submit"
-									class="oh-btn  oh-btn--secondary"
-									title="{% trans 'Delete' %}"
-								>
-									<ion-icon
-										class="me-1 md hydrated"
-										name="trash-outline"
-										role="img"
-										aria-label="trash outline"
-									></ion-icon
-									>
-								</button>
-							</form>
-						{% endif %}
-					</div>
-				</div>
-			</div>
-		{% endfor %}
-	</div>
-{% else %}
-	<div class="d-flex justify-content-center align-items-center" style="height: 40vh;">
-	    <div class="text-center">
-	        <img class="oh-404__image mb-3" style="width: 150px; height: 150px;" src="{% static 'images/ui/no_documents.png' %}" alt="No documents">
-	        <h5 class="oh-404__subtitle">{% trans "No documents have been uploaded yet." %}</h5>
-	    </div>
-	</div>
-{% endif %}
-
-<div
-	class="oh-modal"
-	id="viewFileModal"
-	role="dialog"
-	aria-labelledby="viewFileModal"
-	aria-hidden="true"
->
-	<div class="oh-modal__dialog custom-dialog">
-		<div class="oh-modal__dialog-header">
-			<span class="oh-modal__dialog-title" id="viewFileModalLabel"
-				>{% trans "View File" %}</span
-			>
-			<button class="oh-modal__close" aria-label="Close">
-				<ion-icon
-					name="close-outline"
-					role="img"
-					class="md hydrated"
-					aria-label="close outline"
-				></ion-icon>
-			</button>
-		</div>
-		<div class="oh-modal__dialog-body" id="viewFile"></div>
-	</div>
+{# ── Sub-tab bar ─────────────────────────────────────────────────────────── #}
+<div style="border-bottom: 1px solid #dee2e6;">
+    <ul class="oh-general__tabs oh-general__tabs--border oh-general__tabs--no-grow mt-0 mb-0 px-3" id="doc-subtab-list">
+        <li class="oh-general__tab">
+            <a class="oh-general__tab-link oh-general__tab-link--active"
+               role="button"
+               onclick="docSubTabSwitch(this, 'doc-panel-all')">
+                {% trans "Tutti" %}
+            </a>
+        </li>
+        {% for cat in categories %}
+            <li class="oh-general__tab">
+                <a class="oh-general__tab-link"
+                   role="button"
+                   hx-get="{% url 'document-category-tab' emp_id cat.id %}"
+                   hx-target="#doc-panel-cat-{{ cat.id }}"
+                   hx-trigger="click once"
+                   onclick="docSubTabSwitch(this, 'doc-panel-cat-{{ cat.id }}')">
+                    {{ cat.name }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
 </div>
 
-<div
-	class="oh-modal"
-	id="documentCreateModal"
-	role="dialog"
-	aria-labelledby="documentCreateModal"
-	aria-hidden="true"
->
-	<div class="oh-modal__dialog">
-		<div class="oh-modal__dialog-header">
-			<button class="oh-modal__close" aria-label="Close">
-				<ion-icon
-					name="close-outline"
-					role="img"
-					class="md hydrated"
-					aria-label="close outline"
-				></ion-icon>
-			</button>
-		</div>
-		<div class="oh-modal__dialog-body" id="documentCreateForm"></div>
-	</div>
+{# ── Panel: Tutti ────────────────────────────────────────────────────────── #}
+<div id="doc-panel-all">
+    <div class="oh-btn-group p-3 justify-content-end">
+        <button
+            class="oh-btn oh-btn--secondary"
+            data-toggle="oh-modal-toggle"
+            data-target="#objectCreateModal"
+            hx-get="{% url 'document-create' emp_id %}"
+            hx-target="#objectCreateModalTarget"
+            onclick="event.preventDefault()"
+        >
+            <ion-icon name="add-sharp" class="mr-2"></ion-icon>{% trans "Crea" %}
+        </button>
+    </div>
+
+    {% if documents %}
+        {% regroup documents by category as docs_by_cat %}
+        {% for cat_group in docs_by_cat %}
+            <div class="mb-3">
+                <div class="px-3 py-2 fw-bold text-uppercase" style="border-left:4px solid var(--oh-color-primary,#e74c3c);background:#f8f9fa;font-size:.8rem;">
+                    {{ cat_group.grouper.name|default:"—" }}
+                </div>
+                {% regroup cat_group.list by subcategory as docs_by_subcat %}
+                {% for subcat_group in docs_by_subcat %}
+                    {% if subcat_group.grouper %}
+                        <div class="px-4 py-1" style="font-size:.75rem;color:#6c757d;border-left:4px solid #dee2e6;background:#fafafa;">
+                            {{ subcat_group.grouper.name }}
+                        </div>
+                    {% endif %}
+                    {% for document in subcat_group.list %}
+                        <div id="document{{ document.id }}">
+                            <div class="oh-user_permission-list_item accordion exclude-accordion-style"
+                                hx-get="{% url 'view-file' document.id %}"
+                                hx-target="#viewFile"
+                                data-toggle="oh-modal-toggle"
+                                data-target="#viewFileModal">
+                                <div class="oh-user_permission-list_profile {% if document.status == 'approved' %}row-status--yellow{% elif document.status == 'rejected' %}row-status--red{% elif document.status == 'requested' %}row-status--blue{% endif %}">
+                                    <div class="oh-navbar__user-photo oh-user_permission--profile">
+                                        {% if document.document %}
+                                            {% if document.status == "approved" %}
+                                                <span class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2" onclick="event.stopPropagation()" title="Approvato">
+                                                    <ion-icon name="checkmark"></ion-icon>
+                                                </span>
+                                            {% elif document.status == "rejected" %}
+                                                <span class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2" onclick="event.stopPropagation()" title="Rifiutato">
+                                                    <ion-icon name="alert"></ion-icon>
+                                                </span>
+                                            {% else %}
+                                                <span class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2" onclick="event.stopPropagation()" title="Caricato">
+                                                    <ion-icon name="image-outline"></ion-icon>
+                                                </span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2"
+                                                hx-get="{% url 'file-upload' document.id %}"
+                                                hx-target="#objectCreateModalTarget"
+                                                data-toggle="oh-modal-toggle"
+                                                data-target="#objectCreateModal"
+                                                onclick="event.stopPropagation()"
+                                                title="Allega File">
+                                                <ion-icon name="attach-outline"></ion-icon>
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="oh-feedback-card__name-container ms-1 title_form">
+                                        <span class="oh-card__title oh-card__title--sm fw-bold me-1">
+                                            {{ document.subcategory.name|default:document.category.name|default:document.title|default:"—" }}
+                                        </span>
+                                        {% if document.document_date %}
+                                            <span class="oh-text--light">{% trans "Data Doc." %}: {{ document.document_date|date:"d/m/Y" }}</span>
+                                        {% endif %}
+                                        {% if document.start_date %}
+                                            <span class="oh-text--light">{% trans "Dal" %}: {{ document.start_date|date:"d/m/Y" }}</span>
+                                        {% endif %}
+                                        {% if document.expiry_date %}
+                                            <span class="oh-text--light">{% trans "Al" %}: {{ document.expiry_date|date:"d/m/Y" }}</span>
+                                        {% endif %}
+                                        {% if document.upload_date %}
+                                            <span class="oh-text--light">{% trans "Caricato il" %}: {{ document.upload_date|date:"d/m/Y H:i" }}</span>
+                                        {% endif %}
+                                        {% if document.notes %}
+                                            <span class="oh-text--light fst-italic">{{ document.notes|truncatechars:80 }}</span>
+                                        {% endif %}
+                                        {% if not document.document %}
+                                            <span class="oh-badge oh-badge--warning oh-badge--small ms-1">{% trans "In attesa documento" %}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="oh-btn-group">
+                                    {% if perms.horilla_document.change_documentrequest %}
+                                        {% if document.status == "approved" %}
+                                            <a class="oh-btn oh-btn--success w-100 oh-btn--disabled" onclick="event.stopPropagation()">
+                                                <ion-icon class="me-1" name="checkmark-outline"></ion-icon>
+                                            </a>
+                                            <a hx-get="{% url 'document-reject' document.id %}" hx-target="#rejectFileForm"
+                                                data-toggle="oh-modal-toggle" data-target="#rejectFileModal"
+                                                title="{% trans 'Rifiuta' %}" class="oh-btn oh-btn--danger w-100" onclick="event.stopPropagation()">
+                                                <ion-icon class="me-1" name="close-circle-outline"></ion-icon>
+                                            </a>
+                                        {% else %}
+                                            <a hx-get="{% url 'document-approve' document.id %}" hx-target="#viewFile"
+                                                title="{% trans 'Approva' %}" class="oh-btn oh-btn--success w-100" onclick="event.stopPropagation()">
+                                                <ion-icon class="me-1" name="checkmark-outline"></ion-icon>
+                                            </a>
+                                            <a class="oh-btn oh-btn--danger w-100 oh-btn--disabled" onclick="event.stopPropagation()">
+                                                <ion-icon class="me-1" name="close-circle-outline"></ion-icon>
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if not document.document_request_id or perms.horilla_document.change_documentrequest %}
+                                        <form hx-confirm="{% trans 'Sei sicuro di voler eliminare questo documento?' %}"
+                                            hx-post="{% url 'document-delete' document.id %}"
+                                            hx-target="#document{{ document.id }}"
+                                            hx-swap="outerHTML"
+                                            hx-on-htmx-after-request="setTimeout(() => { reloadMessage(); }, 300);"
+                                            onclick="event.stopPropagation()">
+                                            {% csrf_token %}
+                                            <button type="submit" class="oh-btn oh-btn--secondary" title="{% trans 'Elimina' %}">
+                                                <ion-icon class="me-1 md hydrated" name="trash-outline"></ion-icon>
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="d-flex justify-content-center align-items-center" style="height:35vh;">
+            <div class="text-center">
+                <img class="oh-404__image mb-3" style="width:150px;height:150px;"
+                     src="{% static 'images/ui/no_documents.png' %}" alt="No documents">
+                <h5 class="oh-404__subtitle">{% trans "Nessun documento caricato." %}</h5>
+            </div>
+        </div>
+    {% endif %}
 </div>
 
+{# ── Panels per categoria (caricati via HTMX al click) ───────────────────── #}
+{% for cat in categories %}
+    <div id="doc-panel-cat-{{ cat.id }}" class="d-none"></div>
+{% endfor %}
 
-<div
-	class="oh-modal"
-	id="rejectFileModal"
-	role="dialog"
-	aria-labelledby="rejectFileModal"
-	aria-hidden="true"
->
-	<div class="oh-modal__dialog">
-		<div class="oh-modal__dialog-header">
-			<span class="oh-modal__dialog-title" id="rejectFileModalLabel"
-				>{% trans "Reject" %}</span
-			>
-			<button class="oh-modal__close--custom" aria-label="Close"
-			onclick="event.stopPropagation();event.preventDefault();$('#rejectFileModal').toggleClass('oh-modal--show');">
-				<ion-icon
-					name="close-outline"
-					role="img"
-					class="md hydrated"
-					aria-label="close outline"
-				></ion-icon>
-			</button>
-		</div>
-		<div class="oh-modal__dialog-body" id="rejectFileForm"></div>
-	</div>
+{# ── Modali ──────────────────────────────────────────────────────────────── #}
+<div class="oh-modal" id="viewFileModal" role="dialog" aria-hidden="true">
+    <div class="oh-modal__dialog custom-dialog">
+        <div class="oh-modal__dialog-header">
+            <span class="oh-modal__dialog-title">{% trans "Visualizza File" %}</span>
+            <button class="oh-modal__close" aria-label="Close">
+                <ion-icon name="close-outline" class="md hydrated"></ion-icon>
+            </button>
+        </div>
+        <div class="oh-modal__dialog-body" id="viewFile"></div>
+    </div>
 </div>
 
- <script>
+<div class="oh-modal" id="rejectFileModal" role="dialog" aria-hidden="true">
+    <div class="oh-modal__dialog">
+        <div class="oh-modal__dialog-header">
+            <span class="oh-modal__dialog-title">{% trans "Rifiuta" %}</span>
+            <button class="oh-modal__close--custom" aria-label="Close"
+                onclick="event.stopPropagation();event.preventDefault();$('#rejectFileModal').toggleClass('oh-modal--show');">
+                <ion-icon name="close-outline" class="md hydrated"></ion-icon>
+            </button>
+        </div>
+        <div class="oh-modal__dialog-body" id="rejectFileForm"></div>
+    </div>
+</div>
+
+<script>
+function docSubTabSwitch(clickedLink, panelId) {
+    document.querySelectorAll('#doc-subtab-list .oh-general__tab-link').forEach(function(el) {
+        el.classList.remove('oh-general__tab-link--active');
+    });
+    document.querySelectorAll('[id^="doc-panel-"]').forEach(function(el) {
+        el.classList.add('d-none');
+    });
+    clickedLink.classList.add('oh-general__tab-link--active');
+    var panel = document.getElementById(panelId);
+    if (panel) panel.classList.remove('d-none');
+}
 </script>

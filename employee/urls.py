@@ -226,6 +226,7 @@ urlpatterns = [
         kwargs={"model": Employee},
     ),
     path("document-tab/<int:emp_id>", views.document_tab, name="document-tab"),
+    path("document-category-tab/<int:emp_id>/<int:category_id>", views.document_category_tab, name="document-category-tab"),
     path(
         "bonus-points-tab/<int:emp_id>", views.bonus_points_tab, name="bonus-points-tab"
     ),

@@ -417,6 +417,7 @@ def employee_view_individual(request, obj_id, **kwargs):
         "current_date": date.today(),
         "leave_request_ids": json.dumps([]),
         "enabled_block_unblock": enabled_block_unblock,
+        "document_categories": DocumentCategory.objects.all(),
     }
     # if the requesting user opens own data
     if request.user.employee_get == employee:
@@ -650,6 +651,29 @@ def document_request_update(request, id):
 @login_required
 @hx_request_required
 @owner_can_enter("horilla_documents.view_document", Employee)
+def document_category_tab(request, emp_id, category_id):
+    """
+    Renders the documents tab filtered by a specific DocumentCategory for the given employee.
+    """
+    from horilla_documents.models import DocumentCategory as DocCat
+
+    employee = Employee.objects.get(id=emp_id)
+    category = get_object_or_404(DocCat, id=category_id)
+    documents = Document.objects.filter(
+        employee_id=emp_id, category=category
+    ).order_by("subcategory__name")
+    form = DocumentForm(initial={"employee_id": employee, "category": category})
+
+    context = {
+        "documents": documents,
+        "form": form,
+        "emp_id": emp_id,
+        "active_category": category,
+    }
+    return render(request, "tabs/document_category_tab.html", context=context)
+
+
+@owner_can_enter("horilla_documents.view_document", Employee)
 def document_tab(request, emp_id):
     """
     This function is used to view documents tab of an employee in employee individual
@@ -663,12 +687,18 @@ def document_tab(request, emp_id):
     """
 
     form = DocumentUpdateForm(request.POST, request.FILES)
-    documents = Document.objects.filter(employee_id=emp_id)
+    documents = Document.objects.filter(employee_id=emp_id).order_by(
+        "category__name", "subcategory__name"
+    )
+    categories = DocumentCategory.objects.filter(
+        document__employee_id=emp_id
+    ).distinct()
 
     context = {
         "documents": documents,
         "form": form,
         "emp_id": emp_id,
+        "categories": categories,
     }
     return render(request, "tabs/document_tab.html", context=context)
 
@@ -687,7 +717,21 @@ def document_create(request, emp_id):
     Returns: return document_tab template
     """
     employee_id = Employee.objects.get(id=emp_id)
-    form = DocumentForm(initial={"employee_id": employee_id, "expiry_date": None})
+    initial = {"employee_id": employee_id, "expiry_date": None}
+
+    # Pre-fill category if provided via GET (e.g. from a category tab)
+    category_id = request.GET.get("category_id")
+    preset_category = None
+    if category_id:
+        try:
+            preset_category = DocumentCategory.objects.get(id=int(category_id))
+            initial["category"] = preset_category
+        except (DocumentCategory.DoesNotExist, ValueError):
+            pass
+
+    form = DocumentForm(initial=initial)
+    if preset_category:
+        form.fields["subcategory"].queryset = DocumentSubCategory.objects.filter(category=preset_category)
     if request.method == "POST":
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
