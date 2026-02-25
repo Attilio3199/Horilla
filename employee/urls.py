@@ -289,6 +289,10 @@ urlpatterns = [
     path("file-upload/<int:id>", views.file_upload, name="file-upload"),
     path("view-file/<int:id>", views.view_file, name="view-file"),
     path("document-create/<int:emp_id>", views.document_create, name="document-create"),
+    path("document-create-quick", views.document_create_quick, name="document-create-quick"),
+    path("document-category-create", views.document_category_create, name="document-category-create"),
+    path("document-subcategory-create", views.document_subcategory_create, name="document-subcategory-create"),
+    path("get-document-subcategories", views.get_document_subcategories, name="get-document-subcategories"),
     path(
         "update-document-title/<int:id>",
         views.update_document_title,

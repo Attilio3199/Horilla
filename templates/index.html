@@ -166,7 +166,7 @@
                         {% include "base/navbar_components/language_settings.html" %}
                         <!-- End of Languages dropdown in nav bar -->
 
-                        {% if perms.base.change_company %}
+                        {% if perms.base.change_company and all_companies|length > 2 %}
                             <!-- Start of Companies dropdown in nav bar -->
                             {% include "base/navbar_components/company_selection.html" %}
                             <!-- End of Companies dropdown in nav bar -->

@@ -71,20 +71,26 @@
 							{% endif %}
 						</div>
 						<div class="oh-feedback-card__name-container ms-1 title_form">
-							<form hx-post = "{% url 'update-document-title' document.id %}" hx-swap="none" hx-on-htmx-after-request="setTimeout(() => { reloadMessage(); }, 300);">
-								<input class="oh-card__title oh-card__title--sm fw-bold me-1 editable-input" onclick="event.stopPropagation();" name="title" value="{{document.title}}" readonly />
-								<span class="error oh-user_permission_list-text text-danger d-none" >{% trans "Title needs to be more than 3 letters" %}</span>
-								<input class="d-none title-submit" type="submit" onclick="event.stopPropagation();" />
-							</form>
-							<span class="oh-text--light" title="{{document.document_request_id.description}}">
-								{{document.document_request_id.description|truncatechars:60}}
-							</span>
-							{% if document.issue_date %}
-								<span class="oh-text--light" title="{{document.document_request_id.description}}">
-									{% trans "Issue Date" %} : {{ document.issue_date }}
-								</span>
+						<span class="oh-card__title oh-card__title--sm fw-bold me-1">
+							{{ document.category.name|default:document.title|default:"—" }}
+							{% if document.subcategory %}
+								<small class="text-muted fw-normal">/ {{ document.subcategory.name }}</small>
 							{% endif %}
-						</div>
+						</span>
+						<span class="oh-text--light" title="{{ document.document_request_id.description }}">
+							{{ document.document_request_id.description|truncatechars:60 }}
+						</span>
+						{% if document.start_date %}
+							<span class="oh-text--light">
+								{% trans "Data Inizio" %}: {{ document.start_date|date:"d/m/Y" }}
+							</span>
+						{% endif %}
+						{% if document.upload_date %}
+							<span class="oh-text--light">
+								{% trans "Caricato il" %}: {{ document.upload_date|date:"d/m/Y H:i" }}
+							</span>
+						{% endif %}
+					</div>
 					</div>
 					<div class="oh-btn-group">
 							{% if perms.horilla_document.change_documentrequest %}
@@ -233,38 +239,4 @@
 </div>
 
  <script>
-	$(document).ready(function(){
-		editableInput = $(".editable-input")
-		var typingTimer;
-		var doneTypingInterval = 300;
-
-		editableInput.on("focus", function(){
-			$(this).prop("readonly", false)
-		})
-
-		editableInput.on("blur", function(){
-			$(this).prop("readonly", true)
-		})
-
-		editableInput.on("keyup", function(){
-			let error = ""
-			let $this = $(this)
-			clearTimeout(typingTimer);
-			typingTimer = setTimeout(function(){
-				if ($this.val().length <=3){
-					$this.siblings(".error").removeClass("d-none")
-					$this.siblings(".error").addClass("d-block")
-				} else {
-					$this.siblings('.title-submit').click();
-					$this.siblings(".error").removeClass("d-block")
-					$this.siblings(".error").addClass("d-none")
-				}
-			}, doneTypingInterval);
-
-			if (event.keyCode === 13) {
-				$(this).blur();
-			}
-		});
-
-	})
 </script>

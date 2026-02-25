@@ -6,9 +6,28 @@ from base.forms import ModelForm
 from base.methods import reload_queryset
 from employee.filters import EmployeeFilter
 from employee.models import Employee
-from horilla_documents.models import Document, DocumentRequest
+from horilla_documents.models import (
+    Document,
+    DocumentCategory,
+    DocumentRequest,
+    DocumentSubCategory,
+)
 from horilla_widgets.widgets.horilla_multi_select_field import HorillaMultiSelectField
 from horilla_widgets.widgets.select_widgets import HorillaMultiSelectWidget
+
+
+class DocumentCategoryForm(forms.ModelForm):
+    class Meta:
+        model = DocumentCategory
+        fields = ["name"]
+        widgets = {"name": forms.TextInput(attrs={"class": "oh-input w-100", "placeholder": _("Nome categoria")})}
+
+
+class DocumentSubCategoryForm(forms.ModelForm):
+    class Meta:
+        model = DocumentSubCategory
+        fields = ["name"]
+        widgets = {"name": forms.TextInput(attrs={"class": "oh-input w-100", "placeholder": _("Nome sottocategoria")})}
 
 
 class DocumentRequestForm(ModelForm):
@@ -56,28 +75,42 @@ class DocumentForm(ModelForm):
     class Meta:
         model = Document
         fields = "__all__"
-        exclude = ["document_request_id", "status", "reject_reason", "is_active"]
+        exclude = ["title", "document_request_id", "status", "reject_reason", "is_active", "upload_date"]
         widgets = {
             "employee_id": forms.HiddenInput(),
-            "issue_date": forms.DateInput(
-                attrs={"type": "date", "class": "oh-input  w-100"}
+            "start_date": forms.DateInput(
+                attrs={"type": "date", "class": "oh-input w-100"}
             ),
             "expiry_date": forms.DateInput(
-                attrs={"type": "date", "class": "oh-input  w-100"}
+                attrs={"type": "date", "class": "oh-input w-100"}
             ),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["category"].required = True
+        self.fields["subcategory"].required = False
+        self.fields["subcategory"].queryset = DocumentSubCategory.objects.none()
+        # If editing, populate subcategory choices for the current category
+        if self.instance and self.instance.pk and self.instance.category_id:
+            self.fields["subcategory"].queryset = DocumentSubCategory.objects.filter(
+                category_id=self.instance.category_id
+            )
+        elif "category" in self.data:
+            try:
+                cat_id = int(self.data.get("category"))
+                self.fields["subcategory"].queryset = DocumentSubCategory.objects.filter(category_id=cat_id)
+            except (ValueError, TypeError):
+                pass
+
     def as_p(self):
-        """
-        Render the form fields as HTML table rows with Bootstrap styling.
-        """
         context = {"form": self}
         table_html = render_to_string("common_form.html", context)
         return table_html
 
 
 class DocumentUpdateForm(ModelForm):
-    """form to Update a Document"""
+    """form to Update a Document (fulfil a request)"""
 
     class Meta:
         model = Document
@@ -89,15 +122,32 @@ class DocumentUpdateForm(ModelForm):
             "created_by",
             "modified_by",
             "employee_id",
+            "upload_date",
         ]
         widgets = {
-            "issue_date": forms.DateInput(
-                attrs={"type": "date", "class": "oh-input  w-100"}
+            "start_date": forms.DateInput(
+                attrs={"type": "date", "class": "oh-input w-100"}
             ),
             "expiry_date": forms.DateInput(
-                attrs={"type": "date", "class": "oh-input  w-100"}
+                attrs={"type": "date", "class": "oh-input w-100"}
             ),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["category"].required = True
+        self.fields["subcategory"].required = False
+        self.fields["subcategory"].queryset = DocumentSubCategory.objects.none()
+        if self.instance and self.instance.pk and self.instance.category_id:
+            self.fields["subcategory"].queryset = DocumentSubCategory.objects.filter(
+                category_id=self.instance.category_id
+            )
+        elif "category" in self.data:
+            try:
+                cat_id = int(self.data.get("category"))
+                self.fields["subcategory"].queryset = DocumentSubCategory.objects.filter(category_id=cat_id)
+            except (ValueError, TypeError):
+                pass
 
 
 class DocumentRejectForm(ModelForm):

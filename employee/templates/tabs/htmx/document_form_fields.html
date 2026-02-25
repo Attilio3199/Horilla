@@ -1,0 +1,200 @@
+{% load i18n %}
+{{ form.errors }}
+
+<div class="row">
+
+  {# ───── CATEGORIA ───── #}
+  <div class="col-12 col-md-6 mb-3">
+    <label class="oh-label required-star" for="id_category">{% trans "Categoria" %}</label>
+    <div class="d-flex gap-1 align-items-center">
+      <select name="category" id="id_category" class="oh-select oh-select-2 w-100" required>
+        <option value="">---{% trans "Scegli Categoria" %}---</option>
+        {% for cat in form.fields.category.queryset %}
+          <option value="{{ cat.id }}" {% if form.instance.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+      {% if perms.horilla_documents.add_documentcategory %}
+      <button type="button" class="oh-btn oh-btn--secondary px-2 py-1" style="min-width:32px;" title="{% trans 'Aggiungi categoria' %}"
+        onclick="showInlineAdd('category-add-row')">
+        <i class="material-icons" style="font-size:16px">add</i>
+      </button>
+      {% endif %}
+    </div>
+    <div id="category-add-row" class="d-none mt-1 d-flex gap-1">
+      <input type="text" id="new-category-name" class="oh-input w-100" placeholder="{% trans 'Nuova categoria...' %}" />
+      <button type="button" class="oh-btn oh-btn--secondary px-2 py-1" onclick="addCategory()">
+        <i class="material-icons" style="font-size:16px">check</i>
+      </button>
+    </div>
+    {% if form.category.errors %}<div class="text-danger small">{{ form.category.errors }}</div>{% endif %}
+  </div>
+
+  {# ───── SOTTOCATEGORIA ───── #}
+  <div class="col-12 col-md-6 mb-3">
+    <label class="oh-label" for="id_subcategory">{% trans "Sottocategoria" %}</label>
+    <div class="d-flex gap-1 align-items-center">
+      <select name="subcategory" id="id_subcategory" class="oh-select oh-select-2 w-100">
+        <option value="">---{% trans "Scegli Sottocategoria" %}---</option>
+        {% for sub in form.fields.subcategory.queryset %}
+          <option value="{{ sub.id }}" {% if form.instance.subcategory_id == sub.id %}selected{% endif %}>{{ sub.name }}</option>
+        {% endfor %}
+      </select>
+      {% if perms.horilla_documents.add_documentsubcategory %}
+      <button type="button" class="oh-btn oh-btn--secondary px-2 py-1" style="min-width:32px;" title="{% trans 'Aggiungi sottocategoria' %}"
+        onclick="showInlineAdd('subcategory-add-row')">
+        <i class="material-icons" style="font-size:16px">add</i>
+      </button>
+      {% endif %}
+    </div>
+    <div id="subcategory-add-row" class="d-none mt-1 d-flex gap-1">
+      <input type="text" id="new-subcategory-name" class="oh-input w-100" placeholder="{% trans 'Nuova sottocategoria...' %}" />
+      <button type="button" class="oh-btn oh-btn--secondary px-2 py-1" onclick="addSubCategory()">
+        <i class="material-icons" style="font-size:16px">check</i>
+      </button>
+    </div>
+    {% if form.subcategory.errors %}<div class="text-danger small">{{ form.subcategory.errors }}</div>{% endif %}
+  </div>
+
+  {# ───── FILE ───── #}
+  <div class="col-12 col-md-6 mb-3">
+    <label class="oh-label required-star" for="id_document">{% trans "Documento" %}</label>
+    {{ form.document }}
+    {% if form.document.errors %}<div class="text-danger small">{{ form.document.errors }}</div>{% endif %}
+  </div>
+
+  {# ───── DATA INIZIO ───── #}
+  <div class="col-12 col-md-6 mb-3">
+    <label class="oh-label" for="id_start_date">{% trans "Data Inizio" %}</label>
+    <input type="date" name="start_date" id="id_start_date" class="oh-input w-100 form-control"
+      value="{{ form.instance.start_date|date:'Y-m-d' }}">
+    {% if form.start_date.errors %}<div class="text-danger small">{{ form.start_date.errors }}</div>{% endif %}
+  </div>
+
+  {# ───── DATA FINE ───── #}
+  <div class="col-12 col-md-6 mb-3">
+    <label class="oh-label" for="id_expiry_date">{% trans "Data Fine" %}</label>
+    <input type="date" name="expiry_date" id="id_expiry_date" class="oh-input w-100 form-control"
+      value="{{ form.instance.expiry_date|date:'Y-m-d' }}">
+    {% if form.expiry_date.errors %}<div class="text-danger small">{{ form.expiry_date.errors }}</div>{% endif %}
+  </div>
+
+  {# ───── NOTIFICA PRIMA (nascosta se non c'è data fine) ───── #}
+  <div class="col-12 col-md-6 mb-3" id="notify-before-row" {% if not form.instance.expiry_date %}style="display:none"{% endif %}>
+    <label class="oh-label" for="id_notify_before">{% trans "Notifica Prima (giorni)" %}</label>
+    {{ form.notify_before }}
+    {% if form.notify_before.errors %}<div class="text-danger small">{{ form.notify_before.errors }}</div>{% endif %}
+  </div>
+
+  {# ───── ASSET DIGITALE ───── #}
+  <div class="col-12 col-md-6 mb-3">
+    <label class="oh-label" for="id_is_digital_asset">{% trans "È Un Asset Digitale" %}</label>
+    <div class="oh-switch" style="width:30px">{{ form.is_digital_asset }}</div>
+    {% if form.is_digital_asset.errors %}<div class="text-danger small">{{ form.is_digital_asset.errors }}</div>{% endif %}
+  </div>
+
+</div>
+
+<div class="d-flex flex-row-reverse">
+  <button type="submit" class="oh-btn oh-btn--secondary mt-2 mr-0 pl-4 pr-5">{% trans "Salva" %}</button>
+</div>
+
+<script>
+(function () {
+  const categorySelect    = document.getElementById("id_category");
+  const subcategorySelect = document.getElementById("id_subcategory");
+  const notifyRow         = document.getElementById("notify-before-row");
+  const expiryInput       = document.getElementById("id_expiry_date");
+
+  // ── Carica sottocategorie quando cambia la categoria ──
+  function loadSubcategories(catId, selectedId) {
+    subcategorySelect.innerHTML = '<option value="">---{% trans "Scegli Sottocategoria" %}---</option>';
+    if (!catId) return;
+    fetch(`{% url 'get-document-subcategories' %}?category_id=${catId}`)
+      .then(r => r.json())
+      .then(data => {
+        data.subcategories.forEach(s => {
+          const opt = document.createElement("option");
+          opt.value = s.id;
+          opt.text  = s.name;
+          if (selectedId && s.id == selectedId) opt.selected = true;
+          subcategorySelect.appendChild(opt);
+        });
+        if ($(subcategorySelect).data("select2")) {
+          $(subcategorySelect).select2("destroy");
+        }
+        $(subcategorySelect).select2({ width: "100%" });
+      });
+  }
+
+  categorySelect.addEventListener("change", function () {
+    loadSubcategories(this.value, null);
+  });
+
+  // Carica al mount se già selezionata
+  if (categorySelect.value) {
+    loadSubcategories(categorySelect.value, subcategorySelect.value || null);
+  }
+
+  // ── Mostra/nascondi notify_before ──
+  if (expiryInput) {
+    expiryInput.addEventListener("change", function () {
+      if (this.value) {
+        notifyRow.style.display = "";
+      } else {
+        notifyRow.style.display = "none";
+      }
+    });
+  }
+
+  // ── Inline add helpers ──
+  window.showInlineAdd = function(rowId) {
+    const row = document.getElementById(rowId);
+    if (row) row.classList.toggle("d-none");
+  };
+
+  window.addCategory = function () {
+    const name = document.getElementById("new-category-name").value.trim();
+    if (!name) return;
+    fetch("{% url 'document-category-create' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `name=${encodeURIComponent(name)}`,
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) { alert(data.error); return; }
+      const opt = new Option(data.name, data.id, true, true);
+      $(categorySelect).append(opt).trigger("change");
+      document.getElementById("new-category-name").value = "";
+      document.getElementById("category-add-row").classList.add("d-none");
+      loadSubcategories(data.id, null);
+    });
+  };
+
+  window.addSubCategory = function () {
+    const name  = document.getElementById("new-subcategory-name").value.trim();
+    const catId = categorySelect.value;
+    if (!name)  { alert("{% trans 'Seleziona prima una categoria' %}"); return; }
+    if (!catId) { alert("{% trans 'Seleziona prima una categoria' %}"); return; }
+    fetch("{% url 'document-subcategory-create' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `name=${encodeURIComponent(name)}&category_id=${catId}`,
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) { alert(data.error); return; }
+      const opt = new Option(data.name, data.id, true, true);
+      $(subcategorySelect).append(opt).trigger("change");
+      document.getElementById("new-subcategory-name").value = "";
+      document.getElementById("subcategory-add-row").classList.add("d-none");
+    });
+  };
+})();
+</script>

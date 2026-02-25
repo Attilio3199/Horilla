@@ -6,11 +6,90 @@ from django.db import models
 from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 from django.forms import ValidationError
+from django.utils import timezone
+from django.utils.text import slugify
 from django.utils.translation import gettext as _
 
 from base.horilla_company_manager import HorillaCompanyManager
 from employee.models import Employee
-from horilla.models import HorillaModel, upload_path
+from horilla.models import HorillaModel
+
+
+def document_upload_path(instance, filename):
+    """
+    Saves documents in a folder tree based on category/subcategory and
+    renames the file using the convention:
+        nomecognome_categoria_datainizio_datacaricamento.ext
+    """
+    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else "bin"
+
+    # ── Employee name ──────────────────────────────────────────────────────
+    employee = instance.employee_id  # ForeignKey → Employee object
+    if employee:
+        first = slugify(employee.employee_first_name or "")
+        last = slugify(employee.employee_last_name or "")
+        emp_name = f"{first}{last}" if (first or last) else "dipendente"
+    else:
+        emp_name = "dipendente"
+
+    # ── Category ───────────────────────────────────────────────────────────
+    category_name = instance.category.name if instance.category else "senza_categoria"
+    category_slug = slugify(category_name)
+
+    # ── Subcategory ────────────────────────────────────────────────────────
+    subcategory_name = instance.subcategory.name if instance.subcategory else None
+    subcategory_slug = slugify(subcategory_name) if subcategory_name else None
+
+    # ── Dates ──────────────────────────────────────────────────────────────
+    start = (
+        instance.start_date.strftime("%d%m%Y") if instance.start_date else "nodatainizio"
+    )
+    today = timezone.now().strftime("%d%m%Y")
+
+    # ── Final filename & folder ────────────────────────────────────────────
+    new_filename = f"{emp_name}_{category_slug}_{start}_{today}.{ext}"
+
+    if subcategory_slug:
+        folder = f"documents/{category_slug}/{subcategory_slug}"
+    else:
+        folder = f"documents/{category_slug}"
+
+    return f"{folder}/{new_filename}"
+
+
+class DocumentCategory(HorillaModel):
+    """Category for documents (e.g. Contratto, Documento identità)"""
+
+    name = models.CharField(max_length=200, unique=True, verbose_name=_("Category"))
+
+    class Meta:
+        verbose_name = _("Document Category")
+        verbose_name_plural = _("Document Categories")
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class DocumentSubCategory(HorillaModel):
+    """Sub-category for documents, filtered by parent category"""
+
+    name = models.CharField(max_length=200, verbose_name=_("Sub Category"))
+    category = models.ForeignKey(
+        DocumentCategory,
+        on_delete=models.CASCADE,
+        related_name="subcategories",
+        verbose_name=_("Category"),
+    )
+
+    class Meta:
+        verbose_name = _("Document Sub Category")
+        verbose_name_plural = _("Document Sub Categories")
+        ordering = ["name"]
+        unique_together = [["name", "category"]]
+
+    def __str__(self):
+        return self.name
 
 STATUS = [
     ("requested", _("Requested")),
@@ -56,10 +135,6 @@ class DocumentRequest(HorillaModel):
     )
 
     class Meta:
-        """
-        Meta class to add additional options
-        """
-
         verbose_name = _("Document Request")
         verbose_name_plural = _("Document Requests")
 
@@ -71,21 +146,34 @@ class DocumentRequest(HorillaModel):
 def document_request_m2m_changed(sender, instance, action, **kwargs):
     if action == "post_add":
         document_create(instance)
-
     elif action == "post_remove":
         document_create(instance)
 
 
 class Document(HorillaModel):
-    title = models.CharField(max_length=250)
+    title = models.CharField(max_length=250, blank=True, null=True)
+    category = models.ForeignKey(
+        DocumentCategory,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        verbose_name=_("Categoria"),
+    )
+    subcategory = models.ForeignKey(
+        DocumentSubCategory,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_("Sottocategoria"),
+    )
     employee_id = models.ForeignKey(
         Employee, on_delete=models.PROTECT, verbose_name=_("Employee")
     )
     document_request_id = models.ForeignKey(
-        DocumentRequest, on_delete=models.PROTECT, null=True
+        DocumentRequest, on_delete=models.PROTECT, null=True, blank=True
     )
     document = models.FileField(
-        upload_to=upload_path, null=True, verbose_name=_("Document")
+        upload_to=document_upload_path, null=True, blank=True, verbose_name=_("Document")
     )
     status = models.CharField(
         choices=STATUS, max_length=10, default="requested", verbose_name=_("Status")
@@ -93,10 +181,15 @@ class Document(HorillaModel):
     reject_reason = models.TextField(
         blank=True, null=True, max_length=255, verbose_name=_("Reject Reason")
     )
-    issue_date = models.DateField(null=True, blank=True, verbose_name=_("Issue Date"))
-    expiry_date = models.DateField(null=True, blank=True, verbose_name=_("Expiry Date"))
+    document_date = models.DateField(null=True, blank=True, verbose_name=_("Data Documento"))
+    start_date = models.DateField(null=True, blank=True, verbose_name=_("Data Inizio"))
+    expiry_date = models.DateField(null=True, blank=True, verbose_name=_("Data Fine"))
+    upload_date = models.DateTimeField(
+        null=True, blank=True, verbose_name=_("Data Caricamento")
+    )
+    notes = models.TextField(null=True, blank=True, verbose_name=_("Note"))
     notify_before = models.IntegerField(
-        default=1, null=True, verbose_name=_("Notify Before")
+        default=1, null=True, verbose_name=_("Notifica Prima (giorni)")
     )
     is_digital_asset = models.BooleanField(
         default=False, verbose_name=_("Is Digital Asset")
@@ -106,41 +199,41 @@ class Document(HorillaModel):
     )
 
     class Meta:
-        """
-        Meta class to add additional options
-        """
-
         verbose_name = _("Document")
         verbose_name_plural = _("Documents")
 
     def __str__(self) -> str:
-        return f"{self.title}"
+        if self.category:
+            return str(self.category)
+        return self.title or f"Document {self.pk}"
 
     def clean(self, *args, **kwargs):
         super().clean(*args, **kwargs)
         file = self.document
 
-        if len(self.title) < 3:
-            raise ValidationError({"title": _("Title must be at least 3 characters")})
-
         if file and self.document_request_id:
-            format = self.document_request_id.format
+            fmt = self.document_request_id.format
             max_size = self.document_request_id.max_size
             if max_size:
                 if file.size > max_size * 1024 * 1024:
                     raise ValidationError(
                         {"document": _("File size exceeds the limit")}
                     )
-
-            ext = file.name.split(".")[1].lower()
-            if format == "any":
-                pass
-            elif ext != format:
+            ext = file.name.split(".")[-1].lower()
+            if fmt != "any" and ext != fmt:
                 raise ValidationError(
-                    {"document": _("Please upload {} file only.").format(format)}
+                    {"document": _("Please upload {} file only.").format(fmt)}
                 )
 
     def save(self, *args, **kwargs):
+        # Auto-set title from category for backward compat
+        if not self.title and self.category:
+            self.title = str(self.category)
+
+        # Set upload_date when a document file is first attached
+        if self.document and not self.upload_date:
+            self.upload_date = timezone.now()
+
         super().save(*args, **kwargs)
         if self.is_digital_asset:
             if apps.is_installed("asset"):
@@ -149,9 +242,8 @@ class Document(HorillaModel):
                 asset_category = AssetCategory.objects.get_or_create(
                     asset_category_name="Digital Asset"
                 )
-
                 Asset.objects.create(
-                    asset_name=self.title,
+                    asset_name=self.title or str(self.category or "Document"),
                     asset_purchase_date=date.today(),
                     asset_category_id=asset_category[0],
                     asset_status="Not-Available",

@@ -71,6 +71,10 @@
         bottom: 450px;
     }
 
+    .inner-fabs.show .fab:nth-child(9) {
+        bottom: 500px;
+    }
+
     .inner-fabs.show + .fab i {
         transform: rotate(135deg);
     }
@@ -216,6 +220,19 @@
         </a>
     </div>
     {% endif %}
+    {% if "horilla_documents"|app_installed %}
+    <div id="fab10" class="fab round" data-tooltip="{% trans 'Upload Document' %}">
+        <a
+            class="text-light"
+            data-toggle="oh-modal-toggle"
+            data-target="#objectCreateModal"
+            hx-get="{% url 'document-create-quick' %}"
+            hx-target="#objectCreateModalTarget"
+        >
+            <i class="material-icons mt-2">upload_file</i>
+        </a>
+    </div>
+    {% endif %}
 </div>
 <div id="fab1" class="fab round" data-tooltip= "{% trans 'Quick Action' %}">
     <i id="fabIcon" class="material-icons">{% trans "add" %}</i>
@@ -242,6 +259,7 @@
                 "fab7",
                 "fab8",
                 "fab9",
+                "fab10",
                 "fabIcon",
             ];
             let isCloseButton =

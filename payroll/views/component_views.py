@@ -2269,3 +2269,176 @@ def payslip_detailed_export(request):
     wb.save(response)
 
     return response
+
+
+@login_required
+@hx_request_required
+@permission_required("payroll.add_payslip")
+def import_cedolini_modal(request):
+    """Restituisce il form di importazione cedolini PDF (modale)."""
+    return render(request, "payroll/payslip/import_cedolini_modal.html")
+
+
+@login_required
+@permission_required("payroll.add_payslip")
+def import_cedolini(request):
+    """
+    Riceve il file PDF caricato dall'utente, lo converte e lo inserisce nel DB.
+    Restituisce una risposta HTMX con il riepilogo.
+    """
+    import logging
+    import traceback
+    logger = logging.getLogger(__name__)
+
+    if request.method != "POST":
+        return HttpResponse(status=405)
+
+    pdf_file = request.FILES.get("pdf_file")
+    if not pdf_file:
+        return render(request, "payroll/payslip/import_cedolini_result.html",
+                      {"errore": _("Nessun file selezionato."), "successo": False,
+                       "inserite": 0, "aggiornate": 0, "saltate": 0, "errori": []})
+
+    if not pdf_file.name.lower().endswith(".pdf"):
+        return render(request, "payroll/payslip/import_cedolini_result.html",
+                      {"errore": _("Il file deve essere in formato PDF."), "successo": False,
+                       "inserite": 0, "aggiornate": 0, "saltate": 0, "errori": []})
+
+    logger.info(f"[import_cedolini] Avvio importazione: {pdf_file.name} ({pdf_file.size} bytes)")
+
+    try:
+        from payroll.services.txt_to_db import importa_pdf_cedolini
+        pdf_bytes = pdf_file.read()
+        logger.info(f"[import_cedolini] PDF letto, avvio parsing...")
+        result = importa_pdf_cedolini(pdf_bytes)
+        logger.info(f"[import_cedolini] Completato: {result.inserite} inserite, {result.aggiornate} aggiornate, errori: {result.errori}")
+        context = {
+            "inserite": result.inserite,
+            "aggiornate": result.aggiornate,
+            "saltate": result.saltate,
+            "errori": result.errori,
+            "log": result.log,
+            "successo": result.inserite + result.aggiornate > 0,
+        }
+    except Exception as exc:
+        tb = traceback.format_exc()
+        logger.error(f"[import_cedolini] ERRORE: {exc}\n{tb}")
+        context = {
+            "errore": str(exc),
+            "successo": False,
+            "inserite": 0,
+            "aggiornate": 0,
+            "saltate": 0,
+            "errori": [str(exc)],
+        }
+
+    return render(request, "payroll/payslip/import_cedolini_result.html", context)
+
+
+# ---------------------------------------------------------------------------
+# Cancellazione cedolini
+# ---------------------------------------------------------------------------
+
+MESI_CHOICES = [
+    ("GEN", "Gennaio"), ("FEB", "Febbraio"), ("MAR", "Marzo"),
+    ("APR", "Aprile"), ("MAG", "Maggio"), ("GIU", "Giugno"),
+    ("LUG", "Luglio"), ("AGO", "Agosto"), ("SET", "Settembre"),
+    ("OTT", "Ottobre"), ("NOV", "Novembre"), ("DIC", "Dicembre"),
+]
+
+
+@login_required
+@hx_request_required
+@permission_required("payroll.delete_payslip")
+def cancella_cedolini_modal(request):
+    """Restituisce il form di cancellazione cedolini (modale)."""
+    from payroll.models.buste_paga_models import BustaPaga
+
+    # anni disponibili nel DB
+    anni = list(
+        BustaPaga.objects.values_list("anno", flat=True)
+        .distinct()
+        .order_by("-anno")
+    )
+    # dipendenti distinti presenti nel DB buste paga
+    dipendenti_raw = (
+        BustaPaga.objects
+        .select_related("employee_id")
+        .values("matricola", "employee_id__employee_first_name", "employee_id__employee_last_name")
+        .distinct()
+        .order_by("matricola")
+    )
+    dipendenti = [
+        {
+            "matricola": d["matricola"],
+            "nome": (
+                f"{d['employee_id__employee_first_name'] or ''} "
+                f"{d['employee_id__employee_last_name'] or ''}".strip()
+                or d["matricola"]
+            ),
+        }
+        for d in dipendenti_raw
+    ]
+    context = {
+        "mesi": MESI_CHOICES,
+        "anni": anni,
+        "dipendenti": dipendenti,
+    }
+    return render(request, "payroll/payslip/cancella_cedolini_modal.html", context)
+
+
+@login_required
+@permission_required("payroll.delete_payslip")
+def cancella_cedolini(request):
+    """
+    Cancella le buste paga per mese+anno (tutti i dipendenti oppure uno solo).
+    """
+    import logging
+    logger = logging.getLogger(__name__)
+
+    if request.method != "POST":
+        return HttpResponse(status=405)
+
+    mese = request.POST.get("mese", "").strip().upper()
+    anno_str = request.POST.get("anno", "").strip()
+    matricola = request.POST.get("matricola", "").strip()
+
+    # validazione base
+    mesi_validi = [m[0] for m in MESI_CHOICES]
+    if mese not in mesi_validi:
+        return render(request, "payroll/payslip/cancella_cedolini_result.html",
+                      {"errore": _("Mese non valido."), "successo": False, "eliminati": 0})
+
+    try:
+        anno = int(anno_str)
+    except (ValueError, TypeError):
+        return render(request, "payroll/payslip/cancella_cedolini_result.html",
+                      {"errore": _("Anno non valido."), "successo": False, "eliminati": 0})
+
+    from payroll.models.buste_paga_models import BustaPaga
+
+    qs = BustaPaga.objects.filter(mese=mese, anno=anno)
+    if matricola:
+        qs = qs.filter(matricola=matricola)
+
+    count = qs.count()
+    if count == 0:
+        return render(request, "payroll/payslip/cancella_cedolini_result.html",
+                      {"successo": False, "eliminati": 0,
+                       "avviso": _("Nessuna busta paga trovata per i criteri selezionati.")})
+
+    logger.info(
+        f"[cancella_cedolini] Cancellazione {count} buste: mese={mese}, anno={anno}"
+        + (f", matricola={matricola}" if matricola else " (tutti i dipendenti)")
+    )
+    qs.delete()
+    logger.info(f"[cancella_cedolini] Eliminate {count} buste.")
+
+    context = {
+        "successo": True,
+        "eliminati": count,
+        "mese": mese,
+        "anno": anno,
+        "matricola": matricola or None,
+    }
+    return render(request, "payroll/payslip/cancella_cedolini_result.html", context)

@@ -51,7 +51,7 @@ msgid "Company"
 msgstr "Società"
 
 msgid "Shift"
-msgstr "Maiusc"
+msgstr "Turno"
 
 msgid "Tags"
 msgstr "Etichette"
@@ -1495,7 +1495,7 @@ msgid "Leave type is optional when 'minus leave' is 0"
 msgstr "Il tipo di congedo è facoltativo quando 'meno congedo' è 0"
 
 msgid "Penalty amount will affect payslip on the date"
-msgstr "La quantità di sanzione influenzerà il payyslip alla data"
+msgstr "La quantità di sanzione influenzerà il cedolino alla data"
 
 msgid "By default minus leave will cut/deduct from available leaves"
 msgstr "Per impostazione predefinita meno congedo taglierà/dedurre dalle foglie disponibili"
@@ -6083,7 +6083,7 @@ msgid "No notes have been added for this employee"
 msgstr "Nessuna nota è stata aggiunta per questo dipendente"
 
 msgid "No Payslips have been generated."
-msgstr "Nessun Payslips è stato generato."
+msgstr "Nessun Cedolino è stato generato."
 
 msgid "No feedbacks have been created."
 msgstr "Nessun feedback è stato creato."
@@ -8646,7 +8646,7 @@ msgid "Title of the allowance"
 msgstr "Titolo dell'indennità"
 
 msgid "The one-time allowance in which the allowance will apply to the payslips             if the date between the payslip period"
-msgstr "L'indennità una tantum in cui l'indennità si applicherà alle labbra paga se la data tra il periodo di payslip"
+msgstr "L'indennità una tantum in cui l'indennità si applicherà ai cedolini se la data tra il periodo del cedolino"
 
 msgid "Include all active employees"
 msgstr "Includi tutti i dipendenti attivi"
@@ -8757,7 +8757,7 @@ msgid "Title of the deduction"
 msgstr "Titolo della detrazione"
 
 msgid "The one-time deduction in which the deduction will apply to the payslips             if the date between the payslip period"
-msgstr "La deduzione una tantum in cui la deduzione si applicherà alle paghe se la data tra il periodo di payslip"
+msgstr "La deduzione una tantum in cui la deduzione si applicherà alle paghe se la data tra il periodo del cedolino"
 
 msgid "Target deduction to all active employees in the company"
 msgstr "Detrazione mirata a tutti i dipendenti attivi della società"
@@ -9024,10 +9024,10 @@ msgid "Contributions"
 msgstr "Contributi"
 
 msgid "Employee Payslips"
-msgstr "Pagamenti Dipendenti"
+msgstr "Cedolini Dipendenti"
 
 msgid "Total Payslips Genarated :"
-msgstr "Totale Payslips Genarated :"
+msgstr "Totale Cedolini Generati:"
 
 msgid "Total Amount :"
 msgstr "Importo Totale :"
@@ -9123,10 +9123,10 @@ msgid "Bulk Payslip"
 msgstr "Bulk Payslip"
 
 msgid "Create Payslip"
-msgstr "Crea Payslip"
+msgstr "Crea Cedolino"
 
 msgid "Payslip"
-msgstr "Payslip"
+msgstr "Cedolino"
 
 msgid "Mail Sent"
 msgstr "Posta Inviata"
@@ -9159,28 +9159,28 @@ msgid "Net Pay Greater or Equal"
 msgstr "Salario netto maggiore o uguale"
 
 msgid "Payslips"
-msgstr "Payslips"
+msgstr "Cedolini"
 
 msgid "Select All Payslips"
-msgstr "Seleziona Tutti I Payslips"
+msgstr "Seleziona Tutti I Cedolini"
 
 msgid "Unselect All Payslips"
-msgstr "Deseleziona Tutte Le Note"
+msgstr "Deseleziona Tutti i Cedolini"
 
 msgid "Export Payslips"
-msgstr "Esporta Payslips"
+msgstr "Esporta Cedolini"
 
 msgid "Do you want to send the payslip by mail?"
-msgstr "Vuoi inviare il payslip per posta?"
+msgstr "Vuoi inviare il cedolino per posta?"
 
 msgid "Send via mail"
 msgstr "Invia via mail"
 
 msgid "Are you sure you want to delete this payslip?"
-msgstr "Sei sicuro di voler eliminare questo payslip?"
+msgstr "Sei sicuro di voler eliminare questo cedolino?"
 
 msgid "payslips"
-msgstr "payslips"
+msgstr "cedolini"
 
 msgid "Select all users"
 msgstr "Seleziona tutti gli utenti"
@@ -9213,7 +9213,7 @@ msgid "Updated Basic Pay"
 msgstr "Pagamenti Di Base Aggiornati"
 
 msgid "The payslip is calculated based on the updated basic pay"
-msgstr "Il payyslip è calcolato sulla base della retribuzione di base aggiornata"
+msgstr "Il cedolino è calcolato sulla base della retribuzione di base aggiornata"
 
 msgid "taxable amount"
 msgstr "imponibile"
@@ -9261,10 +9261,10 @@ msgid "Gross Earnings - Total Deductions"
 msgstr "Utile Lordo - Detrazioni Totali"
 
 msgid "'s Payslip"
-msgstr "'s Payslip"
+msgstr "'s Cedolino"
 
 msgid "Payslip Period :"
-msgstr "Periodo Payslip :"
+msgstr "Periodo Cedolino :"
 
 msgid "Employee Net Pay :"
 msgstr "Dipendente Salario Netto :"

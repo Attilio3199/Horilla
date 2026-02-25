@@ -203,21 +203,56 @@
 
     var dutySelect = document.getElementById("id_duty_role_id");
     var hiddenNewDuty = document.getElementById("id_new_duty");
+
+    function askNewDutyName() {
+      if (!dutySelect || !hiddenNewDuty || dutySelect.value !== "create") {
+        return true;
+      }
+      if ((hiddenNewDuty.value || "").trim()) {
+        return true;
+      }
+
+      var dutyName = window.prompt("Inserisci la nuova mansione");
+      if (!dutyName || !dutyName.trim()) {
+        dutySelect.value = "";
+        hiddenNewDuty.value = "";
+        if (window.jQuery) {
+          $(dutySelect).trigger("change.select2");
+        }
+        return false;
+      }
+
+      hiddenNewDuty.value = dutyName.trim();
+      return true;
+    }
+
     if (dutySelect && hiddenNewDuty) {
       dutySelect.addEventListener("change", function () {
         if (dutySelect.value !== "create") {
           hiddenNewDuty.value = "";
           return;
         }
-
-        var dutyName = window.prompt("Inserisci la nuova mansione");
-        if (!dutyName || !dutyName.trim()) {
-          dutySelect.value = "";
-          hiddenNewDuty.value = "";
-          return;
-        }
-        hiddenNewDuty.value = dutyName.trim();
+        askNewDutyName();
       });
+
+      if (window.jQuery) {
+        $(document).on("select2:select", "#id_duty_role_id", function () {
+          if (dutySelect.value !== "create") {
+            hiddenNewDuty.value = "";
+            return;
+          }
+          askNewDutyName();
+        });
+      }
+
+      var dutyForm = dutySelect.closest('form');
+      if (dutyForm) {
+        dutyForm.addEventListener("submit", function (event) {
+          if (!askNewDutyName()) {
+            event.preventDefault();
+          }
+        });
+      }
     }
   });
 

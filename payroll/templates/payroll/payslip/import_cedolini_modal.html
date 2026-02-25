@@ -1,0 +1,188 @@
+{% load i18n %}
+<div class="oh-modal__content">
+  <div class="oh-modal__header">
+    <h3 class="oh-modal__title">{% trans "Importa Cedolini PDF" %}</h3>
+    <button type="button" class="oh-modal__close" data-toggle="oh-modal-toggle" data-target="#objectCreateModal">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+  </div>
+
+  <div class="oh-modal__body">
+
+    <!-- Form upload -->
+    <div id="importUploadArea">
+      <form
+        id="importCedoliniForm"
+        hx-post="{% url 'import-cedolini' %}"
+        hx-target="#importCedoliniResultArea"
+        hx-swap="innerHTML"
+        hx-encoding="multipart/form-data"
+        hx-on::before-request="importCedoliniBeforeRequest()"
+        hx-on::after-request="importCedoliniAfterRequest()"
+      >
+        {% csrf_token %}
+        <div class="oh-input-wrapper mb-2">
+          <label class="oh-label" for="pdf_file">
+            {% trans "Seleziona file PDF buste paga" %}
+            <span class="oh-asterisk">*</span>
+          </label>
+          <input
+            class="oh-input"
+            type="file"
+            id="pdf_file"
+            name="pdf_file"
+            accept=".pdf"
+            required
+            onchange="importCedoliniFileSelected(this)"
+          />
+          <small class="oh-helper-text text-muted">
+            {% trans "Il PDF può contenere più buste paga (una per pagina)." %}
+          </small>
+        </div>
+
+        <!-- Info file selezionato -->
+        <div id="importFileInfo" class="oh-alert oh-alert--info" style="display:none;">
+          <ion-icon name="document-outline"></ion-icon>
+          <span id="importFileName"></span>
+        </div>
+
+        <!-- Barra di caricamento (nascosta finché non si preme importa) -->
+        <div id="importProgressWrapper" style="display:none;" class="mt-3">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+            <ion-icon name="sync-outline" id="importSpinIcon" style="animation: spin 1s linear infinite; display:inline-block; flex-shrink:0;"></ion-icon>
+            <span style="font-size:0.85rem; color:#555; font-weight:500;" id="importStatusLabel">{% trans "Elaborazione PDF in corso…" %}</span>
+          </div>
+          <div style="background:#e9ecef; border-radius:4px; height:10px; overflow:hidden;">
+            <div id="importProgressBar"
+                 style="height:100%; width:0%; background:#2F5496; border-radius:4px;
+                        transition: width 0.4s ease;">
+            </div>
+          </div>
+
+          <!-- Log in tempo reale -->
+          <div id="importLogArea"
+               style="margin-top:10px; background:#f8f9fa; border:1px solid #dee2e6;
+                      border-radius:4px; padding:8px 10px; font-size:0.78rem;
+                      font-family: monospace; max-height:130px; overflow-y:auto;
+                      line-height:1.7;">
+          </div>
+        </div>
+
+        <div class="oh-modal__footer mt-3 d-flex" style="gap:8px;">
+          <button
+            type="submit"
+            class="oh-btn oh-btn--secondary oh-btn--shadow"
+            id="importSubmitBtn"
+            disabled
+          >
+            <ion-icon name="cloud-upload-outline"></ion-icon>
+            {% trans "Importa Cedolini" %}
+          </button>
+          <button
+            type="button"
+            class="oh-btn oh-btn--light"
+            data-toggle="oh-modal-toggle"
+            data-target="#objectCreateModal"
+          >
+            {% trans "Annulla" %}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Area risultato (popolata da HTMX dopo la risposta) -->
+    <div id="importCedoliniResultArea"></div>
+
+  </div>
+</div>
+
+<style>
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>
+
+<script>
+  var _importProgressInterval = null;
+  var _importLogTimers = [];
+
+  // Step del log simulato: [delay_ms, icona, messaggio, percentuale_barra, label_stato]
+  var IMPORT_LOG_STEPS = [
+    [0,    "⬆️", "Caricamento file sul server…",              5,  "Caricamento…"],
+    [600,  "📄", "Apertura PDF con PyMuPDF…",                15,  "Lettura PDF…"],
+    [1400, "🔍", "Scansione pagine e rilevamento layout…",    30,  "Scansione pagine…"],
+    [2400, "✂️", "Estrazione blocchi testo strutturati…",     48,  "Estrazione testo…"],
+    [3500, "🗂️", "Parsing intestazioni buste paga…",          60,  "Parsing buste…"],
+    [4500, "📊", "Decodifica voci, causali e sezioni AC…",    72,  "Decodifica voci…"],
+    [5600, "💾", "Inserimento dati nel database…",            84,  "Scrittura DB…"],
+    [6800, "🔗", "Collegamento dipendenti (codice_paghe)…",   90,  "Collegamento dipendenti…"],
+  ];
+
+  function _importLog(icon, msg, color) {
+    var area = document.getElementById("importLogArea");
+    if (!area) return;
+    var line = document.createElement("div");
+    var now = new Date();
+    var ts = now.toTimeString().slice(0,8);
+    line.style.color = color || "#333";
+    line.innerHTML = '<span style="color:#aaa;">[' + ts + ']</span> ' + icon + ' ' + msg;
+    area.appendChild(line);
+    area.scrollTop = area.scrollHeight;
+  }
+
+  function importCedoliniFileSelected(input) {
+    var btn = document.getElementById("importSubmitBtn");
+    var info = document.getElementById("importFileInfo");
+    var nameSpan = document.getElementById("importFileName");
+    if (input.files && input.files.length > 0) {
+      var f = input.files[0];
+      nameSpan.textContent = f.name + " (" + (f.size / 1024).toFixed(0) + " KB)";
+      info.style.display = "block";
+      btn.disabled = false;
+    } else {
+      btn.disabled = true;
+      info.style.display = "none";
+    }
+  }
+
+  function importCedoliniBeforeRequest() {
+    document.getElementById("importSubmitBtn").disabled = true;
+    document.getElementById("importProgressWrapper").style.display = "block";
+    document.getElementById("importUploadArea").querySelector("input[type=file]").disabled = true;
+
+    // pulisce log precedenti
+    var area = document.getElementById("importLogArea");
+    if (area) area.innerHTML = "";
+
+    var bar = document.getElementById("importProgressBar");
+    bar.style.width = "0%";
+
+    // schedula ogni step simulato
+    _importLogTimers.forEach(clearTimeout);
+    _importLogTimers = [];
+    IMPORT_LOG_STEPS.forEach(function(step) {
+      var t = setTimeout(function() {
+        bar.style.width = step[3] + "%";
+        document.getElementById("importStatusLabel").textContent = step[4];
+        _importLog(step[1], step[2]);
+      }, step[0]);
+      _importLogTimers.push(t);
+    });
+  }
+
+  function importCedoliniAfterRequest() {
+    _importLogTimers.forEach(clearTimeout);
+    _importLogTimers = [];
+
+    var bar = document.getElementById("importProgressBar");
+    bar.style.width = "100%";
+    document.getElementById("importStatusLabel").textContent = "Completato.";
+    _importLog("✅", "Risposta ricevuta dal server.", "#27ae60");
+
+    setTimeout(function() {
+      document.getElementById("importProgressWrapper").style.display = "none";
+      bar.style.width = "0%";
+      var fi = document.getElementById("importUploadArea").querySelector("input[type=file]");
+      if (fi) fi.disabled = false;
+    }, 800);
+  }
+</script>
+

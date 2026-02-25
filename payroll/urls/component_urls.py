@@ -87,6 +87,10 @@ urlpatterns = [
         name="view-individual-payslip",
     ),
     path("view-payslip/", component_views.view_payslip, name="view-payslip"),
+    path("import-cedolini/", component_views.import_cedolini, name="import-cedolini"),
+    path("import-cedolini-modal/", component_views.import_cedolini_modal, name="import-cedolini-modal"),
+    path("cancella-cedolini/", component_views.cancella_cedolini, name="cancella-cedolini"),
+    path("cancella-cedolini-modal/", component_views.cancella_cedolini_modal, name="cancella-cedolini-modal"),
     path(
         "hx-create-allowance",
         component_views.hx_create_allowance,

@@ -35,6 +35,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as trans
 
 from base.methods import eval_validate, reload_queryset
+from base.models import Company
 from employee.models import (
     Actiontype,
     BonusPoint,
@@ -504,10 +505,20 @@ class EmployeeWorkInformationForm(ModelForm):
                 self.fields[field_name].widget.attrs["class"] = "oh-select oh-select-2"
         self.fields["work_area_type"].widget.attrs["onchange"] = "toggleWorkAreaFieldsGlobal()"
 
+        # Se esiste una sola azienda, nasconde il campo e lo pre-compila automaticamente
+        _only_company = Company.objects.first() if Company.objects.count() == 1 else None
+        if _only_company and "company_id" in self.fields:
+            self.fields["company_id"].initial = _only_company
+            self.fields["company_id"].required = False
+            self.fields["company_id"].widget = forms.HiddenInput()
+
     def clean(self):
         cleaned_data = super().clean()
         if "employee_id" in self.errors:
             del self.errors["employee_id"]
+        _only_company = Company.objects.first() if Company.objects.count() == 1 else None
+        if _only_company:
+            cleaned_data["company_id"] = _only_company
         return cleaned_data
 
     def as_p(self, *args, **kwargs):
@@ -558,6 +569,13 @@ class EmployeeWorkInformationUpdateForm(ModelForm):
         self.fields["reporting_manager_id"].widget.attrs["class"] = "oh-select oh-select-2"
         self.fields["company_id"].widget.attrs["class"] = "oh-select oh-select-2"
         self.fields["work_area_type"].widget.attrs["onchange"] = "toggleWorkAreaFieldsGlobal()"
+
+        # Se esiste una sola azienda, nasconde il campo e lo pre-compila automaticamente
+        _only_company = Company.objects.first() if Company.objects.count() == 1 else None
+        if _only_company and "company_id" in self.fields:
+            self.fields["company_id"].initial = _only_company
+            self.fields["company_id"].required = False
+            self.fields["company_id"].widget = forms.HiddenInput()
 
     def as_p(self, *args, **kwargs):
         context = {"form": self}

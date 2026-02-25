@@ -1,0 +1,27 @@
+{% load i18n %}
+<div class="oh-modal__dialog-header pb-0">
+    <button class="oh-modal__close" aria-label="Close">
+        <ion-icon name="close-outline" role="img" class="md hydrated" aria-label="close outline"></ion-icon>
+    </button>
+</div>
+<div class="oh-modal__dialog-body">
+    <form id="add-form" hx-post="{% url 'document-create-quick' %}" hx-target="#objectCreateModalTarget" hx-encoding="multipart/form-data">
+        {% csrf_token %}
+        {% if is_admin %}
+        {# Campo dipendente visibile solo per admin #}
+        <div class="mb-3">
+            <label class="oh-label required-star" for="id_employee_id">{% trans "Dipendente" %}</label>
+            {{ form.employee_id }}
+        </div>
+        {% else %}
+            {{ form.employee_id }}
+        {% endif %}
+        {% include "tabs/htmx/document_form_fields.html" with form=form %}
+        {% if is_admin %}
+        <small class="text-success">
+            <i class="material-icons" style="font-size:14px;vertical-align:middle;">check_circle</i>
+            {% trans "The document will be automatically approved." %}
+        </small>
+        {% endif %}
+    </form>
+</div>

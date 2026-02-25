@@ -126,12 +126,19 @@ from horilla.horilla_settings import HORILLA_DATE_FORMATS
 from horilla.methods import get_horilla_model_class
 from horilla_audit.models import AccountBlockUnblock, HistoryTrackingFields
 from horilla_documents.forms import (
+    DocumentCategoryForm,
     DocumentForm,
     DocumentRejectForm,
     DocumentRequestForm,
+    DocumentSubCategoryForm,
     DocumentUpdateForm,
 )
-from horilla_documents.models import Document, DocumentRequest
+from horilla_documents.models import (
+    Document,
+    DocumentCategory,
+    DocumentRequest,
+    DocumentSubCategory,
+)
 from notifications.signals import notify
 
 
@@ -684,7 +691,10 @@ def document_create(request, emp_id):
     if request.method == "POST":
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            document = form.save()
+            if request.user.has_perm("horilla_documents.add_document"):
+                document.status = "approved"
+                document.save()
             messages.success(request, _("Document created successfully."))
             return HttpResponse("<script>window.location.reload();</script>")
 
@@ -693,6 +703,79 @@ def document_create(request, emp_id):
         "emp_id": emp_id,
     }
     return render(request, "tabs/htmx/document_create_form.html", context=context)
+
+
+@login_required
+@hx_request_required
+def document_create_quick(request):
+    """
+    Quick action view to create a document. Admins (users with add_document permission)
+    can select any employee; regular employees create a document for themselves.
+    The document is auto-approved when the user has the add_document permission.
+    """
+    employee = request.user.employee_get
+    is_admin = request.user.has_perm("horilla_documents.add_document")
+
+    form = DocumentForm(initial={"employee_id": employee, "expiry_date": None})
+    if is_admin:
+        form.fields["employee_id"].widget = Select(
+            attrs={"class": "oh-select oh-select-2 w-100"}
+        )
+        form.fields["employee_id"].widget.choices = form.fields["employee_id"].choices
+
+    if request.method == "POST":
+        form = DocumentForm(request.POST, request.FILES)
+        if is_admin:
+            form.fields["employee_id"].widget = Select(
+                attrs={"class": "oh-select oh-select-2 w-100"}
+            )
+            form.fields["employee_id"].widget.choices = form.fields["employee_id"].choices
+        if form.is_valid():
+            document = form.save()
+            if is_admin:
+                document.status = "approved"
+                document.save()
+            messages.success(request, _("Document created successfully."))
+            return HttpResponse("<script>window.location.reload();</script>")
+
+    context = {"form": form, "is_admin": is_admin}
+    return render(request, "tabs/htmx/document_quick_form.html", context=context)
+
+
+@login_required
+@permission_required("horilla_documents.add_documentcategory")
+def document_category_create(request):
+    """Inline create for DocumentCategory — called via AJAX from document forms."""
+    name = request.POST.get("name", "").strip()
+    if not name:
+        return JsonResponse({"error": _("Name is required")}, status=400)
+    cat, _ = DocumentCategory.objects.get_or_create(name=name)
+    return JsonResponse({"id": cat.id, "name": cat.name})
+
+
+@login_required
+@permission_required("horilla_documents.add_documentsubcategory")
+def document_subcategory_create(request):
+    """Inline create for DocumentSubCategory — called via AJAX from document forms."""
+    name = request.POST.get("name", "").strip()
+    category_id = request.POST.get("category_id", "").strip()
+    if not name or not category_id:
+        return JsonResponse({"error": _("Name and category are required")}, status=400)
+    cat = get_object_or_404(DocumentCategory, id=category_id)
+    subcat, _ = DocumentSubCategory.objects.get_or_create(name=name, category=cat)
+    return JsonResponse({"id": subcat.id, "name": subcat.name})
+
+
+@login_required
+def get_document_subcategories(request):
+    """Return JSON list of subcategories for a given category_id."""
+    category_id = request.GET.get("category_id")
+    if not category_id:
+        return JsonResponse({"subcategories": []})
+    subcats = list(
+        DocumentSubCategory.objects.filter(category_id=category_id).values("id", "name")
+    )
+    return JsonResponse({"subcategories": subcats})
 
 
 @login_required
