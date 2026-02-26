@@ -624,6 +624,12 @@ class VarzioneOraria(HorillaModel):
     dom = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True, default=0, verbose_name=_("Domenica")
     )
+    attachment = models.FileField(
+        upload_to="payroll/variazioni_orarie/",
+        null=True,
+        blank=True,
+        verbose_name=_("Allegato"),
+    )
     note = models.TextField(null=True, blank=True, max_length=255)
 
     objects = HorillaCompanyManager("employee_id__employee_work_info__company_id")

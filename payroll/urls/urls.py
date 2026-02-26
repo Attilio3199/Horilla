@@ -20,6 +20,11 @@ urlpatterns = [
         name="variazione-oraria-create",
     ),
     path(
+        "variazione-oraria-delete/<int:variazione_id>/",
+        views.variazione_oraria_delete,
+        name="variazione-oraria-delete",
+    ),
+    path(
         "update-contract/<int:contract_id>",
         views.contract_update,
         name="update-contract",

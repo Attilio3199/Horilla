@@ -49,6 +49,14 @@
         {{form.contract_name.errors}}
       </div>
 
+      <div class="col-12 col-md-6">
+        <div class="oh-label__info" for="id_attachment">
+          <label class="oh-label" for="id_attachment">{% trans "Allegato" %}</label>
+        </div>
+        {{ form.attachment|add_class:"form-control" }}
+        {{form.attachment.errors}}
+      </div>
+
       <!-- Data Inizio (readonly - informativo) -->
       <div class="col-12 col-md-6">
         <div class="oh-label__info" for="id_contract_start_date">

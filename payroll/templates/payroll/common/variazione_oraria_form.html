@@ -7,7 +7,21 @@
     <div class="oh-wrapper d-flex justify-content-center mt-4 mb-4">
         <form action="" class="oh-onboarding-card" method="post" enctype="multipart/form-data">
             {% csrf_token %}
+            {% if editing_variazione %}
+            <input type="hidden" name="variazione_id" value="{{ editing_variazione.id }}">
+            {% endif %}
             {{ form.as_p }}
+            {% if editing_variazione and editing_variazione.attachment %}
+            <div class="mt-2 mb-3">
+                <a href="{{ editing_variazione.attachment.url }}" target="_blank" class="oh-btn oh-btn--light-bkg">
+                    <ion-icon name="attach-outline" class="me-1"></ion-icon>{% trans "Visualizza allegato corrente" %}
+                </a>
+                <label class="ms-2" style="cursor:pointer;">
+                    <input type="checkbox" name="remove_attachment" value="1">
+                    {% trans "Rimuovi allegato" %}
+                </label>
+            </div>
+            {% endif %}
             {% if next_url %}
             <input type="hidden" name="next" value="{{ next_url }}">
             {% endif %}

@@ -178,12 +178,26 @@ def variazione_oraria_create(request, employee_id):
 
     employee = get_object_or_404(Employee, id=employee_id)
     next_url = request.GET.get("next") or request.POST.get("next")
+    if next_url and not url_has_allowed_host_and_scheme(
+        next_url, allowed_hosts={request.get_host()}
+    ):
+        next_url = None
     contracts = Contract.objects.filter(employee_id=employee)
+    variazione_id = request.GET.get("variazione_id") or request.POST.get("variazione_id")
+    editing_variazione = None
+    if variazione_id:
+        editing_variazione = get_object_or_404(
+            VarzioneOraria, id=variazione_id, employee_id=employee
+        )
 
     # Determina il contratto selezionato (default: quello attivo)
     selected_contract_id = request.GET.get("contract_id")
-    if selected_contract_id:
-        selected_contract = get_object_or_404(Contract, id=selected_contract_id, employee_id=employee)
+    if editing_variazione:
+        selected_contract = editing_variazione.contract
+    elif selected_contract_id:
+        selected_contract = get_object_or_404(
+            Contract, id=selected_contract_id, employee_id=employee
+        )
     else:
         selected_contract = (
             contracts.filter(contract_status="active").first() or contracts.first()
@@ -191,7 +205,10 @@ def variazione_oraria_create(request, employee_id):
 
     if request.method == "POST":
         contract_id_post = request.POST.get("contratto_selezionato")
-        selected_contract = get_object_or_404(Contract, id=contract_id_post, employee_id=employee)
+        selected_contract = get_object_or_404(
+            Contract, id=contract_id_post, employee_id=employee
+        )
+        original_contract_start_date = selected_contract.contract_start_date
         form = VarzioneOrariaForm(
             request.POST,
             request.FILES,
@@ -200,49 +217,90 @@ def variazione_oraria_create(request, employee_id):
             contracts=contracts,
         )
         if form.is_valid():
-            new_data_fine = form.cleaned_data.get("contract_end_date")
-            original_start = selected_contract.contract_start_date
+            attachment = form.cleaned_data.get("attachment")
+
+            if editing_variazione:
+                editing_variazione.contract = selected_contract
+                editing_variazione.contract_name = form.cleaned_data.get("contract_name")
+                editing_variazione.contract_start_date = form.cleaned_data.get("contract_start_date")
+                editing_variazione.contract_end_date = form.cleaned_data.get("contract_end_date")
+                editing_variazione.tipo_contratto = form.cleaned_data.get("tipo_contratto")
+                editing_variazione.lun = form.cleaned_data.get("lun")
+                editing_variazione.mar = form.cleaned_data.get("mar")
+                editing_variazione.mer = form.cleaned_data.get("mer")
+                editing_variazione.gio = form.cleaned_data.get("gio")
+                editing_variazione.ven = form.cleaned_data.get("ven")
+                editing_variazione.sab = form.cleaned_data.get("sab")
+                editing_variazione.dom = form.cleaned_data.get("dom")
+                if request.POST.get("remove_attachment") == "1":
+                    editing_variazione.attachment = None
+                if attachment:
+                    editing_variazione.attachment = attachment
+                editing_variazione.save()
+                messages.success(request, _("Variazione Oraria aggiornata con successo."))
+                if next_url:
+                    return redirect(next_url)
+                return redirect("employee-view-individual", obj_id=employee.id)
+
+            form_start_date = form.cleaned_data.get("contract_start_date")
+            form_end_date = form.cleaned_data.get("contract_end_date")
 
             # --- Snapshot storico: recupera il record più recente PRIMA della modifica ---
             historical = selected_contract.history.first()
-            if historical is not None:
-                VarzioneOraria.objects.create(
-                    contract=selected_contract,
-                    employee_id=employee,
-                    contract_name=historical.contract_name or "",
-                    contract_start_date=historical.contract_start_date,
-                    contract_end_date=(
-                        new_data_fine - timedelta(days=1) if new_data_fine else None
-                    ),
-                    wage_type=historical.wage_type or "monthly",
-                    pay_frequency=historical.pay_frequency,
-                    wage=historical.wage,
-                    contract_status=historical.contract_status or "draft",
-                    notice_period_in_days=historical.notice_period_in_days or 30,
-                    deduct_leave_from_basic_pay=historical.deduct_leave_from_basic_pay,
-                    calculate_daily_leave_amount=historical.calculate_daily_leave_amount,
-                    deduction_for_one_leave_amount=historical.deduction_for_one_leave_amount,
-                    tipo_contratto=historical.tipo_contratto,
-                    lun=historical.lun,
-                    mar=historical.mar,
-                    mer=historical.mer,
-                    gio=historical.gio,
-                    ven=historical.ven,
-                    sab=historical.sab,
-                    dom=historical.dom,
-                    note=historical.note,
-                    department_id=historical.department_id,
-                    job_position_id=historical.job_position_id,
-                    job_role_id=historical.job_role_id,
-                    shift_id=historical.shift_id,
-                    work_type_id=historical.work_type_id,
-                    filing_status_id=historical.filing_status_id,
-                )
+            snapshot_source = historical if historical is not None else selected_contract
+            VarzioneOraria.objects.create(
+                contract=selected_contract,
+                employee_id=employee,
+                contract_name=snapshot_source.contract_name or "",
+                contract_start_date=original_contract_start_date,
+                contract_end_date=(
+                    form_start_date - timedelta(days=1) if form_start_date else None
+                ),
+                wage_type=snapshot_source.wage_type or "monthly",
+                pay_frequency=snapshot_source.pay_frequency,
+                wage=snapshot_source.wage,
+                contract_status=snapshot_source.contract_status or "draft",
+                notice_period_in_days=snapshot_source.notice_period_in_days or 30,
+                deduct_leave_from_basic_pay=snapshot_source.deduct_leave_from_basic_pay,
+                calculate_daily_leave_amount=snapshot_source.calculate_daily_leave_amount,
+                deduction_for_one_leave_amount=snapshot_source.deduction_for_one_leave_amount,
+                tipo_contratto=snapshot_source.tipo_contratto,
+                lun=snapshot_source.lun,
+                mar=snapshot_source.mar,
+                mer=snapshot_source.mer,
+                gio=snapshot_source.gio,
+                ven=snapshot_source.ven,
+                sab=snapshot_source.sab,
+                dom=snapshot_source.dom,
+                attachment=attachment,
+                note=snapshot_source.note,
+                department_id=snapshot_source.department_id,
+                job_position_id=snapshot_source.job_position_id,
+                job_role_id=snapshot_source.job_role_id,
+                shift_id=snapshot_source.shift_id,
+                work_type_id=snapshot_source.work_type_id,
+                filing_status_id=snapshot_source.filing_status_id,
+            )
 
-            # --- Aggiorna il contratto preservando la Data Inizio ---
-            contract_obj = form.save(commit=False)
-            contract_obj.contract_start_date = original_start  # Ripristina Data Inizio
-            contract_obj.save()
+            # --- Aggiorna il contratto SOLO sui campi richiesti ---
+            selected_contract.lun = form.cleaned_data.get("lun")
+            selected_contract.mar = form.cleaned_data.get("mar")
+            selected_contract.mer = form.cleaned_data.get("mer")
+            selected_contract.gio = form.cleaned_data.get("gio")
+            selected_contract.ven = form.cleaned_data.get("ven")
+            selected_contract.sab = form.cleaned_data.get("sab")
+            selected_contract.dom = form.cleaned_data.get("dom")
+            selected_contract.contract_end_date = form_end_date
+            selected_contract.save(update_fields=[
+                "lun",
+                "mar",
+                "mer",
+                "gio",
+                "ven",
+                "sab",
+                "dom",
+                "contract_end_date",
+            ])
 
             messages.success(request, _("Variazione Oraria salvata con successo."))
             if next_url:
@@ -254,22 +312,74 @@ def variazione_oraria_create(request, employee_id):
         return render(
             request,
             "payroll/common/variazione_oraria_form.html",
-            {"form": form, "employee": employee, "selected_contract": selected_contract, "next_url": next_url},
+            {
+                "form": form,
+                "employee": employee,
+                "selected_contract": selected_contract,
+                "next_url": next_url,
+                "editing_variazione": editing_variazione,
+            },
         )
 
     # GET: pre-popola il form con il contratto selezionato
+    initial = {}
+    if editing_variazione:
+        initial = {
+            "contratto_selezionato": editing_variazione.contract_id,
+            "contract_name": editing_variazione.contract_name,
+            "contract_start_date": editing_variazione.contract_start_date,
+            "contract_end_date": editing_variazione.contract_end_date,
+            "tipo_contratto": editing_variazione.tipo_contratto,
+            "lun": editing_variazione.lun,
+            "mar": editing_variazione.mar,
+            "mer": editing_variazione.mer,
+            "gio": editing_variazione.gio,
+            "ven": editing_variazione.ven,
+            "sab": editing_variazione.sab,
+            "dom": editing_variazione.dom,
+        }
+
     form = VarzioneOrariaForm(
         instance=selected_contract,
         employee=employee,
         contracts=contracts,
+        initial=initial,
     )
     form.initial["contratto_selezionato"] = selected_contract.pk if selected_contract else None
 
     return render(
         request,
         "payroll/common/variazione_oraria_form.html",
-        {"form": form, "employee": employee, "selected_contract": selected_contract, "next_url": next_url},
+        {
+            "form": form,
+            "employee": employee,
+            "selected_contract": selected_contract,
+            "next_url": next_url,
+            "editing_variazione": editing_variazione,
+        },
     )
+
+
+@login_required
+@permission_required("payroll.change_contract")
+def variazione_oraria_delete(request, variazione_id):
+    if request.method != "POST":
+        return redirect("employee-view")
+
+    variazione = get_object_or_404(VarzioneOraria, id=variazione_id)
+    employee_id = variazione.employee_id_id
+    next_url = request.POST.get("next")
+    if next_url and not url_has_allowed_host_and_scheme(
+        next_url, allowed_hosts={request.get_host()}
+    ):
+        next_url = None
+
+    variazione.delete()
+    messages.success(request, _("Variazione Oraria eliminata con successo."))
+
+    if next_url:
+        return redirect(next_url)
+    return redirect("employee-view-individual", obj_id=employee_id)
 
 
 @login_required

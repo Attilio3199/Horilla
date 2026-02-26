@@ -1,4 +1,4 @@
-{% load i18n %} {% load static %}
+{% load i18n %} {% load static %} {% load employee_filter %}
 
 {# ── Sub-tab bar ─────────────────────────────────────────────────────────── #}
 <div style="border-bottom: 1px solid #dee2e6;">
@@ -8,6 +8,13 @@
                role="button"
                onclick="docSubTabSwitch(this, 'doc-panel-all')">
                 {% trans "Tutti" %}
+            </a>
+        </li>
+        <li class="oh-general__tab">
+            <a class="oh-general__tab-link"
+               role="button"
+               onclick="docSubTabSwitch(this, 'doc-panel-variazione')">
+                {% trans "Variazione Oraria" %}
             </a>
         </li>
         {% for cat in categories %}
@@ -162,6 +169,50 @@
                 <h5 class="oh-404__subtitle">{% trans "Nessun documento caricato." %}</h5>
             </div>
         </div>
+    {% endif %}
+</div>
+
+{# ── Panel: Variazione Oraria (sola visualizzazione) ─────────────────────── #}
+<div id="doc-panel-variazione" class="d-none p-3">
+    {% if variazioni_orarie %}
+    <div class="oh-sticky-table">
+        <div class="oh-sticky-table__table">
+            <div class="oh-sticky-table__thead">
+                <div class="oh-sticky-table__tr">
+                    <div class="oh-sticky-table__th" style="width: 62px; min-width: 62px;">{% trans "OreSett" %}</div>
+                    <div class="oh-sticky-table__th" style="width: 78px; min-width: 78px;">{% trans "Data Inizio" %}</div>
+                    <div class="oh-sticky-table__th" style="width: 78px; min-width: 78px;">{% trans "Data Fine" %}</div>
+                    <div class="oh-sticky-table__th" style="width: 110px; min-width: 110px;">{% trans "Contratto" %}</div>
+                    <div class="oh-sticky-table__th" style="width: 40px; min-width: 40px;">{% trans "Doc" %}</div>
+                </div>
+            </div>
+            <div class="oh-sticky-table__tbody">
+                {% for variazione in variazioni_orarie %}
+                <div class="oh-sticky-table__tr">
+                    <div class="oh-sticky-table__td" style="width: 62px; min-width: 62px; text-align: right; font-weight: bold;">
+                        {{ variazione.lun|add:variazione.mar|add:variazione.mer|add:variazione.gio|add:variazione.ven|add:variazione.sab|add:variazione.dom|italianfloat }}
+                    </div>
+                    <div class="oh-sticky-table__td" style="width: 78px; min-width: 78px;">{{ variazione.contract_start_date|date:"d/m/Y" }}</div>
+                    <div class="oh-sticky-table__td" style="width: 78px; min-width: 78px;">{% if variazione.contract_end_date %}{{ variazione.contract_end_date|date:"d/m/Y" }}{% else %}N/A{% endif %}</div>
+                    <div class="oh-sticky-table__td" style="width: 110px; min-width: 110px;">{{ variazione.contract.contract_name|default:"-" }}</div>
+                    <div class="oh-sticky-table__td" style="width: 40px; min-width: 40px; text-align: center;">
+                        {% if variazione.attachment %}
+                        <a href="{{ variazione.attachment.url }}" target="_blank" title="{% trans 'Visualizza documento' %}" style="display:block; width:100%; color: inherit; text-decoration: none;">
+                            <ion-icon name="document-attach-outline"></ion-icon>
+                        </a>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="d-flex justify-content-center align-items-center" style="height:25vh;">
+        <h5 class="oh-404__subtitle">{% trans "Nessuna variazione oraria registrata." %}</h5>
+    </div>
     {% endif %}
 </div>
 

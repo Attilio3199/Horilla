@@ -702,12 +702,22 @@ def document_tab(request, emp_id):
     categories = DocumentCategory.objects.filter(
         document__employee_id=emp_id
     ).distinct()
+    variazioni_orarie = []
+    if apps.is_installed("payroll"):
+        from payroll.models.models import VarzioneOraria
+
+        variazioni_orarie = list(
+            VarzioneOraria.objects.entire()
+            .filter(employee_id_id=emp_id)
+            .order_by("-contract_start_date")
+        )
 
     context = {
         "documents": documents,
         "form": form,
         "emp_id": emp_id,
         "categories": categories,
+        "variazioni_orarie": variazioni_orarie,
     }
     return render(request, "tabs/document_tab.html", context=context)
 

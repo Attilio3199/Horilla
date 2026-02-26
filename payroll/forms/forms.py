@@ -156,6 +156,7 @@ class VarzioneOrariaForm(ContractForm):
     """
 
     verbose_name = _("Variazione Oraria")
+    attachment = forms.FileField(label=_("Allegato"), required=False)
 
     contratto_selezionato = forms.ModelChoiceField(
         queryset=Contract.objects.none(),
@@ -186,6 +187,12 @@ class VarzioneOrariaForm(ContractForm):
             {
                 "onchange": "variazioneOrariaReload(this.value)",
                 "class": "oh-select",
+            }
+        )
+        self.fields["attachment"].widget.attrs.update(
+            {
+                "accept": ".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx",
+                "class": "form-control",
             }
         )
         # Porta contratto_selezionato in cima
