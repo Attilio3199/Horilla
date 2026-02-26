@@ -124,6 +124,15 @@
         {{form.contract_name.errors}}
       </div>
 
+      <!-- Documento Contratto (facoltativo) -->
+      <div class="col-12 col-md-6 mt-3">
+        <div class="oh-label__info" for="id_contract_document">
+          <label class="oh-label" for="id_contract_document">{% trans "Documento Contratto" %}</label>
+        </div>
+        {{ form.contract_document|add_class:"form-control" }}
+        {{form.contract_document.errors}}
+      </div>
+
       <!-- Hidden fields -->
       {% for field in form.hidden_fields %}
         {{ field }}

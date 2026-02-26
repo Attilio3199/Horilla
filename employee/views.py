@@ -439,7 +439,11 @@ def about_tab(request, obj_id, **kwargs):
     This method is used to view profile of an employee.
     """
     employee = Employee.objects.get(id=obj_id)
-    contracts = employee.contract_set.all() if apps.is_installed("payroll") else None
+    contracts = (
+        employee.contract_set.all().order_by("-contract_start_date")
+        if apps.is_installed("payroll")
+        else None
+    )
     variazioni_orarie = None
     if apps.is_installed("payroll"):
         from payroll.models.models import VarzioneOraria
@@ -703,13 +707,17 @@ def document_tab(request, emp_id):
         document__employee_id=emp_id
     ).distinct()
     variazioni_orarie = []
+    contratti = []
     if apps.is_installed("payroll"):
-        from payroll.models.models import VarzioneOraria
+        from payroll.models.models import Contract, VarzioneOraria
 
         variazioni_orarie = list(
             VarzioneOraria.objects.entire()
             .filter(employee_id_id=emp_id)
             .order_by("-contract_start_date")
+        )
+        contratti = list(
+            Contract.objects.filter(employee_id_id=emp_id).order_by("-contract_start_date")
         )
 
     context = {
@@ -718,6 +726,7 @@ def document_tab(request, emp_id):
         "emp_id": emp_id,
         "categories": categories,
         "variazioni_orarie": variazioni_orarie,
+        "contratti": contratti,
     }
     return render(request, "tabs/document_tab.html", context=context)
 

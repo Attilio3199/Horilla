@@ -28,6 +28,24 @@
         </form>
     </div>
     <script>
+        function formatDateDigits(value) {
+            const digits = (value || "").replace(/\D/g, "").slice(0, 8);
+            if (digits.length <= 2) return digits;
+            if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+            return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+        }
+
+        function enableDateAutoFormat(selector) {
+            const element = document.querySelector(selector);
+            if (!element) return;
+            element.addEventListener("input", function () {
+                this.value = formatDateDigits(this.value);
+            });
+            element.addEventListener("blur", function () {
+                this.value = formatDateDigits(this.value);
+            });
+        }
+
         function variazioneOrariaReload(contractId) {
             if (!contractId) return;
             var url = new URL(window.location.href);
@@ -36,6 +54,9 @@
         }
 
         $(document).ready(function () {
+            enableDateAutoFormat("#id_contract_start_date");
+            enableDateAutoFormat("#id_contract_end_date");
+
             // jQuery UI datepicker - stesso setup del form contratti originale
             if ($("#id_contract_start_date").length) {
                 $("#id_contract_start_date, #id_contract_end_date").datepicker({

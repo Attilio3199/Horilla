@@ -49,37 +49,51 @@
         {{form.contract_name.errors}}
       </div>
 
-      <div class="col-12 col-md-6">
-        <div class="oh-label__info" for="id_attachment">
-          <label class="oh-label" for="id_attachment">{% trans "Allegato" %}</label>
-        </div>
-        {{ form.attachment|add_class:"form-control" }}
-        {{form.attachment.errors}}
-      </div>
-
       <!-- Data Inizio (readonly - informativo) -->
       <div class="col-12 col-md-6">
         <div class="oh-label__info" for="id_contract_start_date">
           <label class="oh-label required-star" for="id_contract_start_date">
-            {% trans "Data Inizio" %}
+            {% if not editing_variazione %}
+              {% trans "Data Variazione" %}
+            {% else %}
+              {% trans "Data Inizio" %}
+            {% endif %}
+            {% if not editing_variazione %}
             <span class="badge bg-secondary ms-1" style="font-size: 0.7rem;">{% trans "verrà preservata" %}</span>
+            {% endif %}
           </label>
         </div>
         {{ form.contract_start_date|add_class:"form-control" }}
         {{form.contract_start_date.errors}}
+        {% if not editing_variazione %}
+        <small class="text-muted">{% trans "La Data Fine nella variazione contrattuale sarà il giorno precedente alla Data Inizio inserita" %}</small>
+        {% endif %}
       </div>
 
       <!-- Data Fine (nuova – determina la fine in VarzioneOraria) -->
       <div class="col-12 col-md-6">
         <div class="oh-label__info" for="id_contract_end_date">
           <label class="oh-label" for="id_contract_end_date">
-            {% trans "Data Fine" %}
+            {% if not editing_variazione %}
+              {% trans "Nuova Data Fine" %}
+            {% else %}
+              {% trans "Data Fine" %}
+            {% endif %}
+            {% if not editing_variazione %}
             <span class="badge bg-warning text-dark ms-1" style="font-size: 0.7rem;">{% trans "aggiornata" %}</span>
+            {% endif %}
           </label>
         </div>
         {{ form.contract_end_date|add_class:"form-control" }}
         {{form.contract_end_date.errors}}
-        <small class="text-muted">{% trans "La Variazione Oraria verrà registrata fino al giorno precedente questa data." %}</small>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="oh-label__info" for="id_attachment">
+          <label class="oh-label" for="id_attachment">{% trans "Allegato" %}</label>
+        </div>
+        {{ form.attachment|add_class:"form-control" }}
+        {{form.attachment.errors}}
       </div>
 
       <!-- Ore settimanali -->

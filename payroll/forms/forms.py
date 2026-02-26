@@ -59,6 +59,7 @@ class ContractForm(ModelForm):
             "tipo_contratto",
             "contract_start_date",
             "contract_end_date",
+            "contract_document",
             "lun",
             "mar",
             "mer",
@@ -204,7 +205,10 @@ class VarzioneOrariaForm(ContractForm):
         """
         Render del form tramite template personalizzato.
         """
-        context = {"form": self}
+        context = {
+            "form": self,
+            "editing_variazione": getattr(self, "editing_variazione", False),
+        }
         return render_to_string("variazione_oraria_contract_form.html", context)
 
 

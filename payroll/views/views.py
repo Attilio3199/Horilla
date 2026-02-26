@@ -143,10 +143,13 @@ def contract_update(request, contract_id, **kwargs):
     contract_form = ContractForm(instance=contract)
     if request.method == "POST":
         next_url = request.POST.get("next")
-        if next_url and not url_has_allowed_host_and_scheme(
-            next_url, allowed_hosts={request.get_host()}
-        ):
-            next_url = None
+        if next_url:
+            is_safe_relative = next_url.startswith("/") and not next_url.startswith("//")
+            is_safe_absolute = url_has_allowed_host_and_scheme(
+                next_url, allowed_hosts={request.get_host()}
+            )
+            if not (is_safe_relative or is_safe_absolute):
+                next_url = None
         contract_form = ContractForm(request.POST, request.FILES, instance=contract)
         if contract_form.is_valid():
             contract_form.save()
@@ -216,6 +219,7 @@ def variazione_oraria_create(request, employee_id):
             employee=employee,
             contracts=contracts,
         )
+        form.editing_variazione = bool(editing_variazione)
         if form.is_valid():
             attachment = form.cleaned_data.get("attachment")
 
@@ -345,6 +349,7 @@ def variazione_oraria_create(request, employee_id):
         contracts=contracts,
         initial=initial,
     )
+    form.editing_variazione = bool(editing_variazione)
     form.initial["contratto_selezionato"] = selected_contract.pk if selected_contract else None
 
     return render(

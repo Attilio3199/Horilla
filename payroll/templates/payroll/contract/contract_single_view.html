@@ -88,6 +88,18 @@
                     <span class="oh-timeoff-modal__stat-count">{{contract.get_tipo_contratto_display|default:"N/A"}}</span>
                 </div>
             </div>
+            <div class="oh-timeoff-modal__stats-container mt-3 mb-3">
+                <div class="oh-timeoff-modal__stat">
+                    <span class="oh-timeoff-modal__stat-title">{% trans "Documento Contratto" %}</span>
+                    <span class="oh-timeoff-modal__stat-count">
+                        {% if contract.contract_document %}
+                            <a href="{{ contract.contract_document.url }}" target="_blank">{% trans "Apri documento" %}</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
             
             <!-- Ore Settimanali -->
             <div class="mt-3 mb-2">
