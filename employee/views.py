@@ -440,6 +440,14 @@ def about_tab(request, obj_id, **kwargs):
     """
     employee = Employee.objects.get(id=obj_id)
     contracts = employee.contract_set.all() if apps.is_installed("payroll") else None
+    variazioni_orarie = None
+    if apps.is_installed("payroll"):
+        from payroll.models.models import VarzioneOraria
+        variazioni_orarie = list(
+            VarzioneOraria.objects.entire()
+            .filter(employee_id_id=employee.id)
+            .order_by("-contract_start_date")
+        )
     employee_leaves = (
         employee.available_leave.all() if apps.is_installed("leave") else None
     )
@@ -450,6 +458,7 @@ def about_tab(request, obj_id, **kwargs):
             "employee": employee,
             "employee_leaves": employee_leaves,
             "contracts": contracts,
+            "variazioni_orarie": variazioni_orarie,
         },
     )
 

@@ -1,0 +1,38 @@
+{% extends 'index.html' %}
+{% block content %}
+{% load static %}
+{% load i18n %}
+
+<div id="variazioneOrariaFormTarget">
+    <div class="oh-wrapper d-flex justify-content-center mt-4 mb-4">
+        <form action="" class="oh-onboarding-card" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% if next_url %}
+            <input type="hidden" name="next" value="{{ next_url }}">
+            {% endif %}
+        </form>
+    </div>
+    <script>
+        function variazioneOrariaReload(contractId) {
+            if (!contractId) return;
+            var url = new URL(window.location.href);
+            url.searchParams.set('contract_id', contractId);
+            window.location.href = url.toString();
+        }
+
+        $(document).ready(function () {
+            // jQuery UI datepicker - stesso setup del form contratti originale
+            if ($("#id_contract_start_date").length) {
+                $("#id_contract_start_date, #id_contract_end_date").datepicker({
+                    dateFormat: "dd/mm/yy",
+                    changeMonth: true,
+                    changeYear: true,
+                    showAnim: "fadeIn"
+                });
+            }
+        });
+    </script>
+</div>
+
+{% endblock %}

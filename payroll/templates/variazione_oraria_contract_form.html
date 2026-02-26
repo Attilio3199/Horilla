@@ -1,0 +1,156 @@
+{% load widget_tweaks %}
+{% load i18n %}
+
+<div class="oh-general__tab-target oh-profile-section" id="variazione-oraria">
+  <div class="oh-payslip__header">
+    <div class="oh-payslip__header-left">
+      <div class="oh-payroll__component-title">
+          {{ form.verbose_name }}
+      </div>
+    </div>
+  </div>
+  <div class="oh-profile-section__card">
+    <div class="row">
+      <div class="col-12">
+        {{form.non_field_errors}}
+      </div>
+
+      <!-- Seleziona Contratto -->
+      <div class="col-12 mb-3">
+        <div class="oh-label__info" for="id_contratto_selezionato">
+          <label class="oh-label required-star" for="id_contratto_selezionato">{% trans "Contratto da modificare" %}</label>
+        </div>
+        {{ form.contratto_selezionato|add_class:"form-control" }}
+        {{form.contratto_selezionato.errors}}
+        <small class="text-muted">{% trans "La Data Inizio del contratto selezionato rimarrà invariata." %}</small>
+      </div>
+
+      <!-- Employee (hidden) -->
+      {{ form.employee_id }}
+
+      <!-- Tipo Contratto -->
+      <div class="col-12 col-md-6">
+        <div class="oh-label__info" for="id_tipo_contratto">
+          <label class="oh-label" for="id_tipo_contratto">{% trans "Tipo Contratto" %}</label>
+        </div>
+        {{ form.tipo_contratto|add_class:"form-control" }}
+        {{form.tipo_contratto.errors}}
+      </div>
+
+      <!-- Colonna vuota per allineare tipo contratto left -->
+      <div class="col-12 col-md-6"></div>
+
+      <!-- Nota Contratto - full width per evitare overflow della textarea -->
+      <div class="col-12">
+        <div class="oh-label__info" for="id_contract_name">
+          <label class="oh-label" for="id_contract_name">{% trans "Nota Contratto" %}</label>
+        </div>
+        {{ form.contract_name|add_class:"form-control" }}
+        {{form.contract_name.errors}}
+      </div>
+
+      <!-- Data Inizio (readonly - informativo) -->
+      <div class="col-12 col-md-6">
+        <div class="oh-label__info" for="id_contract_start_date">
+          <label class="oh-label required-star" for="id_contract_start_date">
+            {% trans "Data Inizio" %}
+            <span class="badge bg-secondary ms-1" style="font-size: 0.7rem;">{% trans "verrà preservata" %}</span>
+          </label>
+        </div>
+        {{ form.contract_start_date|add_class:"form-control" }}
+        {{form.contract_start_date.errors}}
+      </div>
+
+      <!-- Data Fine (nuova – determina la fine in VarzioneOraria) -->
+      <div class="col-12 col-md-6">
+        <div class="oh-label__info" for="id_contract_end_date">
+          <label class="oh-label" for="id_contract_end_date">
+            {% trans "Data Fine" %}
+            <span class="badge bg-warning text-dark ms-1" style="font-size: 0.7rem;">{% trans "aggiornata" %}</span>
+          </label>
+        </div>
+        {{ form.contract_end_date|add_class:"form-control" }}
+        {{form.contract_end_date.errors}}
+        <small class="text-muted">{% trans "La Variazione Oraria verrà registrata fino al giorno precedente questa data." %}</small>
+      </div>
+
+      <!-- Ore settimanali -->
+      <div class="col-12">
+        <h6 class="mt-3 mb-2">{% trans "Nuove Ore Settimanali" %}</h6>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="oh-label__info" for="id_lun">
+          <label class="oh-label" for="id_lun">{% trans "Lunedì" %}</label>
+        </div>
+        {{ form.lun|add_class:"form-control" }}
+        {{form.lun.errors}}
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="oh-label__info" for="id_mar">
+          <label class="oh-label" for="id_mar">{% trans "Martedì" %}</label>
+        </div>
+        {{ form.mar|add_class:"form-control" }}
+        {{form.mar.errors}}
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="oh-label__info" for="id_mer">
+          <label class="oh-label" for="id_mer">{% trans "Mercoledì" %}</label>
+        </div>
+        {{ form.mer|add_class:"form-control" }}
+        {{form.mer.errors}}
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="oh-label__info" for="id_gio">
+          <label class="oh-label" for="id_gio">{% trans "Giovedì" %}</label>
+        </div>
+        {{ form.gio|add_class:"form-control" }}
+        {{form.gio.errors}}
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="oh-label__info" for="id_ven">
+          <label class="oh-label" for="id_ven">{% trans "Venerdì" %}</label>
+        </div>
+        {{ form.ven|add_class:"form-control" }}
+        {{form.ven.errors}}
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="oh-label__info" for="id_sab">
+          <label class="oh-label" for="id_sab">{% trans "Sabato" %}</label>
+        </div>
+        {{ form.sab|add_class:"form-control" }}
+        {{form.sab.errors}}
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="oh-label__info" for="id_dom">
+          <label class="oh-label" for="id_dom">{% trans "Domenica" %}</label>
+        </div>
+        {{ form.dom|add_class:"form-control" }}
+        {{form.dom.errors}}
+      </div>
+
+      <!-- Hidden fields -->
+      {% for field in form.hidden_fields %}
+        {% if field.name != "employee_id" %}
+          {{ field }}
+        {% endif %}
+      {% endfor %}
+
+    </div>
+
+    <div class="d-flex flex-row-reverse">
+      <button
+        type="submit"
+        class="oh-btn oh-btn--secondary mt-2 mr-0 pl-4 pr-5 oh-btn--w-100-resp"
+      >
+        {% trans "Salva Variazione Oraria" %}
+      </button>
+    </div>
+  </div>
+</div>

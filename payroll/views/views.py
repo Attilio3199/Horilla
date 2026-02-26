@@ -61,6 +61,7 @@ from payroll.models.models import (
     Reimbursement,
     ReimbursementFile,
     ReimbursementrequestComment,
+    VarzioneOraria,
 )
 from payroll.models.tax_models import PayrollSettings
 
@@ -160,6 +161,114 @@ def contract_update(request, contract_id, **kwargs):
             "form": contract_form,
             "next_url": next_url,
         },
+    )
+
+
+@login_required
+@permission_required("payroll.change_contract")
+def variazione_oraria_create(request, employee_id):
+    """
+    View per la Variazione Oraria di un contratto dipendente.
+
+    GET: mostra il form pre-compilato con il contratto attivo (o quello scelto tramite ?contract_id=X).
+    POST: crea un record VarzioneOraria (snapshot storico) e aggiorna il contratto
+          preservando la Data Inizio originale; aggiorna la Data Fine con il valore del form.
+    """
+    from payroll.forms.forms import VarzioneOrariaForm
+
+    employee = get_object_or_404(Employee, id=employee_id)
+    next_url = request.GET.get("next") or request.POST.get("next")
+    contracts = Contract.objects.filter(employee_id=employee)
+
+    # Determina il contratto selezionato (default: quello attivo)
+    selected_contract_id = request.GET.get("contract_id")
+    if selected_contract_id:
+        selected_contract = get_object_or_404(Contract, id=selected_contract_id, employee_id=employee)
+    else:
+        selected_contract = (
+            contracts.filter(contract_status="active").first() or contracts.first()
+        )
+
+    if request.method == "POST":
+        contract_id_post = request.POST.get("contratto_selezionato")
+        selected_contract = get_object_or_404(Contract, id=contract_id_post, employee_id=employee)
+        form = VarzioneOrariaForm(
+            request.POST,
+            request.FILES,
+            instance=selected_contract,
+            employee=employee,
+            contracts=contracts,
+        )
+        if form.is_valid():
+            new_data_fine = form.cleaned_data.get("contract_end_date")
+            original_start = selected_contract.contract_start_date
+
+            # --- Snapshot storico: recupera il record più recente PRIMA della modifica ---
+            historical = selected_contract.history.first()
+            if historical is not None:
+                VarzioneOraria.objects.create(
+                    contract=selected_contract,
+                    employee_id=employee,
+                    contract_name=historical.contract_name or "",
+                    contract_start_date=historical.contract_start_date,
+                    contract_end_date=(
+                        new_data_fine - timedelta(days=1) if new_data_fine else None
+                    ),
+                    wage_type=historical.wage_type or "monthly",
+                    pay_frequency=historical.pay_frequency,
+                    wage=historical.wage,
+                    contract_status=historical.contract_status or "draft",
+                    notice_period_in_days=historical.notice_period_in_days or 30,
+                    deduct_leave_from_basic_pay=historical.deduct_leave_from_basic_pay,
+                    calculate_daily_leave_amount=historical.calculate_daily_leave_amount,
+                    deduction_for_one_leave_amount=historical.deduction_for_one_leave_amount,
+                    tipo_contratto=historical.tipo_contratto,
+                    lun=historical.lun,
+                    mar=historical.mar,
+                    mer=historical.mer,
+                    gio=historical.gio,
+                    ven=historical.ven,
+                    sab=historical.sab,
+                    dom=historical.dom,
+                    note=historical.note,
+                    department_id=historical.department_id,
+                    job_position_id=historical.job_position_id,
+                    job_role_id=historical.job_role_id,
+                    shift_id=historical.shift_id,
+                    work_type_id=historical.work_type_id,
+                    filing_status_id=historical.filing_status_id,
+                )
+
+            # --- Aggiorna il contratto preservando la Data Inizio ---
+            contract_obj = form.save(commit=False)
+            contract_obj.contract_start_date = original_start  # Ripristina Data Inizio
+            contract_obj.save()
+
+            messages.success(request, _("Variazione Oraria salvata con successo."))
+            if next_url:
+                return redirect(next_url)
+            return redirect(contract_view)
+
+        # Form non valido: ri-mostra con errori
+        form.initial["contratto_selezionato"] = selected_contract.pk
+        return render(
+            request,
+            "payroll/common/variazione_oraria_form.html",
+            {"form": form, "employee": employee, "selected_contract": selected_contract, "next_url": next_url},
+        )
+
+    # GET: pre-popola il form con il contratto selezionato
+    form = VarzioneOrariaForm(
+        instance=selected_contract,
+        employee=employee,
+        contracts=contracts,
+    )
+    form.initial["contratto_selezionato"] = selected_contract.pk if selected_contract else None
+
+    return render(
+        request,
+        "payroll/common/variazione_oraria_form.html",
+        {"form": form, "employee": employee, "selected_contract": selected_contract, "next_url": next_url},
     )
 
 

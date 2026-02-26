@@ -147,6 +147,60 @@ class ContractForm(ModelForm):
         return f"/payroll/update-contract-status/{instance.pk}"
 
 
+class VarzioneOrariaForm(ContractForm):
+    """
+    Form per la Variazione Oraria di un contratto.
+    Identico a ContractForm ma aggiunge la selezione del contratto da modificare.
+    Il salvataggio preserva la Data Inizio originale e aggiorna la Data Fine.
+    Il contract_status non è modificabile tramite variazione oraria.
+    """
+
+    verbose_name = _("Variazione Oraria")
+
+    contratto_selezionato = forms.ModelChoiceField(
+        queryset=Contract.objects.none(),
+        label=_("Contratto da modificare"),
+        required=True,
+        empty_label=_("-- Seleziona Contratto --"),
+    )
+
+    def label_from_instance_contract(self, obj):
+        start = obj.contract_start_date.strftime("%d/%m/%Y") if obj.contract_start_date else "N/A"
+        end = obj.contract_end_date.strftime("%d/%m/%Y") if obj.contract_end_date else "N/A"
+        note = obj.contract_name or ""
+        return f"{note} - {start} - {end}" if note else f"{start} - {end}"
+
+    def __init__(self, *args, employee=None, contracts=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Imposta il queryset dei contratti dell'employee
+        if contracts is not None:
+            self.fields["contratto_selezionato"].queryset = contracts
+        # Formatta le date DD/MM/YYYY nel dropdown
+        self.fields["contratto_selezionato"].label_from_instance = self.label_from_instance_contract
+        # Nasconde employee_id (fisso tramite URL)
+        self.fields["employee_id"].widget = forms.HiddenInput()
+        # Rimuove contract_status: non va modificato tramite variazione oraria
+        self.fields.pop("contract_status", None)
+        # Ricarica il form al cambio del contratto selezionato
+        self.fields["contratto_selezionato"].widget.attrs.update(
+            {
+                "onchange": "variazioneOrariaReload(this.value)",
+                "class": "oh-select",
+            }
+        )
+        # Porta contratto_selezionato in cima
+        new_fields = {"contratto_selezionato": self.fields.pop("contratto_selezionato")}
+        new_fields.update(self.fields)
+        self.fields = new_fields
+
+    def as_p(self):
+        """
+        Render del form tramite template personalizzato.
+        """
+        context = {"form": self}
+        return render_to_string("variazione_oraria_contract_form.html", context)
+
+
 class ReimbursementRequestCommentForm(ModelForm):
     """
     ReimbursementRequestCommentForm form

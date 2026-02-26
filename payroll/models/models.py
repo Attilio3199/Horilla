@@ -458,6 +458,189 @@ class Contract(HorillaModel):
         unique_together = ["employee_id", "contract_start_date", "contract_end_date"]
 
 
+class VarzioneOraria(HorillaModel):
+    """
+    VarzioneOraria - Storico delle variazioni orarie dei contratti.
+    Snapshot del contratto PRIMA di una variazione oraria.
+    """
+
+    WAGE_CHOICES = [
+        ("daily", _("Daily")),
+        ("monthly", _("Monthly")),
+        ("hourly", _("Hourly")),
+    ]
+    PAY_FREQUENCY_CHOICES = (
+        ("weekly", _("Weekly")),
+        ("monthly", _("Monthly")),
+        ("semi_monthly", _("Semi-Monthly")),
+    )
+    CONTRACT_STATUS_CHOICES = (
+        ("draft", _("Draft")),
+        ("active", _("Active")),
+        ("expired", _("Expired")),
+        ("terminated", _("Terminated")),
+    )
+    TIPO_CONTRATTO_CHOICES = (
+        (1, _("Tirocinanti")),
+        (2, _("Apprendistato")),
+        (3, _("Determinato")),
+        (4, _("Indeterminato")),
+        (5, _("cocopro")),
+        (6, _("GI GROUP")),
+        (7, _("infojobmetis")),
+        (8, _("ranstad")),
+        (9, _("voucher")),
+    )
+
+    contract = models.ForeignKey(
+        Contract,
+        on_delete=models.CASCADE,
+        related_name="variazioni_orarie",
+        verbose_name=_("Contratto"),
+    )
+    employee_id = models.ForeignKey(
+        Employee,
+        on_delete=models.CASCADE,
+        related_name="variazioni_orarie",
+        verbose_name=_("Dipendente"),
+    )
+    # Snapshot di tutti i campi del contratto al momento della variazione
+    contract_name = models.CharField(
+        max_length=250, blank=True, verbose_name=_("Contract")
+    )
+    contract_start_date = models.DateField(verbose_name=_("Data Inizio"))
+    contract_end_date = models.DateField(
+        null=True, blank=True, verbose_name=_("Data Fine")
+    )
+    wage_type = models.CharField(
+        choices=WAGE_CHOICES,
+        max_length=250,
+        default="monthly",
+        verbose_name=_("Wage Type"),
+    )
+    pay_frequency = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        choices=PAY_FREQUENCY_CHOICES,
+        default="monthly",
+        verbose_name=_("Pay Frequency"),
+    )
+    wage = models.FloatField(verbose_name=_("Basic Salary"), null=True, default=0)
+    filing_status = models.ForeignKey(
+        FilingStatus,
+        on_delete=models.SET_NULL,
+        related_name="variazioni_orarie",
+        null=True,
+        blank=True,
+        verbose_name=_("Filing Status"),
+    )
+    contract_status = models.CharField(
+        choices=CONTRACT_STATUS_CHOICES,
+        max_length=250,
+        default="draft",
+        verbose_name=_("Status"),
+    )
+    department = models.ForeignKey(
+        Department,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="variazioni_orarie",
+        verbose_name=_("Department"),
+    )
+    job_position = models.ForeignKey(
+        JobPosition,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="variazioni_orarie",
+        verbose_name=_("Job Position"),
+    )
+    job_role = models.ForeignKey(
+        JobRole,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="variazioni_orarie",
+        verbose_name=_("Job Role"),
+    )
+    shift = models.ForeignKey(
+        EmployeeShift,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="variazioni_orarie",
+        verbose_name=_("Shift"),
+    )
+    work_type = models.ForeignKey(
+        WorkType,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="variazioni_orarie",
+        verbose_name=_("Work Type"),
+    )
+    notice_period_in_days = models.IntegerField(
+        default=30,
+        validators=[min_zero],
+        verbose_name=_("Notice Period"),
+    )
+    deduct_leave_from_basic_pay = models.BooleanField(
+        default=True,
+        verbose_name=_("Deduct From Basic Pay"),
+    )
+    calculate_daily_leave_amount = models.BooleanField(
+        default=True,
+        verbose_name=_("Calculate Daily Leave Amount"),
+    )
+    deduction_for_one_leave_amount = models.FloatField(
+        null=True, blank=True, default=0, verbose_name=_("Deduction For One Leave Amount")
+    )
+    tipo_contratto = models.IntegerField(
+        choices=TIPO_CONTRATTO_CHOICES,
+        null=True,
+        blank=True,
+        verbose_name=_("Tipo Contratto"),
+    )
+    lun = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True, default=0, verbose_name=_("Lunedì")
+    )
+    mar = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True, default=0, verbose_name=_("Martedì")
+    )
+    mer = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True, default=0, verbose_name=_("Mercoledì")
+    )
+    gio = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True, default=0, verbose_name=_("Giovedì")
+    )
+    ven = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True, default=0, verbose_name=_("Venerdì")
+    )
+    sab = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True, default=0, verbose_name=_("Sabato")
+    )
+    dom = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True, default=0, verbose_name=_("Domenica")
+    )
+    note = models.TextField(null=True, blank=True, max_length=255)
+
+    objects = HorillaCompanyManager("employee_id__employee_work_info__company_id")
+
+    def __str__(self):
+        return (
+            f"Variazione {self.contract.contract_name} - "
+            f"{self.contract_start_date} / {self.contract_end_date}"
+        )
+
+    class Meta:
+        db_table = "payroll_variazioneoraria"
+        ordering = ["-contract_start_date"]
+        verbose_name = _("Variazione Oraria")
+        verbose_name_plural = _("Variazioni Orarie")
+
+
 class WorkRecord(models.Model):
     """
     WorkRecord Model

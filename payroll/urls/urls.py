@@ -15,6 +15,11 @@ urlpatterns = [
     path("get-language-code/", views.get_language_code, name="get-language-code"),
     path("contract-create", views.contract_create, name="contract-create"),
     path(
+        "variazione-oraria/<int:employee_id>/",
+        views.variazione_oraria_create,
+        name="variazione-oraria-create",
+    ),
+    path(
         "update-contract/<int:contract_id>",
         views.contract_update,
         name="update-contract",

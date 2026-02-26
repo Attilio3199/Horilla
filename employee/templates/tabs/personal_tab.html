@@ -240,15 +240,52 @@
 				<div class="oh-card oh-card--margin">
 					<div class="oh-card__header d-flex justify-content-between align-items-center">
 						<span class="oh-card__title oh-card__title--sm fw-bold me-2">{% trans "Contract details" %}</span>
-						{% if perms.payroll.add_contract %}
-						<a href="{% url 'contract-create' %}?employee_id={{employee.id}}&next={% url 'employee-view-individual' employee.id %}" class="oh-btn oh-btn--info-outline">
-							<ion-icon name="add-outline"></ion-icon>
-							{% trans "Add Contract" %}
-						</a>
-						{% endif %}
+						<div class="d-flex gap-2">
+							{% if perms.payroll.add_contract %}
+							<a href="{% url 'contract-create' %}?employee_id={{employee.id}}&next={% url 'employee-view-individual' employee.id %}" class="oh-btn oh-btn--info-outline">
+								<ion-icon name="add-outline"></ion-icon>
+								{% trans "Add Contract" %}
+							</a>
+							{% endif %}
+							{% if perms.payroll.change_contract %}
+							<a href="{% url 'variazione-oraria-create' employee.id %}?next={% url 'employee-view-individual' employee.id %}" class="oh-btn oh-btn--warning-outline">
+								<ion-icon name="time-outline"></ion-icon>
+								{% trans "Variazione Oraria" %}
+							</a>
+							{% endif %}
+						</div>
 					</div>
-					<div class="oh-card__body mt-4">
-						{% include "tabs/contract-tab.html" %}
+					<div class="oh-card__body mt-2">
+						<style>
+							#contractDetailsTabs input[type="radio"] { display: none; }
+							#contractDetailsTabs .cdt-tabs { display: flex; gap: 0; border-bottom: 2px solid #eee; margin-bottom: 0; }
+							#contractDetailsTabs .cdt-tab-label {
+								padding: 10px 20px; cursor: pointer; font-weight: 600; color: #666;
+								border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s;
+							}
+							#contractDetailsTabs .cdt-tab-label:hover { color: #333; }
+							#contractDetailsTabs #cdt_radio_contratti:checked ~ .cdt-tabs .cdt-label-contratti,
+							#contractDetailsTabs #cdt_radio_variazione:checked ~ .cdt-tabs .cdt-label-variazione {
+								color: #333; border-bottom-color: #f59e0b;
+							}
+							#contractDetailsTabs .cdt-panel { display: none; padding-top: 8px; }
+							#contractDetailsTabs #cdt_radio_contratti:checked ~ #cdt_panel_contratti { display: block; }
+							#contractDetailsTabs #cdt_radio_variazione:checked ~ #cdt_panel_variazione { display: block; }
+						</style>
+						<div id="contractDetailsTabs">
+							<input type="radio" name="cdt_tab" id="cdt_radio_contratti" checked>
+							<input type="radio" name="cdt_tab" id="cdt_radio_variazione">
+							<div class="cdt-tabs">
+								<label class="cdt-tab-label cdt-label-contratti" for="cdt_radio_contratti">{% trans "Contratti" %}</label>
+								<label class="cdt-tab-label cdt-label-variazione" for="cdt_radio_variazione">{% trans "Variazione Oraria" %}</label>
+							</div>
+							<div class="cdt-panel" id="cdt_panel_contratti">
+								{% include "tabs/contract-tab.html" %}
+							</div>
+							<div class="cdt-panel" id="cdt_panel_variazione">
+								{% include "tabs/variazione-oraria-tab.html" %}
+							</div>
+						</div>
 					</div>
 				</div>
 			{% endif %}
