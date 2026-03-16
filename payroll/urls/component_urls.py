@@ -98,6 +98,16 @@ urlpatterns = [
         name="delete-payslip-presenze",
     ),
     path(
+        "presenze-by-lavoratore/",
+        component_views.presenze_by_lavoratore,
+        name="presenze-by-lavoratore",
+    ),
+    path(
+        "presenze-lavoratore-rows/",
+        component_views.presenze_lavoratore_rows,
+        name="presenze-lavoratore-rows",
+    ),
+    path(
         "hx-create-allowance",
         component_views.hx_create_allowance,
         name="hx-create-allowance",

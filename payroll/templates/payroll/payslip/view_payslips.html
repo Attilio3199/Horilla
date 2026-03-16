@@ -235,6 +235,8 @@
   </div>
 </section>
 
+{% include "payroll/payslip/presenze_summary_section.html" %}
+
 {% if payslips %} {% include "payroll/payslip/payslips_quick_filter.html" %}
 <div
   class="oh-checkpoint-badge mb-2"
@@ -523,4 +525,5 @@
   </div>
 </div>
 <script src="{% static 'payroll/action.js' %}"></script>
+
 {% endblock content %}

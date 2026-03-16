@@ -1004,6 +1004,8 @@ def view_payslip(request):
     """
     This method is used to render the template for viewing a payslip.
     """
+    from django.db.models import Count, Sum as DSum
+
     if request.user.has_perm("payroll.view_payslip"):
         payslips = Payslip.objects.all()
     else:
@@ -1019,6 +1021,18 @@ def view_payslip(request):
     previous_data = request.GET.urlencode()
     data_dict = parse_qs(previous_data)
     get_key_instances(Payslip, data_dict)
+
+    presenze_summary = (
+        PayslipPresenze.objects
+        .values("mese", "anno")
+        .annotate(
+            n_lavoratori=Count("matricola", distinct=True),
+            n_voci=Count("id"),
+            tot_ore=DSum("ore_tot"),
+        )
+        .order_by("-anno", "-mese")
+    )
+
     return render(
         request,
         "payroll/payslip/view_payslips.html",
@@ -1030,6 +1044,7 @@ def view_payslip(request):
             "bulk_form": bulk_form,
             "filter_dict": data_dict,
             "gp_fields": PayslipReGroup.fields,
+            "presenze_summary": presenze_summary,
         },
     )
 
@@ -2485,4 +2500,61 @@ def delete_payslip_presenze(request):
     )
     return redirect("view-payslip")
 
+
+@login_required
+def presenze_by_lavoratore(request):
+    """
+    HTMX partial: tabella dipendenti per un dato mese/anno.
+    """
+    from django.db.models import Count, Sum as DSum
+
+    try:
+        mese = int(request.GET.get("mese", 0))
+        anno = int(request.GET.get("anno", 0))
+    except (ValueError, TypeError):
+        return HttpResponse("")
+
+    search = request.GET.get("search", "").strip()
+    qs = PayslipPresenze.objects.filter(mese=mese, anno=anno)
+    if search:
+        qs = qs.filter(lavoratore__icontains=search)
+    rows = (
+        qs
+        .values("matricola", "lavoratore")
+        .annotate(
+            n_voci=Count("id"),
+            tot_ore=DSum("ore_tot"),
+            tot_gg=DSum("gg_tot"),
+        )
+        .order_by("lavoratore")
+    )
+    return render(request, "payroll/payslip/presenze_by_lavoratore.html", {
+        "rows": rows,
+        "mese": mese,
+        "anno": anno,
+        "search": search,
+    })
+
+
+@login_required
+def presenze_lavoratore_rows(request):
+    """
+    HTMX partial: tutte le colonne di un lavoratore per un dato mese/anno.
+    """
+    try:
+        mese = int(request.GET.get("mese", 0))
+        anno = int(request.GET.get("anno", 0))
+    except (ValueError, TypeError):
+        return HttpResponse("")
+
+    matricola = request.GET.get("matricola", "")
+    rows = PayslipPresenze.objects.filter(mese=mese, anno=anno, matricola=matricola).order_by("cod_voce")
+    return render(request, "payroll/payslip/presenze_lavoratore_rows.html", {
+        "rows": rows,
+        "mese": mese,
+        "anno": anno,
+        "matricola": matricola,
+        "lavoratore": rows.first().lavoratore if rows.exists() else matricola,
+        "days": list(range(1, 32)),
+    })
 
