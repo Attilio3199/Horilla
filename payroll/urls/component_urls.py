@@ -88,6 +88,16 @@ urlpatterns = [
     ),
     path("view-payslip/", component_views.view_payslip, name="view-payslip"),
     path(
+        "import-payslip-presenze/",
+        component_views.import_payslip_presenze,
+        name="import-payslip-presenze",
+    ),
+    path(
+        "delete-payslip-presenze/",
+        component_views.delete_payslip_presenze,
+        name="delete-payslip-presenze",
+    ),
+    path(
         "hx-create-allowance",
         component_views.hx_create_allowance,
         name="hx-create-allowance",

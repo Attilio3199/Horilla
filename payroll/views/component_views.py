@@ -81,6 +81,7 @@ from payroll.models.models import (
     Deduction,
     LoanAccount,
     Payslip,
+    PayslipPresenze,
     Reimbursement,
     ReimbursementMultipleAttachment,
 )
@@ -2269,5 +2270,219 @@ def payslip_detailed_export(request):
     wb.save(response)
 
     return response
+
+
+# ---------------------------------------------------------------------------
+# Importazione / Cancellazione Libro Presenze (payslip_presenze)
+# ---------------------------------------------------------------------------
+
+
+def _parse_float(value):
+    """Converte un valore stringa con separatore decimale virgola in float."""
+    if value is None:
+        return None
+    s = str(value).strip()
+    if s == "" or s == "nan":
+        return None
+    s = s.replace(".", "").replace(",", ".")
+    try:
+        return float(s)
+    except (ValueError, TypeError):
+        return None
+
+
+@login_required
+def import_payslip_presenze(request):
+    """
+    GET  – mostra il form per selezionare mese/anno e caricare il CSV.
+    POST – valida il file e importa i dati nella tabella payslip_presenze.
+    """
+    months = [
+        (1, "Gennaio"), (2, "Febbraio"), (3, "Marzo"), (4, "Aprile"),
+        (5, "Maggio"), (6, "Giugno"), (7, "Luglio"), (8, "Agosto"),
+        (9, "Settembre"), (10, "Ottobre"), (11, "Novembre"), (12, "Dicembre"),
+    ]
+    current_year = date.today().year
+
+    if request.method == "GET":
+        return render(request, "payroll/payslip/import_payslip_presenze.html",
+                      {"months": months, "current_year": current_year})
+
+    mese_str = request.POST.get("mese", "").strip()
+    anno_str = request.POST.get("anno", "").strip()
+    csv_file = request.FILES.get("file")
+
+    # --- validazione parametri base ---
+    if not mese_str or not anno_str:
+        messages.error(request, _("Selezionare mese e anno prima di importare."))
+        return render(request, "payroll/payslip/import_payslip_presenze.html",
+                      {"mese": mese_str, "anno": anno_str, "months": months, "current_year": current_year})
+
+    try:
+        mese = int(mese_str)
+        anno = int(anno_str)
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except ValueError:
+        messages.error(request, _("Mese o anno non validi."))
+        return render(request, "payroll/payslip/import_payslip_presenze.html",
+                      {"mese": mese_str, "anno": anno_str, "months": months, "current_year": current_year})
+
+    if not csv_file:
+        messages.error(request, _("Nessun file caricato."))
+        return render(request, "payroll/payslip/import_payslip_presenze.html",
+                      {"mese": mese, "anno": anno, "months": months, "current_year": current_year})
+
+    # --- lettura CSV ---
+    import csv as csv_module
+    import io
+    from datetime import datetime as dt_parse
+
+    try:
+        content = csv_file.read().decode("utf-8", errors="replace")
+        reader = csv_module.DictReader(io.StringIO(content), delimiter=";")
+        rows = list(reader)
+    except Exception as exc:
+        messages.error(request, _("Impossibile leggere il file CSV: {}").format(exc))
+        return render(request, "payroll/payslip/import_payslip_presenze.html",
+                      {"mese": mese, "anno": anno, "months": months, "current_year": current_year})
+
+    if not rows:
+        messages.error(request, _("Il file CSV è vuoto."))
+        return render(request, "payroll/payslip/import_payslip_presenze.html",
+                      {"mese": mese, "anno": anno, "months": months, "current_year": current_year})
+
+    # --- validazione mese/anno su tutte le righe ---
+    invalid_rows = []       # (n_riga, trovato_mese, trovato_anno)
+    found_combos = set()    # coppie mese/anno trovate nel file
+    for idx, row in enumerate(rows, start=2):  # riga 1 = header
+        try:
+            row_mese = int(str(row.get("mese", "")).strip())
+            row_anno = int(str(row.get("anno", "")).strip())
+        except (ValueError, TypeError):
+            invalid_rows.append((idx, "?", "?"))
+            continue
+        found_combos.add((row_mese, row_anno))
+        if row_mese != mese or row_anno != anno:
+            invalid_rows.append((idx, row_mese, row_anno))
+
+    if invalid_rows:
+        found_str = ", ".join(
+            f"{m:02d}/{a}" for m, a in sorted(found_combos) if (m, a) != (mese, anno)
+        )
+        rows_str = ", ".join(str(r[0]) for r in invalid_rows[:20])
+        suffix = f" ... e altre {len(invalid_rows) - 20}" if len(invalid_rows) > 20 else ""
+        messages.error(
+            request,
+            _(
+                "Hai selezionato {sel_mese:02d}/{sel_anno}, ma il file CSV contiene "
+                "righe con mese/anno: {found}. "
+                "Righe non conformi: {rows}{suffix}."
+            ).format(
+                sel_mese=mese,
+                sel_anno=anno,
+                found=found_str or "non leggibile",
+                rows=rows_str,
+                suffix=suffix,
+            ),
+        )
+        return render(request, "payroll/payslip/import_payslip_presenze.html",
+                      {"mese": mese, "anno": anno, "months": months, "current_year": current_year})
+
+    # --- importazione ---
+    day_fields = [str(i) for i in range(1, 32)]
+    objects_to_create = []
+
+    for row in rows:
+        # data_ass: dd/mm/yyyy -> yyyy-mm-dd
+        data_ass = None
+        raw_data_ass = str(row.get("data ass", "")).strip()
+        if raw_data_ass:
+            try:
+                data_ass = dt_parse.strptime(raw_data_ass, "%d/%m/%Y").date()
+            except ValueError:
+                try:
+                    data_ass = dt_parse.strptime(raw_data_ass, "%Y-%m-%d").date()
+                except ValueError:
+                    data_ass = None
+
+        day_values = {}
+        for i, col in enumerate(day_fields, start=1):
+            day_values[f"day_{i}"] = _parse_float(row.get(col))
+
+        mat = str(row.get("matricola", "")).strip()
+        mat_mese_anno = f"{mat}_{mese:02d}_{anno}" if mat else None
+
+        obj = PayslipPresenze(
+            dl=str(row.get("dl", "")).strip() or None,
+            fil=str(row.get("fil", "")).strip() or None,
+            cc=str(row.get("cc", "")).strip() or None,
+            rag_soc=str(row.get("rag.soc.", "")).strip() or None,
+            matricola=str(row.get("matricola", "")).strip() or None,
+            lavoratore=str(row.get("lavoratore", "")).strip() or None,
+            qp=str(row.get("qp", "")).strip() or None,
+            data_ass=data_ass,
+            livello=str(row.get("livello", "")).strip() or None,
+            desc_liv=str(row.get(" desc.liv.", "")).strip() or None,
+            pt=str(row.get("pt", "")).strip() or None,
+            perc_pt=_parse_float(row.get("%pt")),
+            perc_turn=_parse_float(row.get("%turn")),
+            mese=mese,
+            anno=anno,
+            matricola_mese_anno=mat_mese_anno,
+            cod_voce=str(row.get("cod.voce", "")).strip() or None,
+            desc_voce=str(row.get("desc.voce", "")).strip() or None,
+            aliq_voce=_parse_float(row.get("aliq.voce")),
+            ore_tot=_parse_float(row.get("ore tot")),
+            gg_tot=_parse_float(row.get("gg tot")),
+            periodo_elab=str(row.get("periodo elab.", "")).strip() or None,
+            **day_values,
+        )
+        objects_to_create.append(obj)
+
+    PayslipPresenze.objects.bulk_create(objects_to_create)
+    messages.success(
+        request,
+        _("Importate {} righe per {:02d}/{}.").format(len(objects_to_create), mese, anno),
+    )
+    return redirect("view-payslip")
+
+
+@login_required
+def delete_payslip_presenze(request):
+    """
+    POST – cancella tutte le righe di payslip_presenze per il mese/anno indicati.
+    GET  – mostra il form di conferma cancellazione.
+    """
+    months = [
+        (1, "Gennaio"), (2, "Febbraio"), (3, "Marzo"), (4, "Aprile"),
+        (5, "Maggio"), (6, "Giugno"), (7, "Luglio"), (8, "Agosto"),
+        (9, "Settembre"), (10, "Ottobre"), (11, "Novembre"), (12, "Dicembre"),
+    ]
+    current_year = date.today().year
+
+    if request.method == "GET":
+        return render(request, "payroll/payslip/delete_payslip_presenze.html",
+                      {"months": months, "current_year": current_year})
+
+    mese_str = request.POST.get("mese", "").strip()
+    anno_str = request.POST.get("anno", "").strip()
+
+    try:
+        mese = int(mese_str)
+        anno = int(anno_str)
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        messages.error(request, _("Mese o anno non validi."))
+        return render(request, "payroll/payslip/delete_payslip_presenze.html",
+                      {"mese": mese_str, "anno": anno_str, "months": months, "current_year": current_year})
+
+    deleted_count, _del = PayslipPresenze.objects.filter(mese=mese, anno=anno).delete()
+    messages.success(
+        request,
+        _("Eliminati {} record per {:02d}/{}.").format(deleted_count, mese, anno),
+    )
+    return redirect("view-payslip")
 
 

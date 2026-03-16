@@ -2192,3 +2192,77 @@ class PayslipAutoGenerate(models.Model):
 
     def __str__(self) -> str:
         return f"{self.generate_day} | {self.company_id} "
+
+
+class PayslipPresenze(models.Model):
+    """
+    Tabella che contiene i dati importati dal libro presenze (cedolini).
+    """
+
+    dl = models.CharField(max_length=20, blank=True, null=True)
+    fil = models.CharField(max_length=20, blank=True, null=True)
+    cc = models.CharField(max_length=20, blank=True, null=True)
+    rag_soc = models.CharField(max_length=100, blank=True, null=True, verbose_name=_("Ragione Sociale"))
+    matricola = models.CharField(max_length=20, blank=True, null=True)
+    lavoratore = models.CharField(max_length=100, blank=True, null=True)
+    qp = models.CharField(max_length=10, blank=True, null=True)
+    data_ass = models.DateField(blank=True, null=True, verbose_name=_("Data Assunzione"))
+    livello = models.CharField(max_length=10, blank=True, null=True)
+    desc_liv = models.CharField(max_length=50, blank=True, null=True, verbose_name=_("Descrizione Livello"))
+    pt = models.CharField(max_length=10, blank=True, null=True)
+    perc_pt = models.FloatField(blank=True, null=True, verbose_name=_("% PT"))
+    perc_turn = models.FloatField(blank=True, null=True, verbose_name=_("% Turn"))
+    mese = models.IntegerField(verbose_name=_("Mese"))
+    anno = models.IntegerField(verbose_name=_("Anno"))
+    matricola_mese_anno = models.CharField(
+        max_length=50, blank=True, null=True,
+        verbose_name=_("Matricola_Mese_Anno"),
+        help_text=_("Concatenazione di matricola_mese_anno")
+    )
+    cod_voce = models.CharField(max_length=20, blank=True, null=True, verbose_name=_("Codice Voce"))
+    desc_voce = models.CharField(max_length=100, blank=True, null=True, verbose_name=_("Descrizione Voce"))
+    aliq_voce = models.FloatField(blank=True, null=True, verbose_name=_("Aliquota Voce"))
+    day_1 = models.FloatField(blank=True, null=True)
+    day_2 = models.FloatField(blank=True, null=True)
+    day_3 = models.FloatField(blank=True, null=True)
+    day_4 = models.FloatField(blank=True, null=True)
+    day_5 = models.FloatField(blank=True, null=True)
+    day_6 = models.FloatField(blank=True, null=True)
+    day_7 = models.FloatField(blank=True, null=True)
+    day_8 = models.FloatField(blank=True, null=True)
+    day_9 = models.FloatField(blank=True, null=True)
+    day_10 = models.FloatField(blank=True, null=True)
+    day_11 = models.FloatField(blank=True, null=True)
+    day_12 = models.FloatField(blank=True, null=True)
+    day_13 = models.FloatField(blank=True, null=True)
+    day_14 = models.FloatField(blank=True, null=True)
+    day_15 = models.FloatField(blank=True, null=True)
+    day_16 = models.FloatField(blank=True, null=True)
+    day_17 = models.FloatField(blank=True, null=True)
+    day_18 = models.FloatField(blank=True, null=True)
+    day_19 = models.FloatField(blank=True, null=True)
+    day_20 = models.FloatField(blank=True, null=True)
+    day_21 = models.FloatField(blank=True, null=True)
+    day_22 = models.FloatField(blank=True, null=True)
+    day_23 = models.FloatField(blank=True, null=True)
+    day_24 = models.FloatField(blank=True, null=True)
+    day_25 = models.FloatField(blank=True, null=True)
+    day_26 = models.FloatField(blank=True, null=True)
+    day_27 = models.FloatField(blank=True, null=True)
+    day_28 = models.FloatField(blank=True, null=True)
+    day_29 = models.FloatField(blank=True, null=True)
+    day_30 = models.FloatField(blank=True, null=True)
+    day_31 = models.FloatField(blank=True, null=True)
+    ore_tot = models.FloatField(blank=True, null=True, verbose_name=_("Ore Totali"))
+    gg_tot = models.FloatField(blank=True, null=True, verbose_name=_("Giorni Totali"))
+    periodo_elab = models.CharField(max_length=20, blank=True, null=True, verbose_name=_("Periodo Elaborazione"))
+
+    objects = models.Manager()
+
+    class Meta:
+        db_table = "payslip_presenze"
+        verbose_name = _("Payslip Presenze")
+        verbose_name_plural = _("Payslip Presenze")
+
+    def __str__(self):
+        return f"{self.lavoratore} | {self.mese:02d}/{self.anno} | {self.cod_voce}"
