@@ -217,49 +217,6 @@
           </div>
         </div>
       {% endif %}
-      {% if perms.payroll.add_payslip %}
-      <div class="oh-btn-group ml-2">
-        <div>
-          <a
-            class="oh-btn oh-btn--secondary oh-btn--shadow"
-            data-toggle="oh-modal-toggle"
-            data-target="#objectCreateModal"
-            hx-get="{% url 'import-cedolini-modal' %}"
-            hx-target="#objectCreateModalTarget"
-          >
-            <ion-icon
-              class="md hydrated"
-              name="cloud-upload-outline"
-              role="img"
-              aria-label="import cedolini"
-            ></ion-icon
-            >{% trans "Importa Cedolini" %}</a
-          >
-        </div>
-      </div>
-      {% endif %}
-      {% if perms.payroll.delete_payslip %}
-      <div class="oh-btn-group ml-2">
-        <div>
-          <a
-            class="oh-btn oh-btn--light oh-btn--shadow"
-            style="color:#c0392b; border-color:#c0392b;"
-            data-toggle="oh-modal-toggle"
-            data-target="#objectCreateModal"
-            hx-get="{% url 'cancella-cedolini-modal' %}"
-            hx-target="#objectCreateModalTarget"
-          >
-            <ion-icon
-              class="md hydrated"
-              name="trash-outline"
-              role="img"
-              aria-label="cancella cedolini"
-            ></ion-icon
-            >{% trans "Cancella Cedolini" %}</a
-          >
-        </div>
-      </div>
-      {% endif %}
     </form>
   </div>
 </section>
