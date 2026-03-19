@@ -36,6 +36,7 @@
               <th class="text-center">{% trans "Voci" %}</th>
               <th class="text-center">{% trans "Ore Totali" %}</th>
               <th class="text-center">{% trans "Dettaglio" %}</th>
+              <th class="text-center">{% trans "Controllo" %}</th>
             </tr>
           </thead>
           <tbody>
@@ -56,8 +57,15 @@
                   <ion-icon name="people-outline" class="mr-1"></ion-icon>
                   {% trans "Dettaglio" %}
                 </button>
-              </td>
-            </tr>
+              </td>              <td class="text-center">
+                <a
+                  class="oh-btn oh-btn--warning oh-btn--sm"
+                  href="{% url 'controllo-cedolini' %}?mese={{ item.mese }}&anno={{ item.anno }}"
+                >
+                  <ion-icon name="git-compare-outline" class="mr-1"></ion-icon>
+                  {% trans "Controlla" %}
+                </a>
+              </td>            </tr>
             {% endfor %}
           </tbody>
         </table>
@@ -98,15 +106,39 @@ function closeAccordion(matricola) {
   if (rowEl) rowEl.style.display = 'none';
   var inner = document.getElementById('detail-' + matricola);
   if (inner) inner.innerHTML = '';
+  var btn = document.getElementById('btn-detail-' + matricola);
+  if (btn) {
+    btn.innerHTML = '<ion-icon name="chevron-down-outline" class="mr-1"></ion-icon> Vedi tutto';
+    btn.classList.remove('oh-btn--light');
+    btn.classList.add('oh-btn--secondary');
+  }
+}
+function togglePresenzaDetail(btn) {
+  var matricola = btn.dataset.matricola;
+  var rowEl = document.getElementById('detail-' + matricola + '-row');
+  var isOpen = rowEl && rowEl.style.display !== 'none';
+  if (isOpen) {
+    closeAccordion(matricola);
+  } else {
+    var url = btn.dataset.url + '?mese=' + btn.dataset.mese + '&anno=' + btn.dataset.anno + '&matricola=' + matricola;
+    htmx.ajax('GET', url, { target: '#detail-' + matricola, swap: 'innerHTML' });
+  }
 }
 document.body.addEventListener('htmx:afterSwap', function(evt) {
   var target = evt.detail.target;
   if (!target || !target.id) return;
-  if (target.id.startsWith('detail-')) {
-    var rowEl = document.getElementById(target.id + '-row');
+  if (target.id.startsWith('detail-') && !target.id.endsWith('-row')) {
+    var matricola = target.id.replace('detail-', '');
+    var rowEl = document.getElementById('detail-' + matricola + '-row');
     if (rowEl) {
       rowEl.style.display = '';
       rowEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    var btn = document.getElementById('btn-detail-' + matricola);
+    if (btn) {
+      btn.innerHTML = '<ion-icon name="close-outline" class="mr-1"></ion-icon> Chiudi';
+      btn.classList.remove('oh-btn--secondary');
+      btn.classList.add('oh-btn--light');
     }
   }
 });

@@ -108,6 +108,26 @@ urlpatterns = [
         name="presenze-lavoratore-rows",
     ),
     path(
+        "controllo-cedolini/",
+        component_views.controllo_cedolini,
+        name="controllo-cedolini",
+    ),
+    path(
+        "toggle-dizionario-attivo/<int:mapping_id>/",
+        component_views.toggle_dizionario_attivo,
+        name="toggle-dizionario-attivo",
+    ),
+    path(
+        "export-controllo-excel/",
+        component_views.export_controllo_excel,
+        name="export-controllo-excel",
+    ),
+    path(
+        "export-controllo-docx/",
+        component_views.export_controllo_docx,
+        name="export-controllo-docx",
+    ),
+    path(
         "hx-create-allowance",
         component_views.hx_create_allowance,
         name="hx-create-allowance",

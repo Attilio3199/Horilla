@@ -1,11 +1,6 @@
 {% load i18n %}
 {% if rows %}
 <div style="overflow-x: auto; overflow-y: visible; background:#f8f9fa; padding: 8px; width:100%;">
-  <div class="d-flex justify-content-end mb-1">
-    <button class="oh-btn oh-btn--light oh-btn--sm" onclick="closeAccordion('{{ matricola }}')">
-      <ion-icon name="close-outline" class="mr-1"></ion-icon>{% trans "Chiudi" %}
-    </button>
-  </div>
   <table class="oh-table table table-bordered table-sm mb-0" style="min-width: 2800px; font-size: 0.78rem;">
     <thead class="table-secondary">
       <tr>
@@ -23,7 +18,7 @@
         <th>{% trans "Cod. Voce" %}</th>
         <th>{% trans "Desc. Voce" %}</th>
         <th>{% trans "Aliq. Voce" %}</th>
-        {% for d in days %}<th class="text-center">{{ d }}</th>{% endfor %}
+        {% for d in days %}<th class="text-center" style="border-left: 2px solid #adb5bd; border-right: 2px solid #adb5bd; min-width:36px;">{{ d }}</th>{% endfor %}
         <th>{% trans "Ore Tot." %}</th>
         <th>{% trans "Gg Tot." %}</th>
         <th>{% trans "Periodo Elab." %}</th>
@@ -43,46 +38,46 @@
         <td>{{ r.livello|default:"" }}</td>
         <td>{{ r.desc_liv|default:"" }}</td>
         <td>{{ r.pt|default:"" }}</td>
-        <td>{{ r.perc_pt|default:"" }}</td>
-        <td>{{ r.perc_turn|default:"" }}</td>
+        <td>{{ r.perc_pt|floatformat:2 }}</td>
+        <td>{{ r.perc_turn|floatformat:2 }}</td>
         <td>{{ r.mese|stringformat:"02d" }}</td>
         <td>{{ r.anno }}</td>
         <td>{{ r.cod_voce|default:"" }}</td>
         <td>{{ r.desc_voce|default:"" }}</td>
-        <td>{{ r.aliq_voce|default:"" }}</td>
-        <td class="text-center">{{ r.day_1|default:"" }}</td>
-        <td class="text-center">{{ r.day_2|default:"" }}</td>
-        <td class="text-center">{{ r.day_3|default:"" }}</td>
-        <td class="text-center">{{ r.day_4|default:"" }}</td>
-        <td class="text-center">{{ r.day_5|default:"" }}</td>
-        <td class="text-center">{{ r.day_6|default:"" }}</td>
-        <td class="text-center">{{ r.day_7|default:"" }}</td>
-        <td class="text-center">{{ r.day_8|default:"" }}</td>
-        <td class="text-center">{{ r.day_9|default:"" }}</td>
-        <td class="text-center">{{ r.day_10|default:"" }}</td>
-        <td class="text-center">{{ r.day_11|default:"" }}</td>
-        <td class="text-center">{{ r.day_12|default:"" }}</td>
-        <td class="text-center">{{ r.day_13|default:"" }}</td>
-        <td class="text-center">{{ r.day_14|default:"" }}</td>
-        <td class="text-center">{{ r.day_15|default:"" }}</td>
-        <td class="text-center">{{ r.day_16|default:"" }}</td>
-        <td class="text-center">{{ r.day_17|default:"" }}</td>
-        <td class="text-center">{{ r.day_18|default:"" }}</td>
-        <td class="text-center">{{ r.day_19|default:"" }}</td>
-        <td class="text-center">{{ r.day_20|default:"" }}</td>
-        <td class="text-center">{{ r.day_21|default:"" }}</td>
-        <td class="text-center">{{ r.day_22|default:"" }}</td>
-        <td class="text-center">{{ r.day_23|default:"" }}</td>
-        <td class="text-center">{{ r.day_24|default:"" }}</td>
-        <td class="text-center">{{ r.day_25|default:"" }}</td>
-        <td class="text-center">{{ r.day_26|default:"" }}</td>
-        <td class="text-center">{{ r.day_27|default:"" }}</td>
-        <td class="text-center">{{ r.day_28|default:"" }}</td>
-        <td class="text-center">{{ r.day_29|default:"" }}</td>
-        <td class="text-center">{{ r.day_30|default:"" }}</td>
-        <td class="text-center">{{ r.day_31|default:"" }}</td>
-        <td class="text-center">{{ r.ore_tot|default:"" }}</td>
-        <td class="text-center">{{ r.gg_tot|default:"" }}</td>
+        <td>{{ r.aliq_voce|floatformat:2 }}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_1 %}<strong>{{ r.day_1|floatformat:2 }}</strong>{% else %}{{ r.day_1|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_2 %}<strong>{{ r.day_2|floatformat:2 }}</strong>{% else %}{{ r.day_2|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_3 %}<strong>{{ r.day_3|floatformat:2 }}</strong>{% else %}{{ r.day_3|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_4 %}<strong>{{ r.day_4|floatformat:2 }}</strong>{% else %}{{ r.day_4|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_5 %}<strong>{{ r.day_5|floatformat:2 }}</strong>{% else %}{{ r.day_5|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_6 %}<strong>{{ r.day_6|floatformat:2 }}</strong>{% else %}{{ r.day_6|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_7 %}<strong>{{ r.day_7|floatformat:2 }}</strong>{% else %}{{ r.day_7|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_8 %}<strong>{{ r.day_8|floatformat:2 }}</strong>{% else %}{{ r.day_8|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_9 %}<strong>{{ r.day_9|floatformat:2 }}</strong>{% else %}{{ r.day_9|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_10 %}<strong>{{ r.day_10|floatformat:2 }}</strong>{% else %}{{ r.day_10|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_11 %}<strong>{{ r.day_11|floatformat:2 }}</strong>{% else %}{{ r.day_11|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_12 %}<strong>{{ r.day_12|floatformat:2 }}</strong>{% else %}{{ r.day_12|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_13 %}<strong>{{ r.day_13|floatformat:2 }}</strong>{% else %}{{ r.day_13|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_14 %}<strong>{{ r.day_14|floatformat:2 }}</strong>{% else %}{{ r.day_14|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_15 %}<strong>{{ r.day_15|floatformat:2 }}</strong>{% else %}{{ r.day_15|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_16 %}<strong>{{ r.day_16|floatformat:2 }}</strong>{% else %}{{ r.day_16|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_17 %}<strong>{{ r.day_17|floatformat:2 }}</strong>{% else %}{{ r.day_17|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_18 %}<strong>{{ r.day_18|floatformat:2 }}</strong>{% else %}{{ r.day_18|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_19 %}<strong>{{ r.day_19|floatformat:2 }}</strong>{% else %}{{ r.day_19|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_20 %}<strong>{{ r.day_20|floatformat:2 }}</strong>{% else %}{{ r.day_20|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_21 %}<strong>{{ r.day_21|floatformat:2 }}</strong>{% else %}{{ r.day_21|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_22 %}<strong>{{ r.day_22|floatformat:2 }}</strong>{% else %}{{ r.day_22|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_23 %}<strong>{{ r.day_23|floatformat:2 }}</strong>{% else %}{{ r.day_23|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_24 %}<strong>{{ r.day_24|floatformat:2 }}</strong>{% else %}{{ r.day_24|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_25 %}<strong>{{ r.day_25|floatformat:2 }}</strong>{% else %}{{ r.day_25|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_26 %}<strong>{{ r.day_26|floatformat:2 }}</strong>{% else %}{{ r.day_26|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_27 %}<strong>{{ r.day_27|floatformat:2 }}</strong>{% else %}{{ r.day_27|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_28 %}<strong>{{ r.day_28|floatformat:2 }}</strong>{% else %}{{ r.day_28|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_29 %}<strong>{{ r.day_29|floatformat:2 }}</strong>{% else %}{{ r.day_29|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_30 %}<strong>{{ r.day_30|floatformat:2 }}</strong>{% else %}{{ r.day_30|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center" style="border-left:2px solid #adb5bd; border-right:2px solid #adb5bd;">{% if r.day_31 %}<strong>{{ r.day_31|floatformat:2 }}</strong>{% else %}{{ r.day_31|default_if_none:"" }}{% endif %}</td>
+        <td class="text-center">{{ r.ore_tot|floatformat:2 }}</td>
+        <td class="text-center">{{ r.gg_tot|floatformat:2 }}</td>
         <td>{{ r.periodo_elab|default:"" }}</td>
       </tr>
       {% endfor %}

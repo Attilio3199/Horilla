@@ -49,11 +49,13 @@
             <td class="text-center">{{ row.tot_gg|default:"-" }}</td>
             <td class="text-center">
               <button
+                id="btn-detail-{{ row.matricola }}"
                 class="oh-btn oh-btn--secondary oh-btn--sm"
-                hx-get="{% url 'presenze-lavoratore-rows' %}?mese={{ mese }}&anno={{ anno }}&matricola={{ row.matricola }}"
-                hx-target="#detail-{{ row.matricola }}"
-                hx-swap="innerHTML"
-                hx-indicator="#presenze-loading"
+                data-matricola="{{ row.matricola }}"
+                data-url="{% url 'presenze-lavoratore-rows' %}"
+                data-mese="{{ mese }}"
+                data-anno="{{ anno }}"
+                onclick="togglePresenzaDetail(this)"
               >
                 <ion-icon name="chevron-down-outline" class="mr-1"></ion-icon>
                 {% trans "Vedi tutto" %}

@@ -2210,8 +2210,8 @@ class PayslipPresenze(models.Model):
     livello = models.CharField(max_length=10, blank=True, null=True)
     desc_liv = models.CharField(max_length=50, blank=True, null=True, verbose_name=_("Descrizione Livello"))
     pt = models.CharField(max_length=10, blank=True, null=True)
-    perc_pt = models.FloatField(blank=True, null=True, verbose_name=_("% PT"))
-    perc_turn = models.FloatField(blank=True, null=True, verbose_name=_("% Turn"))
+    perc_pt = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, verbose_name=_("% PT"))
+    perc_turn = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, verbose_name=_("% Turn"))
     mese = models.IntegerField(verbose_name=_("Mese"))
     anno = models.IntegerField(verbose_name=_("Anno"))
     matricola_mese_anno = models.CharField(
@@ -2219,43 +2219,44 @@ class PayslipPresenze(models.Model):
         verbose_name=_("Matricola_Mese_Anno"),
         help_text=_("Concatenazione di matricola_mese_anno")
     )
-    cod_voce = models.CharField(max_length=20, blank=True, null=True, verbose_name=_("Codice Voce"))
+    cod_voce = models.IntegerField(blank=True, null=True, verbose_name=_("Codice Voce"))
     desc_voce = models.CharField(max_length=100, blank=True, null=True, verbose_name=_("Descrizione Voce"))
-    aliq_voce = models.FloatField(blank=True, null=True, verbose_name=_("Aliquota Voce"))
-    day_1 = models.FloatField(blank=True, null=True)
-    day_2 = models.FloatField(blank=True, null=True)
-    day_3 = models.FloatField(blank=True, null=True)
-    day_4 = models.FloatField(blank=True, null=True)
-    day_5 = models.FloatField(blank=True, null=True)
-    day_6 = models.FloatField(blank=True, null=True)
-    day_7 = models.FloatField(blank=True, null=True)
-    day_8 = models.FloatField(blank=True, null=True)
-    day_9 = models.FloatField(blank=True, null=True)
-    day_10 = models.FloatField(blank=True, null=True)
-    day_11 = models.FloatField(blank=True, null=True)
-    day_12 = models.FloatField(blank=True, null=True)
-    day_13 = models.FloatField(blank=True, null=True)
-    day_14 = models.FloatField(blank=True, null=True)
-    day_15 = models.FloatField(blank=True, null=True)
-    day_16 = models.FloatField(blank=True, null=True)
-    day_17 = models.FloatField(blank=True, null=True)
-    day_18 = models.FloatField(blank=True, null=True)
-    day_19 = models.FloatField(blank=True, null=True)
-    day_20 = models.FloatField(blank=True, null=True)
-    day_21 = models.FloatField(blank=True, null=True)
-    day_22 = models.FloatField(blank=True, null=True)
-    day_23 = models.FloatField(blank=True, null=True)
-    day_24 = models.FloatField(blank=True, null=True)
-    day_25 = models.FloatField(blank=True, null=True)
-    day_26 = models.FloatField(blank=True, null=True)
-    day_27 = models.FloatField(blank=True, null=True)
-    day_28 = models.FloatField(blank=True, null=True)
-    day_29 = models.FloatField(blank=True, null=True)
-    day_30 = models.FloatField(blank=True, null=True)
-    day_31 = models.FloatField(blank=True, null=True)
-    ore_tot = models.FloatField(blank=True, null=True, verbose_name=_("Ore Totali"))
-    gg_tot = models.FloatField(blank=True, null=True, verbose_name=_("Giorni Totali"))
+    aliq_voce = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True, verbose_name=_("Aliquota Voce"))
+    day_1 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_2 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_3 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_4 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_5 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_6 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_7 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_8 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_9 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_10 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_11 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_12 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_13 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_14 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_15 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_16 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_17 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_18 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_19 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_20 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_21 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_22 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_23 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_24 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_25 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_26 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_27 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_28 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_29 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_30 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    day_31 = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
+    ore_tot = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True, verbose_name=_("Ore Totali"))
+    gg_tot = models.DecimalField(max_digits=6, decimal_places=4, blank=True, null=True, verbose_name=_("Giorni Totali"))
     periodo_elab = models.CharField(max_length=20, blank=True, null=True, verbose_name=_("Periodo Elaborazione"))
+    cod_dip = models.CharField(max_length=50, blank=True, null=True, verbose_name=_("Codice Dipendente"))
 
     objects = models.Manager()
 
@@ -2266,3 +2267,114 @@ class PayslipPresenze(models.Model):
 
     def __str__(self):
         return f"{self.lavoratore} | {self.mese:02d}/{self.anno} | {self.cod_voce}"
+
+
+class PayslipDizionario(models.Model):
+    """
+    Dizionario di mappatura tra:
+      - orari.turni_creati.CODICE_TIPO_ORARIO
+      - horilla_main.payslip_presenze.cod_voce
+
+    Specifica inoltre se il confronto deve usare gli orari consuntivi
+    (Ora_Cons_Inizio / Ora_Cons_Fine) o preventivi (Ora_Prev_Inizio / Ora_Prev_Fine),
+    e se la verifica per quella voce è attiva.
+    """
+
+    ORA_CONS = "consuntivo"
+    ORA_PREV = "previsionale"
+    TIPO_ORA_CHOICES = [
+        (ORA_CONS, _("Consuntivo (Ora_Cons_Inizio / Ora_Cons_Fine)")),
+        (ORA_PREV, _("Previsionale (Ora_Prev_Inizio / Ora_Prev_Fine)")),
+    ]
+
+    codice_tipo_orario = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name=_("CODICE_TIPO_ORARIO (turni_creati)"),
+        help_text=_("Valore del campo CODICE_TIPO_ORARIO in orari.turni_creati"),
+    )
+    cod_voce = models.CharField(
+        max_length=4,
+        blank=True,
+        null=True,
+        verbose_name=_("Codice Voce (payslip_presenze)"),
+        help_text=_("Valore del campo cod_voce in payslip_presenze da confrontare (4 cifre con zero padding, es. 0300)"),
+    )
+    tipo_ora = models.CharField(
+        max_length=20,
+        choices=TIPO_ORA_CHOICES,
+        default=ORA_CONS,
+        verbose_name=_("Tipo orario da usare"),
+        help_text=_("Indica se usare gli orari consuntivi o preventivi per il calcolo"),
+    )
+    attivo = models.BooleanField(
+        default=False,
+        verbose_name=_("Verifica attiva"),
+        help_text=_("Se disabilitato, questa voce viene ignorata nel controllo incrociato"),
+    )
+    note = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name=_("Note"),
+    )
+
+    objects = models.Manager()
+
+    class Meta:
+        db_table = "payslip_dizionario"
+        verbose_name = _("Dizionario Presenze ↔ Orari")
+        verbose_name_plural = _("Dizionario Presenze ↔ Orari")
+        ordering = ["codice_tipo_orario"]
+
+    def __str__(self):
+        stato = "✓" if self.attivo else "✗"
+        cod = self.cod_voce if self.cod_voce is not None else "—"
+        return f"[{stato}] {self.codice_tipo_orario} → cod_voce {cod} ({self.tipo_ora})"
+
+
+class PayslipCorpo(models.Model):
+    """
+    Corpo della busta paga importato da CSV.
+    Ogni riga rappresenta una voce (cod_voce) di una busta paga.
+    """
+
+    mese = models.IntegerField(verbose_name=_("Mese"))
+    anno = models.IntegerField(verbose_name=_("Anno"))
+
+    codice_dl = models.CharField(max_length=20, verbose_name=_("Codice DL"))
+    denominazione = models.CharField(max_length=100, verbose_name=_("Denominazione"))
+    filiale = models.CharField(max_length=20, blank=True, null=True, verbose_name=_("Filiale"))
+    c_costo = models.IntegerField(blank=True, null=True, verbose_name=_("C.Costo"))
+    reparto = models.IntegerField(blank=True, null=True, verbose_name=_("Reparto"))
+    matricola = models.CharField(max_length=20, verbose_name=_("Matricola"))
+    cognome = models.CharField(max_length=100, verbose_name=_("Cognome"))
+    nome = models.CharField(max_length=100, verbose_name=_("Nome"))
+    qp = models.CharField(max_length=10, blank=True, null=True, verbose_name=_("QP"))
+
+    assunzione = models.DateField(blank=True, null=True, verbose_name=_("Data assunzione"))
+    anzianita = models.DateField(blank=True, null=True, verbose_name=_("Data anzianità"))
+    cod_pos = models.IntegerField(blank=True, null=True, verbose_name=_("Cod. posizione"))
+    data_pos = models.DateField(blank=True, null=True, verbose_name=_("Data posizione"))
+    liq = models.CharField(max_length=20, blank=True, null=True, verbose_name=_("Liquidazione"))
+
+    cod_voce = models.IntegerField(verbose_name=_("Cod. voce"))
+    descrizione_voce = models.CharField(max_length=100, verbose_name=_("Descrizione voce"))
+
+    aliq_perc_lav = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True, verbose_name=_("Aliq./%lav."))
+    unita = models.DecimalField(max_digits=10, decimal_places=4, blank=True, null=True, verbose_name=_("h/g/n /%d.l."))
+    dato_base_imponibile = models.DecimalField(max_digits=15, decimal_places=4, blank=True, null=True, verbose_name=_("Dato base/imponibile"))
+    importo_ctr_lav = models.DecimalField(max_digits=15, decimal_places=4, blank=True, null=True, verbose_name=_("Importo/ctr lav"))
+    db_tfr = models.DecimalField(max_digits=15, decimal_places=4, blank=True, null=True, verbose_name=_("D.B. TFR"))
+    imp_tfr_ctr_dl = models.DecimalField(max_digits=15, decimal_places=4, blank=True, null=True, verbose_name=_("Imp. TFR/ctr.dl"))
+
+    objects = models.Manager()
+
+    class Meta:
+        db_table = "payslip_corpo"
+        verbose_name = _("Corpo busta paga")
+        verbose_name_plural = _("Corpo buste paga")
+        ordering = ["anno", "mese", "matricola", "cod_voce"]
+
+    def __str__(self):
+        return f"{self.matricola} {self.cognome} {self.nome} – {self.mese}/{self.anno} – voce {self.cod_voce}"

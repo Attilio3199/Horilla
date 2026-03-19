@@ -16,7 +16,7 @@ from django.apps import apps
 from django.contrib import messages
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, QueryDict
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
@@ -81,6 +81,7 @@ from payroll.models.models import (
     Deduction,
     LoanAccount,
     Payslip,
+    PayslipDizionario,
     PayslipPresenze,
     Reimbursement,
     ReimbursementMultipleAttachment,
@@ -2428,6 +2429,13 @@ def import_payslip_presenze(request):
         mat = str(row.get("matricola", "")).strip()
         mat_mese_anno = f"{mat}_{mese:02d}_{anno}" if mat else None
 
+        # Ricava badge_id dall'anagrafica dipendenti tramite codice_paghe == matricola
+        cod_dip = None
+        if mat:
+            emp = Employee.objects.filter(codice_paghe=mat).first()
+            if emp:
+                cod_dip = emp.badge_id
+
         obj = PayslipPresenze(
             dl=str(row.get("dl", "")).strip() or None,
             fil=str(row.get("fil", "")).strip() or None,
@@ -2445,12 +2453,13 @@ def import_payslip_presenze(request):
             mese=mese,
             anno=anno,
             matricola_mese_anno=mat_mese_anno,
-            cod_voce=str(row.get("cod.voce", "")).strip() or None,
+            cod_voce=int(str(row.get("cod.voce", "")).strip()) if str(row.get("cod.voce", "")).strip() else None,
             desc_voce=str(row.get("desc.voce", "")).strip() or None,
             aliq_voce=_parse_float(row.get("aliq.voce")),
             ore_tot=_parse_float(row.get("ore tot")),
             gg_tot=_parse_float(row.get("gg tot")),
             periodo_elab=str(row.get("periodo elab.", "")).strip() or None,
+            cod_dip=cod_dip,
             **day_values,
         )
         objects_to_create.append(obj)
@@ -2556,5 +2565,772 @@ def presenze_lavoratore_rows(request):
         "matricola": matricola,
         "lavoratore": rows.first().lavoratore if rows.exists() else matricola,
         "days": list(range(1, 32)),
+    })
+
+
+# ---------------------------------------------------------------------------
+# Controllo incrociato cedolini (payslip_presenze) vs turni (orari.turni_creati)
+# ---------------------------------------------------------------------------
+
+_ORA_COL = {
+    "consuntivo":   ("Ora_Cons_Inizio", "Ora_Cons_Fine"),
+    "previsionale": ("Ora_Prev_Inizio", "Ora_Prev_Fine"),
+}
+
+
+def _mysql_orari_conn():
+    """Apre e restituisce una connessione pymysql al db orari (MySQL)."""
+    import pymysql
+    return pymysql.connect(
+        host="127.0.0.1",
+        port=3306,
+        user="root",
+        password="V@lenza15048!",
+        database="orari",
+        charset="utf8mb4",
+        cursorclass=pymysql.cursors.DictCursor,
+    )
+
+
+@login_required
+def controllo_cedolini(request):
+    """
+    GET  /controllo-cedolini/                  → selettore periodo
+    GET  /controllo-cedolini/?mese=2&anno=2026 → pannello configurazione (dizionario + dipendenti)
+    POST /controllo-cedolini/                  → esegue il controllo e mostra risultati
+    """
+    import calendar
+    from datetime import date as _date
+
+    periodi = (
+        PayslipPresenze.objects
+        .values("mese", "anno")
+        .distinct()
+        .order_by("-anno", "-mese")
+    )
+    mappings = list(PayslipDizionario.objects.all().order_by("codice_tipo_orario"))
+
+    mese_str = (request.POST.get("mese") or request.GET.get("mese", "")).strip()
+    anno_str = (request.POST.get("anno") or request.GET.get("anno", "")).strip()
+
+    ctx_base = {
+        "periodi": periodi,
+        "mappings": mappings,
+        "mappings_attivi_count": sum(1 for m in mappings if m.attivo),
+    }
+
+    if not mese_str or not anno_str:
+        return render(request, "payroll/payslip/controllo_cedolini.html", ctx_base)
+
+    try:
+        mese = int(mese_str)
+        anno = int(anno_str)
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        messages.error(request, _("Mese o anno non validi."))
+        return render(request, "payroll/payslip/controllo_cedolini.html", ctx_base)
+
+    num_giorni = calendar.monthrange(anno, mese)[1]
+    data_inizio = _date(anno, mese, 1)
+    data_fine   = _date(anno, mese, num_giorni)
+
+    # --- Dipendenti da MySQL per il periodo ---
+    dipendenti_mysql = []
+    try:
+        conn = _mysql_orari_conn()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT CODICEPERSONALE, MIN(Descrizione) AS nome
+                    FROM turni_creati
+                    WHERE Data BETWEEN %s AND %s
+                      AND CODICEPERSONALE IS NOT NULL AND CODICEPERSONALE != ''
+                    GROUP BY CODICEPERSONALE
+                    ORDER BY nome
+                    """,
+                    [data_inizio, data_fine],
+                )
+                dipendenti_mysql = cur.fetchall()
+        finally:
+            conn.close()
+    except Exception as exc:
+        messages.error(request, _("Errore connessione al database orari: {}").format(exc))
+        return render(request, "payroll/payslip/controllo_cedolini.html", {
+            **ctx_base, "mese": mese, "anno": anno,
+        })
+
+    ctx_config = {
+        **ctx_base,
+        "mese": mese,
+        "anno": anno,
+        "dipendenti_mysql": dipendenti_mysql,
+    }
+
+    # GET: mostra solo pannello configurazione
+    if request.method != "POST":
+        return render(request, "payroll/payslip/controllo_cedolini.html", ctx_config)
+
+    # --- POST: esegui il controllo ---
+    all_cod_dip_mysql = [d["CODICEPERSONALE"] for d in dipendenti_mysql]
+    selected_dip = request.POST.getlist("dipendenti") or all_cod_dip_mysql
+
+    mappings_attivi = [m for m in mappings if m.attivo and m.cod_voce]
+    if not mappings_attivi:
+        messages.warning(request, _("Nessuna voce attiva nel dizionario."))
+        return render(request, "payroll/payslip/controllo_cedolini.html", {
+            **ctx_config, "selected_dip": selected_dip,
+        })
+
+    # cod_voce in payslip_presenze è intero (300); in dizionario è "0300" → strip zero
+    cod_voce_int_map = {int(m.cod_voce): m for m in mappings_attivi}
+    cod_voce_desc    = {int(m.cod_voce): m.codice_tipo_orario for m in mappings_attivi}
+    codici_tipo_orario = [m.codice_tipo_orario for m in mappings_attivi]
+    # mappa tipo_orario → usa_prev per leggere le ore corrette
+    tipo_ora_map = {m.codice_tipo_orario: (m.tipo_ora == "previsionale") for m in mappings_attivi}
+
+    # Dipendenti presenti in payslip_presenze per il periodo e la selezione
+    day_cols = [f"day_{i}" for i in range(1, num_giorni + 1)]
+    dipendenti_qs = (
+        PayslipPresenze.objects
+        .filter(mese=mese, anno=anno, cod_dip__in=selected_dip)
+        .exclude(cod_dip__isnull=True).exclude(cod_dip="")
+        .values("cod_dip", "lavoratore", "matricola")
+        .distinct().order_by("lavoratore")
+    )
+    dipendenti_list = list(dipendenti_qs)
+    all_cod_dip = [d["cod_dip"] for d in dipendenti_list]
+
+    if not all_cod_dip:
+        messages.warning(request, _("Nessun dipendente trovato in payslip_presenze per la selezione."))
+        return render(request, "payroll/payslip/controllo_cedolini.html", {
+            **ctx_config, "selected_dip": selected_dip,
+        })
+
+    presenze_qs = (
+        PayslipPresenze.objects
+        .filter(mese=mese, anno=anno,
+                cod_voce__in=list(cod_voce_int_map.keys()),
+                cod_dip__in=all_cod_dip)
+        .values("cod_dip", "cod_voce", *day_cols)
+    )
+    presenze_idx = {(r["cod_dip"], r["cod_voce"]): r for r in presenze_qs}
+
+    # Batch query MySQL — tutti i turni del periodo (nessun filtro per tipo)
+    ph_dip = ",".join(["%s"] * len(selected_dip))
+    sql = f"""
+        SELECT
+            CODICEPERSONALE,
+            CODICE_TIPO_ORARIO,
+            DAY(Data) AS giorno,
+            SUM(CASE
+                WHEN Ora_Cons_Inizio IS NOT NULL AND Ora_Cons_Fine IS NOT NULL
+                     AND Ora_Cons_Fine > Ora_Cons_Inizio
+                THEN (TIME_TO_SEC(Ora_Cons_Fine) - TIME_TO_SEC(Ora_Cons_Inizio)) / 3600.0
+                ELSE 0
+            END) AS ore_cons,
+            SUM(CASE
+                WHEN Ora_Prev_Inizio IS NOT NULL AND Ora_Prev_Fine IS NOT NULL
+                     AND Ora_Prev_Fine > Ora_Prev_Inizio
+                THEN (TIME_TO_SEC(Ora_Prev_Fine) - TIME_TO_SEC(Ora_Prev_Inizio)) / 3600.0
+                ELSE 0
+            END) AS ore_prev
+        FROM turni_creati
+        WHERE CODICEPERSONALE IN ({ph_dip})
+          AND Data BETWEEN %s AND %s
+        GROUP BY CODICEPERSONALE, CODICE_TIPO_ORARIO, DAY(Data)
+    """
+    params = selected_dip + [data_inizio, data_fine]
+
+    # turni_idx: {(cod_dip, tipo_orario, giorno): (ore_cons, ore_prev)}
+    turni_idx = {}
+    # turni_per_day: {(cod_dip, giorno): [(tipo, ore_cons, ore_prev), ...]}
+    turni_per_day: dict = {}
+    try:
+        conn = _mysql_orari_conn()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(sql, params)
+                for r in cur.fetchall():
+                    cp = r["CODICEPERSONALE"]
+                    tipo = r["CODICE_TIPO_ORARIO"]
+                    g = int(r["giorno"])
+                    oc = float(r["ore_cons"] or 0)
+                    op = float(r["ore_prev"] or 0)
+                    turni_idx[(cp, tipo, g)] = (oc, op)
+                    turni_per_day.setdefault((cp, g), []).append((tipo, oc, op))
+        finally:
+            conn.close()
+    except Exception as exc:
+        messages.error(request, _("Errore connessione al database orari: {}").format(exc))
+        return render(request, "payroll/payslip/controllo_cedolini.html", {
+            **ctx_config, "selected_dip": selected_dip,
+        })
+
+    def _tipo_effettivo(cod_dip, giorno, usa_prev):
+        """Restituisce i tipi turno effettivamente presenti quel giorno (es. 'FERIE')."""
+        righe = turni_per_day.get((cod_dip, giorno), [])
+        if not righe:
+            return "—"
+        nomi = [tipo for tipo, oc, op in righe
+                if (op if tipo_ora_map.get(tipo, usa_prev) else oc) > 0]
+        return ", ".join(nomi) if nomi else righe[0][0]
+
+    def _ore_effettive(cod_dip, giorno):
+        """Somma le ore di tutti i tipi presenti quel giorno, ognuno con il suo tipo_ora."""
+        righe = turni_per_day.get((cod_dip, giorno), [])
+        totale = 0.0
+        for tipo, oc, op in righe:
+            usa_p = tipo_ora_map.get(tipo, False)
+            totale += op if usa_p else oc
+        return round(totale, 2)
+
+    SOGLIA = 0.05
+    risultati = []
+    n_controllati = 0
+
+    for dip in dipendenti_list:
+        cod_dip = dip["cod_dip"]
+        discrepanze_dip = []
+
+        for cod_voce_int, mapping in cod_voce_int_map.items():
+            pres_row = presenze_idx.get((cod_dip, cod_voce_int))
+            usa_prev = (mapping.tipo_ora == "previsionale")
+
+            for giorno in range(1, num_giorni + 1):
+                ore_ced = float((pres_row or {}).get(f"day_{giorno}") or 0)
+                # Controlla solo i giorni dove il cedolino ha quella voce
+                if ore_ced <= SOGLIA:
+                    continue
+                # Detection: ore della voce SPECIFICA cercata (es. LAVORATO)
+                ore_cons_m, ore_prev_m = turni_idx.get(
+                    (cod_dip, mapping.codice_tipo_orario, giorno), (0.0, 0.0)
+                )
+                ore_mapped_app = ore_prev_m if usa_prev else ore_cons_m
+
+                if abs(ore_ced - ore_mapped_app) > SOGLIA:
+                    # Display: cosa c'è effettivamente nell'app quel giorno
+                    ore_app_display = _ore_effettive(cod_dip, giorno)
+                    discrepanze_dip.append({
+                        "codice_tipo_orario": mapping.codice_tipo_orario,
+                        "tipo_effettivo_app": _tipo_effettivo(cod_dip, giorno, usa_prev),
+                        "cod_voce": mapping.cod_voce,
+                        "desc_voce_cedolino": cod_voce_desc.get(cod_voce_int, str(cod_voce_int)),
+                        "giorno": giorno,
+                        "ore_cedolino": round(ore_ced, 2),
+                        "ore_turni":   ore_app_display,
+                        "delta":       round(ore_ced - ore_app_display, 2),
+                    })
+
+        n_controllati += 1
+        if discrepanze_dip:
+            risultati.append({
+                "lavoratore": dip.get("lavoratore") or "",
+                "cod_dip":    cod_dip,
+                "matricola":  dip.get("matricola") or "",
+                "discrepanze": discrepanze_dip,
+            })
+
+    return render(request, "payroll/payslip/controllo_cedolini.html", {
+        **ctx_config,
+        "selected_dip":    selected_dip,
+        "risultati":        risultati,
+        "n_controllati":    n_controllati,
+        "n_con_diff":       len(risultati),
+        "n_discrepanze":    sum(len(r["discrepanze"]) for r in risultati),
+        "mappings_attivi":  mappings_attivi,
+    })
+
+
+@login_required
+def toggle_dizionario_attivo(request, mapping_id):
+    """HTMX: inverte il flag attivo di una riga del dizionario."""
+    if request.method != "POST":
+        return HttpResponse(status=405)
+    m = get_object_or_404(PayslipDizionario, pk=mapping_id)
+    m.attivo = not m.attivo
+    m.save(update_fields=["attivo"])
+    return HttpResponse(status=204)
+
+
+def _build_risultati_for_export(mese, anno, selected_dip):
+    """
+    Ricostruisce i risultati del controllo per un dato periodo e lista dipendenti.
+    Restituisce (risultati, mappings_attivi) nel formato usato dalla view principale.
+    """
+    import calendar
+    from datetime import date as _date
+
+    num_giorni = calendar.monthrange(anno, mese)[1]
+    data_inizio = _date(anno, mese, 1)
+    data_fine   = _date(anno, mese, num_giorni)
+
+    mappings_attivi = list(PayslipDizionario.objects.filter(attivo=True, cod_voce__isnull=False))
+    if not mappings_attivi or not selected_dip:
+        return [], mappings_attivi
+
+    cod_voce_int_map   = {int(m.cod_voce): m for m in mappings_attivi}
+    codici_tipo_orario = [m.codice_tipo_orario for m in mappings_attivi]
+    # reverse map cod_voce_int -> descrizione (usa codice_tipo_orario come label)
+    cod_voce_desc = {int(m.cod_voce): m.codice_tipo_orario for m in mappings_attivi}
+    # mappa tipo_orario → usa_prev
+    tipo_ora_map = {m.codice_tipo_orario: (m.tipo_ora == "previsionale") for m in mappings_attivi}
+
+    day_cols = [f"day_{i}" for i in range(1, num_giorni + 1)]
+
+    dipendenti_qs = (
+        PayslipPresenze.objects
+        .filter(mese=mese, anno=anno, cod_dip__in=selected_dip)
+        .exclude(cod_dip__isnull=True).exclude(cod_dip="")
+        .values("cod_dip", "lavoratore", "matricola")
+        .distinct().order_by("lavoratore")
+    )
+    dipendenti_list = list(dipendenti_qs)
+    all_cod_dip = [d["cod_dip"] for d in dipendenti_list]
+    if not all_cod_dip:
+        return [], mappings_attivi
+
+    presenze_qs = (
+        PayslipPresenze.objects
+        .filter(mese=mese, anno=anno,
+                cod_voce__in=list(cod_voce_int_map.keys()),
+                cod_dip__in=all_cod_dip)
+        .values("cod_dip", "cod_voce", *day_cols)
+    )
+    presenze_idx = {(r["cod_dip"], r["cod_voce"]): r for r in presenze_qs}
+
+    # Query MySQL senza filtro tipo → tutti i turni del periodo
+    ph_dip = ",".join(["%s"] * len(selected_dip))
+    sql = f"""
+        SELECT
+            CODICEPERSONALE, CODICE_TIPO_ORARIO, DAY(Data) AS giorno,
+            SUM(CASE WHEN Ora_Cons_Inizio IS NOT NULL AND Ora_Cons_Fine IS NOT NULL
+                          AND Ora_Cons_Fine > Ora_Cons_Inizio
+                     THEN (TIME_TO_SEC(Ora_Cons_Fine) - TIME_TO_SEC(Ora_Cons_Inizio)) / 3600.0
+                     ELSE 0 END) AS ore_cons,
+            SUM(CASE WHEN Ora_Prev_Inizio IS NOT NULL AND Ora_Prev_Fine IS NOT NULL
+                          AND Ora_Prev_Fine > Ora_Prev_Inizio
+                     THEN (TIME_TO_SEC(Ora_Prev_Fine) - TIME_TO_SEC(Ora_Prev_Inizio)) / 3600.0
+                     ELSE 0 END) AS ore_prev
+        FROM turni_creati
+        WHERE CODICEPERSONALE IN ({ph_dip})
+          AND Data BETWEEN %s AND %s
+        GROUP BY CODICEPERSONALE, CODICE_TIPO_ORARIO, DAY(Data)
+    """
+    params = selected_dip + [data_inizio, data_fine]
+
+    turni_idx = {}
+    turni_per_day: dict = {}
+    conn = _mysql_orari_conn()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(sql, params)
+            for r in cur.fetchall():
+                cp = r["CODICEPERSONALE"]
+                tipo = r["CODICE_TIPO_ORARIO"]
+                g = int(r["giorno"])
+                oc = float(r["ore_cons"] or 0)
+                op = float(r["ore_prev"] or 0)
+                turni_idx[(cp, tipo, g)] = (oc, op)
+                turni_per_day.setdefault((cp, g), []).append((tipo, oc, op))
+    finally:
+        conn.close()
+
+    def _tipo_effettivo_exp(cod_dip, giorno, usa_prev):
+        righe = turni_per_day.get((cod_dip, giorno), [])
+        if not righe:
+            return "—"
+        nomi = [tipo for tipo, oc, op in righe
+                if (op if tipo_ora_map.get(tipo, usa_prev) else oc) > 0]
+        return ", ".join(nomi) if nomi else righe[0][0]
+
+    def _ore_effettive_exp(cod_dip, giorno):
+        righe = turni_per_day.get((cod_dip, giorno), [])
+        totale = 0.0
+        for tipo, oc, op in righe:
+            usa_p = tipo_ora_map.get(tipo, False)
+            totale += op if usa_p else oc
+        return round(totale, 2)
+
+    SOGLIA = 0.05
+    risultati = []
+    for dip in dipendenti_list:
+        cod_dip = dip["cod_dip"]
+        discrepanze_dip = []
+        for cod_voce_int, mapping in cod_voce_int_map.items():
+            pres_row = presenze_idx.get((cod_dip, cod_voce_int))
+            usa_prev = (mapping.tipo_ora == "previsionale")
+            for giorno in range(1, num_giorni + 1):
+                ore_ced = float((pres_row or {}).get(f"day_{giorno}") or 0)
+                # Controlla solo i giorni dove il cedolino ha quella voce
+                if ore_ced <= SOGLIA:
+                    continue
+                # Detection: ore della voce SPECIFICA cercata
+                ore_cons_m, ore_prev_m = turni_idx.get(
+                    (cod_dip, mapping.codice_tipo_orario, giorno), (0.0, 0.0))
+                ore_mapped_app = ore_prev_m if usa_prev else ore_cons_m
+                if abs(ore_ced - ore_mapped_app) > SOGLIA:
+                    # Display: cosa c'è effettivamente nell'app quel giorno
+                    ore_app_display = _ore_effettive_exp(cod_dip, giorno)
+                    discrepanze_dip.append({
+                        "codice_tipo_orario": mapping.codice_tipo_orario,
+                        "tipo_effettivo_app": _tipo_effettivo_exp(cod_dip, giorno, usa_prev),
+                        "cod_voce": mapping.cod_voce,
+                        "desc_voce_cedolino": cod_voce_desc.get(cod_voce_int, str(cod_voce_int)),
+                        "giorno": giorno,
+                        "ore_cedolino": round(ore_ced, 2),
+                        "ore_turni":    ore_app_display,
+                        "delta":        round(ore_ced - ore_app_display, 2),
+                    })
+        if discrepanze_dip:
+            risultati.append({
+                "lavoratore": dip.get("lavoratore") or "",
+                "cod_dip":    cod_dip,
+                "matricola":  dip.get("matricola") or "",
+                "discrepanze": discrepanze_dip,
+            })
+    return risultati, mappings_attivi
+
+
+@login_required
+def export_controllo_excel(request):
+    """Scarica un file .xlsx con le discrepanze del controllo cedolini."""
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+    from openpyxl.utils import get_column_letter
+
+    try:
+        mese = int(request.GET.get("mese", 0))
+        anno = int(request.GET.get("anno", 0))
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        return HttpResponse("Parametri non validi", status=400)
+
+    selected_dip = request.GET.getlist("dipendenti") or None
+    if not selected_dip:
+        selected_dip = list(
+            PayslipPresenze.objects
+            .filter(mese=mese, anno=anno)
+            .exclude(cod_dip__isnull=True).exclude(cod_dip="")
+            .values_list("cod_dip", flat=True).distinct()
+        )
+
+    risultati, _ = _build_risultati_for_export(mese, anno, selected_dip)
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = f"Controllo {mese:02d}-{anno}"
+
+    # Intestazione
+    headers = ["DIPENDENTE", "GIORNO", "ORE APP", "TURNO APP", "ORE CEDOLINO", "TURNO CEDOLINO"]
+    bold = Font(bold=True)
+    fill_hdr = PatternFill("solid", fgColor="366092")
+    font_hdr = Font(bold=True, color="FFFFFF")
+    thin = Side(style="thin")
+    border = Border(left=thin, right=thin, top=thin, bottom=thin)
+
+    for col_idx, h in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col_idx, value=h)
+        cell.font = font_hdr
+        cell.fill = fill_hdr
+        cell.alignment = Alignment(horizontal="center", vertical="center")
+        cell.border = border
+    ws.row_dimensions[1].height = 20
+
+    fill_warn = PatternFill("solid", fgColor="FFF2CC")
+    fill_err  = PatternFill("solid", fgColor="FFDCE1")
+
+    row_num = 2
+    for ris in risultati:
+        for d in ris["discrepanze"]:
+            data_str = f"{d['giorno']:02d}/{mese:02d}/{anno}"
+            values = [
+                ris["lavoratore"],
+                data_str,
+                d["ore_turni"],
+                d.get("tipo_effettivo_app", "—"),
+                d["ore_cedolino"],
+                d["codice_tipo_orario"],
+            ]
+            row_fill = fill_warn if d["delta"] > 0 else fill_err
+            for col_idx, v in enumerate(values, 1):
+                cell = ws.cell(row=row_num, column=col_idx, value=v)
+                cell.border = border
+                cell.fill = row_fill
+                if col_idx in (4, 6, 7):
+                    cell.alignment = Alignment(horizontal="center")
+            row_num += 1
+
+    # Larghezze colonne
+    col_widths = [30, 14, 12, 30, 14, 26]
+    for i, w in enumerate(col_widths, 1):
+        ws.column_dimensions[get_column_letter(i)].width = w
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = f'attachment; filename="controllo_cedolini_{mese:02d}_{anno}.xlsx"'
+    wb.save(response)
+    return response
+
+
+@login_required
+def export_controllo_docx(request):
+    """Scarica un file .docx descrittivo con le discrepanze del controllo cedolini."""
+    from docx import Document
+    from docx.shared import Pt, RGBColor
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
+    import io
+
+    try:
+        mese = int(request.GET.get("mese", 0))
+        anno = int(request.GET.get("anno", 0))
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        return HttpResponse("Parametri non validi", status=400)
+
+    selected_dip = request.GET.getlist("dipendenti") or None
+    if not selected_dip:
+        selected_dip = list(
+            PayslipPresenze.objects
+            .filter(mese=mese, anno=anno)
+            .exclude(cod_dip__isnull=True).exclude(cod_dip="")
+            .values_list("cod_dip", flat=True).distinct()
+        )
+
+    risultati, _ = _build_risultati_for_export(mese, anno, selected_dip)
+
+    doc = Document()
+
+    # Titolo
+    title = doc.add_heading(
+        f"Controllo Presenze — {mese:02d}/{anno}", level=1
+    )
+    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    mesi_ita = ["", "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+                "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
+    sub = doc.add_paragraph(
+        f"Periodo: {mesi_ita[mese]} {anno}  —  "
+        f"{sum(len(r['discrepanze']) for r in risultati)} discrepanze su {len(risultati)} dipendenti"
+    )
+    sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    doc.add_paragraph()
+
+    if not risultati:
+        doc.add_paragraph("✅ Nessuna discrepanza rilevata. Tutti i valori coincidono.")
+    else:
+        for ris in risultati:
+            n = len(ris["discrepanze"])
+            p = doc.add_heading(
+                f"{ris['lavoratore']}  (cod_dip: {ris['cod_dip']})", level=2
+            )
+            intro = doc.add_paragraph()
+            intro.add_run(
+                f"Il dipendente {ris['lavoratore']} ha {n} "
+                f"{'discrepanza' if n == 1 else 'discrepanze'}:"
+            )
+            for d in ris["discrepanze"]:
+                data_str = f"{d['giorno']:02d}/{mese:02d}/{anno}"
+                bullet = doc.add_paragraph(style="List Bullet")
+                bullet.add_run(f"il {data_str} ").bold = False
+                tipo_app_str = d.get('tipo_effettivo_app', '—')
+                bullet.add_run(
+                    f"sull'app risultano {d['ore_turni']}h di {tipo_app_str}"
+                )
+                bullet.add_run(" mentre ")
+                bullet.add_run(
+                    f"sul cedolino sono segnate {d['ore_cedolino']}h di {d['codice_tipo_orario']}"
+                )
+                bullet.add_run(".")
+            doc.add_paragraph()
+
+    buf = io.BytesIO()
+    doc.save(buf)
+    buf.seek(0)
+
+    response = HttpResponse(
+        buf.read(),
+        content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    )
+    response["Content-Disposition"] = f'attachment; filename="controllo_cedolini_{mese:02d}_{anno}.docx"'
+    return response
+    """
+    Confronto incrociato tra horilla_main.payslip_presenze e orari.turni_creati.
+    Solo le voci di payslip_dizionario con attivo=True vengono controllate.
+    """
+    import calendar
+    from datetime import date as _date
+
+    periodi = (
+        PayslipPresenze.objects
+        .values("mese", "anno")
+        .distinct()
+        .order_by("-anno", "-mese")
+    )
+
+    mese_str = request.GET.get("mese", "").strip()
+    anno_str = request.GET.get("anno", "").strip()
+
+    if not mese_str or not anno_str:
+        return render(request, "payroll/payslip/controllo_cedolini.html", {
+            "periodi": periodi,
+        })
+
+    try:
+        mese = int(mese_str)
+        anno = int(anno_str)
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        messages.error(request, _("Mese o anno non validi."))
+        return render(request, "payroll/payslip/controllo_cedolini.html", {
+            "periodi": periodi,
+        })
+
+    num_giorni = calendar.monthrange(anno, mese)[1]
+    data_inizio = _date(anno, mese, 1)
+    data_fine   = _date(anno, mese, num_giorni)
+
+    # --- Mappature attive con cod_voce valorizzato ---
+    mappings = list(PayslipDizionario.objects.filter(attivo=True, cod_voce__isnull=False))
+    if not mappings:
+        messages.warning(request, _("Nessuna voce attiva nel dizionario."))
+        return render(request, "payroll/payslip/controllo_cedolini.html", {
+            "periodi": periodi, "mese": mese, "anno": anno,
+        })
+
+    # cod_voce in payslip_presenze è intero (300), in dizionario è "0300" → strip zero
+    cod_voce_int_map = {int(m.cod_voce): m for m in mappings}  # {300: mapping, ...}
+    codici_tipo_orario = [m.codice_tipo_orario for m in mappings]
+
+    # --- Dipendenti con cod_dip presenti nel periodo ---
+    dipendenti_qs = (
+        PayslipPresenze.objects
+        .filter(mese=mese, anno=anno)
+        .exclude(cod_dip__isnull=True)
+        .exclude(cod_dip="")
+        .values("cod_dip", "lavoratore", "matricola")
+        .distinct()
+        .order_by("lavoratore")
+    )
+    dipendenti_list = list(dipendenti_qs)
+    all_cod_dip = [d["cod_dip"] for d in dipendenti_list]
+
+    if not all_cod_dip:
+        messages.warning(request, _("Nessun dipendente con cod_dip per il periodo selezionato."))
+        return render(request, "payroll/payslip/controllo_cedolini.html", {
+            "periodi": periodi, "mese": mese, "anno": anno,
+        })
+
+    # --- Leggi tutte le righe presenze per le voci attive in un colpo solo ---
+    day_cols = [f"day_{i}" for i in range(1, num_giorni + 1)]
+    presenze_qs = (
+        PayslipPresenze.objects
+        .filter(mese=mese, anno=anno,
+                cod_voce__in=list(cod_voce_int_map.keys()),
+                cod_dip__in=all_cod_dip)
+        .values("cod_dip", "cod_voce", *day_cols)
+    )
+    # Indice (cod_dip, cod_voce_int) → row
+    presenze_idx = {(r["cod_dip"], r["cod_voce"]): r for r in presenze_qs}
+
+    # --- Batch query MySQL: tutti i dipendenti e tipi in una sola chiamata ---
+    # Recupera sia ore_cons che ore_prev così gestiamo entrambi i tipo_ora
+    ph_dip  = ",".join(["%s"] * len(all_cod_dip))
+    ph_tipo = ",".join(["%s"] * len(codici_tipo_orario))
+
+    sql = f"""
+        SELECT
+            CODICEPERSONALE,
+            CODICE_TIPO_ORARIO,
+            DAY(Data) AS giorno,
+            SUM(CASE
+                WHEN Ora_Cons_Inizio IS NOT NULL AND Ora_Cons_Fine IS NOT NULL
+                     AND Ora_Cons_Fine > Ora_Cons_Inizio
+                THEN (TIME_TO_SEC(Ora_Cons_Fine) - TIME_TO_SEC(Ora_Cons_Inizio)) / 3600.0
+                ELSE 0
+            END) AS ore_cons,
+            SUM(CASE
+                WHEN Ora_Prev_Inizio IS NOT NULL AND Ora_Prev_Fine IS NOT NULL
+                     AND Ora_Prev_Fine > Ora_Prev_Inizio
+                THEN (TIME_TO_SEC(Ora_Prev_Fine) - TIME_TO_SEC(Ora_Prev_Inizio)) / 3600.0
+                ELSE 0
+            END) AS ore_prev
+        FROM turni_creati
+        WHERE CODICEPERSONALE IN ({ph_dip})
+          AND Data BETWEEN %s AND %s
+          AND CODICE_TIPO_ORARIO IN ({ph_tipo})
+        GROUP BY CODICEPERSONALE, CODICE_TIPO_ORARIO, DAY(Data)
+    """
+    params = all_cod_dip + [data_inizio, data_fine] + codici_tipo_orario
+
+    turni_idx = {}  # (cod_dip, codice_tipo_orario, giorno) → (ore_cons, ore_prev)
+    try:
+        conn = _mysql_orari_conn()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(sql, params)
+                for r in cur.fetchall():
+                    key = (r["CODICEPERSONALE"], r["CODICE_TIPO_ORARIO"], int(r["giorno"]))
+                    turni_idx[key] = (float(r["ore_cons"] or 0), float(r["ore_prev"] or 0))
+        finally:
+            conn.close()
+    except Exception as exc:
+        messages.error(request, _("Errore connessione al database orari: {}").format(exc))
+        return render(request, "payroll/payslip/controllo_cedolini.html", {
+            "periodi": periodi, "mese": mese, "anno": anno,
+        })
+
+    # --- Confronto giorno per giorno ---
+    SOGLIA = 0.05   # differenza minima in ore da segnalare (~3 minuti)
+
+    risultati = []
+    n_controllati = 0
+
+    for dip in dipendenti_list:
+        cod_dip = dip["cod_dip"]
+        discrepanze_dip = []
+
+        for cod_voce_int, mapping in cod_voce_int_map.items():
+            pres_row = presenze_idx.get((cod_dip, cod_voce_int))
+            usa_prev = (mapping.tipo_ora == "previsionale")
+
+            for giorno in range(1, num_giorni + 1):
+                ore_ced = float((pres_row or {}).get(f"day_{giorno}") or 0)
+                ore_cons, ore_prev = turni_idx.get((cod_dip, mapping.codice_tipo_orario, giorno), (0.0, 0.0))
+                ore_tur = ore_prev if usa_prev else ore_cons
+
+                if abs(ore_ced - ore_tur) > SOGLIA:
+                    discrepanze_dip.append({
+                        "codice_tipo_orario": mapping.codice_tipo_orario,
+                        "cod_voce": mapping.cod_voce,
+                        "giorno": giorno,
+                        "ore_cedolino": round(ore_ced, 2),
+                        "ore_turni": round(ore_tur, 2),
+                        "delta": round(ore_ced - ore_tur, 2),
+                    })
+
+        n_controllati += 1
+        if discrepanze_dip:
+            risultati.append({
+                "lavoratore": dip.get("lavoratore") or "",
+                "cod_dip": cod_dip,
+                "matricola": dip.get("matricola") or "",
+                "discrepanze": discrepanze_dip,
+            })
+
+    return render(request, "payroll/payslip/controllo_cedolini.html", {
+        "periodi": periodi,
+        "mese": mese,
+        "anno": anno,
+        "risultati": risultati,
+        "n_controllati": n_controllati,
+        "n_con_diff": len(risultati),
+        "n_discrepanze": sum(len(r["discrepanze"]) for r in risultati),
+        "mappings_attivi": mappings,
     })
 
