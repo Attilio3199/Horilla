@@ -229,6 +229,13 @@
               </li>
               <li class="oh-dropdown__item">
                 <a
+                  class="oh-dropdown__link"
+                  href="{% url 'import-payslip-corpo' %}"
+                  >{% trans "Importa Corpo Busta Paga" %}</a
+                >
+              </li>
+              <li class="oh-dropdown__item">
+                <a
                   class="oh-dropdown__link oh-dropdown__link--danger"
                   href="{% url 'delete-payslip-presenze' %}"
                   >{% trans "Cancella Libro Presenze" %}</a

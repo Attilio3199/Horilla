@@ -2307,6 +2307,37 @@ def _parse_float(value):
         return None
 
 
+def _parse_decimal(value):
+    """Converte una stringa con separatori italiani (punto migliaia, virgola decimale) in Decimal."""
+    from decimal import Decimal, InvalidOperation
+    if value is None:
+        return None
+    s = str(value).strip()
+    if s == "" or s == "nan":
+        return None
+    s = s.replace(".", "").replace(",", ".")
+    try:
+        return Decimal(s)
+    except (InvalidOperation, ValueError):
+        return None
+
+
+def _parse_date_it(value):
+    """Converte una stringa data italiana dd.mm.yyyy o dd/mm/yyyy in oggetto date."""
+    from datetime import datetime as _dt
+    if value is None:
+        return None
+    s = str(value).strip()
+    if not s:
+        return None
+    for fmt in ("%d.%m.%Y", "%d/%m/%Y", "%Y-%m-%d"):
+        try:
+            return _dt.strptime(s, fmt).date()
+        except ValueError:
+            continue
+    return None
+
+
 @login_required
 def import_payslip_presenze(request):
     """
@@ -2507,6 +2538,136 @@ def delete_payslip_presenze(request):
         request,
         _("Eliminati {} record per {:02d}/{}.").format(deleted_count, mese, anno),
     )
+    return redirect("view-payslip")
+
+
+@login_required
+def import_payslip_corpo(request):
+    """
+    GET  – mostra il form per selezionare mese/anno e caricare il CSV del corpo busta.
+    POST – importa il file CSV nella tabella payslip_corpo.
+    Mese e anno NON sono presenti nel CSV: vengono impostati dall'utente nel form
+    e scritti su ogni riga importata.
+    """
+    from payroll.models.models import PayslipCorpo
+
+    months = [
+        (1, "Gennaio"), (2, "Febbraio"), (3, "Marzo"), (4, "Aprile"),
+        (5, "Maggio"), (6, "Giugno"), (7, "Luglio"), (8, "Agosto"),
+        (9, "Settembre"), (10, "Ottobre"), (11, "Novembre"), (12, "Dicembre"),
+    ]
+    current_year = date.today().year
+
+    if request.method == "GET":
+        return render(request, "payroll/payslip/import_payslip_corpo.html",
+                      {"months": months, "current_year": current_year})
+
+    mese_str = request.POST.get("mese", "").strip()
+    anno_str = request.POST.get("anno", "").strip()
+    csv_file = request.FILES.get("file")
+
+    if not mese_str or not anno_str:
+        messages.error(request, _("Selezionare mese e anno prima di importare."))
+        return render(request, "payroll/payslip/import_payslip_corpo.html",
+                      {"mese": mese_str, "anno": anno_str, "months": months, "current_year": current_year})
+
+    try:
+        mese = int(mese_str)
+        anno = int(anno_str)
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except ValueError:
+        messages.error(request, _("Mese o anno non validi."))
+        return render(request, "payroll/payslip/import_payslip_corpo.html",
+                      {"mese": mese_str, "anno": anno_str, "months": months, "current_year": current_year})
+
+    if not csv_file:
+        messages.error(request, _("Nessun file caricato."))
+        return render(request, "payroll/payslip/import_payslip_corpo.html",
+                      {"mese": mese, "anno": anno, "months": months, "current_year": current_year})
+
+    import csv as csv_module
+    import io
+
+    try:
+        content = csv_file.read().decode("utf-8", errors="replace")
+        reader = csv_module.reader(io.StringIO(content), delimiter=";")
+        all_rows = list(reader)
+    except Exception as exc:
+        messages.error(request, _("Impossibile leggere il file CSV: {}").format(exc))
+        return render(request, "payroll/payslip/import_payslip_corpo.html",
+                      {"mese": mese, "anno": anno, "months": months, "current_year": current_year})
+
+    if len(all_rows) < 2:
+        messages.error(request, _("Il file CSV è vuoto o privo di dati."))
+        return render(request, "payroll/payslip/import_payslip_corpo.html",
+                      {"mese": mese, "anno": anno, "months": months, "current_year": current_year})
+
+    # colonne attese (indice 0-based), ignoriamo l'ultima colonna vuota (trailing ;)
+    # 0:Codice DL, 1:Denominazione, 2:Filiale, 3:C.Costo, 4:Reparto,
+    # 5:Matricola, 6:Cognome, 7:Nome, 8:qp, 9:ass., 10:anz.,
+    # 11:cod.pos., 12:data pos., 13:liq., 14:Cod.voce, 15:Descrizione.,
+    # 16:aliq./%lav., 17:h/g/n /%d.l., 18:Dato base/imponibile,
+    # 19:Importo/ctr lav, 20:d.b.tfr, 21:Imp.tfr/ctr.dl
+    EXPECTED_COLS = 22
+
+    objects_to_create = []
+    skipped = 0
+
+    for idx, row in enumerate(all_rows[1:], start=2):  # salta header
+        if len(row) < EXPECTED_COLS:
+            skipped += 1
+            continue
+
+        def _cell(i):
+            return row[i].strip() if i < len(row) else ""
+
+        def _int_or_none(i):
+            v = _cell(i)
+            try:
+                return int(v) if v else None
+            except ValueError:
+                return None
+
+        obj = PayslipCorpo(
+            mese=mese,
+            anno=anno,
+            codice_dl=_cell(0)[:20] or None,
+            denominazione=_cell(1)[:100] or None,
+            filiale=_cell(2)[:20] or None,
+            c_costo=_int_or_none(3),
+            reparto=_int_or_none(4),
+            matricola=_cell(5)[:20] or None,
+            cognome=_cell(6)[:100] or None,
+            nome=_cell(7)[:100] or None,
+            qp=_cell(8)[:10] or None,
+            assunzione=_parse_date_it(_cell(9)),
+            anzianita=_parse_date_it(_cell(10)),
+            cod_pos=_int_or_none(11),
+            data_pos=_parse_date_it(_cell(12)),
+            liq=_cell(13)[:20] or None,
+            cod_voce=_int_or_none(14),
+            descrizione_voce=_cell(15)[:100] or None,
+            aliq_perc_lav=_parse_decimal(_cell(16)),
+            unita=_parse_decimal(_cell(17)),
+            dato_base_imponibile=_parse_decimal(_cell(18)),
+            importo_ctr_lav=_parse_decimal(_cell(19)),
+            db_tfr=_parse_decimal(_cell(20)),
+            imp_tfr_ctr_dl=_parse_decimal(_cell(21)),
+        )
+        objects_to_create.append(obj)
+
+    if not objects_to_create:
+        messages.error(request, _("Nessuna riga valida trovata nel file CSV."))
+        return render(request, "payroll/payslip/import_payslip_corpo.html",
+                      {"mese": mese, "anno": anno, "months": months, "current_year": current_year})
+
+    PayslipCorpo.objects.bulk_create(objects_to_create)
+
+    msg = _("Importate {} righe per {:02d}/{}.").format(len(objects_to_create), mese, anno)
+    if skipped:
+        msg += " " + _("{} righe ignorate (colonne insufficienti).").format(skipped)
+    messages.success(request, msg)
     return redirect("view-payslip")
 
 

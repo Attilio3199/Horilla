@@ -98,6 +98,11 @@ urlpatterns = [
         name="delete-payslip-presenze",
     ),
     path(
+        "import-payslip-corpo/",
+        component_views.import_payslip_corpo,
+        name="import-payslip-corpo",
+    ),
+    path(
         "presenze-by-lavoratore/",
         component_views.presenze_by_lavoratore,
         name="presenze-by-lavoratore",
