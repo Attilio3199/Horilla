@@ -830,8 +830,8 @@ class EmployeeWorkInformation(models.Model):
     basic_salary = models.IntegerField(
         null=True, blank=True, default=0, verbose_name=_("Basic Salary")
     )
-    salary_hour = models.IntegerField(
-        null=True, blank=True, default=0, verbose_name=_("Salary Per Hour")
+    salary_hour = models.DecimalField(
+        max_digits=15, decimal_places=4, null=True, blank=True, default=0, verbose_name=_("Salary Per Hour")
     )
     export_payslip = models.BooleanField(default=False, verbose_name=_("Esporta Cedolino"))
     mirror_payslip = models.BooleanField(

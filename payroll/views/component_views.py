@@ -1866,22 +1866,22 @@ def get_contribution_report(request):
         )
         deductions = []
         for head in pay_heads:
-            for deduction in head["gross_pay_deductions"]:
+            for deduction in head.get("gross_pay_deductions", []):
                 if deduction.get("deduction_id"):
                     deductions.append(deduction)
-            for deduction in head["basic_pay_deductions"]:
+            for deduction in head.get("basic_pay_deductions", []):
                 if deduction.get("deduction_id"):
                     deductions.append(deduction)
-            for deduction in head["pretax_deductions"]:
+            for deduction in head.get("pretax_deductions", []):
                 if deduction.get("deduction_id"):
                     deductions.append(deduction)
-            for deduction in head["post_tax_deductions"]:
+            for deduction in head.get("post_tax_deductions", []):
                 if deduction.get("deduction_id"):
                     deductions.append(deduction)
-            for deduction in head["tax_deductions"]:
+            for deduction in head.get("tax_deductions", []):
                 if deduction.get("deduction_id"):
                     deductions.append(deduction)
-            for deduction in head["net_deductions"]:
+            for deduction in head.get("net_deductions", []):
                 deductions.append(deduction)
 
         deductions.sort(key=lambda x: x["deduction_id"])
@@ -2542,6 +2542,61 @@ def delete_payslip_presenze(request):
 
 
 @login_required
+def delete_payslip_corpo(request):
+    """
+    POST – cancella tutte le righe di payslip_corpo per il mese/anno indicati.
+    GET  – mostra il form di conferma cancellazione.
+    """
+    from payroll.models.models import PayslipCorpo
+
+    months = [
+        (1, "Gennaio"), (2, "Febbraio"), (3, "Marzo"), (4, "Aprile"),
+        (5, "Maggio"), (6, "Giugno"), (7, "Luglio"), (8, "Agosto"),
+        (9, "Settembre"), (10, "Ottobre"), (11, "Novembre"), (12, "Dicembre"),
+    ]
+    current_year = date.today().year
+
+    if request.method == "GET":
+        return render(request, "payroll/payslip/delete_payslip_corpo.html",
+                      {"months": months, "current_year": current_year})
+
+    mese_str = request.POST.get("mese", "").strip()
+    anno_str = request.POST.get("anno", "").strip()
+
+    try:
+        mese = int(mese_str)
+        anno = int(anno_str)
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        messages.error(request, _("Mese o anno non validi."))
+        return render(request, "payroll/payslip/delete_payslip_corpo.html",
+                      {"mese": mese_str, "anno": anno_str, "months": months, "current_year": current_year})
+
+    from django.db import transaction
+    from payroll.models.models import Payslip
+
+    with transaction.atomic():
+        # Trova i Payslip collegati tramite FK prima di cancellare le righe corpo
+        payslip_ids = list(
+            PayslipCorpo.objects.filter(mese=mese, anno=anno)
+            .exclude(payslip_id=None)
+            .values_list("payslip_id", flat=True)
+            .distinct()
+        )
+        deleted_count, _del_detail = PayslipCorpo.objects.filter(mese=mese, anno=anno).delete()
+        payslip_deleted = 0
+        if payslip_ids:
+            payslip_deleted, _ps_detail = Payslip.objects.filter(id__in=payslip_ids).delete()
+
+    msg = _("Eliminati {} record corpo per {:02d}/{}.").format(deleted_count, mese, anno)
+    if payslip_deleted:
+        msg += " " + _("Buste paga eliminate: {}.").format(payslip_deleted)
+    messages.success(request, msg)
+    return redirect("view-payslip")
+
+
+@login_required
 def import_payslip_corpo(request):
     """
     GET  – mostra il form per selezionare mese/anno e caricare il CSV del corpo busta.
@@ -2664,9 +2719,104 @@ def import_payslip_corpo(request):
 
     PayslipCorpo.objects.bulk_create(objects_to_create)
 
+    # --- Sincronizzazione payroll_payslip e update salary_hour ---
+    import calendar
+    from django.db import transaction
+    from employee.models import Employee as Emp, EmployeeWorkInformation
+    from payroll.models.models import Payslip
+
+    start_date = date(anno, mese, 1)
+    end_date = date(anno, mese, calendar.monthrange(anno, mese)[1])
+
+    # Raggruppa le righe per matricola sommando cod_voce=852 e cod_voce=800
+    net_pay_by_matricola = {}
+    for obj in objects_to_create:
+        if obj.cod_voce in (852, 800) and obj.matricola and obj.importo_ctr_lav is not None:
+            net_pay_by_matricola[obj.matricola] = (
+                net_pay_by_matricola.get(obj.matricola, 0.0) + float(obj.importo_ctr_lav)
+            )
+
+    salary_updated = 0
+    salary_not_found = []
+    payslip_created = 0
+    payslip_updated = 0
+    payslip_no_852 = []
+    payslip_no_emp = []
+
+    # Raccogli tutte le matricole uniche presenti nel CSV
+    all_matricole = {obj.matricola for obj in objects_to_create if obj.matricola}
+
+    with transaction.atomic():
+        for matricola in all_matricole:
+            # --- update salary_hour per cod_voce=300 ---
+            voce_300 = next(
+                (o for o in objects_to_create if o.matricola == matricola and o.cod_voce == 300 and o.dato_base_imponibile is not None),
+                None,
+            )
+            emp = Emp.objects.filter(codice_paghe=matricola).first()
+            if not emp:
+                salary_not_found.append(matricola)
+                if matricola not in net_pay_by_matricola:
+                    payslip_no_emp.append(matricola)
+                continue
+
+            if voce_300:
+                updated = EmployeeWorkInformation.objects.filter(employee_id=emp).update(
+                    salary_hour=voce_300.dato_base_imponibile
+                )
+                if updated:
+                    salary_updated += 1
+
+            # --- Crea/aggiorna Payslip da cod_voce=852 ---
+            if matricola not in net_pay_by_matricola:
+                payslip_no_852.append(matricola)
+                continue
+
+            net_pay = net_pay_by_matricola[matricola]
+            payslip, created = Payslip.objects.get_or_create(
+                employee_id=emp,
+                start_date=start_date,
+                end_date=end_date,
+                defaults={
+                    "net_pay": net_pay,
+                    "gross_pay": net_pay,
+                    "basic_pay": net_pay,
+                    "deduction": 0,
+                    "contract_wage": net_pay,
+                    "status": "paid",
+                    "pay_head_data": {"source": "import_corpo", "cod_voce_852_800": net_pay},
+                    "sent_to_employee": False,
+                },
+            )
+            if not created:
+                payslip.net_pay = net_pay
+                payslip.gross_pay = net_pay
+                payslip.status = "paid"
+                payslip.pay_head_data = {"source": "import_corpo", "cod_voce_852_800": net_pay}
+                payslip.save(update_fields=["net_pay", "gross_pay", "status", "pay_head_data"])
+                payslip_updated += 1
+            else:
+                payslip_created += 1
+
+            # Collega tutte le righe corpo di questa matricola/mese/anno al Payslip
+            PayslipCorpo.objects.filter(
+                matricola=matricola, mese=mese, anno=anno
+            ).update(payslip=payslip)
+
     msg = _("Importate {} righe per {:02d}/{}.").format(len(objects_to_create), mese, anno)
     if skipped:
         msg += " " + _("{} righe ignorate (colonne insufficienti).").format(skipped)
+    if salary_updated:
+        msg += " " + _("salary_hour aggiornato per {} dipendenti.").format(salary_updated)
+    if payslip_created:
+        msg += " " + _("Buste paga create: {}.").format(payslip_created)
+    if payslip_updated:
+        msg += " " + _("Buste paga aggiornate: {}.").format(payslip_updated)
+    if salary_not_found:
+        not_found_str = ", ".join(sorted(set(salary_not_found)))
+        msg += " " + _("Matricole non trovate in anagrafica: {}.").format(not_found_str)
+    if payslip_no_852:
+        msg += " " + _("Nessun cod_voce 852/800 (netto) per: {}.").format(", ".join(sorted(set(payslip_no_852))))
     messages.success(request, msg)
     return redirect("view-payslip")
 

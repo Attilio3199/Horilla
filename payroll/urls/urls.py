@@ -119,6 +119,16 @@ urlpatterns = [
         name="dashboard-department-chart",
     ),
     path(
+        "dashboard-store-drilldown",
+        views.dashboard_store_drilldown_chart,
+        name="dashboard-store-drilldown",
+    ),
+    path(
+        "dashboard-store-employees",
+        views.dashboard_store_employees_chart,
+        name="dashboard-store-employees",
+    ),
+    path(
         "dashboard-contract-ending",
         views.contract_ending,
         name="dashboard-contract-ending",

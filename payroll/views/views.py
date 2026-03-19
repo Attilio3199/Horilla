@@ -1088,21 +1088,12 @@ def payslip_details(request):
 @login_required
 def dashboard_department_chart(request):
     """
-    payroll dashboard department chart data
+    payroll dashboard work area type chart data (SEDE / NEGOZI)
     """
 
     date = request.GET.get("period")
     year = date.split("-")[0]
     month = date.split("-")[1]
-    dataset = [
-        {
-            "label": "",
-            "data": [],
-            "backgroundColor": ["#8de5b3", "#f0a8a6", "#8ed1f7", "#f8e08e", "#c2c7cc"],
-        }
-    ]
-    department = []
-    department_total = []
 
     is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
     if is_ajax and request.method == "GET":
@@ -1110,43 +1101,118 @@ def dashboard_department_chart(request):
             Q(start_date__month=month) & Q(start_date__year=year)
         )
 
-        for employee in employee_list:
-            department.append(
-                employee.employee_id.employee_work_info.department_id.department
-            )
+        area_totals = {}
+        for payslip in employee_list:
+            work_info = payslip.employee_id.employee_work_info
+            area = work_info.work_area_type if work_info.work_area_type else "N/D"
+            area_totals[area] = area_totals.get(area, 0) + round(payslip.net_pay, 2)
 
-        department = list(set(department))
-        for depart in department:
-            department_total.append({"department": depart, "amount": 0})
-
-        for employee in employee_list:
-            employee_department = (
-                employee.employee_id.employee_work_info.department_id.department
-            )
-
-            for depart in department_total:
-                if depart["department"] == employee_department:
-                    depart["amount"] += round(employee.net_pay, 2)
-
-        colors = generate_colors(len(department))
+        labels = list(area_totals.keys())
+        colors = generate_colors(len(labels))
 
         dataset = [
             {
                 "label": "",
-                "data": [],
+                "data": [area_totals[l] for l in labels],
                 "backgroundColor": colors,
             }
         ]
-
-        for depart_total, depart in zip(department_total, department):
-            if depart == depart_total["department"]:
-                dataset[0]["data"].append(depart_total["amount"])
+        department_total = [
+            {"department": l, "amount": area_totals[l]} for l in labels
+        ]
 
         response = {
             "dataset": dataset,
-            "labels": department,
+            "labels": labels,
             "department_total": department_total,
             "message": _("No payslips generated for this month."),
+        }
+        return JsonResponse(response)
+
+
+@login_required
+def dashboard_store_employees_chart(request):
+    """
+    payroll dashboard drill-down level 2: dipendenti di un singolo store
+    """
+    date = request.GET.get("period")
+    year = date.split("-")[0]
+    month = date.split("-")[1]
+    store_name = request.GET.get("store_name", "")
+
+    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+    if is_ajax and request.method == "GET":
+        employee_list = Payslip.objects.filter(
+            Q(start_date__month=month) & Q(start_date__year=year),
+            employee_id__employee_work_info__store_name=store_name,
+        )
+
+        labels = []
+        data = []
+        for payslip in employee_list:
+            emp = payslip.employee_id
+            labels.append(f"{emp.employee_first_name} {emp.employee_last_name}")
+            data.append(round(payslip.net_pay, 2))
+
+        colors = generate_colors(len(labels))
+        dataset = [
+            {
+                "label": store_name,
+                "data": data,
+                "backgroundColor": colors,
+            }
+        ]
+        response = {
+            "dataset": dataset,
+            "labels": labels,
+            "store_name": store_name,
+            "message": _("No payslips for this store this month."),
+        }
+        return JsonResponse(response)
+
+
+@login_required
+def dashboard_store_drilldown_chart(request):
+    """
+    payroll dashboard drill-down: group payslips for NEGOZI by store_name
+    """
+
+    date = request.GET.get("period")
+    year = date.split("-")[0]
+    month = date.split("-")[1]
+
+    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+    if is_ajax and request.method == "GET":
+        employee_list = Payslip.objects.filter(
+            Q(start_date__month=month) & Q(start_date__year=year),
+            employee_id__employee_work_info__work_area_type="NEGOZI",
+        )
+
+        store_totals = {}
+        for payslip in employee_list:
+            store = payslip.employee_id.employee_work_info.store_name or "N/D"
+            store_totals[store] = store_totals.get(store, 0) + round(payslip.net_pay, 2)
+
+        sorted_stores = sorted(store_totals.items(), key=lambda x: x[1], reverse=True)
+        labels = [s[0] for s in sorted_stores]
+        colors = generate_colors(len(labels))
+
+        dataset = [
+            {
+                "label": "",
+                "data": [store_totals[l] for l in labels],
+                "backgroundColor": colors,
+            }
+        ]
+        store_total_list = [
+            {"department": l, "amount": store_totals[l]} for l in labels
+        ]
+
+        response = {
+            "dataset": dataset,
+            "labels": labels,
+            "department_total": store_total_list,
+            "message": _("No payslips for NEGOZI this month."),
         }
         return JsonResponse(response)
 

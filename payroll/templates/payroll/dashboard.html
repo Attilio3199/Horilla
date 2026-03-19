@@ -131,38 +131,37 @@
                 </div>
 
                 <div class="oh-dashboard__movable-cards row mt-4">
+
+                    <!-- ===== LIVELLO 1/2/3: Work Area → Store → Dipendenti ===== -->
                     <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-4">
                         <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent">
-                            <div class="oh-card-dashboard__header oh-card-dashboard__header--divider" style = "cursor: default;">
-                                <span class="oh-card-dashboard__title" id="employee-previous" style = "cursor: pointer;"><ion-icon name="caret-back-outline"></ion-icon></span>
-                                <span class="oh-card-dashboard__title">{% trans "Employee Payslips" %}</span>
-                                <span class="oh-card-dashboard__title float-end" id="payroll-employee-next" style = "cursor: pointer;"><ion-icon name="caret-forward"></ion-icon></span>
-
+                            <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
+                                <span class="oh-card-dashboard__title" id="dept_chart_title">{% trans "Work Area Chart" %}</span>
                             </div>
-                            <div class="oh-card-dashboard__body" id="employee_canvas_body">
-                                <canvas id="employeeChart"></canvas>
+                            <div class="oh-card-dashboard__body" id="department_canvas_body" style="width:70%;margin:0 auto;">
+                                <canvas id="departmentChart"></canvas>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-6" >
-                        <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent" style = "cursor: default;">
-                            <h6 class="ms-4 m-2 fw-bold">{% trans "Total Payslips Genarated :" %}  <b><span class="payslip-number"></span></b></h6>
-                            {% if position == "prefix" %}
-                                <h6 class="ms-4 m-2 fw-bold">{% trans "Total Amount :" %} <b>{{currency}} <span class="payslip-amount"></span></b></h6>
-                            {% else %}
-                                <h6 class="ms-4 m-2 fw-bold">{% trans "Total Amount :" %} <b><span class="payslip-amount"></span> {{currency}}</b></h6>
-                            {% endif %}
-                            <h5 class="ms-4 m-2 fw-bold" style="color:#9C4000">{% trans "Department Total Amount" %}</h5>
-                            <hr class="line">
-                            <ul id="department_total" style="height: 286px; overflow-y: auto; list-style: disc;"></ul>
-                            <ul id="department_total_empty" style="height: 232px; overflow-y: auto; list-style: disc;"></ul>
-                        </div>
-                    </div>
-
                     <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-4">
-                        <form hx-get="{% url 'get-contribution-report' %}" hx-trigger="load, submit"  hx-target="#contributionReportContainer" class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent" >
-                            <div class="d-flex justify-content-between oh-card-dashboard__header oh-card-dashboard__header--divider" style = "cursor: default;">
-                                {% comment %} <span class="oh-card-dashboard__title" id="employee-previous" style = "cursor: pointer;"><ion-icon name="caret-back-outline"></ion-icon></span> {% endcomment %}
+                        <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent" style="cursor:default;">
+                            <h6 class="ms-4 m-2 fw-bold">{% trans "Total Payslips Generated:" %} <b><span class="payslip-number"></span></b></h6>
+                            {% if position == "prefix" %}
+                                <h6 class="ms-4 m-2 fw-bold">{% trans "Total Amount:" %} <b>{{currency}} <span class="payslip-amount"></span></b></h6>
+                            {% else %}
+                                <h6 class="ms-4 m-2 fw-bold">{% trans "Total Amount:" %} <b><span class="payslip-amount"></span> {{currency}}</b></h6>
+                            {% endif %}
+                            <h5 class="ms-4 m-2 fw-bold" id="area_list_title" style="color:#9C4000">{% trans "Totale per Area" %}</h5>
+                            <hr class="line">
+                            <ul id="department_total" style="height:286px;overflow-y:auto;list-style:disc;"></ul>
+                            <ul id="department_total_empty" style="height:232px;overflow-y:auto;list-style:disc;"></ul>
+                        </div>
+                    </div>
+
+                    <!-- ===== Employer Contributions + Contracts ===== -->
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-4">
+                        <form hx-get="{% url 'get-contribution-report' %}" hx-trigger="load, submit" hx-target="#contributionReportContainer" class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent">
+                            <div class="d-flex justify-content-between oh-card-dashboard__header oh-card-dashboard__header--divider" style="cursor:default;">
                                 <span class="oh-card-dashboard__title">{% trans "Employer Contributions" %}</span>
                                 <div>
                                     <span class="oh-card-dashboard__title">
@@ -176,43 +175,21 @@
                                             {% endfor %}
                                         </select>
                                     </span>
-                                    {% comment %} <span class="oh-card-dashboard__title">
-                                        <select name="deduction_id" class="oh-select" onchange="$(this).closest('form').find('[type=submit]').click()" id="deduction">
-                                            <option value="">{% trans "All" %}</option>
-                                            {% for deduction in get_deductions %}
-                                            <option value="{{deduction.id}}">{{deduction.title}}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </span> {% endcomment %}
                                 </div>
-                                {% comment %} <span class="oh-card-dashboard__title float-end" id="payroll-employee-next" style = "cursor: pointer;"><ion-icon name="caret-forward"></ion-icon></span> {% endcomment %}
-
                             </div>
-                            <div class="oh-card-dashboard__body" id="contributionReportContainer" >
-                            </div>
+                            <div class="oh-card-dashboard__body" id="contributionReportContainer"></div>
                             <button type="submit" hidden>
                         </form>
                     </div>
                     <div class="col-12 col-sm-12 col-md-12 col-lg-6">
-                        <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent" style = "cursor: default;">
-                            <h4 class="ms-4 m-2 fw-bold text-danger">{% trans "Contracts ending " %}  <b><span class=""></span></b></h4>
-                            <h6 class="ms-4 fw-bold" >{% trans "Number of contracts expiring in " %} <b class="contract-number"></b></h6>
+                        <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent" style="cursor:default;">
+                            <h4 class="ms-4 m-2 fw-bold text-danger">{% trans "Contracts ending" %}</h4>
+                            <h6 class="ms-4 fw-bold">{% trans "Number of contracts expiring in" %} <b class="contract-number"></b></h6>
                             <hr class="line">
-                            <ul id="contract_ending" style="height: 200px; overflow-y: auto; list-style: disc;">
+                            <ul id="contract_ending" style="height:200px;overflow-y:auto;list-style:disc;"></ul>
+                        </div>
+                    </div>
 
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-6">
-                        <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent">
-                            <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                                <span class="oh-card-dashboard__title">{% trans "Department Chart" %}</span>
-                            </div>
-                            <div class="oh-card-dashboard__body" id="department_canvas_body" style="width: 50%; margin: 0 auto;" >
-                                <canvas id="departmentChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -224,7 +201,7 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{% static 'payroll/dashboard.js' %}"></script>
+<script src="{% static 'payroll/dashboard.js' %}?v={% now "U" %}"></script>
 <script>
     $(document).ready(function() {
         $("#paidPayslip").on("click", function(){

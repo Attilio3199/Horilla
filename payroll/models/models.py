@@ -2368,6 +2368,15 @@ class PayslipCorpo(models.Model):
     db_tfr = models.DecimalField(max_digits=15, decimal_places=4, blank=True, null=True, verbose_name=_("D.B. TFR"))
     imp_tfr_ctr_dl = models.DecimalField(max_digits=15, decimal_places=4, blank=True, null=True, verbose_name=_("Imp. TFR/ctr.dl"))
 
+    payslip = models.ForeignKey(
+        "Payslip",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="corpo_rows",
+        verbose_name=_("Busta paga"),
+    )
+
     objects = models.Manager()
 
     class Meta:
