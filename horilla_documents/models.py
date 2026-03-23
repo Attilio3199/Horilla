@@ -191,6 +191,25 @@ class Document(HorillaModel):
     notify_before = models.IntegerField(
         default=1, null=True, verbose_name=_("Notifica Prima (giorni)")
     )
+    # ── Campi specifici per categoria "104" ────────────────────────────────
+    beneficiario = models.CharField(
+        max_length=255, null=True, blank=True, verbose_name=_("Beneficiario")
+    )
+    # ── Campi specifici per categoria "MATERNITA'" ─────────────────────────
+    dati_nascituro = models.TextField(
+        null=True, blank=True, verbose_name=_("Dati Nascituro")
+    )
+    sostituito_da = models.ForeignKey(
+        Employee,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="sostituzione_maternita",
+        verbose_name=_("Sostituito Da"),
+    )
+    sedia_maternita = models.CharField(
+        max_length=255, null=True, blank=True, verbose_name=_("Sedia Maternità")
+    )
     is_digital_asset = models.BooleanField(
         default=False, verbose_name=_("Is Digital Asset")
     )

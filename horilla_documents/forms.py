@@ -75,11 +75,18 @@ class DocumentForm(ModelForm):
     class Meta:
         model = Document
         fields = "__all__"
-        exclude = ["title", "document_request_id", "status", "reject_reason", "is_active", "upload_date"]
+        exclude = [
+            "title", "document_request_id", "status", "reject_reason", "is_active",
+            "upload_date", "notify_before", "is_digital_asset",
+            "dati_nascituro", "sostituito_da", "sedia_maternita",
+        ]
         widgets = {
             "employee_id": forms.HiddenInput(),
             "document_date": forms.DateInput(
                 attrs={"type": "date", "class": "oh-input w-100"}
+            ),
+            "beneficiario": forms.TextInput(
+                attrs={"class": "oh-input w-100", "placeholder": _("Beneficiario")}
             ),
             "start_date": forms.DateInput(
                 attrs={"type": "date", "class": "oh-input w-100"}

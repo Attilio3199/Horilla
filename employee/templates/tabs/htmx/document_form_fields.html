@@ -3,66 +3,45 @@
 
 <div class="row">
 
-  {# ───── CATEGORIA ───── #}
+  {# ── RIGA 1: Categoria | Sottocategoria ── #}
   <div class="col-12 col-md-6 mb-3">
     <label class="oh-label required-star" for="id_category">{% trans "Categoria" %}</label>
-    <div class="d-flex gap-1 align-items-center">
-      <select name="category" id="id_category" class="oh-select oh-select-2 w-100" required>
-        <option value="">---{% trans "Scegli Categoria" %}---</option>
-        {% for cat in form.fields.category.queryset %}
-          <option value="{{ cat.id }}" {% if form.instance.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
-        {% endfor %}
-      </select>
-      {% if perms.horilla_documents.add_documentcategory %}
-      <button type="button" class="oh-btn oh-btn--secondary px-2 py-1" style="min-width:32px;" title="{% trans 'Aggiungi categoria' %}"
-        onclick="showInlineAdd('category-add-row')">
-        <i class="material-icons" style="font-size:16px">add</i>
-      </button>
-      {% endif %}
-    </div>
-    <div id="category-add-row" class="d-none mt-1 d-flex gap-1">
-      <input type="text" id="new-category-name" class="oh-input w-100" placeholder="{% trans 'Nuova categoria...' %}" />
-      <button type="button" class="oh-btn oh-btn--secondary px-2 py-1" onclick="addCategory()">
-        <i class="material-icons" style="font-size:16px">check</i>
-      </button>
-    </div>
+    <select name="category" id="id_category" class="oh-select oh-select-2 w-100" required>
+      <option value="">---{% trans "Scegli Categoria" %}---</option>
+      {% for cat in form.fields.category.queryset %}
+        <option value="{{ cat.id }}" {% if form.instance.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+      {% endfor %}
+    </select>
     {% if form.category.errors %}<div class="text-danger small">{{ form.category.errors }}</div>{% endif %}
   </div>
 
-  {# ───── SOTTOCATEGORIA ───── #}
   <div class="col-12 col-md-6 mb-3">
     <label class="oh-label" for="id_subcategory">{% trans "Sottocategoria" %}</label>
-    <div class="d-flex gap-1 align-items-center">
-      <select name="subcategory" id="id_subcategory" class="oh-select oh-select-2 w-100">
-        <option value="">---{% trans "Scegli Sottocategoria" %}---</option>
-        {% for sub in form.fields.subcategory.queryset %}
-          <option value="{{ sub.id }}" {% if form.instance.subcategory_id == sub.id %}selected{% endif %}>{{ sub.name }}</option>
-        {% endfor %}
-      </select>
-      {% if perms.horilla_documents.add_documentsubcategory %}
-      <button type="button" class="oh-btn oh-btn--secondary px-2 py-1" style="min-width:32px;" title="{% trans 'Aggiungi sottocategoria' %}"
-        onclick="showInlineAdd('subcategory-add-row')">
-        <i class="material-icons" style="font-size:16px">add</i>
-      </button>
-      {% endif %}
-    </div>
-    <div id="subcategory-add-row" class="d-none mt-1 d-flex gap-1">
-      <input type="text" id="new-subcategory-name" class="oh-input w-100" placeholder="{% trans 'Nuova sottocategoria...' %}" />
-      <button type="button" class="oh-btn oh-btn--secondary px-2 py-1" onclick="addSubCategory()">
-        <i class="material-icons" style="font-size:16px">check</i>
-      </button>
-    </div>
+    <select name="subcategory" id="id_subcategory" class="oh-select oh-select-2 w-100">
+      <option value="">---{% trans "Scegli Sottocategoria" %}---</option>
+      {% for sub in form.fields.subcategory.queryset %}
+        <option value="{{ sub.id }}" {% if form.instance.subcategory_id == sub.id %}selected{% endif %}>{{ sub.name }}</option>
+      {% endfor %}
+    </select>
     {% if form.subcategory.errors %}<div class="text-danger small">{{ form.subcategory.errors }}</div>{% endif %}
   </div>
 
-  {# ───── FILE ───── #}
-  <div class="col-12 col-md-6 mb-3">
-    <label class="oh-label required-star" for="id_document">{% trans "Documento" %}</label>
-    {{ form.document }}
-    {% if form.document.errors %}<div class="text-danger small">{{ form.document.errors }}</div>{% endif %}
+  {# ── RIGA 2: Data Documento (full o metà) | Beneficiario (solo cat. 104) ── #}
+  <div class="col-12 mb-3" id="document-date-col">
+    <label class="oh-label" for="id_document_date">{% trans "Data Documento" %}</label>
+    <input type="date" name="document_date" id="id_document_date" class="oh-input w-100 form-control"
+      value="{{ form.instance.document_date|date:'Y-m-d' }}">
+    {% if form.document_date.errors %}<div class="text-danger small">{{ form.document_date.errors }}</div>{% endif %}
   </div>
 
-  {# ───── DATA INIZIO ───── #}
+  <div class="col-12 col-md-6 mb-3 d-none" id="beneficiario-col">
+    <label class="oh-label" for="id_beneficiario">{% trans "Beneficiario" %}</label>
+    <input type="text" name="beneficiario" id="id_beneficiario" class="oh-input w-100"
+      placeholder="{% trans 'Beneficiario' %}" value="{{ form.instance.beneficiario|default_if_none:'' }}">
+    {% if form.beneficiario.errors %}<div class="text-danger small">{{ form.beneficiario.errors }}</div>{% endif %}
+  </div>
+
+  {# ── RIGA 3: Data Inizio | Data Fine ── #}
   <div class="col-12 col-md-6 mb-3">
     <label class="oh-label" for="id_start_date">{% trans "Data Inizio" %}</label>
     <input type="date" name="start_date" id="id_start_date" class="oh-input w-100 form-control"
@@ -70,7 +49,6 @@
     {% if form.start_date.errors %}<div class="text-danger small">{{ form.start_date.errors }}</div>{% endif %}
   </div>
 
-  {# ───── DATA FINE ───── #}
   <div class="col-12 col-md-6 mb-3">
     <label class="oh-label" for="id_expiry_date">{% trans "Data Fine" %}</label>
     <input type="date" name="expiry_date" id="id_expiry_date" class="oh-input w-100 form-control"
@@ -78,32 +56,82 @@
     {% if form.expiry_date.errors %}<div class="text-danger small">{{ form.expiry_date.errors }}</div>{% endif %}
   </div>
 
-  {# ───── NOTIFICA PRIMA (nascosta se non c'è data fine) ───── #}
-  <div class="col-12 col-md-6 mb-3" id="notify-before-row" {% if not form.instance.expiry_date %}style="display:none"{% endif %}>
-    <label class="oh-label" for="id_notify_before">{% trans "Notifica Prima (giorni)" %}</label>
-    {{ form.notify_before }}
-    {% if form.notify_before.errors %}<div class="text-danger small">{{ form.notify_before.errors }}</div>{% endif %}
+  {# ── RIGA 4: Note | Documento da caricare ── #}
+  <div class="col-12 col-md-6 mb-3">
+    <label class="oh-label" for="id_notes">{% trans "Note" %}</label>
+    <textarea name="notes" id="id_notes" class="oh-input w-100" rows="3"
+      placeholder="{% trans 'Note aggiuntive...' %}">{{ form.instance.notes|default_if_none:'' }}</textarea>
+    {% if form.notes.errors %}<div class="text-danger small">{{ form.notes.errors }}</div>{% endif %}
   </div>
 
-  {# ───── ASSET DIGITALE ───── #}
   <div class="col-12 col-md-6 mb-3">
-    <label class="oh-label" for="id_is_digital_asset">{% trans "È Un Asset Digitale" %}</label>
-    <div class="oh-switch" style="width:30px">{{ form.is_digital_asset }}</div>
-    {% if form.is_digital_asset.errors %}<div class="text-danger small">{{ form.is_digital_asset.errors }}</div>{% endif %}
+    <label class="oh-label" for="id_document">{% trans "Documento da caricare" %}</label>
+    {{ form.document }}
+    {% if form.document.errors %}<div class="text-danger small">{{ form.document.errors }}</div>{% endif %}
   </div>
 
 </div>
 
+{# Banner visibile quando si seleziona "VARIAZIONE ORARIA" #}
+<div id="variazione-oraria-banner" class="alert alert-info d-none" role="alert">
+  <i class="material-icons align-middle me-1" style="font-size:18px">info</i>
+  {% trans "Selezionata 'VARIAZIONE ORARIA': verrai reindirizzato al relativo form." %}
+</div>
+
 <div class="d-flex flex-row-reverse">
-  <button type="submit" class="oh-btn oh-btn--secondary mt-2 mr-0 pl-4 pr-5">{% trans "Salva" %}</button>
+  <button type="submit" class="oh-btn oh-btn--secondary mt-2 mr-0 pl-4 pr-5" id="doc-submit-btn">{% trans "Salva" %}</button>
 </div>
 
 <script>
 (function () {
   const categorySelect    = document.getElementById("id_category");
   const subcategorySelect = document.getElementById("id_subcategory");
-  const notifyRow         = document.getElementById("notify-before-row");
-  const expiryInput       = document.getElementById("id_expiry_date");
+  const submitBtn         = document.getElementById("doc-submit-btn");
+  const varBanner         = document.getElementById("variazione-oraria-banner");
+  const beneficiarioCol   = document.getElementById("beneficiario-col");
+  const beneficiarioInput = document.getElementById("id_beneficiario");
+  const documentDateCol   = document.getElementById("document-date-col");
+  const empId             = "{{ emp_id|default:'' }}";
+
+  function getCategoryName(selectEl) {
+    const opt = selectEl.options[selectEl.selectedIndex];
+    return opt ? opt.text.trim().toUpperCase() : "";
+  }
+
+  function updateCategoryDependents() {
+    const name = getCategoryName(categorySelect);
+
+  // VARIAZIONE ORARIA → redirect
+    if (name === "VARIAZIONE ORARIA") {
+      // emp_id dal contesto (vista dipendente) o dal select employee_id (quick form)
+      const empSelectEl = document.getElementById("id_employee_id");
+      const resolvedEmpId = empId || (empSelectEl ? empSelectEl.value : "");
+      if (!resolvedEmpId) {
+        alert("{% trans 'Seleziona prima un dipendente.' %}");
+        categorySelect.value = "";
+        if ($(categorySelect).data("select2")) $(categorySelect).trigger("change.select2");
+        return;
+      }
+      varBanner.classList.remove("d-none");
+      submitBtn.disabled = true;
+      window.location.href = `/payroll/variazione-oraria/${resolvedEmpId}/`;
+      return;
+    }
+    varBanner.classList.add("d-none");
+    submitBtn.disabled = false;
+
+    // 104 → Data Documento col-md-6 + mostra Beneficiario
+    if (name === "104") {
+      documentDateCol.classList.remove("col-12");
+      documentDateCol.classList.add("col-md-6");
+      beneficiarioCol.classList.remove("d-none");
+    } else {
+      documentDateCol.classList.remove("col-md-6");
+      documentDateCol.classList.add("col-12");
+      beneficiarioCol.classList.add("d-none");
+      if (beneficiarioInput) beneficiarioInput.value = "";
+    }
+  }
 
   // ── Carica sottocategorie quando cambia la categoria ──
   function loadSubcategories(catId, selectedId) {
@@ -127,74 +155,14 @@
   }
 
   categorySelect.addEventListener("change", function () {
+    updateCategoryDependents();
     loadSubcategories(this.value, null);
   });
 
-  // Carica al mount se già selezionata
+  // Applica al mount (modifica/pre-selezione)
+  updateCategoryDependents();
   if (categorySelect.value) {
     loadSubcategories(categorySelect.value, subcategorySelect.value || null);
   }
-
-  // ── Mostra/nascondi notify_before ──
-  if (expiryInput) {
-    expiryInput.addEventListener("change", function () {
-      if (this.value) {
-        notifyRow.style.display = "";
-      } else {
-        notifyRow.style.display = "none";
-      }
-    });
-  }
-
-  // ── Inline add helpers ──
-  window.showInlineAdd = function(rowId) {
-    const row = document.getElementById(rowId);
-    if (row) row.classList.toggle("d-none");
-  };
-
-  window.addCategory = function () {
-    const name = document.getElementById("new-category-name").value.trim();
-    if (!name) return;
-    fetch("{% url 'document-category-create' %}", {
-      method: "POST",
-      headers: {
-        "X-CSRFToken": "{{ csrf_token }}",
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `name=${encodeURIComponent(name)}`,
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.error) { alert(data.error); return; }
-      const opt = new Option(data.name, data.id, true, true);
-      $(categorySelect).append(opt).trigger("change");
-      document.getElementById("new-category-name").value = "";
-      document.getElementById("category-add-row").classList.add("d-none");
-      loadSubcategories(data.id, null);
-    });
-  };
-
-  window.addSubCategory = function () {
-    const name  = document.getElementById("new-subcategory-name").value.trim();
-    const catId = categorySelect.value;
-    if (!name)  { alert("{% trans 'Seleziona prima una categoria' %}"); return; }
-    if (!catId) { alert("{% trans 'Seleziona prima una categoria' %}"); return; }
-    fetch("{% url 'document-subcategory-create' %}", {
-      method: "POST",
-      headers: {
-        "X-CSRFToken": "{{ csrf_token }}",
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `name=${encodeURIComponent(name)}&category_id=${catId}`,
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.error) { alert(data.error); return; }
-      const opt = new Option(data.name, data.id, true, true);
-      $(subcategorySelect).append(opt).trigger("change");
-      document.getElementById("new-subcategory-name").value = "";
-      document.getElementById("subcategory-add-row").classList.add("d-none");
-    });
-  };
 })();
 </script>
