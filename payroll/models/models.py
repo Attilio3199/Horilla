@@ -2289,7 +2289,6 @@ class PayslipDizionario(models.Model):
 
     codice_tipo_orario = models.CharField(
         max_length=100,
-        unique=True,
         verbose_name=_("CODICE_TIPO_ORARIO (turni_creati)"),
         help_text=_("Valore del campo CODICE_TIPO_ORARIO in orari.turni_creati"),
     )

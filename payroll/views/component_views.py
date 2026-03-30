@@ -2994,10 +2994,13 @@ def controllo_cedolini(request):
             **ctx_config, "selected_dip": selected_dip,
         })
 
-    # cod_voce in payslip_presenze è intero (300); in dizionario è "0300" → strip zero
-    cod_voce_int_map = {int(m.cod_voce): m for m in mappings_attivi}
-    cod_voce_desc    = {int(m.cod_voce): m.codice_tipo_orario for m in mappings_attivi}
-    codici_tipo_orario = [m.codice_tipo_orario for m in mappings_attivi]
+    # Raggruppa per codice_tipo_orario → lista di mapping (es. ROL → [0303, 0336])
+    from collections import defaultdict as _defaultdict
+    tipo_orario_to_mappings: dict = _defaultdict(list)
+    for _m in mappings_attivi:
+        tipo_orario_to_mappings[_m.codice_tipo_orario].append(_m)
+    # Tutti i cod_voce attivi come interi (per la query presenze)
+    cod_voce_int_set = {int(m.cod_voce) for m in mappings_attivi}
     # mappa tipo_orario → usa_prev per leggere le ore corrette
     tipo_ora_map = {m.codice_tipo_orario: (m.tipo_ora == "previsionale") for m in mappings_attivi}
 
@@ -3022,7 +3025,7 @@ def controllo_cedolini(request):
     presenze_qs = (
         PayslipPresenze.objects
         .filter(mese=mese, anno=anno,
-                cod_voce__in=list(cod_voce_int_map.keys()),
+                cod_voce__in=list(cod_voce_int_set),
                 cod_dip__in=all_cod_dip)
         .values("cod_dip", "cod_voce", *day_cols)
     )
@@ -3105,29 +3108,33 @@ def controllo_cedolini(request):
         cod_dip = dip["cod_dip"]
         discrepanze_dip = []
 
-        for cod_voce_int, mapping in cod_voce_int_map.items():
-            pres_row = presenze_idx.get((cod_dip, cod_voce_int))
-            usa_prev = (mapping.tipo_ora == "previsionale")
+        for tipo_orario, tipo_mappings in tipo_orario_to_mappings.items():
+            usa_prev = tipo_mappings[0].tipo_ora == "previsionale"
+            # Tutti i cod_voce (interi) associati a questo tipo_orario
+            cod_voci = [int(m.cod_voce) for m in tipo_mappings]
+            cod_voce_label = " + ".join(m.cod_voce for m in tipo_mappings)
 
             for giorno in range(1, num_giorni + 1):
-                ore_ced = float((pres_row or {}).get(f"day_{giorno}") or 0)
-                # Controlla solo i giorni dove il cedolino ha quella voce
+                # Somma le ore di TUTTE le cod_voce associate a questo tipo_orario
+                ore_ced = sum(
+                    float((presenze_idx.get((cod_dip, cv)) or {}).get(f"day_{giorno}") or 0)
+                    for cv in cod_voci
+                )
+                # Controlla solo i giorni dove il cedolino ha almeno una di quelle voci
                 if ore_ced <= SOGLIA:
                     continue
-                # Detection: ore della voce SPECIFICA cercata (es. LAVORATO)
                 ore_cons_m, ore_prev_m = turni_idx.get(
-                    (cod_dip, mapping.codice_tipo_orario, giorno), (0.0, 0.0)
+                    (cod_dip, tipo_orario, giorno), (0.0, 0.0)
                 )
                 ore_mapped_app = ore_prev_m if usa_prev else ore_cons_m
 
                 if abs(ore_ced - ore_mapped_app) > SOGLIA:
-                    # Display: cosa c'è effettivamente nell'app quel giorno
                     ore_app_display = _ore_effettive(cod_dip, giorno)
                     discrepanze_dip.append({
-                        "codice_tipo_orario": mapping.codice_tipo_orario,
+                        "codice_tipo_orario": tipo_orario,
                         "tipo_effettivo_app": _tipo_effettivo(cod_dip, giorno, usa_prev),
-                        "cod_voce": mapping.cod_voce,
-                        "desc_voce_cedolino": cod_voce_desc.get(cod_voce_int, str(cod_voce_int)),
+                        "cod_voce": cod_voce_label,
+                        "desc_voce_cedolino": cod_voce_label,
                         "giorno": giorno,
                         "ore_cedolino": round(ore_ced, 2),
                         "ore_turni":   ore_app_display,
@@ -3181,10 +3188,12 @@ def _build_risultati_for_export(mese, anno, selected_dip):
     if not mappings_attivi or not selected_dip:
         return [], mappings_attivi
 
-    cod_voce_int_map   = {int(m.cod_voce): m for m in mappings_attivi}
-    codici_tipo_orario = [m.codice_tipo_orario for m in mappings_attivi]
-    # reverse map cod_voce_int -> descrizione (usa codice_tipo_orario come label)
-    cod_voce_desc = {int(m.cod_voce): m.codice_tipo_orario for m in mappings_attivi}
+    # Raggruppa per codice_tipo_orario → lista di mapping (es. ROL → [0303, 0336])
+    from collections import defaultdict as _defaultdict
+    tipo_orario_to_mappings: dict = _defaultdict(list)
+    for _m in mappings_attivi:
+        tipo_orario_to_mappings[_m.codice_tipo_orario].append(_m)
+    cod_voce_int_set = {int(m.cod_voce) for m in mappings_attivi}
     # mappa tipo_orario → usa_prev
     tipo_ora_map = {m.codice_tipo_orario: (m.tipo_ora == "previsionale") for m in mappings_attivi}
 
@@ -3205,7 +3214,7 @@ def _build_risultati_for_export(mese, anno, selected_dip):
     presenze_qs = (
         PayslipPresenze.objects
         .filter(mese=mese, anno=anno,
-                cod_voce__in=list(cod_voce_int_map.keys()),
+                cod_voce__in=list(cod_voce_int_set),
                 cod_dip__in=all_cod_dip)
         .values("cod_dip", "cod_voce", *day_cols)
     )
@@ -3269,26 +3278,28 @@ def _build_risultati_for_export(mese, anno, selected_dip):
     for dip in dipendenti_list:
         cod_dip = dip["cod_dip"]
         discrepanze_dip = []
-        for cod_voce_int, mapping in cod_voce_int_map.items():
-            pres_row = presenze_idx.get((cod_dip, cod_voce_int))
-            usa_prev = (mapping.tipo_ora == "previsionale")
+        for tipo_orario, tipo_mappings in tipo_orario_to_mappings.items():
+            usa_prev = tipo_mappings[0].tipo_ora == "previsionale"
+            cod_voci = [int(m.cod_voce) for m in tipo_mappings]
+            cod_voce_label = " + ".join(m.cod_voce for m in tipo_mappings)
             for giorno in range(1, num_giorni + 1):
-                ore_ced = float((pres_row or {}).get(f"day_{giorno}") or 0)
-                # Controlla solo i giorni dove il cedolino ha quella voce
+                # Somma le ore di TUTTE le cod_voce associate a questo tipo_orario
+                ore_ced = sum(
+                    float((presenze_idx.get((cod_dip, cv)) or {}).get(f"day_{giorno}") or 0)
+                    for cv in cod_voci
+                )
                 if ore_ced <= SOGLIA:
                     continue
-                # Detection: ore della voce SPECIFICA cercata
                 ore_cons_m, ore_prev_m = turni_idx.get(
-                    (cod_dip, mapping.codice_tipo_orario, giorno), (0.0, 0.0))
+                    (cod_dip, tipo_orario, giorno), (0.0, 0.0))
                 ore_mapped_app = ore_prev_m if usa_prev else ore_cons_m
                 if abs(ore_ced - ore_mapped_app) > SOGLIA:
-                    # Display: cosa c'è effettivamente nell'app quel giorno
                     ore_app_display = _ore_effettive_exp(cod_dip, giorno)
                     discrepanze_dip.append({
-                        "codice_tipo_orario": mapping.codice_tipo_orario,
+                        "codice_tipo_orario": tipo_orario,
                         "tipo_effettivo_app": _tipo_effettivo_exp(cod_dip, giorno, usa_prev),
-                        "cod_voce": mapping.cod_voce,
-                        "desc_voce_cedolino": cod_voce_desc.get(cod_voce_int, str(cod_voce_int)),
+                        "cod_voce": cod_voce_label,
+                        "desc_voce_cedolino": cod_voce_label,
                         "giorno": giorno,
                         "ore_cedolino": round(ore_ced, 2),
                         "ore_turni":    ore_app_display,
