@@ -2386,3 +2386,29 @@ class PayslipCorpo(models.Model):
 
     def __str__(self):
         return f"{self.matricola} {self.cognome} {self.nome} – {self.mese}/{self.anno} – voce {self.cod_voce}"
+
+
+class PayslipImporti(models.Model):
+    """
+    Premi importati da file Excel (una riga per dipendente per mese/anno).
+    """
+
+    mese = models.IntegerField(verbose_name=_("Mese"))
+    anno = models.IntegerField(verbose_name=_("Anno"))
+    neg = models.CharField(max_length=50, blank=True, null=True, verbose_name=_("NEG"))
+    badge_id = models.CharField(max_length=50, blank=True, null=True, verbose_name=_("Badge ID"))
+    matricola = models.CharField(max_length=20, blank=True, null=True, verbose_name=_("Matricola"))
+    importo = models.DecimalField(
+        max_digits=15, decimal_places=4, blank=True, null=True, verbose_name=_("Importo")
+    )
+
+    objects = models.Manager()
+
+    class Meta:
+        db_table = "payslip_importi"
+        verbose_name = _("Premio importato")
+        verbose_name_plural = _("Premi importati")
+        ordering = ["anno", "mese", "badge_id"]
+
+    def __str__(self):
+        return f"{self.badge_id} | {self.mese:02d}/{self.anno} | {self.importo}"

@@ -82,6 +82,7 @@ from payroll.models.models import (
     LoanAccount,
     Payslip,
     PayslipDizionario,
+    PayslipImporti,
     PayslipPresenze,
     Reimbursement,
     ReimbursementMultipleAttachment,
@@ -2821,6 +2822,184 @@ def import_payslip_corpo(request):
     return redirect("view-payslip")
 
 
+# ---------------------------------------------------------------------------
+# Importazione / Cancellazione Premi (payslip_importi)
+# ---------------------------------------------------------------------------
+
+_MONTHS_IT = [
+    (1, "Gennaio"), (2, "Febbraio"), (3, "Marzo"), (4, "Aprile"),
+    (5, "Maggio"), (6, "Giugno"), (7, "Luglio"), (8, "Agosto"),
+    (9, "Settembre"), (10, "Ottobre"), (11, "Novembre"), (12, "Dicembre"),
+]
+
+
+@login_required
+def import_payslip_importi(request):
+    """
+    GET  – mostra il form per selezionare mese/anno e caricare il file Excel.
+    POST – importa i dati dalla tabella payslip_importi.
+
+    Struttura Excel attesa (senza intestazioni significative, prima riga skippata):
+      col 0 = neg
+      col 1 = (ignorata)
+      col 2 = badge_id
+      col 3 = importo
+    La colonna matricola viene ricavata da employee_employee.codice_paghe
+    dove badge_id corrisponde a quello della riga in importazione.
+    """
+    from payroll.models.models import PayslipImporti
+
+    current_year = date.today().year
+
+    def _render(extra=None):
+        ctx = {"months": _MONTHS_IT, "current_year": current_year}
+        if extra:
+            ctx.update(extra)
+        return render(request, "payroll/payslip/import_payslip_importi.html", ctx)
+
+    if request.method == "GET":
+        return _render()
+
+    mese_str = request.POST.get("mese", "").strip()
+    anno_str = request.POST.get("anno", "").strip()
+    excel_file = request.FILES.get("file")
+    confirm_overwrite = request.POST.get("confirm_overwrite", "")
+
+    # --- validazione mese/anno ---
+    if not mese_str or not anno_str:
+        messages.error(request, _("Selezionare mese e anno prima di importare."))
+        return _render({"mese": mese_str, "anno": anno_str})
+
+    try:
+        mese = int(mese_str)
+        anno = int(anno_str)
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        messages.error(request, _("Mese o anno non validi."))
+        return _render({"mese": mese_str, "anno": anno_str})
+
+    if not excel_file:
+        messages.error(request, _("Nessun file caricato."))
+        return _render({"mese": mese, "anno": anno})
+
+    # --- lettura Excel con pandas ---
+    try:
+        import io
+        df = pd.read_excel(io.BytesIO(excel_file.read()), header=None, dtype=str)
+    except Exception as exc:
+        messages.error(request, _("Impossibile leggere il file Excel: {}").format(exc))
+        return _render({"mese": mese, "anno": anno})
+
+    # Salta la prima riga (intestazione)
+    df = df.iloc[1:].reset_index(drop=True)
+
+    if df.empty:
+        messages.error(request, _("Il file Excel non contiene dati dopo l'intestazione."))
+        return _render({"mese": mese, "anno": anno})
+
+    # --- controlla se esistono già righe per mese/anno ---
+    existing_count = PayslipImporti.objects.filter(mese=mese, anno=anno).count()
+    if existing_count and confirm_overwrite != "yes":
+        return _render({
+            "mese": mese,
+            "anno": anno,
+            "existing_count": existing_count,
+            "warn_existing": True,
+        })
+
+    if existing_count and confirm_overwrite == "yes":
+        PayslipImporti.objects.filter(mese=mese, anno=anno).delete()
+
+    # --- costruzione oggetti da importare ---
+    objects_to_create = []
+    skipped = 0
+
+    for idx, row in df.iterrows():
+        cols = list(row)
+        if len(cols) < 4:
+            skipped += 1
+            continue
+
+        def _cell(i):
+            v = cols[i]
+            if v is None:
+                return ""
+            s = str(v).strip()
+            return "" if s.lower() in ("nan", "none", "") else s
+
+        neg_val = _cell(0) or None
+        badge_id_val = _cell(2) or None
+        importo_val = _parse_decimal(_cell(3))
+
+        # ricava matricola da employee_employee tramite badge_id
+        matricola_val = None
+        if badge_id_val:
+            emp = Employee.objects.filter(badge_id=badge_id_val).first()
+            if emp and emp.codice_paghe:
+                matricola_val = emp.codice_paghe
+
+        objects_to_create.append(PayslipImporti(
+            mese=mese,
+            anno=anno,
+            neg=neg_val,
+            badge_id=badge_id_val,
+            matricola=matricola_val,
+            importo=importo_val,
+        ))
+
+    if not objects_to_create:
+        messages.error(request, _("Nessuna riga valida trovata nel file Excel."))
+        return _render({"mese": mese, "anno": anno})
+
+    PayslipImporti.objects.bulk_create(objects_to_create)
+
+    msg = _("Importate {} righe per {:02d}/{}.").format(len(objects_to_create), mese, anno)
+    if skipped:
+        msg += " " + _("{} righe ignorate (colonne insufficienti).").format(skipped)
+    messages.success(request, msg)
+    return redirect("view-payslip")
+
+
+@login_required
+def delete_payslip_importi(request):
+    """
+    GET  – mostra il form di selezione mese/anno.
+    POST – cancella tutte le righe di payslip_importi per il mese/anno indicati.
+    """
+    from payroll.models.models import PayslipImporti
+
+    current_year = date.today().year
+
+    def _render(extra=None):
+        ctx = {"months": _MONTHS_IT, "current_year": current_year}
+        if extra:
+            ctx.update(extra)
+        return render(request, "payroll/payslip/delete_payslip_importi.html", ctx)
+
+    if request.method == "GET":
+        return _render()
+
+    mese_str = request.POST.get("mese", "").strip()
+    anno_str = request.POST.get("anno", "").strip()
+
+    try:
+        mese = int(mese_str)
+        anno = int(anno_str)
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        messages.error(request, _("Mese o anno non validi."))
+        return _render({"mese": mese_str, "anno": anno_str})
+
+    deleted_count, _ = PayslipImporti.objects.filter(mese=mese, anno=anno).delete()
+    messages.success(
+        request,
+        _("Eliminati {} record premi per {:02d}/{}.").format(deleted_count, mese, anno),
+    )
+    return redirect("view-payslip")
+
+
 @login_required
 def presenze_by_lavoratore(request):
     """
@@ -2904,7 +3083,7 @@ def _mysql_orari_conn():
 
 
 @login_required
-def controllo_cedolini(request):
+def controllo_cedolini_presenze(request):
     """
     GET  /controllo-cedolini/                  → selettore periodo
     GET  /controllo-cedolini/?mese=2&anno=2026 → pannello configurazione (dizionario + dipendenti)
@@ -2931,7 +3110,7 @@ def controllo_cedolini(request):
     }
 
     if not mese_str or not anno_str:
-        return render(request, "payroll/payslip/controllo_cedolini.html", ctx_base)
+        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", ctx_base)
 
     try:
         mese = int(mese_str)
@@ -2940,7 +3119,7 @@ def controllo_cedolini(request):
             raise ValueError
     except (ValueError, TypeError):
         messages.error(request, _("Mese o anno non validi."))
-        return render(request, "payroll/payslip/controllo_cedolini.html", ctx_base)
+        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", ctx_base)
 
     num_giorni = calendar.monthrange(anno, mese)[1]
     data_inizio = _date(anno, mese, 1)
@@ -2968,7 +3147,7 @@ def controllo_cedolini(request):
             conn.close()
     except Exception as exc:
         messages.error(request, _("Errore connessione al database orari: {}").format(exc))
-        return render(request, "payroll/payslip/controllo_cedolini.html", {
+        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
             **ctx_base, "mese": mese, "anno": anno,
         })
 
@@ -2981,7 +3160,7 @@ def controllo_cedolini(request):
 
     # GET: mostra solo pannello configurazione
     if request.method != "POST":
-        return render(request, "payroll/payslip/controllo_cedolini.html", ctx_config)
+        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", ctx_config)
 
     # --- POST: esegui il controllo ---
     all_cod_dip_mysql = [d["CODICEPERSONALE"] for d in dipendenti_mysql]
@@ -2990,7 +3169,7 @@ def controllo_cedolini(request):
     mappings_attivi = [m for m in mappings if m.attivo and m.cod_voce]
     if not mappings_attivi:
         messages.warning(request, _("Nessuna voce attiva nel dizionario."))
-        return render(request, "payroll/payslip/controllo_cedolini.html", {
+        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
             **ctx_config, "selected_dip": selected_dip,
         })
 
@@ -3018,7 +3197,7 @@ def controllo_cedolini(request):
 
     if not all_cod_dip:
         messages.warning(request, _("Nessun dipendente trovato in payslip_presenze per la selezione."))
-        return render(request, "payroll/payslip/controllo_cedolini.html", {
+        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
             **ctx_config, "selected_dip": selected_dip,
         })
 
@@ -3078,7 +3257,7 @@ def controllo_cedolini(request):
             conn.close()
     except Exception as exc:
         messages.error(request, _("Errore connessione al database orari: {}").format(exc))
-        return render(request, "payroll/payslip/controllo_cedolini.html", {
+        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
             **ctx_config, "selected_dip": selected_dip,
         })
 
@@ -3150,7 +3329,7 @@ def controllo_cedolini(request):
                 "discrepanze": discrepanze_dip,
             })
 
-    return render(request, "payroll/payslip/controllo_cedolini.html", {
+    return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
         **ctx_config,
         "selected_dip":    selected_dip,
         "risultati":        risultati,
@@ -3172,7 +3351,151 @@ def toggle_dizionario_attivo(request, mapping_id):
     return HttpResponse(status=204)
 
 
-def _build_risultati_for_export(mese, anno, selected_dip):
+# ---------------------------------------------------------------------------
+# Hub controllo cedolini + sotto-pagine
+# ---------------------------------------------------------------------------
+
+@login_required
+def controllo_cedolini(request):
+    """
+    Hub page /payroll/controllo-cedolini/ — mostra i tre sotto-menù:
+      1. /presenze/  → confronto libro presenze vs turni (già esistente)
+      2. /importi/   → controllo voce 429: premi importati vs corpo busta
+      3. /acconti/   → da implementare
+    """
+    return render(request, "payroll/payslip/controllo_cedolini.html", {})
+
+
+@login_required
+def controllo_cedolini_importi(request):
+    """
+    GET  /payroll/controllo-cedolini/importi/ → selettore periodo
+    POST /payroll/controllo-cedolini/importi/ → esegue il controllo e mostra risultati
+
+    Incrocia payslip_importi (premi) con payslip_corpo voce 429 per il mese/anno
+    selezionato e mostra le discrepanze.
+    """
+    from payroll.models.models import PayslipCorpo
+
+    periodi_importi = (
+        PayslipImporti.objects
+        .values("mese", "anno")
+        .distinct()
+        .order_by("-anno", "-mese")
+    )
+    periodi_corpo = (
+        PayslipCorpo.objects
+        .filter(cod_voce=429)
+        .values("mese", "anno")
+        .distinct()
+        .order_by("-anno", "-mese")
+    )
+    # Unione periodi disponibili
+    periodi_set = {(p["mese"], p["anno"]) for p in periodi_importi}
+    periodi_set |= {(p["mese"], p["anno"]) for p in periodi_corpo}
+    periodi = sorted(periodi_set, key=lambda x: (-x[1], -x[0]))
+
+    mese_str = (request.POST.get("mese") or request.GET.get("mese", "")).strip()
+    anno_str = (request.POST.get("anno") or request.GET.get("anno", "")).strip()
+
+    ctx_base = {"periodi": periodi}
+
+    if not mese_str or not anno_str:
+        return render(request, "payroll/payslip/controllo_cedolini_importi.html", ctx_base)
+
+    try:
+        mese = int(mese_str)
+        anno = int(anno_str)
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        messages.error(request, _("Mese o anno non validi."))
+        return render(request, "payroll/payslip/controllo_cedolini_importi.html", ctx_base)
+
+    # --- Dati da payslip_importi ---
+    importi_qs = (
+        PayslipImporti.objects
+        .filter(mese=mese, anno=anno)
+        .values("matricola", "badge_id", "neg", "importo")
+    )
+    importi_by_mat = {}
+    for r in importi_qs:
+        mat = (r["matricola"] or "").strip()
+        if mat:
+            importi_by_mat[mat] = {
+                "importo": float(r["importo"] or 0) if r["importo"] is not None else 0.0,
+                "badge_id": r["badge_id"] or "",
+                "neg": r["neg"] or "",
+            }
+
+    # --- Dati da payslip_corpo voce 429 ---
+    corpo_429_qs = (
+        PayslipCorpo.objects
+        .filter(mese=mese, anno=anno, cod_voce=429)
+        .values("matricola", "cognome", "nome", "importo_ctr_lav")
+    )
+    corpo_429_by_mat = {}
+    for r in corpo_429_qs:
+        mat = (r["matricola"] or "").strip()
+        if mat:
+            nome_completo = f"{r['cognome'] or ''} {r['nome'] or ''}".strip()
+            corpo_429_by_mat[mat] = {
+                "importo": float(r["importo_ctr_lav"] or 0) if r["importo_ctr_lav"] is not None else 0.0,
+                "nome": nome_completo,
+            }
+
+    # --- Costruzione risultati ---
+    tutte_matricole = set(importi_by_mat.keys()) | set(corpo_429_by_mat.keys())
+    risultati = []
+    for mat in sorted(tutte_matricole):
+        imp = importi_by_mat.get(mat)
+        corp = corpo_429_by_mat.get(mat)
+        importo_imp = imp["importo"] if imp else None
+        importo_corp = corp["importo"] if corp else None
+        nome = (corp["nome"] if corp else "") or (imp["badge_id"] if imp else mat)
+
+        if imp and corp:
+            delta = round((importo_imp or 0) - (importo_corp or 0), 2)
+            stato = "ok" if abs(delta) < 0.01 else "delta"
+        elif imp:
+            delta = None
+            stato = "solo_importi"
+        else:
+            delta = None
+            stato = "solo_corpo"
+
+        risultati.append({
+            "matricola":     mat,
+            "nome":          nome,
+            "neg":           imp["neg"] if imp else "",
+            "badge_id":      imp["badge_id"] if imp else "",
+            "importo_imp":   importo_imp,
+            "importo_corpo": importo_corp,
+            "delta":         delta,
+            "stato":         stato,
+        })
+
+    n_ok   = sum(1 for r in risultati if r["stato"] == "ok")
+    n_diff = sum(1 for r in risultati if r["stato"] != "ok")
+
+    return render(request, "payroll/payslip/controllo_cedolini_importi.html", {
+        **ctx_base,
+        "mese":      mese,
+        "anno":      anno,
+        "risultati": risultati,
+        "n_ok":      n_ok,
+        "n_diff":    n_diff,
+        "n_totale":  len(risultati),
+    })
+
+
+@login_required
+def controllo_cedolini_acconti(request):
+    """Placeholder /payroll/controllo-cedolini/acconti/ — da implementare."""
+    return render(request, "payroll/payslip/controllo_cedolini_acconti.html", {})
+
+
+
     """
     Ricostruisce i risultati del controllo per un dato periodo e lista dipendenti.
     Restituisce (risultati, mappings_attivi) nel formato usato dalla view principale.
@@ -3498,7 +3821,7 @@ def export_controllo_docx(request):
     anno_str = request.GET.get("anno", "").strip()
 
     if not mese_str or not anno_str:
-        return render(request, "payroll/payslip/controllo_cedolini.html", {
+        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
             "periodi": periodi,
         })
 
@@ -3509,7 +3832,7 @@ def export_controllo_docx(request):
             raise ValueError
     except (ValueError, TypeError):
         messages.error(request, _("Mese o anno non validi."))
-        return render(request, "payroll/payslip/controllo_cedolini.html", {
+        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
             "periodi": periodi,
         })
 
@@ -3521,7 +3844,7 @@ def export_controllo_docx(request):
     mappings = list(PayslipDizionario.objects.filter(attivo=True, cod_voce__isnull=False))
     if not mappings:
         messages.warning(request, _("Nessuna voce attiva nel dizionario."))
-        return render(request, "payroll/payslip/controllo_cedolini.html", {
+        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
             "periodi": periodi, "mese": mese, "anno": anno,
         })
 
@@ -3544,7 +3867,7 @@ def export_controllo_docx(request):
 
     if not all_cod_dip:
         messages.warning(request, _("Nessun dipendente con cod_dip per il periodo selezionato."))
-        return render(request, "payroll/payslip/controllo_cedolini.html", {
+        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
             "periodi": periodi, "mese": mese, "anno": anno,
         })
 
@@ -3603,7 +3926,7 @@ def export_controllo_docx(request):
             conn.close()
     except Exception as exc:
         messages.error(request, _("Errore connessione al database orari: {}").format(exc))
-        return render(request, "payroll/payslip/controllo_cedolini.html", {
+        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
             "periodi": periodi, "mese": mese, "anno": anno,
         })
 
@@ -3645,7 +3968,7 @@ def export_controllo_docx(request):
                 "discrepanze": discrepanze_dip,
             })
 
-    return render(request, "payroll/payslip/controllo_cedolini.html", {
+    return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
         "periodi": periodi,
         "mese": mese,
         "anno": anno,

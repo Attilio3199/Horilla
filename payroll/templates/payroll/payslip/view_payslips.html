@@ -217,7 +217,7 @@
                 <a
                   class="oh-dropdown__link"
                   href="{% url 'controllo-cedolini' %}"
-                  >{% trans "Controllo Cedolini" %}</a
+                  >{% trans "Controllo" %}</a
                 >
               </li>
               <li class="oh-dropdown__item">
@@ -236,6 +236,13 @@
               </li>
               <li class="oh-dropdown__item">
                 <a
+                  class="oh-dropdown__link"
+                  href="{% url 'import-payslip-importi' %}"
+                  >{% trans "Importa Premi" %}</a
+                >
+              </li>
+              <li class="oh-dropdown__item">
+                <a
                   class="oh-dropdown__link oh-dropdown__link--danger"
                   href="{% url 'delete-payslip-corpo' %}"
                   >{% trans "Cancella Corpo Busta Paga" %}</a
@@ -246,6 +253,13 @@
                   class="oh-dropdown__link oh-dropdown__link--danger"
                   href="{% url 'delete-payslip-presenze' %}"
                   >{% trans "Cancella Libro Presenze" %}</a
+                >
+              </li>
+              <li class="oh-dropdown__item">
+                <a
+                  class="oh-dropdown__link oh-dropdown__link--danger"
+                  href="{% url 'delete-payslip-importi' %}"
+                  >{% trans "Cancella Premi" %}</a
                 >
               </li>
             </ul>

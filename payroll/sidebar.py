@@ -48,6 +48,10 @@ SUBMENUS = [
         "redirect": reverse("filing-status-view"),
         "accessibility": "payroll.sidebar.federal_tax_accessibility",
     },
+    {
+        "menu": trans("Controllo"),
+        "redirect": reverse("controllo-cedolini"),
+    },
 ]
 
 

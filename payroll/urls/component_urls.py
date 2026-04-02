@@ -108,6 +108,16 @@ urlpatterns = [
         name="delete-payslip-corpo",
     ),
     path(
+        "import-payslip-importi/",
+        component_views.import_payslip_importi,
+        name="import-payslip-importi",
+    ),
+    path(
+        "delete-payslip-importi/",
+        component_views.delete_payslip_importi,
+        name="delete-payslip-importi",
+    ),
+    path(
         "presenze-by-lavoratore/",
         component_views.presenze_by_lavoratore,
         name="presenze-by-lavoratore",
@@ -121,6 +131,21 @@ urlpatterns = [
         "controllo-cedolini/",
         component_views.controllo_cedolini,
         name="controllo-cedolini",
+    ),
+    path(
+        "controllo-cedolini/presenze/",
+        component_views.controllo_cedolini_presenze,
+        name="controllo-cedolini-presenze",
+    ),
+    path(
+        "controllo-cedolini/importi/",
+        component_views.controllo_cedolini_importi,
+        name="controllo-cedolini-importi",
+    ),
+    path(
+        "controllo-cedolini/acconti/",
+        component_views.controllo_cedolini_acconti,
+        name="controllo-cedolini-acconti",
     ),
     path(
         "toggle-dizionario-attivo/<int:mapping_id>/",
