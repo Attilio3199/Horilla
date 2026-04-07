@@ -19,8 +19,36 @@
         {% endfor %}
       {% endif %}
 
-      {% if warn_existing %}
-      {# ── Avviso: esistono già dati per questo mese/anno ── #}
+      {% if warn_conflicts %}
+      {# ── Conflitti: badge_id già presenti per mese/anno ── #}
+      <div class="oh-alert oh-alert--warning mb-3">
+        <strong>{% trans "Attenzione – Badge ID già presenti:" %}</strong><br>
+        {% blocktrans with n=n_conflicts tot=n_total_badge m=mese a=anno %}
+          {{ n }} badge_id su {{ tot }} risultano già presenti in payslip_importi per {{ m }}/{{ a }}.
+        {% endblocktrans %}
+      </div>
+      <ul class="mb-3 small" style="max-height:200px;overflow-y:auto;">
+        {% for bid in conflict_badge_ids %}<li><code>{{ bid }}</code></li>{% endfor %}
+      </ul>
+      <form method="post" action="{% url 'import-payslip-importi' %}">
+        {% csrf_token %}
+        <input type="hidden" name="step" value="conflicts">
+        <p class="text-muted small">{% trans "Cosa vuoi fare per i badge_id in conflitto?" %}</p>
+        <div class="d-flex gap-2">
+          <button type="submit" name="conflict_action" value="replace" class="oh-btn oh-btn--danger">
+            <ion-icon name="refresh-outline" class="mr-1"></ion-icon>
+            {% trans "Sostituisci i vecchi dati" %}
+          </button>
+          <button type="submit" name="conflict_action" value="keep" class="oh-btn oh-btn--secondary">
+            <ion-icon name="lock-closed-outline" class="mr-1"></ion-icon>
+            {% trans "Mantieni i vecchi, importa solo i nuovi badge_id" %}
+          </button>
+          <a href="{% url 'import-payslip-importi' %}" class="oh-btn oh-btn--light">{% trans "Annulla" %}</a>
+        </div>
+      </form>
+
+      {% elif warn_existing %}
+      {# ── Avviso legacy: esistono già dati per questo mese/anno ── #}
       <div class="oh-alert oh-alert--danger mb-3">
         <strong>{% trans "Attenzione:" %}</strong>
         {% blocktrans with count=existing_count m=mese a=anno %}
@@ -52,6 +80,52 @@
             {% trans "Sovrascrivi e Importa" %}
           </button>
           <a href="{% url 'view-payslip' %}" class="oh-btn oh-btn--light">{% trans "Annulla" %}</a>
+        </div>
+      </form>
+
+      {% elif step2 %}
+      {# ── Step 2: badge_id senza matricola ── #}
+      <div class="oh-alert oh-alert--warning mb-3">
+        <strong>{% trans "Badge ID non trovati:" %}</strong>
+        {% blocktrans with n=n_unmatched tot=n_total %}
+          {{ n }} badge_id su {{ tot }} righe non sono stati trovati nell'anagrafica dipendenti.
+        {% endblocktrans %}
+      </div>
+      <p class="text-muted small mb-3">
+        {% trans "Inserisci la matricola per i badge_id che vuoi risolvere (puoi lasciare vuoti quelli che non conosci: verranno importati senza matricola)." %}
+      </p>
+
+      <form method="post" action="{% url 'import-payslip-importi' %}">
+        {% csrf_token %}
+        <input type="hidden" name="step" value="2">
+        <div class="table-responsive mb-3">
+          <table class="table table-sm table-bordered">
+            <thead class="table-warning">
+              <tr>
+                <th>{% trans "Badge ID" %}</th>
+                <th>{% trans "Matricola (lascia vuoto per saltare)" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for badge_id in unmatched %}
+              <tr>
+                <td><code>{{ badge_id }}</code></td>
+                <td>
+                  <input type="text" name="mat_{{ badge_id }}"
+                         class="oh-input oh-input--sm w-100"
+                         placeholder="Es. 10321002820" autocomplete="off">
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="oh-btn oh-btn--primary">
+            <ion-icon name="cloud-upload-outline" class="mr-1"></ion-icon>
+            {% trans "Importa" %}
+          </button>
+          <a href="{% url 'import-payslip-importi' %}" class="oh-btn oh-btn--light">{% trans "Annulla" %}</a>
         </div>
       </form>
 

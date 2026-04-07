@@ -72,6 +72,25 @@
       </a>
     </div>
 
+    {# ── Malattie ── #}
+    <div class="col-md-4">
+      <a href="{% url 'controllo-cedolini-malattie' %}" class="text-decoration-none">
+        <div class="oh-card h-100" style="border-left:4px solid #dc3545; transition:.2s; cursor:pointer;"
+             onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'"
+             onmouseout="this.style.boxShadow=''">
+          <div class="oh-card__body d-flex align-items-center gap-3 py-4">
+            <ion-icon name="medkit-outline" style="font-size:2.5rem;color:#dc3545;flex-shrink:0;"></ion-icon>
+            <div>
+              <h5 class="mb-1 fw-bold">{% trans "Malattie" %}</h5>
+              <p class="mb-0 text-muted small">
+                {% trans "Voci MALATTIA da libro presenze per periodo." %}
+              </p>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+
   </div>
 </div>
 

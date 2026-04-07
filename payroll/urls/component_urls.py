@@ -148,6 +148,31 @@ urlpatterns = [
         name="controllo-cedolini-acconti",
     ),
     path(
+        "controllo-cedolini/malattie/",
+        component_views.controllo_cedolini_malattie,
+        name="controllo-cedolini-malattie",
+    ),
+    path(
+        "export-malattie-excel/",
+        component_views.export_malattie_excel,
+        name="export-malattie-excel",
+    ),
+    path(
+        "export-malattie-docx/",
+        component_views.export_malattie_docx,
+        name="export-malattie-docx",
+    ),
+    path(
+        "export-acconti-excel/",
+        component_views.export_acconti_excel,
+        name="export-acconti-excel",
+    ),
+    path(
+        "export-acconti-docx/",
+        component_views.export_acconti_docx,
+        name="export-acconti-docx",
+    ),
+    path(
         "toggle-dizionario-attivo/<int:mapping_id>/",
         component_views.toggle_dizionario_attivo,
         name="toggle-dizionario-attivo",

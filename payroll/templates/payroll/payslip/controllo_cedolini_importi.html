@@ -105,7 +105,7 @@
           </thead>
           <tbody id="imp-tbody">
             {% for r in risultati %}
-            <tr class="{% if r.stato == 'ok' %}table-success{% elif r.stato == 'solo_importi' %}table-warning{% elif r.stato == 'solo_corpo' %}table-info{% else %}table-danger{% endif %}">
+            <tr class="{% if r.stato == 'ok' %}table-success{% elif r.stato == 'solo_premi' %}table-warning{% elif r.stato == 'solo_busta' %}table-info{% else %}table-danger{% endif %}">
               <td><code>{{ r.matricola }}</code></td>
               <td>{{ r.nome|default:"—" }}</td>
               <td>{{ r.neg|default:"—" }}</td>
@@ -125,12 +125,12 @@
               <td class="text-center">
                 {% if r.stato == 'ok' %}
                   <span class="badge bg-success">{% trans "OK" %}</span>
-                {% elif r.stato == 'delta' %}
-                  <span class="badge bg-danger">{% trans "Differenza" %}</span>
-                {% elif r.stato == 'solo_importi' %}
-                  <span class="badge bg-warning text-dark">{% trans "Solo premi" %}</span>
+                {% elif r.stato == 'solo_busta' %}
+                  <span class="badge bg-info text-dark">{% trans "Solo Busta" %}</span>
+                {% elif r.stato == 'busta_non_presente' %}
+                  <span class="badge bg-danger">{% trans "Busta non presente" %}</span>
                 {% else %}
-                  <span class="badge bg-info text-dark">{% trans "Solo busta" %}</span>
+                  <span class="badge bg-warning text-dark">{% trans "Solo Premi" %}</span>
                 {% endif %}
               </td>
             </tr>

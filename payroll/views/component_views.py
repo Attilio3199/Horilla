@@ -2352,9 +2352,89 @@ def import_payslip_presenze(request):
     ]
     current_year = date.today().year
 
+    def _render_pres(extra=None):
+        ctx = {"months": months, "current_year": current_year}
+        if extra:
+            ctx.update(extra)
+        return render(request, "payroll/payslip/import_payslip_presenze.html", ctx)
+
     if request.method == "GET":
-        return render(request, "payroll/payslip/import_payslip_presenze.html",
-                      {"months": months, "current_year": current_year})
+        request.session.pop('import_presenze_pending', None)
+        return _render_pres()
+
+    # ── Step 2b: conflitti – l'utente ha scelto replace/keep ──
+    if request.POST.get("step") == "conflicts":
+        pending = request.session.get('import_presenze_pending')
+        if not pending:
+            messages.error(request, _("Sessione scaduta. Ricaricare il file."))
+            return _render_pres()
+        mese, anno = pending['mese'], pending['anno']
+        action = request.POST.get('conflict_action', 'keep')
+        conflict_matricole = set(pending.get('conflict_matricole', []))
+        if action == 'replace':
+            PayslipPresenze.objects.filter(
+                mese=mese, anno=anno, matricola__in=conflict_matricole
+            ).delete()
+        else:
+            pending['objects_data'] = [
+                od for od in pending['objects_data']
+                if od.get('matricola') not in conflict_matricole
+            ]
+        request.session['import_presenze_pending'] = pending
+        # Se ci sono ancora matricole non trovate, vai a step 2
+        if pending.get('unmatched'):
+            return _render_pres({
+                "mese": mese, "anno": anno,
+                "step2": True,
+                "unmatched": pending['unmatched'],
+                "n_total": len(pending['objects_data']),
+                "n_unmatched": len(pending['unmatched']),
+            })
+        # Altrimenti crea direttamente
+        from datetime import date as _date_cls
+        objects_to_create = []
+        for od in pending['objects_data']:
+            kwargs = dict(od)
+            if kwargs.get('data_ass'):
+                kwargs['data_ass'] = _date_cls.fromisoformat(kwargs['data_ass'])
+            objects_to_create.append(PayslipPresenze(**kwargs))
+        PayslipPresenze.objects.bulk_create(objects_to_create)
+        request.session.pop('import_presenze_pending', None)
+        messages.success(request, _("Importate {} righe per {:02d}/{}.").format(len(objects_to_create), mese, anno))
+        return redirect("view-payslip")
+
+    # ── Step 2: l'utente ha fornito i badge_id per le matricole non trovate ──
+    if request.POST.get("step") == "2":
+        pending = request.session.get('import_presenze_pending')
+        if not pending:
+            messages.error(request, _("Sessione scaduta. Ricaricare il file."))
+            return render(request, "payroll/payslip/import_payslip_presenze.html",
+                          {"months": months, "current_year": current_year})
+        mese, anno = pending['mese'], pending['anno']
+        # matricola → badge_id (cod_dip) inserito dall'utente
+        override_map = {
+            key[4:]: val.strip()
+            for key, val in request.POST.items()
+            if key.startswith('bid_') and val.strip()
+        }
+        from datetime import date as _date_cls
+        objects_to_create = []
+        for od in pending['objects_data']:
+            kwargs = dict(od)
+            if kwargs.get('data_ass'):
+                kwargs['data_ass'] = _date_cls.fromisoformat(kwargs['data_ass'])
+            mat = kwargs.get('matricola')
+            if kwargs.get('cod_dip') is None and mat and mat in override_map:
+                kwargs['cod_dip'] = override_map[mat]
+            objects_to_create.append(PayslipPresenze(**kwargs))
+        PayslipPresenze.objects.bulk_create(objects_to_create)
+        request.session.pop('import_presenze_pending', None)
+        n_senza = sum(1 for o in objects_to_create if o.cod_dip is None and o.matricola)
+        msg = _("Importate {} righe per {:02d}/{}.").format(len(objects_to_create), mese, anno)
+        if n_senza:
+            msg += " " + _("{} righe senza cod_dip (matricola non risolta).").format(n_senza)
+        messages.success(request, msg)
+        return redirect("view-payslip")
 
     mese_str = request.POST.get("mese", "").strip()
     anno_str = request.POST.get("anno", "").strip()
@@ -2378,8 +2458,7 @@ def import_payslip_presenze(request):
 
     if not csv_file:
         messages.error(request, _("Nessun file caricato."))
-        return render(request, "payroll/payslip/import_payslip_presenze.html",
-                      {"mese": mese, "anno": anno, "months": months, "current_year": current_year})
+        return _render_pres({"mese": mese, "anno": anno})
 
     # --- lettura CSV ---
     import csv as csv_module
@@ -2439,7 +2518,9 @@ def import_payslip_presenze(request):
 
     # --- importazione ---
     day_fields = [str(i) for i in range(1, 32)]
-    objects_to_create = []
+    objects_data = []
+    seen_unmatched = set()
+    unmatched_list = []  # [{matricola, lavoratore}]
 
     for row in rows:
         # data_ass: dd/mm/yyyy -> yyyy-mm-dd
@@ -2459,6 +2540,7 @@ def import_payslip_presenze(request):
             day_values[f"day_{i}"] = _parse_float(row.get(col))
 
         mat = str(row.get("matricola", "")).strip()
+        lavoratore_val = str(row.get("lavoratore", "")).strip() or None
         mat_mese_anno = f"{mat}_{mese:02d}_{anno}" if mat else None
 
         # Ricava badge_id dall'anagrafica dipendenti tramite codice_paghe == matricola
@@ -2467,34 +2549,83 @@ def import_payslip_presenze(request):
             emp = Employee.objects.filter(codice_paghe=mat).first()
             if emp:
                 cod_dip = emp.badge_id
+            elif mat not in seen_unmatched:
+                seen_unmatched.add(mat)
+                unmatched_list.append({'matricola': mat, 'lavoratore': lavoratore_val or mat})
 
-        obj = PayslipPresenze(
-            dl=str(row.get("dl", "")).strip() or None,
-            fil=str(row.get("fil", "")).strip() or None,
-            cc=str(row.get("cc", "")).strip() or None,
-            rag_soc=str(row.get("rag.soc.", "")).strip() or None,
-            matricola=str(row.get("matricola", "")).strip() or None,
-            lavoratore=str(row.get("lavoratore", "")).strip() or None,
-            qp=str(row.get("qp", "")).strip() or None,
-            data_ass=data_ass,
-            livello=str(row.get("livello", "")).strip() or None,
-            desc_liv=str(row.get(" desc.liv.", "")).strip() or None,
-            pt=str(row.get("pt", "")).strip() or None,
-            perc_pt=_parse_float(row.get("%pt")),
-            perc_turn=_parse_float(row.get("%turn")),
-            mese=mese,
-            anno=anno,
-            matricola_mese_anno=mat_mese_anno,
-            cod_voce=int(str(row.get("cod.voce", "")).strip()) if str(row.get("cod.voce", "")).strip() else None,
-            desc_voce=str(row.get("desc.voce", "")).strip() or None,
-            aliq_voce=_parse_float(row.get("aliq.voce")),
-            ore_tot=_parse_float(row.get("ore tot")),
-            gg_tot=_parse_float(row.get("gg tot")),
-            periodo_elab=str(row.get("periodo elab.", "")).strip() or None,
-            cod_dip=cod_dip,
+        row_data = {
+            'dl':               str(row.get("dl", "")).strip() or None,
+            'fil':              str(row.get("fil", "")).strip() or None,
+            'cc':               str(row.get("cc", "")).strip() or None,
+            'rag_soc':          str(row.get("rag.soc.", "")).strip() or None,
+            'matricola':        mat or None,
+            'lavoratore':       lavoratore_val,
+            'qp':               str(row.get("qp", "")).strip() or None,
+            'data_ass':         data_ass.isoformat() if data_ass else None,
+            'livello':          str(row.get("livello", "")).strip() or None,
+            'desc_liv':         str(row.get(" desc.liv.", "")).strip() or None,
+            'pt':               str(row.get("pt", "")).strip() or None,
+            'perc_pt':          _parse_float(row.get("%pt")),
+            'perc_turn':        _parse_float(row.get("%turn")),
+            'mese':             mese,
+            'anno':             anno,
+            'matricola_mese_anno': mat_mese_anno,
+            'cod_voce':         int(str(row.get("cod.voce", "")).strip()) if str(row.get("cod.voce", "")).strip() else None,
+            'desc_voce':        str(row.get("desc.voce", "")).strip() or None,
+            'aliq_voce':        _parse_float(row.get("aliq.voce")),
+            'ore_tot':          _parse_float(row.get("ore tot")),
+            'gg_tot':           _parse_float(row.get("gg tot")),
+            'periodo_elab':     str(row.get("periodo elab.", "")).strip() or None,
+            'cod_dip':          cod_dip,
             **day_values,
-        )
-        objects_to_create.append(obj)
+        }
+        objects_data.append(row_data)
+
+    # --- Controllo conflitti: matricole già presenti per mese/anno ---
+    matricole_nel_file = {od['matricola'] for od in objects_data if od.get('matricola')}
+    gia_presenti_pres = set(
+        PayslipPresenze.objects.filter(mese=mese, anno=anno, matricola__in=matricole_nel_file)
+        .values_list('matricola', flat=True).distinct()
+    )
+    if gia_presenti_pres:
+        request.session['import_presenze_pending'] = {
+            'mese': mese, 'anno': anno,
+            'objects_data': objects_data,
+            'unmatched': unmatched_list,
+            'conflict_matricole': sorted(gia_presenti_pres),
+        }
+        return _render_pres({
+            'mese': mese, 'anno': anno,
+            'warn_conflicts': True,
+            'conflict_matricole': sorted(gia_presenti_pres),
+            'n_conflicts': len(gia_presenti_pres),
+            'n_total_matricole': len(matricole_nel_file),
+        })
+
+    # Matricole senza badge_id: chiedi all'utente
+    if unmatched_list:
+        request.session['import_presenze_pending'] = {
+            'mese': mese,
+            'anno': anno,
+            'objects_data': objects_data,
+            'unmatched': unmatched_list,
+        }
+        return _render_pres({
+            "mese": mese, "anno": anno,
+            "step2": True,
+            "unmatched": unmatched_list,
+            "n_total": len(objects_data),
+            "n_unmatched": len(unmatched_list),
+        })
+
+    # Nessun non-trovato: crea direttamente
+    from datetime import date as _date_cls
+    objects_to_create = []
+    for od in objects_data:
+        kwargs = dict(od)
+        if kwargs.get('data_ass'):
+            kwargs['data_ass'] = _date_cls.fromisoformat(kwargs['data_ass'])
+        objects_to_create.append(PayslipPresenze(**kwargs))
 
     PayslipPresenze.objects.bulk_create(objects_to_create)
     messages.success(
@@ -2614,9 +2745,42 @@ def import_payslip_corpo(request):
     ]
     current_year = date.today().year
 
+    def _render_corpo(extra=None):
+        ctx = {"months": months, "current_year": current_year}
+        if extra:
+            ctx.update(extra)
+        return render(request, "payroll/payslip/import_payslip_corpo.html", ctx)
+
     if request.method == "GET":
-        return render(request, "payroll/payslip/import_payslip_corpo.html",
-                      {"months": months, "current_year": current_year})
+        request.session.pop('import_corpo_pending', None)
+        return _render_corpo()
+
+    # ── Step conflicts: l'utente ha scelto cosa fare con i conflitti ──
+    if request.POST.get("step") == "conflicts":
+        pending = request.session.get('import_corpo_pending')
+        if not pending:
+            messages.error(request, _("Sessione scaduta. Ricaricare il file."))
+            return _render_corpo()
+        mese, anno = pending['mese'], pending['anno']
+        action = request.POST.get('conflict_action', 'keep')  # 'replace' o 'keep'
+        objects_to_create = []
+        for od in pending['objects_data']:
+            obj = PayslipCorpo(**{k: v for k, v in od.items() if k not in ('assunzione', 'anzianita', 'data_pos')})
+            from datetime import date as _dc
+            obj.assunzione = _dc.fromisoformat(od['assunzione']) if od.get('assunzione') else None
+            obj.anzianita  = _dc.fromisoformat(od['anzianita'])  if od.get('anzianita')  else None
+            obj.data_pos   = _dc.fromisoformat(od['data_pos'])   if od.get('data_pos')   else None
+            objects_to_create.append(obj)
+        conflict_matricole = set(pending['conflict_matricole'])
+        if action == 'replace':
+            PayslipCorpo.objects.filter(mese=mese, anno=anno, matricola__in=conflict_matricole).delete()
+        else:
+            objects_to_create = [o for o in objects_to_create if o.matricola not in conflict_matricole]
+        request.session.pop('import_corpo_pending', None)
+        # prosegui con la bulk_create e sincronizzazione
+        # (il codice sotto viene riutilizzato)
+        _corpo_bulk_and_sync(request, mese, anno, objects_to_create, skipped=pending.get('skipped', 0))
+        return redirect("view-payslip")
 
     mese_str = request.POST.get("mese", "").strip()
     anno_str = request.POST.get("anno", "").strip()
@@ -2715,8 +2879,51 @@ def import_payslip_corpo(request):
 
     if not objects_to_create:
         messages.error(request, _("Nessuna riga valida trovata nel file CSV."))
-        return render(request, "payroll/payslip/import_payslip_corpo.html",
-                      {"mese": mese, "anno": anno, "months": months, "current_year": current_year})
+        return _render_corpo({"mese": mese, "anno": anno})
+
+    # --- Controllo conflitti: matricole già presenti per mese/anno ---
+    matricole_nel_file = {o.matricola for o in objects_to_create if o.matricola}
+    gia_presenti = set(
+        PayslipCorpo.objects.filter(mese=mese, anno=anno, matricola__in=matricole_nel_file)
+        .values_list('matricola', flat=True).distinct()
+    )
+    if gia_presenti:
+        # Serializza date come stringhe ISO per la sessione
+        def _ser(obj):
+            d = obj.__dict__.copy()
+            d.pop('_state', None)
+            d.pop('id', None)
+            d.pop('payslip_id', None)
+            for fld in ('assunzione', 'anzianita', 'data_pos'):
+                if d.get(fld) is not None:
+                    d[fld] = d[fld].isoformat()
+            for fld in ('aliq_perc_lav', 'unita', 'dato_base_imponibile',
+                         'importo_ctr_lav', 'db_tfr', 'imp_tfr_ctr_dl'):
+                if d.get(fld) is not None:
+                    d[fld] = str(d[fld])
+            return d
+        request.session['import_corpo_pending'] = {
+            'mese': mese, 'anno': anno,
+            'objects_data': [_ser(o) for o in objects_to_create],
+            'conflict_matricole': sorted(gia_presenti),
+            'skipped': skipped,
+        }
+        return _render_corpo({
+            'mese': mese, 'anno': anno,
+            'warn_conflicts': True,
+            'conflict_matricole': sorted(gia_presenti),
+            'n_conflicts': len(gia_presenti),
+            'n_total_matricole': len(matricole_nel_file),
+        })
+
+    _corpo_bulk_and_sync(request, mese, anno, objects_to_create, skipped)
+    return redirect("view-payslip")
+
+
+def _corpo_bulk_and_sync(request, mese, anno, objects_to_create, skipped=0):
+    """Bulk-crea le righe corpo e sincronizza Payslip e salary_hour."""
+    from payroll.models.models import PayslipCorpo, Payslip
+    from decimal import Decimal
 
     PayslipCorpo.objects.bulk_create(objects_to_create)
 
@@ -2819,7 +3026,6 @@ def import_payslip_corpo(request):
     if payslip_no_852:
         msg += " " + _("Nessun cod_voce 852/800 (netto) per: {}.").format(", ".join(sorted(set(payslip_no_852))))
     messages.success(request, msg)
-    return redirect("view-payslip")
 
 
 # ---------------------------------------------------------------------------
@@ -2858,7 +3064,87 @@ def import_payslip_importi(request):
         return render(request, "payroll/payslip/import_payslip_importi.html", ctx)
 
     if request.method == "GET":
+        request.session.pop('import_importi_pending', None)
         return _render()
+
+    # ── Step 2b: conflitti badge_id – l'utente ha scelto replace/keep ──
+    if request.POST.get("step") == "conflicts":
+        pending = request.session.get('import_importi_pending')
+        if not pending:
+            messages.error(request, _("Sessione scaduta. Ricaricare il file."))
+            return _render()
+        mese, anno = pending['mese'], pending['anno']
+        action = request.POST.get('conflict_action', 'keep')
+        conflict_badge_ids = set(pending.get('conflict_badge_ids', []))
+        if action == 'replace':
+            PayslipImporti.objects.filter(
+                mese=mese, anno=anno, badge_id__in=conflict_badge_ids
+            ).delete()
+        else:
+            pending['objects_data'] = [
+                od for od in pending['objects_data']
+                if od.get('badge_id') not in conflict_badge_ids
+            ]
+        request.session['import_importi_pending'] = pending
+        # Se ci sono ancora badge_id non trovati in anagrafica, vai a step 2
+        if pending.get('unmatched'):
+            return _render({
+                'mese': mese, 'anno': anno,
+                'step2': True,
+                'unmatched': pending['unmatched'],
+                'n_total': len(pending['objects_data']),
+                'n_unmatched': len(pending['unmatched']),
+            })
+        # Altrimenti crea direttamente
+        from decimal import Decimal
+        if pending.get('needs_delete'):
+            PayslipImporti.objects.filter(mese=mese, anno=anno).delete()
+        PayslipImporti.objects.bulk_create([
+            PayslipImporti(
+                mese=mese, anno=anno,
+                neg=od.get('neg'), badge_id=od.get('badge_id'),
+                matricola=od.get('matricola'),
+                importo=Decimal(od['importo']) if od.get('importo') else None,
+            )
+            for od in pending['objects_data']
+        ])
+        request.session.pop('import_importi_pending', None)
+        messages.success(request, _("Importate {} righe per {:02d}/{}.").format(len(pending['objects_data']), mese, anno))
+        return redirect("view-payslip")
+
+    # ── Step 2: l'utente ha fornito le matricole per i badge_id non trovati ──
+    if request.POST.get("step") == "2":
+        from decimal import Decimal
+        pending = request.session.get('import_importi_pending')
+        if not pending:
+            messages.error(request, _("Sessione scaduta. Ricaricare il file."))
+            return _render()
+        mese, anno = pending['mese'], pending['anno']
+        override_map = {
+            key[4:]: val.strip()
+            for key, val in request.POST.items()
+            if key.startswith('mat_') and val.strip()
+        }
+        to_create = []
+        for od in pending['objects_data']:
+            badge_id = od.get('badge_id')
+            matricola = od.get('matricola') or override_map.get(badge_id or '')
+            importo = Decimal(od['importo']) if od.get('importo') else None
+            to_create.append(PayslipImporti(
+                mese=mese, anno=anno,
+                neg=od.get('neg'), badge_id=badge_id,
+                matricola=matricola or None, importo=importo,
+            ))
+        if pending.get('needs_delete'):
+            PayslipImporti.objects.filter(mese=mese, anno=anno).delete()
+        PayslipImporti.objects.bulk_create(to_create)
+        request.session.pop('import_importi_pending', None)
+        n_senza = sum(1 for o in to_create if o.matricola is None)
+        msg = _("Importate {} righe per {:02d}/{}.").format(len(to_create), mese, anno)
+        if n_senza:
+            msg += " " + _("{} senza matricola (badge_id non risolto).").format(n_senza)
+        messages.success(request, msg)
+        return redirect("view-payslip")
 
     mese_str = request.POST.get("mese", "").strip()
     anno_str = request.POST.get("anno", "").strip()
@@ -2908,12 +3194,13 @@ def import_payslip_importi(request):
             "warn_existing": True,
         })
 
-    if existing_count and confirm_overwrite == "yes":
-        PayslipImporti.objects.filter(mese=mese, anno=anno).delete()
+    needs_delete = existing_count > 0  # deferisce il delete al momento del bulk_create
 
     # --- costruzione oggetti da importare ---
-    objects_to_create = []
+    objects_data = []
     skipped = 0
+    seen_unmatched = set()
+    unmatched_list = []
 
     for idx, row in df.iterrows():
         cols = list(row)
@@ -2938,23 +3225,75 @@ def import_payslip_importi(request):
             emp = Employee.objects.filter(badge_id=badge_id_val).first()
             if emp and emp.codice_paghe:
                 matricola_val = emp.codice_paghe
+            elif badge_id_val not in seen_unmatched:
+                seen_unmatched.add(badge_id_val)
+                unmatched_list.append(badge_id_val)
 
-        objects_to_create.append(PayslipImporti(
-            mese=mese,
-            anno=anno,
-            neg=neg_val,
-            badge_id=badge_id_val,
-            matricola=matricola_val,
-            importo=importo_val,
-        ))
+        objects_data.append({
+            'neg': neg_val,
+            'badge_id': badge_id_val,
+            'matricola': matricola_val,
+            'importo': str(importo_val) if importo_val is not None else None,
+        })
 
-    if not objects_to_create:
+    if not objects_data:
         messages.error(request, _("Nessuna riga valida trovata nel file Excel."))
         return _render({"mese": mese, "anno": anno})
 
-    PayslipImporti.objects.bulk_create(objects_to_create)
+    # --- Controllo conflitti: badge_id già presenti per mese/anno ---
+    badge_ids_nel_file = {od['badge_id'] for od in objects_data if od.get('badge_id')}
+    gia_presenti_imp = set(
+        PayslipImporti.objects.filter(mese=mese, anno=anno, badge_id__in=badge_ids_nel_file)
+        .values_list('badge_id', flat=True).distinct()
+    )
+    if gia_presenti_imp:
+        request.session['import_importi_pending'] = {
+            'mese': mese, 'anno': anno,
+            'needs_delete': needs_delete,
+            'objects_data': objects_data,
+            'unmatched': unmatched_list,
+            'conflict_badge_ids': sorted(gia_presenti_imp),
+        }
+        return _render({
+            'mese': mese, 'anno': anno,
+            'warn_conflicts': True,
+            'conflict_badge_ids': sorted(gia_presenti_imp),
+            'n_conflicts': len(gia_presenti_imp),
+            'n_total_badge': len(badge_ids_nel_file),
+        })
 
-    msg = _("Importate {} righe per {:02d}/{}.").format(len(objects_to_create), mese, anno)
+    # Badge_id senza matricola: chiedi all'utente
+    if unmatched_list:
+        request.session['import_importi_pending'] = {
+            'mese': mese,
+            'anno': anno,
+            'needs_delete': needs_delete,
+            'objects_data': objects_data,
+            'unmatched': unmatched_list,
+        }
+        return _render({
+            'mese': mese, 'anno': anno,
+            'step2': True,
+            'unmatched': unmatched_list,
+            'n_total': len(objects_data),
+            'n_unmatched': len(unmatched_list),
+            'skipped': skipped,
+        })
+
+    # Nessun non-trovato: crea direttamente
+    from decimal import Decimal
+    if needs_delete:
+        PayslipImporti.objects.filter(mese=mese, anno=anno).delete()
+    PayslipImporti.objects.bulk_create([
+        PayslipImporti(
+            mese=mese, anno=anno,
+            neg=od['neg'], badge_id=od['badge_id'],
+            matricola=od['matricola'],
+            importo=Decimal(od['importo']) if od.get('importo') else None,
+        )
+        for od in objects_data
+    ])
+    msg = _("Importate {} righe per {:02d}/{}.").format(len(objects_data), mese, anno)
     if skipped:
         msg += " " + _("{} righe ignorate (colonne insufficienti).").format(skipped)
     messages.success(request, msg)
@@ -2992,7 +3331,7 @@ def delete_payslip_importi(request):
         messages.error(request, _("Mese o anno non validi."))
         return _render({"mese": mese_str, "anno": anno_str})
 
-    deleted_count, _ = PayslipImporti.objects.filter(mese=mese, anno=anno).delete()
+    deleted_count, _del_detail = PayslipImporti.objects.filter(mese=mese, anno=anno).delete()
     messages.success(
         request,
         _("Eliminati {} record premi per {:02d}/{}.").format(deleted_count, mese, anno),
@@ -3208,7 +3547,18 @@ def controllo_cedolini_presenze(request):
                 cod_dip__in=all_cod_dip)
         .values("cod_dip", "cod_voce", *day_cols)
     )
-    presenze_idx = {(r["cod_dip"], r["cod_voce"]): r for r in presenze_qs}
+    # Se esistono più righe con stesso (cod_dip, cod_voce) sommiamo i valori giornalieri
+    presenze_idx = {}
+    for r in presenze_qs:
+        key = (r["cod_dip"], r["cod_voce"])
+        if key not in presenze_idx:
+            presenze_idx[key] = dict(r)
+        else:
+            for dc in day_cols:
+                presenze_idx[key][dc] = (
+                    float(presenze_idx[key].get(dc) or 0) +
+                    float(r.get(dc) or 0)
+                )
 
     # Batch query MySQL — tutti i turni del periodo (nessun filtro per tipo)
     ph_dip = ",".join(["%s"] * len(selected_dip))
@@ -3299,13 +3649,13 @@ def controllo_cedolini_presenze(request):
                     float((presenze_idx.get((cod_dip, cv)) or {}).get(f"day_{giorno}") or 0)
                     for cv in cod_voci
                 )
-                # Controlla solo i giorni dove il cedolino ha almeno una di quelle voci
-                if ore_ced <= SOGLIA:
-                    continue
                 ore_cons_m, ore_prev_m = turni_idx.get(
                     (cod_dip, tipo_orario, giorno), (0.0, 0.0)
                 )
                 ore_mapped_app = ore_prev_m if usa_prev else ore_cons_m
+                # Salta solo se entrambi sono zero (nessuna delle due parti ha ore)
+                if ore_ced <= SOGLIA and ore_mapped_app <= SOGLIA:
+                    continue
 
                 if abs(ore_ced - ore_mapped_app) > SOGLIA:
                     ore_app_display = _ore_effettive(cod_dip, giorno)
@@ -3326,7 +3676,7 @@ def controllo_cedolini_presenze(request):
                 "lavoratore": dip.get("lavoratore") or "",
                 "cod_dip":    cod_dip,
                 "matricola":  dip.get("matricola") or "",
-                "discrepanze": discrepanze_dip,
+                "discrepanze": sorted(discrepanze_dip, key=lambda x: (x["giorno"], x["codice_tipo_orario"])),
             })
 
     return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
@@ -3444,6 +3794,15 @@ def controllo_cedolini_importi(request):
                 "nome": nome_completo,
             }
 
+    # --- Matricole con almeno una riga in payslip_corpo (qualsiasi voce) ---
+    corpo_all_matricole = set(
+        (r["matricola"] or "").strip()
+        for r in PayslipCorpo.objects
+        .filter(mese=mese, anno=anno)
+        .values("matricola")
+        if (r["matricola"] or "").strip()
+    )
+
     # --- Costruzione risultati ---
     tutte_matricole = set(importi_by_mat.keys()) | set(corpo_429_by_mat.keys())
     risultati = []
@@ -3455,14 +3814,21 @@ def controllo_cedolini_importi(request):
         nome = (corp["nome"] if corp else "") or (imp["badge_id"] if imp else mat)
 
         if imp and corp:
+            # Presente in entrambe le fonti
             delta = round((importo_imp or 0) - (importo_corp or 0), 2)
-            stato = "ok" if abs(delta) < 0.01 else "delta"
+            stato = "ok"
         elif imp:
+            # In payslip_importi ma non in voce 429:
+            # distinguiamo se la busta esiste o meno
             delta = None
-            stato = "solo_importi"
+            if mat in corpo_all_matricole:
+                stato = "solo_premi"          # busta presente, ma voce 429 assente
+            else:
+                stato = "busta_non_presente"  # nessuna riga di busta per questo dipendente
         else:
+            # Solo in payslip_corpo voce 429, non in payslip_importi
             delta = None
-            stato = "solo_corpo"
+            stato = "solo_busta"
 
         risultati.append({
             "matricola":     mat,
@@ -3491,11 +3857,277 @@ def controllo_cedolini_importi(request):
 
 @login_required
 def controllo_cedolini_acconti(request):
-    """Placeholder /payroll/controllo-cedolini/acconti/ — da implementare."""
-    return render(request, "payroll/payslip/controllo_cedolini_acconti.html", {})
+    """
+    GET  /payroll/controllo-cedolini/acconti/              → selettore periodo
+    POST /payroll/controllo-cedolini/acconti/              → esegue il controllo
+
+    Confronta la voce cod_voce=800 (acconto) di payslip_corpo tra il mese
+    selezionato e il mese precedente.  Classifica ogni dipendente come:
+      - 'nuovo'          : presente nel mese corrente ma assente nel precedente
+      - 'sparito'        : presente nel precedente ma assente nel corrente
+      - 'cambio_importo' : presente in entrambi ma con importo diverso
+      - 'uguale'         : presente in entrambi con stesso importo
+    """
+    from payroll.models.models import PayslipCorpo
+
+    # Periodi disponibili (solo quelli che hanno almeno una voce 800)
+    periodi_qs = (
+        PayslipCorpo.objects
+        .filter(cod_voce=800)
+        .values("mese", "anno")
+        .distinct()
+        .order_by("-anno", "-mese")
+    )
+    periodi = [(p["mese"], p["anno"]) for p in periodi_qs]
+
+    mese_str = (request.POST.get("mese") or request.GET.get("mese", "")).strip()
+    anno_str = (request.POST.get("anno") or request.GET.get("anno", "")).strip()
+
+    ctx_base = {"periodi": periodi}
+
+    if not mese_str or not anno_str:
+        return render(request, "payroll/payslip/controllo_cedolini_acconti.html", ctx_base)
+
+    try:
+        mese = int(mese_str)
+        anno = int(anno_str)
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        messages.error(request, _("Mese o anno non validi."))
+        return render(request, "payroll/payslip/controllo_cedolini_acconti.html", ctx_base)
+
+    # Mese precedente
+    if mese == 1:
+        mese_prec, anno_prec = 12, anno - 1
+    else:
+        mese_prec, anno_prec = mese - 1, anno
+
+    def _fetch_acconti(m, a):
+        """Restituisce {matricola: dict} per vo. 800 nel mese/anno m/a."""
+        qs = (
+            PayslipCorpo.objects
+            .filter(mese=m, anno=a, cod_voce=800)
+            .values("matricola", "cognome", "nome", "descrizione_voce", "importo_ctr_lav")
+            .order_by("cognome", "nome")
+        )
+        result = {}
+        for r in qs:
+            mat = (r["matricola"] or "").strip()
+            if mat:
+                result[mat] = {
+                    "matricola":        mat,
+                    "cognome":          r["cognome"] or "",
+                    "nome":             r["nome"] or "",
+                    "descrizione_voce": r["descrizione_voce"] or "",
+                    "importo":          float(r["importo_ctr_lav"] or 0),
+                }
+        return result
+
+    corrente_by_mat  = _fetch_acconti(mese, anno)
+    precedente_by_mat = _fetch_acconti(mese_prec, anno_prec)
+
+    # Matricole con almeno una riga in payslip_corpo nel mese corrente (qualsiasi voce)
+    corpo_corrente_matricole = set(
+        (r["matricola"] or "").strip()
+        for r in PayslipCorpo.objects
+        .filter(mese=mese, anno=anno)
+        .values("matricola")
+        if (r["matricola"] or "").strip()
+    )
+
+    tutte_matricole = sorted(
+        set(corrente_by_mat.keys()) | set(precedente_by_mat.keys()),
+        key=lambda m: (
+            (corrente_by_mat.get(m) or precedente_by_mat.get(m))["cognome"],
+            (corrente_by_mat.get(m) or precedente_by_mat.get(m))["nome"],
+        )
+    )
+
+    risultati = []
+    for mat in tutte_matricole:
+        curr = corrente_by_mat.get(mat)
+        prev = precedente_by_mat.get(mat)
+        ref  = curr or prev   # almeno uno esiste
+
+        importo_corrente  = curr["importo"] if curr else None
+        importo_precedente = prev["importo"] if prev else None
+
+        if curr and prev:
+            if abs(importo_corrente - importo_precedente) < 0.01:
+                stato = "uguale"
+            else:
+                stato = "cambio_importo"
+        elif curr:
+            stato = "nuovo"
+        else:
+            # Presente nel mese precedente ma assente nel corrente:
+            # distinguiamo se la busta esiste o meno per il mese corrente
+            if mat in corpo_corrente_matricole:
+                stato = "sparito"           # busta presente ma voce 800 assente
+            else:
+                stato = "busta_non_presente"  # nessuna busta paga nel mese corrente
+
+        risultati.append({
+            "matricola":          mat,
+            "cognome":            ref["cognome"],
+            "nome":               ref["nome"],
+            "descrizione_voce":   ref["descrizione_voce"],
+            "importo_corrente":   importo_corrente,
+            "importo_precedente": importo_precedente,
+            "delta":              round(importo_corrente - importo_precedente, 2)
+                                  if curr and prev else None,
+            "stato":              stato,
+        })
+
+    n_nuovi           = sum(1 for r in risultati if r["stato"] == "nuovo")
+    n_spariti         = sum(1 for r in risultati if r["stato"] == "sparito")
+    n_busta_np        = sum(1 for r in risultati if r["stato"] == "busta_non_presente")
+    n_cambiati        = sum(1 for r in risultati if r["stato"] == "cambio_importo")
+    n_uguali          = sum(1 for r in risultati if r["stato"] == "uguale")
+
+    return render(request, "payroll/payslip/controllo_cedolini_acconti.html", {
+        **ctx_base,
+        "mese":             mese,
+        "anno":             anno,
+        "mese_prec":        mese_prec,
+        "anno_prec":        anno_prec,
+        "risultati":        risultati,
+        "n_totale":         len(risultati),
+        "n_nuovi":          n_nuovi,
+        "n_spariti":        n_spariti,
+        "n_busta_np":       n_busta_np,
+        "n_cambiati":       n_cambiati,
+        "n_uguali":         n_uguali,
+    })
 
 
+@login_required
+def controllo_cedolini_malattie(request):
+    """
+    GET  /payroll/controllo-cedolini/malattie/  → selettore periodo
+    POST /payroll/controllo-cedolini/malattie/  → mostra righe presenze per voci MALATTIA
 
+    Legge i cod_voce configurati in payslip_dizionario con codice_tipo_orario='MALATTIA',
+    poi estrae da payslip_presenze le righe corrispondenti per il periodo selezionato,
+    raggruppandole per dipendente e mostrando i giorni attivi per ogni voce.
+    """
+    import calendar
+    from payroll.models.models import PayslipPresenze
+
+    # --- Voci MALATTIA dal dizionario ---
+    voci_malattia_qs = PayslipDizionario.objects.filter(
+        codice_tipo_orario="MALATTIA", cod_voce__isnull=False
+    ).values("cod_voce", "note").order_by("cod_voce")
+    cod_voci_int = []
+    for v in voci_malattia_qs:
+        try:
+            cod_voci_int.append(int(v["cod_voce"]))
+        except (TypeError, ValueError):
+            pass
+
+    # --- Periodi disponibili ---
+    periodi_qs = (
+        PayslipPresenze.objects
+        .filter(cod_voce__in=cod_voci_int)
+        .values("mese", "anno")
+        .distinct()
+        .order_by("-anno", "-mese")
+    ) if cod_voci_int else []
+    periodi = [(p["mese"], p["anno"]) for p in periodi_qs]
+
+    mese_str = (request.POST.get("mese") or request.GET.get("mese", "")).strip()
+    anno_str = (request.POST.get("anno") or request.GET.get("anno", "")).strip()
+
+    ctx_base = {"periodi": periodi, "n_voci_malattia": len(cod_voci_int)}
+
+    if not mese_str or not anno_str:
+        return render(request, "payroll/payslip/controllo_cedolini_malattie.html", ctx_base)
+
+    try:
+        mese = int(mese_str)
+        anno = int(anno_str)
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        messages.error(request, _("Mese o anno non validi."))
+        return render(request, "payroll/payslip/controllo_cedolini_malattie.html", ctx_base)
+
+    num_giorni = calendar.monthrange(anno, mese)[1]
+    day_cols = [f"day_{i}" for i in range(1, 32)]
+
+    qs = (
+        PayslipPresenze.objects
+        .filter(mese=mese, anno=anno, cod_voce__in=cod_voci_int)
+        .values("matricola", "lavoratore", "cod_voce", "desc_voce", "aliq_voce", *day_cols)
+        .order_by("lavoratore", "matricola", "cod_voce")
+    )
+
+    # Raggruppa per dipendente, converti i giorni in lista compatta dei soli attivi
+    from collections import OrderedDict
+    import datetime
+    _GIORNI_ITA = ["Lu", "Ma", "Me", "Gi", "Ve", "Sa", "Do"]
+    dip_dict: dict = OrderedDict()
+    for r in qs:
+        mat = (r["matricola"] or "").strip()
+        lav = (r["lavoratore"] or "").strip()
+        key = mat or lav
+        if key not in dip_dict:
+            dip_dict[key] = {"matricola": mat, "lavoratore": lav, "voci": []}
+
+        # Strip compatta: solo giorni con valore > 0
+        giorni_attivi = []
+        strip = []  # 31 dict {val, we}, per la barra visiva
+        for g in range(1, num_giorni + 1):
+            val = r.get(f"day_{g}")
+            v = float(val) if val is not None else 0.0
+            wd = datetime.date(anno, mese, g).weekday()
+            is_we = wd >= 5
+            strip.append({"val": round(v, 2) if v > 0 else None, "we": is_we})
+            if v > 0:
+                giorni_attivi.append({
+                    "g": g,
+                    "v": round(v, 2),
+                    "dow": _GIORNI_ITA[wd],
+                    "weekend": is_we,
+                })
+
+        cod_voce_val = r["cod_voce"]
+        aliq_raw = float(r["aliq_voce"]) if r["aliq_voce"] is not None else None
+        # Voce 909: aliquota sempre 100% indipendentemente dal valore del campo
+        if cod_voce_val == 909:
+            aliq_display = 100.0
+        else:
+            aliq_display = aliq_raw
+
+        dip_dict[key]["voci"].append({
+            "cod_voce":  cod_voce_val,
+            "desc_voce": r["desc_voce"] or "",
+            "aliq_voce": aliq_display,
+            "n_giorni":  len(giorni_attivi),
+            "giorni":    giorni_attivi,   # solo i giorni attivi
+            "strip":     strip,           # lista 1..num_giorni per barra visiva
+        })
+
+    # Ordina le voci di ogni dipendente per aliquota decrescente (None in fondo)
+    for dip in dip_dict.values():
+        dip["voci"].sort(key=lambda v: v["aliq_voce"] if v["aliq_voce"] is not None else -1, reverse=True)
+
+    risultati = list(dip_dict.values())
+    n_giorni_tot = sum(v["n_giorni"] for d in risultati for v in d["voci"])
+
+    return render(request, "payroll/payslip/controllo_cedolini_malattie.html", {
+        **ctx_base,
+        "mese":         mese,
+        "anno":         anno,
+        "num_giorni":   num_giorni,
+        "risultati":    risultati,
+        "n_dipendenti": len(risultati),
+        "n_giorni_tot": n_giorni_tot,
+    })
+
+
+def _build_risultati_for_export(mese, anno, selected_dip):
     """
     Ricostruisce i risultati del controllo per un dato periodo e lista dipendenti.
     Restituisce (risultati, mappings_attivi) nel formato usato dalla view principale.
@@ -3541,7 +4173,18 @@ def controllo_cedolini_acconti(request):
                 cod_dip__in=all_cod_dip)
         .values("cod_dip", "cod_voce", *day_cols)
     )
-    presenze_idx = {(r["cod_dip"], r["cod_voce"]): r for r in presenze_qs}
+    # Se esistono più righe con stesso (cod_dip, cod_voce) sommiamo i valori giornalieri
+    presenze_idx = {}
+    for r in presenze_qs:
+        key = (r["cod_dip"], r["cod_voce"])
+        if key not in presenze_idx:
+            presenze_idx[key] = dict(r)
+        else:
+            for dc in day_cols:
+                presenze_idx[key][dc] = (
+                    float(presenze_idx[key].get(dc) or 0) +
+                    float(r.get(dc) or 0)
+                )
 
     # Query MySQL senza filtro tipo → tutti i turni del periodo
     ph_dip = ",".join(["%s"] * len(selected_dip))
@@ -3611,11 +4254,12 @@ def controllo_cedolini_acconti(request):
                     float((presenze_idx.get((cod_dip, cv)) or {}).get(f"day_{giorno}") or 0)
                     for cv in cod_voci
                 )
-                if ore_ced <= SOGLIA:
-                    continue
                 ore_cons_m, ore_prev_m = turni_idx.get(
                     (cod_dip, tipo_orario, giorno), (0.0, 0.0))
                 ore_mapped_app = ore_prev_m if usa_prev else ore_cons_m
+                # Salta solo se entrambi sono zero (nessuna delle due parti ha ore)
+                if ore_ced <= SOGLIA and ore_mapped_app <= SOGLIA:
+                    continue
                 if abs(ore_ced - ore_mapped_app) > SOGLIA:
                     ore_app_display = _ore_effettive_exp(cod_dip, giorno)
                     discrepanze_dip.append({
@@ -3633,7 +4277,7 @@ def controllo_cedolini_acconti(request):
                 "lavoratore": dip.get("lavoratore") or "",
                 "cod_dip":    cod_dip,
                 "matricola":  dip.get("matricola") or "",
-                "discrepanze": discrepanze_dip,
+                "discrepanze": sorted(discrepanze_dip, key=lambda x: (x["giorno"], x["codice_tipo_orario"])),
             })
     return risultati, mappings_attivi
 
@@ -3669,8 +4313,7 @@ def export_controllo_excel(request):
     ws.title = f"Controllo {mese:02d}-{anno}"
 
     # Intestazione
-    headers = ["DIPENDENTE", "GIORNO", "ORE APP", "TURNO APP", "ORE CEDOLINO", "TURNO CEDOLINO"]
-    bold = Font(bold=True)
+    headers = ["DIPENDENTE", "GIORNO SETTIMANA", "DATA", "ORE APP", "TURNO APP", "ORE CEDOLINO", "TURNO CEDOLINO"]
     fill_hdr = PatternFill("solid", fgColor="366092")
     font_hdr = Font(bold=True, color="FFFFFF")
     thin = Side(style="thin")
@@ -3687,12 +4330,17 @@ def export_controllo_excel(request):
     fill_warn = PatternFill("solid", fgColor="FFF2CC")
     fill_err  = PatternFill("solid", fgColor="FFDCE1")
 
+    from datetime import date as _date
+    giorni_settimana_ita = ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"]
     row_num = 2
     for ris in risultati:
         for d in ris["discrepanze"]:
+            _wd = _date(anno, mese, d["giorno"]).weekday()
+            giorno_sett = giorni_settimana_ita[_wd].capitalize()
             data_str = f"{d['giorno']:02d}/{mese:02d}/{anno}"
             values = [
                 ris["lavoratore"],
+                giorno_sett,
                 data_str,
                 d["ore_turni"],
                 d.get("tipo_effettivo_app", "—"),
@@ -3704,12 +4352,12 @@ def export_controllo_excel(request):
                 cell = ws.cell(row=row_num, column=col_idx, value=v)
                 cell.border = border
                 cell.fill = row_fill
-                if col_idx in (4, 6, 7):
+                if col_idx in (2, 5, 7):
                     cell.alignment = Alignment(horizontal="center")
             row_num += 1
 
     # Larghezze colonne
-    col_widths = [30, 14, 12, 30, 14, 26]
+    col_widths = [30, 16, 14, 12, 30, 14, 26]
     for i, w in enumerate(col_widths, 1):
         ws.column_dimensions[get_column_letter(i)].width = w
 
@@ -3765,6 +4413,9 @@ def export_controllo_docx(request):
     sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
     doc.add_paragraph()
 
+    from datetime import date as _date
+    giorni_settimana_ita = ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"]
+
     if not risultati:
         doc.add_paragraph("✅ Nessuna discrepanza rilevata. Tutti i valori coincidono.")
     else:
@@ -3779,7 +4430,8 @@ def export_controllo_docx(request):
                 f"{'discrepanza' if n == 1 else 'discrepanze'}:"
             )
             for d in ris["discrepanze"]:
-                data_str = f"{d['giorno']:02d}/{mese:02d}/{anno}"
+                _wd = _date(anno, mese, d["giorno"]).weekday()
+                data_str = f"{giorni_settimana_ita[_wd]} {d['giorno']:02d}/{mese:02d}/{anno}"
                 bullet = doc.add_paragraph(style="List Bullet")
                 bullet.add_run(f"il {data_str} ").bold = False
                 tipo_app_str = d.get('tipo_effettivo_app', '—')
@@ -3803,179 +4455,511 @@ def export_controllo_docx(request):
     )
     response["Content-Disposition"] = f'attachment; filename="controllo_cedolini_{mese:02d}_{anno}.docx"'
     return response
-    """
-    Confronto incrociato tra horilla_main.payslip_presenze e orari.turni_creati.
-    Solo le voci di payslip_dizionario con attivo=True vengono controllate.
-    """
-    import calendar
-    from datetime import date as _date
 
-    periodi = (
-        PayslipPresenze.objects
-        .values("mese", "anno")
-        .distinct()
-        .order_by("-anno", "-mese")
-    )
 
-    mese_str = request.GET.get("mese", "").strip()
-    anno_str = request.GET.get("anno", "").strip()
-
-    if not mese_str or not anno_str:
-        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
-            "periodi": periodi,
-        })
+@login_required
+def export_acconti_excel(request):
+    """Scarica un .xlsx con il confronto acconti (voce 800) tra mese corrente e precedente."""
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+    from openpyxl.utils import get_column_letter
+    from payroll.models.models import PayslipCorpo
 
     try:
-        mese = int(mese_str)
-        anno = int(anno_str)
+        mese = int(request.GET.get("mese", 0))
+        anno = int(request.GET.get("anno", 0))
         if not (1 <= mese <= 12):
             raise ValueError
     except (ValueError, TypeError):
-        messages.error(request, _("Mese o anno non validi."))
-        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
-            "periodi": periodi,
-        })
+        return HttpResponse("Parametri non validi", status=400)
+
+    if mese == 1:
+        mese_prec, anno_prec = 12, anno - 1
+    else:
+        mese_prec, anno_prec = mese - 1, anno
+
+    def _fetch(m, a):
+        qs = PayslipCorpo.objects.filter(mese=m, anno=a, cod_voce=800).values(
+            "matricola", "cognome", "nome", "descrizione_voce", "importo_ctr_lav"
+        )
+        return {
+            (r["matricola"] or "").strip(): {
+                "cognome": r["cognome"] or "",
+                "nome": r["nome"] or "",
+                "descrizione_voce": r["descrizione_voce"] or "",
+                "importo": float(r["importo_ctr_lav"] or 0),
+            }
+            for r in qs if (r["matricola"] or "").strip()
+        }
+
+    corrente  = _fetch(mese, anno)
+    precedente = _fetch(mese_prec, anno_prec)
+
+    # Matricole con almeno una riga in payslip_corpo nel mese corrente (qualsiasi voce)
+    corpo_corrente_matricole = set(
+        (r["matricola"] or "").strip()
+        for r in PayslipCorpo.objects.filter(mese=mese, anno=anno).values("matricola")
+        if (r["matricola"] or "").strip()
+    )
+
+    tutte = sorted(
+        set(corrente.keys()) | set(precedente.keys()),
+        key=lambda m: ((corrente.get(m) or precedente.get(m))["cognome"],
+                       (corrente.get(m) or precedente.get(m))["nome"])
+    )
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = f"Acconti {mese:02d}-{anno}"
+
+    thin = Side(style="thin")
+    border = Border(left=thin, right=thin, top=thin, bottom=thin)
+    font_hdr = Font(bold=True, color="FFFFFF")
+    fill_hdr = PatternFill("solid", fgColor="366092")
+
+    headers = [
+        "MATRICOLA", "COGNOME", "NOME", "DESCRIZIONE VOCE",
+        f"IMPORTO {mese_prec:02d}/{anno_prec}",
+        f"IMPORTO {mese:02d}/{anno}",
+        "DIFFERENZA", "STATO",
+    ]
+    for ci, h in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=ci, value=h)
+        cell.font = font_hdr
+        cell.fill = fill_hdr
+        cell.alignment = Alignment(horizontal="center", vertical="center")
+        cell.border = border
+    ws.row_dimensions[1].height = 20
+
+    fill_map = {
+        "nuovo":              PatternFill("solid", fgColor="C6EFCE"),
+        "sparito":            PatternFill("solid", fgColor="FFC7CE"),
+        "busta_non_presente": PatternFill("solid", fgColor="D9D9D9"),
+        "cambio_importo":     PatternFill("solid", fgColor="FFEB9C"),
+        "uguale":             None,
+    }
+    stato_label = {
+        "nuovo":              "Nuovo",
+        "sparito":            "Sparito",
+        "busta_non_presente": "Busta non presente",
+        "cambio_importo":     "Importo cambiato",
+        "uguale":             "Uguale",
+    }
+
+    for row_num, mat in enumerate(tutte, 2):
+        curr = corrente.get(mat)
+        prev = precedente.get(mat)
+        ref  = curr or prev
+        imp_c = curr["importo"] if curr else None
+        imp_p = prev["importo"] if prev else None
+        if curr and prev:
+            stato = "uguale" if abs(imp_c - imp_p) < 0.01 else "cambio_importo"
+            delta = round(imp_c - imp_p, 2)
+        elif curr:
+            stato, delta = "nuovo", None
+        else:
+            delta = None
+            stato = "sparito" if mat in corpo_corrente_matricole else "busta_non_presente"
+
+        values = [
+            mat, ref["cognome"], ref["nome"], ref["descrizione_voce"],
+            imp_p, imp_c, delta, stato_label[stato],
+        ]
+        fill = fill_map[stato]
+        for ci, v in enumerate(values, 1):
+            cell = ws.cell(row=row_num, column=ci, value=v)
+            cell.border = border
+            if fill:
+                cell.fill = fill
+            if ci in (5, 6, 7):
+                cell.alignment = Alignment(horizontal="right")
+            if ci == 8:
+                cell.alignment = Alignment(horizontal="center")
+
+    col_widths = [16, 22, 18, 30, 18, 18, 14, 20]
+    for i, w in enumerate(col_widths, 1):
+        ws.column_dimensions[get_column_letter(i)].width = w
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = (
+        f'attachment; filename="controllo_acconti_{mese:02d}_{anno}.xlsx"'
+    )
+    wb.save(response)
+    return response
+
+
+@login_required
+def export_acconti_docx(request):
+    """Scarica un .docx con il confronto acconti (voce 800) tra mese corrente e precedente."""
+    from docx import Document
+    from docx.shared import Pt, RGBColor
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
+    import io
+    from payroll.models.models import PayslipCorpo
+
+    try:
+        mese = int(request.GET.get("mese", 0))
+        anno = int(request.GET.get("anno", 0))
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        return HttpResponse("Parametri non validi", status=400)
+
+    if mese == 1:
+        mese_prec, anno_prec = 12, anno - 1
+    else:
+        mese_prec, anno_prec = mese - 1, anno
+
+    def _fetch(m, a):
+        qs = PayslipCorpo.objects.filter(mese=m, anno=a, cod_voce=800).values(
+            "matricola", "cognome", "nome", "descrizione_voce", "importo_ctr_lav"
+        )
+        return {
+            (r["matricola"] or "").strip(): {
+                "cognome": r["cognome"] or "",
+                "nome": r["nome"] or "",
+                "descrizione_voce": r["descrizione_voce"] or "",
+                "importo": float(r["importo_ctr_lav"] or 0),
+            }
+            for r in qs if (r["matricola"] or "").strip()
+        }
+
+    corrente  = _fetch(mese, anno)
+    precedente = _fetch(mese_prec, anno_prec)
+
+    # Matricole con almeno una riga in payslip_corpo nel mese corrente (qualsiasi voce)
+    corpo_corrente_matricole = set(
+        (r["matricola"] or "").strip()
+        for r in PayslipCorpo.objects.filter(mese=mese, anno=anno).values("matricola")
+        if (r["matricola"] or "").strip()
+    )
+
+    tutte = sorted(
+        set(corrente.keys()) | set(precedente.keys()),
+        key=lambda m: ((corrente.get(m) or precedente.get(m))["cognome"],
+                       (corrente.get(m) or precedente.get(m))["nome"])
+    )
+
+    mesi_ita = ["", "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+                "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
+
+    doc = Document()
+    title = doc.add_heading(f"Controllo Acconti — {mese:02d}/{anno}", level=1)
+    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    sub = doc.add_paragraph(
+        f"Confronto {mesi_ita[mese_prec]} {anno_prec} → {mesi_ita[mese]} {anno}"
+    )
+    sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    doc.add_paragraph()
+
+    nuovi    = [(m, corrente[m])   for m in tutte if m in corrente  and m not in precedente]
+    spariti  = [(m, precedente[m]) for m in tutte
+                if m in precedente and m not in corrente and m in corpo_corrente_matricole]
+    busta_np = [(m, precedente[m]) for m in tutte
+                if m in precedente and m not in corrente and m not in corpo_corrente_matricole]
+    cambiati = [(m, corrente[m], precedente[m]) for m in tutte
+                if m in corrente and m in precedente
+                and abs(corrente[m]["importo"] - precedente[m]["importo"]) >= 0.01]
+
+    if nuovi:
+        doc.add_heading(f"🟢 Nuovi acconti ({len(nuovi)})", level=2)
+        for mat, r in nuovi:
+            p = doc.add_paragraph(style="List Bullet")
+            p.add_run(f"{r['cognome']} {r['nome']} (matr. {mat}): ")
+            p.add_run(f"{r['importo']:.2f} €").bold = True
+        doc.add_paragraph()
+
+    if spariti:
+        doc.add_heading(f"🔴 Acconti spariti ({len(spariti)})", level=2)
+        for mat, r in spariti:
+            p = doc.add_paragraph(style="List Bullet")
+            p.add_run(f"{r['cognome']} {r['nome']} (matr. {mat}): ")
+            p.add_run(f"{r['importo']:.2f} €").bold = True
+        doc.add_paragraph()
+
+    if busta_np:
+        doc.add_heading(f"⚫ Busta non presente ({len(busta_np)})", level=2)
+        for mat, r in busta_np:
+            p = doc.add_paragraph(style="List Bullet")
+            p.add_run(f"{r['cognome']} {r['nome']} (matr. {mat}): ")
+            p.add_run(f"{r['importo']:.2f} €").bold = True
+            p.add_run(" — nessuna busta paga presente nel mese corrente")
+        doc.add_paragraph()
+
+    if cambiati:
+        doc.add_heading(f"🟡 Importo cambiato ({len(cambiati)})", level=2)
+        for mat, curr, prev in cambiati:
+            delta = round(curr["importo"] - prev["importo"], 2)
+            p = doc.add_paragraph(style="List Bullet")
+            p.add_run(f"{curr['cognome']} {curr['nome']} (matr. {mat}): ")
+            p.add_run(f"{prev['importo']:.2f} €").bold = True
+            p.add_run(f" → ")
+            p.add_run(f"{curr['importo']:.2f} €").bold = True
+            p.add_run(f"  (Δ {delta:+.2f} €)")
+        doc.add_paragraph()
+
+    if not nuovi and not spariti and not busta_np and not cambiati:
+        doc.add_paragraph("✅ Nessuna variazione rilevata sugli acconti.")
+
+    buf = io.BytesIO()
+    doc.save(buf)
+    buf.seek(0)
+    response = HttpResponse(
+        buf.read(),
+        content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    )
+    response["Content-Disposition"] = (
+        f'attachment; filename="controllo_acconti_{mese:02d}_{anno}.docx"'
+    )
+    return response
+
+
+@login_required
+def export_malattie_excel(request):
+    """Scarica un .xlsx con il controllo malattie per il periodo selezionato."""
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+    from openpyxl.utils import get_column_letter
+    import datetime, calendar
+
+    try:
+        mese = int(request.GET.get("mese", 0))
+        anno = int(request.GET.get("anno", 0))
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        return HttpResponse("Parametri non validi", status=400)
 
     num_giorni = calendar.monthrange(anno, mese)[1]
-    data_inizio = _date(anno, mese, 1)
-    data_fine   = _date(anno, mese, num_giorni)
-
-    # --- Mappature attive con cod_voce valorizzato ---
-    mappings = list(PayslipDizionario.objects.filter(attivo=True, cod_voce__isnull=False))
-    if not mappings:
-        messages.warning(request, _("Nessuna voce attiva nel dizionario."))
-        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
-            "periodi": periodi, "mese": mese, "anno": anno,
-        })
-
-    # cod_voce in payslip_presenze è intero (300), in dizionario è "0300" → strip zero
-    cod_voce_int_map = {int(m.cod_voce): m for m in mappings}  # {300: mapping, ...}
-    codici_tipo_orario = [m.codice_tipo_orario for m in mappings]
-
-    # --- Dipendenti con cod_dip presenti nel periodo ---
-    dipendenti_qs = (
-        PayslipPresenze.objects
-        .filter(mese=mese, anno=anno)
-        .exclude(cod_dip__isnull=True)
-        .exclude(cod_dip="")
-        .values("cod_dip", "lavoratore", "matricola")
-        .distinct()
-        .order_by("lavoratore")
-    )
-    dipendenti_list = list(dipendenti_qs)
-    all_cod_dip = [d["cod_dip"] for d in dipendenti_list]
-
-    if not all_cod_dip:
-        messages.warning(request, _("Nessun dipendente con cod_dip per il periodo selezionato."))
-        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
-            "periodi": periodi, "mese": mese, "anno": anno,
-        })
-
-    # --- Leggi tutte le righe presenze per le voci attive in un colpo solo ---
     day_cols = [f"day_{i}" for i in range(1, num_giorni + 1)]
-    presenze_qs = (
-        PayslipPresenze.objects
-        .filter(mese=mese, anno=anno,
-                cod_voce__in=list(cod_voce_int_map.keys()),
-                cod_dip__in=all_cod_dip)
-        .values("cod_dip", "cod_voce", *day_cols)
+    _GIORNI_ITA = ["Lu", "Ma", "Me", "Gi", "Ve", "Sa", "Do"]
+
+    # Voci MALATTIA dal dizionario
+    cod_voci_malattia = list(
+        PayslipDizionario.objects.filter(codice_tipo_orario="MALATTIA", attivo=True)
+        .exclude(cod_voce__isnull=True)
+        .values_list("cod_voce", flat=True)
+        .distinct()
     )
-    # Indice (cod_dip, cod_voce_int) → row
-    presenze_idx = {(r["cod_dip"], r["cod_voce"]): r for r in presenze_qs}
+    cod_voci_int = [int(v) for v in cod_voci_malattia]
 
-    # --- Batch query MySQL: tutti i dipendenti e tipi in una sola chiamata ---
-    # Recupera sia ore_cons che ore_prev così gestiamo entrambi i tipo_ora
-    ph_dip  = ",".join(["%s"] * len(all_cod_dip))
-    ph_tipo = ",".join(["%s"] * len(codici_tipo_orario))
+    qs = list(
+        PayslipPresenze.objects
+        .filter(mese=mese, anno=anno, cod_voce__in=cod_voci_int)
+        .values("matricola", "lavoratore", "cod_voce", "desc_voce", "aliq_voce", *day_cols)
+        .order_by("lavoratore", "matricola", "cod_voce")
+    )
 
-    sql = f"""
-        SELECT
-            CODICEPERSONALE,
-            CODICE_TIPO_ORARIO,
-            DAY(Data) AS giorno,
-            SUM(CASE
-                WHEN Ora_Cons_Inizio IS NOT NULL AND Ora_Cons_Fine IS NOT NULL
-                     AND Ora_Cons_Fine > Ora_Cons_Inizio
-                THEN (TIME_TO_SEC(Ora_Cons_Fine) - TIME_TO_SEC(Ora_Cons_Inizio)) / 3600.0
-                ELSE 0
-            END) AS ore_cons,
-            SUM(CASE
-                WHEN Ora_Prev_Inizio IS NOT NULL AND Ora_Prev_Fine IS NOT NULL
-                     AND Ora_Prev_Fine > Ora_Prev_Inizio
-                THEN (TIME_TO_SEC(Ora_Prev_Fine) - TIME_TO_SEC(Ora_Prev_Inizio)) / 3600.0
-                ELSE 0
-            END) AS ore_prev
-        FROM turni_creati
-        WHERE CODICEPERSONALE IN ({ph_dip})
-          AND Data BETWEEN %s AND %s
-          AND CODICE_TIPO_ORARIO IN ({ph_tipo})
-        GROUP BY CODICEPERSONALE, CODICE_TIPO_ORARIO, DAY(Data)
-    """
-    params = all_cod_dip + [data_inizio, data_fine] + codici_tipo_orario
+    wb = Workbook()
+    ws = wb.active
+    ws.title = f"Malattie {mese:02d}-{anno}"
 
-    turni_idx = {}  # (cod_dip, codice_tipo_orario, giorno) → (ore_cons, ore_prev)
+    thin = Side(style="thin")
+    border = Border(left=thin, right=thin, top=thin, bottom=thin)
+    font_hdr = Font(bold=True, color="FFFFFF")
+    fill_hdr = PatternFill("solid", fgColor="C00000")
+    fill_we = PatternFill("solid", fgColor="FFDCE0")   # weekend con ore
+    fill_we_hdr = PatternFill("solid", fgColor="7B0000")
+
+    # Intestazioni: colonne fisse + una colonna per ogni giorno del mese
+    fixed_headers = ["MATRICOLA", "LAVORATORE", "COD. VOCE", "DESCRIZIONE", "ALIQUOTA %", "N. GIORNI"]
+    day_headers = [str(g) for g in range(1, num_giorni + 1)]
+    all_headers = fixed_headers + day_headers
+
+    for ci, h in enumerate(all_headers, 1):
+        cell = ws.cell(row=1, column=ci, value=h)
+        cell.font = font_hdr
+        cell.border = border
+        cell.alignment = Alignment(horizontal="center", vertical="center")
+        idx = ci - len(fixed_headers)  # 1-based day index
+        if ci > len(fixed_headers):
+            g = idx
+            wd = datetime.date(anno, mese, g).weekday()
+            cell.fill = fill_we_hdr if wd >= 5 else fill_hdr
+        else:
+            cell.fill = fill_hdr
+    ws.row_dimensions[1].height = 20
+
+    row_num = 2
+    for r in qs:
+        mat = (r["matricola"] or "").strip()
+        lav = (r["lavoratore"] or "").strip()
+        cod_voce_val = r["cod_voce"]
+        aliq_raw = float(r["aliq_voce"]) if r["aliq_voce"] is not None else None
+        aliq_display = 100.0 if cod_voce_val == 909 else aliq_raw
+        n_giorni = 0
+        for g in range(1, num_giorni + 1):
+            v = float(r.get(f"day_{g}") or 0)
+            if v > 0:
+                n_giorni += 1
+
+        fixed_vals = [mat, lav, cod_voce_val, r["desc_voce"] or "", aliq_display, n_giorni]
+        for ci, val in enumerate(fixed_vals, 1):
+            cell = ws.cell(row=row_num, column=ci, value=val)
+            cell.border = border
+            if ci == 5:
+                cell.alignment = Alignment(horizontal="right")
+            if ci == 6:
+                cell.alignment = Alignment(horizontal="center")
+
+        for g in range(1, num_giorni + 1):
+            ci = len(fixed_headers) + g
+            v = float(r.get(f"day_{g}") or 0)
+            val = round(v, 2) if v > 0 else None
+            cell = ws.cell(row=row_num, column=ci, value=val)
+            cell.border = border
+            cell.alignment = Alignment(horizontal="center")
+            wd = datetime.date(anno, mese, g).weekday()
+            if val is not None and wd >= 5:
+                cell.fill = fill_we
+
+        row_num += 1
+
+    # Larghezze colonne
+    col_widths_fixed = [16, 28, 11, 32, 12, 10]
+    for i, w in enumerate(col_widths_fixed, 1):
+        ws.column_dimensions[get_column_letter(i)].width = w
+    for g in range(1, num_giorni + 1):
+        ws.column_dimensions[get_column_letter(len(fixed_headers) + g)].width = 5
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = (
+        f'attachment; filename="controllo_malattie_{mese:02d}_{anno}.xlsx"'
+    )
+    wb.save(response)
+    return response
+
+
+@login_required
+def export_malattie_docx(request):
+    """Scarica un .docx con il controllo malattie per il periodo selezionato."""
+    from docx import Document
+    from docx.shared import Pt, RGBColor
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
+    import io, datetime, calendar
+
     try:
-        conn = _mysql_orari_conn()
-        try:
-            with conn.cursor() as cur:
-                cur.execute(sql, params)
-                for r in cur.fetchall():
-                    key = (r["CODICEPERSONALE"], r["CODICE_TIPO_ORARIO"], int(r["giorno"]))
-                    turni_idx[key] = (float(r["ore_cons"] or 0), float(r["ore_prev"] or 0))
-        finally:
-            conn.close()
-    except Exception as exc:
-        messages.error(request, _("Errore connessione al database orari: {}").format(exc))
-        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
-            "periodi": periodi, "mese": mese, "anno": anno,
+        mese = int(request.GET.get("mese", 0))
+        anno = int(request.GET.get("anno", 0))
+        if not (1 <= mese <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        return HttpResponse("Parametri non validi", status=400)
+
+    num_giorni = calendar.monthrange(anno, mese)[1]
+    day_cols = [f"day_{i}" for i in range(1, num_giorni + 1)]
+    _GIORNI_ITA = ["Lu", "Ma", "Me", "Gi", "Ve", "Sa", "Do"]
+    mesi_ita = ["", "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+                "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
+
+    # Voci MALATTIA dal dizionario
+    cod_voci_malattia = list(
+        PayslipDizionario.objects.filter(codice_tipo_orario="MALATTIA", attivo=True)
+        .exclude(cod_voce__isnull=True)
+        .values_list("cod_voce", flat=True)
+        .distinct()
+    )
+    cod_voci_int = [int(v) for v in cod_voci_malattia]
+
+    qs = list(
+        PayslipPresenze.objects
+        .filter(mese=mese, anno=anno, cod_voce__in=cod_voci_int)
+        .values("matricola", "lavoratore", "cod_voce", "desc_voce", "aliq_voce", *day_cols)
+        .order_by("lavoratore", "matricola", "cod_voce")
+    )
+
+    # Raggruppa per dipendente, stessa logica della view
+    from collections import OrderedDict
+    dip_dict: dict = OrderedDict()
+    for r in qs:
+        mat = (r["matricola"] or "").strip()
+        lav = (r["lavoratore"] or "").strip()
+        key = mat or lav
+        if key not in dip_dict:
+            dip_dict[key] = {"matricola": mat, "lavoratore": lav, "voci": []}
+
+        cod_voce_val = r["cod_voce"]
+        aliq_raw = float(r["aliq_voce"]) if r["aliq_voce"] is not None else None
+        aliq_display = 100.0 if cod_voce_val == 909 else aliq_raw
+
+        giorni_attivi = []
+        for g in range(1, num_giorni + 1):
+            v = float(r.get(f"day_{g}") or 0)
+            if v > 0:
+                wd = datetime.date(anno, mese, g).weekday()
+                giorni_attivi.append({
+                    "g": g, "v": round(v, 2),
+                    "dow": _GIORNI_ITA[wd], "weekend": wd >= 5,
+                })
+
+        dip_dict[key]["voci"].append({
+            "cod_voce": cod_voce_val,
+            "desc_voce": r["desc_voce"] or "",
+            "aliq_voce": aliq_display,
+            "giorni": giorni_attivi,
         })
 
-    # --- Confronto giorno per giorno ---
-    SOGLIA = 0.05   # differenza minima in ore da segnalare (~3 minuti)
+    for dip in dip_dict.values():
+        dip["voci"].sort(
+            key=lambda v: v["aliq_voce"] if v["aliq_voce"] is not None else -1,
+            reverse=True,
+        )
 
-    risultati = []
-    n_controllati = 0
+    doc = Document()
+    title = doc.add_heading(f"Controllo Malattie — {mese:02d}/{anno}", level=1)
+    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    sub = doc.add_paragraph(f"{mesi_ita[mese]} {anno}")
+    sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    doc.add_paragraph()
 
-    for dip in dipendenti_list:
-        cod_dip = dip["cod_dip"]
-        discrepanze_dip = []
+    if dip_dict:
+        for dip in dip_dict.values():
+            # Intestazione dipendente
+            hdr = doc.add_heading(level=2)
+            run = hdr.add_run(
+                f"{dip['lavoratore'] or dip['matricola']}"
+                + (f"  (matr. {dip['matricola']})" if dip["matricola"] else "")
+            )
+            run.font.color.rgb = RGBColor(0xC0, 0x00, 0x00)
 
-        for cod_voce_int, mapping in cod_voce_int_map.items():
-            pres_row = presenze_idx.get((cod_dip, cod_voce_int))
-            usa_prev = (mapping.tipo_ora == "previsionale")
+            for voce in dip["voci"]:
+                aliq_str = f"{voce['aliq_voce']:.2f}%" if voce["aliq_voce"] is not None else "—"
+                p_voce = doc.add_paragraph()
+                r_label = p_voce.add_run(
+                    f"Voce {voce['cod_voce']}  {voce['desc_voce']}  [{aliq_str}]  — "
+                    f"{len(voce['giorni'])} giorno/i"
+                )
+                r_label.bold = True
+                r_label.font.size = Pt(10)
 
-            for giorno in range(1, num_giorni + 1):
-                ore_ced = float((pres_row or {}).get(f"day_{giorno}") or 0)
-                ore_cons, ore_prev = turni_idx.get((cod_dip, mapping.codice_tipo_orario, giorno), (0.0, 0.0))
-                ore_tur = ore_prev if usa_prev else ore_cons
+                if voce["giorni"]:
+                    giorni_str = ",  ".join(
+                        f"{gd['dow']} {gd['g']}: {gd['v']:.2f}h"
+                        + ("  (WE)" if gd["weekend"] else "")
+                        for gd in voce["giorni"]
+                    )
+                    p_det = doc.add_paragraph(style="List Bullet")
+                    p_det.add_run(giorni_str).font.size = Pt(9)
+                else:
+                    p_det = doc.add_paragraph(style="List Bullet")
+                    p_det.add_run("nessun giorno attivo").font.color.rgb = RGBColor(0x99, 0x99, 0x99)
 
-                if abs(ore_ced - ore_tur) > SOGLIA:
-                    discrepanze_dip.append({
-                        "codice_tipo_orario": mapping.codice_tipo_orario,
-                        "cod_voce": mapping.cod_voce,
-                        "giorno": giorno,
-                        "ore_cedolino": round(ore_ced, 2),
-                        "ore_turni": round(ore_tur, 2),
-                        "delta": round(ore_ced - ore_tur, 2),
-                    })
+            doc.add_paragraph()
+    else:
+        doc.add_paragraph("Nessuna malattia trovata per il periodo selezionato.")
 
-        n_controllati += 1
-        if discrepanze_dip:
-            risultati.append({
-                "lavoratore": dip.get("lavoratore") or "",
-                "cod_dip": cod_dip,
-                "matricola": dip.get("matricola") or "",
-                "discrepanze": discrepanze_dip,
-            })
-
-    return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
-        "periodi": periodi,
-        "mese": mese,
-        "anno": anno,
-        "risultati": risultati,
-        "n_controllati": n_controllati,
-        "n_con_diff": len(risultati),
-        "n_discrepanze": sum(len(r["discrepanze"]) for r in risultati),
-        "mappings_attivi": mappings,
-    })
-
+    buf = io.BytesIO()
+    doc.save(buf)
+    buf.seek(0)
+    response = HttpResponse(
+        buf.read(),
+        content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    )
+    response["Content-Disposition"] = (
+        f'attachment; filename="controllo_malattie_{mese:02d}_{anno}.docx"'
+    )
+    return response

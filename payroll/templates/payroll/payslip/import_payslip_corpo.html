@@ -19,6 +19,35 @@
         {% endfor %}
       {% endif %}
 
+      {% if warn_conflicts %}
+      {# ── Conflitti: matricole già presenti per mese/anno ── #}
+      <div class="oh-alert oh-alert--warning mb-3">
+        <strong>{% trans "Attenzione – Matricole già presenti:" %}</strong><br>
+        {% blocktrans with n=n_conflicts tot=n_total_matricole m=mese a=anno %}
+          {{ n }} matricole su {{ tot }} risultano già presenti in payslip_corpo per {{ m }}/{{ a }}.
+        {% endblocktrans %}
+      </div>
+      <ul class="mb-3 small" style="max-height:200px;overflow-y:auto;">
+        {% for mat in conflict_matricole %}<li><code>{{ mat }}</code></li>{% endfor %}
+      </ul>
+      <form method="post" action="{% url 'import-payslip-corpo' %}">
+        {% csrf_token %}
+        <input type="hidden" name="step" value="conflicts">
+        <p class="text-muted small">{% trans "Cosa vuoi fare per le matricole in conflitto?" %}</p>
+        <div class="d-flex gap-2">
+          <button type="submit" name="conflict_action" value="replace" class="oh-btn oh-btn--danger">
+            <ion-icon name="refresh-outline" class="mr-1"></ion-icon>
+            {% trans "Sostituisci i vecchi dati" %}
+          </button>
+          <button type="submit" name="conflict_action" value="keep" class="oh-btn oh-btn--secondary">
+            <ion-icon name="lock-closed-outline" class="mr-1"></ion-icon>
+            {% trans "Mantieni i vecchi, importa solo le nuove matricole" %}
+          </button>
+          <a href="{% url 'import-payslip-corpo' %}" class="oh-btn oh-btn--light">{% trans "Annulla" %}</a>
+        </div>
+      </form>
+
+      {% else %}
       <p class="mb-3">
         {% trans "Seleziona il mese e l'anno di riferimento, poi carica il file CSV del corpo busta paga." %}
         {% trans "Mese e anno verranno scritti su tutte le righe importate." %}
@@ -73,6 +102,7 @@
           <a href="{% url 'view-payslip' %}" class="oh-btn oh-btn--light">{% trans "Annulla" %}</a>
         </div>
       </form>
+      {% endif %}
 
     </div>
   </div>
