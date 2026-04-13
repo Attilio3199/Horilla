@@ -3713,6 +3713,17 @@ def controllo_cedolini(request):
       2. /importi/   → controllo voce 429: premi importati vs corpo busta
       3. /acconti/   → da implementare
     """
+    # Tronca i breadcrumb in sessione fino a "controllo-cedolini" esclusi,
+    # così le sotto-pagine visitate in precedenza non rimangono nel trail.
+    crumbs = request.session.get("breadcrumbs", [])
+    idx = next(
+        (i for i, b in enumerate(crumbs) if b.get("name") == "controllo-cedolini"),
+        None,
+    )
+    if idx is not None:
+        request.session["breadcrumbs"] = crumbs[: idx]
+        request.session.modified = True
+
     return render(request, "payroll/payslip/controllo_cedolini.html", {})
 
 

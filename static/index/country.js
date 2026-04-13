@@ -841,8 +841,8 @@ function setProvinceSelectOptions(countryEl, stateEl, provinceEl) {
     }
 
     if (provinceEl.dataset.provinceBound !== "1") {
-        countryEl.addEventListener("change", refresh);
-        stateEl.addEventListener("change", refresh);
+        $(countryEl).on("change", refresh);
+        $(stateEl).on("change", refresh);
         provinceEl.dataset.provinceBound = "1";
     }
     refresh();
