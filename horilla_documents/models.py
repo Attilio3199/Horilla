@@ -107,6 +107,16 @@ FORMATS = [
     ("jpeg", "JPEG"),
 ]
 
+SEDIA_MATERNITA_CHOICES = [
+    ("SI", "Sì"),
+    ("NO", "No"),
+]
+
+
+def maternita_upload_path(instance, filename):
+    """Salva i file della maternità in media/documents/maternita/comunicazioni/"""
+    return f"documents/maternita/comunicazioni/{filename}"
+
 
 def document_create(instance):
     employees = instance.employee_id.all()
@@ -148,6 +158,86 @@ def document_request_m2m_changed(sender, instance, action, **kwargs):
         document_create(instance)
     elif action == "post_remove":
         document_create(instance)
+
+
+class Maternita(HorillaModel):
+    """
+    Rappresenta una gravidanza/maternità di un dipendente.
+    Una riga = un figlio.  A questa riga possono essere collegati più
+    Document (categoria "MATERNITA'") tramite Document.maternita FK.
+    """
+
+    employee_id = models.ForeignKey(
+        Employee,
+        on_delete=models.PROTECT,
+        verbose_name=_("Dipendente"),
+        related_name="maternita_set",
+    )
+    n_figlio = models.IntegerField(verbose_name=_("N° Figlio"))
+    nome_figlio = models.CharField(
+        max_length=255, null=True, blank=True, verbose_name=_("Nome Figlio")
+    )
+    data_comunicazione = models.DateTimeField(
+        null=True, blank=True, verbose_name=_("Data Comunicazione")
+    )
+    data_prevista_parto = models.DateTimeField(
+        null=True, blank=True, verbose_name=_("Data Prevista Parto")
+    )
+    sedia_maternita = models.CharField(
+        max_length=10,
+        choices=SEDIA_MATERNITA_CHOICES,
+        null=True,
+        blank=True,
+        verbose_name=_("Sedia Maternità"),
+    )
+    # Sostituta: testo storicizzato (cognome + nome) + badge_id al momento dell'inserimento
+    sostituta = models.CharField(
+        max_length=255, null=True, blank=True, verbose_name=_("Sostituta")
+    )
+    id_sostituta = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name=_("Badge ID Sostituta"),
+        help_text=_("badge_id del dipendente selezionato come sostituta"),
+    )
+    data_nascita = models.DateTimeField(
+        null=True, blank=True, verbose_name=_("Data Nascita")
+    )
+    data_rientro = models.DateTimeField(
+        null=True, blank=True, verbose_name=_("Data Rientro")
+    )
+    negozio = models.CharField(
+        max_length=255, null=True, blank=True, verbose_name=_("Negozio")
+    )
+    documento = models.FileField(
+        upload_to=maternita_upload_path,
+        null=True,
+        blank=True,
+        verbose_name=_("Documento comunicazione"),
+    )
+    note = models.TextField(
+        null=True, blank=True, verbose_name=_("Note")
+    )
+
+    class Meta:
+        verbose_name = _("Maternità")
+        verbose_name_plural = _("Maternità")
+        unique_together = [["employee_id", "n_figlio"]]
+        ordering = ["employee_id", "n_figlio"]
+
+    def __str__(self):
+        emp = str(self.employee_id)
+        return f"{emp} — figlio n°{self.n_figlio}"
+
+    def save(self, *args, **kwargs):
+        # Auto-calcola n_figlio se non impostato
+        if not self.pk and not self.n_figlio:
+            existing = Maternita.objects.filter(
+                employee_id=self.employee_id
+            ).count()
+            self.n_figlio = existing + 1
+        super().save(*args, **kwargs)
 
 
 class Document(HorillaModel):
@@ -195,20 +285,14 @@ class Document(HorillaModel):
     beneficiario = models.CharField(
         max_length=255, null=True, blank=True, verbose_name=_("Beneficiario")
     )
-    # ── Campi specifici per categoria "MATERNITA'" ─────────────────────────
-    dati_nascituro = models.TextField(
-        null=True, blank=True, verbose_name=_("Dati Nascituro")
-    )
-    sostituito_da = models.ForeignKey(
-        Employee,
+    # ── Collegamento a Maternità (popolato solo se categoria = "MATERNITA'") ──
+    maternita = models.ForeignKey(
+        "Maternita",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="sostituzione_maternita",
-        verbose_name=_("Sostituito Da"),
-    )
-    sedia_maternita = models.CharField(
-        max_length=255, null=True, blank=True, verbose_name=_("Sedia Maternità")
+        related_name="documents",
+        verbose_name=_("Maternità"),
     )
     is_digital_asset = models.BooleanField(
         default=False, verbose_name=_("Is Digital Asset")

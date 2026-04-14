@@ -138,6 +138,7 @@ from horilla_documents.models import (
     DocumentCategory,
     DocumentRequest,
     DocumentSubCategory,
+    Maternita,
 )
 from notifications.signals import notify
 
@@ -705,7 +706,7 @@ def document_tab(request, emp_id):
     )
     categories = DocumentCategory.objects.filter(
         document__employee_id=emp_id
-    ).distinct()
+    ).exclude(name="MATERNITA'").distinct()
     variazioni_orarie = []
     contratti = []
     if apps.is_installed("payroll"):
@@ -720,6 +721,7 @@ def document_tab(request, emp_id):
             Contract.objects.filter(employee_id_id=emp_id).order_by("-contract_start_date")
         )
 
+    maternita_category = DocumentCategory.objects.filter(name="MATERNITA'").first()
     context = {
         "documents": documents,
         "form": form,
@@ -727,13 +729,83 @@ def document_tab(request, emp_id):
         "categories": categories,
         "variazioni_orarie": variazioni_orarie,
         "contratti": contratti,
+        "maternita_list": list(
+            Maternita.objects.filter(employee_id_id=emp_id).order_by("n_figlio")
+        ),
+        "maternita_category_id": maternita_category.id if maternita_category else "",
     }
     return render(request, "tabs/document_tab.html", context=context)
 
 
-@login_required
-@hx_request_required
-@owner_can_enter("horilla_documents.add_document", Employee)
+def _save_maternita_from_post(employee, post_data, files):
+    """
+    Crea o aggiorna una riga Maternita dai dati POST del form documento.
+    Ritorna l'oggetto Maternita salvato.
+    """
+    import datetime
+
+    def _parse_date(val):
+        val = (val or "").strip()
+        for fmt in ("%Y-%m-%d", "%d/%m/%Y"):
+            try:
+                return datetime.datetime.strptime(val, fmt).date()
+            except ValueError:
+                pass
+        return None
+
+    def _parse_datetime(val):
+        val = (val or "").strip()
+        for fmt in ("%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M", "%d/%m/%Y %H:%M", "%d/%m/%Y", "%Y-%m-%d"):
+            try:
+                return datetime.datetime.strptime(val, fmt)
+            except ValueError:
+                pass
+        return None
+
+    maternita_id = post_data.get("maternita_id", "").strip()
+    if maternita_id:
+        try:
+            mat = Maternita.objects.get(id=int(maternita_id))
+        except (Maternita.DoesNotExist, ValueError):
+            mat = Maternita(employee_id=employee)
+    else:
+        mat = Maternita(employee_id=employee)
+
+    n_figlio_val = post_data.get("mat_n_figlio", "").strip()
+    if n_figlio_val:
+        try:
+            mat.n_figlio = int(n_figlio_val)
+        except ValueError:
+            pass
+    elif not mat.pk:
+        mat.n_figlio = Maternita.objects.filter(employee_id=employee).count() + 1
+
+    mat.nome_figlio = post_data.get("mat_nome_figlio", "").strip() or None
+    mat.data_comunicazione = _parse_datetime(post_data.get("mat_data_comunicazione"))
+    mat.data_prevista_parto = _parse_datetime(post_data.get("mat_data_prevista_parto"))
+    mat.sedia_maternita = post_data.get("mat_sedia_maternita", "").strip() or None
+    mat.data_nascita = _parse_datetime(post_data.get("mat_data_nascita"))
+    mat.data_rientro = _parse_datetime(post_data.get("mat_data_rientro"))
+
+    # Sostituta: dall'ID dipendente selezionato ricava nome+cognome e badge_id
+    sostituta_emp_id = post_data.get("mat_sostituta_employee_id", "").strip()
+    if sostituta_emp_id:
+        try:
+            sostituta_emp = Employee.objects.get(id=int(sostituta_emp_id))
+            mat.sostituta = f"{sostituta_emp.employee_last_name} {sostituta_emp.employee_first_name}"
+            mat.id_sostituta = sostituta_emp.badge_id or ""
+        except (Employee.DoesNotExist, ValueError):
+            pass
+
+    if "mat_documento" in files and files["mat_documento"]:
+        mat.documento = files["mat_documento"]
+
+    mat.note = post_data.get("mat_note", "").strip() or None
+
+    mat.save()
+    return mat
+
+
 def document_create(request, emp_id):
     """
     This function is used to create documents from employee individual & profile view.
@@ -763,16 +835,41 @@ def document_create(request, emp_id):
     if request.method == "POST":
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
-            document = form.save()
-            if request.user.has_perm("horilla_documents.add_document"):
-                document.status = "approved"
+            document = form.save(commit=False)
+            cat = document.category
+            if cat and cat.name == "MATERNITA'":
+                mat_id = request.POST.get("maternita_id", "").strip()
+                if not mat_id:
+                    form.add_error(None, _("Seleziona il figlio a cui collegare il documento prima di salvare."))
+                else:
+                    try:
+                        document.maternita = Maternita.objects.get(id=int(mat_id))
+                    except (Maternita.DoesNotExist, ValueError):
+                        form.add_error(None, _("Maternità selezionata non trovata."))
+            if not form.errors:
+                if request.user.has_perm("horilla_documents.add_document"):
+                    document.status = "approved"
                 document.save()
-            messages.success(request, _("Document created successfully."))
-            return HttpResponse("<script>window.location.reload();</script>")
+                messages.success(request, _("Document created successfully."))
+                return _maternita_reload_response(emp_id)
 
+    active_employees = Employee.objects.filter(is_active=True).order_by(
+        "employee_last_name", "employee_first_name"
+    )
+    from employee.models import EmployeeWorkInformation
+    store_names = (
+        EmployeeWorkInformation.objects.filter(work_area_type="NEGOZI")
+        .exclude(store_name__isnull=True).exclude(store_name="")
+        .values_list("store_name", flat=True).distinct().order_by("store_name")
+    )
+    preset_maternita_id = request.GET.get("maternita_id", "")
     context = {
         "form": form,
         "emp_id": emp_id,
+        "active_employees": active_employees,
+        "store_names": store_names,
+        "preset_maternita_id": preset_maternita_id,
+        "preset_category_id": preset_category.id if preset_category else "",
     }
     return render(request, "tabs/htmx/document_create_form.html", context=context)
 
@@ -803,14 +900,36 @@ def document_create_quick(request):
             )
             form.fields["employee_id"].widget.choices = form.fields["employee_id"].choices
         if form.is_valid():
-            document = form.save()
+            document = form.save(commit=False)
+            cat = document.category
+            if cat and cat.name == "MATERNITA'":
+                mat_id = request.POST.get("maternita_id", "").strip()
+                if mat_id:
+                    try:
+                        document.maternita = Maternita.objects.get(id=int(mat_id))
+                    except (Maternita.DoesNotExist, ValueError):
+                        pass
             if is_admin:
                 document.status = "approved"
-                document.save()
+            document.save()
             messages.success(request, _("Document created successfully."))
             return HttpResponse("<script>window.location.reload();</script>")
 
-    context = {"form": form, "is_admin": is_admin}
+    active_employees = Employee.objects.filter(is_active=True).order_by(
+        "employee_last_name", "employee_first_name"
+    )
+    from employee.models import EmployeeWorkInformation
+    store_names = (
+        EmployeeWorkInformation.objects.filter(work_area_type="NEGOZI")
+        .exclude(store_name__isnull=True).exclude(store_name="")
+        .values_list("store_name", flat=True).distinct().order_by("store_name")
+    )
+    context = {
+        "form": form,
+        "is_admin": is_admin,
+        "active_employees": active_employees,
+        "store_names": store_names,
+    }
     return render(request, "tabs/htmx/document_quick_form.html", context=context)
 
 
@@ -851,6 +970,234 @@ def get_document_subcategories(request):
 
 
 @login_required
+def get_maternita_by_employee(request):
+    """Return JSON list of Maternita records for a given employee_id."""
+    employee_id = request.GET.get("employee_id")
+    if not employee_id:
+        return JsonResponse({"maternita": []})
+    qs = Maternita.objects.filter(employee_id_id=employee_id).order_by("n_figlio")
+    items = [
+        {
+            "id": m.id,
+            "n_figlio": m.n_figlio,
+            "nome_figlio": m.nome_figlio or "",
+            "data_prevista_parto": m.data_prevista_parto.strftime("%d/%m/%Y") if m.data_prevista_parto else "",
+            "sedia_maternita": m.sedia_maternita or "",
+        }
+        for m in qs
+    ]
+    return JsonResponse({"maternita": items})
+
+
+
+@login_required
+def maternita_documents(request, mat_id):
+    """Return HTML partial: documents linked to a Maternita record."""
+    try:
+        mat = Maternita.objects.get(id=mat_id)
+    except Maternita.DoesNotExist:
+        return HttpResponse("<p class='text-muted p-3'>Maternità non trovata.</p>")
+    docs = Document.objects.filter(maternita_id=mat_id).order_by(
+        "subcategory__name", "document_date"
+    )
+    return render(
+        request,
+        "tabs/htmx/maternita_documents_partial.html",
+        {"mat": mat, "docs": docs},
+    )
+
+
+@login_required
+def maternita_save(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+    emp_id_str = request.POST.get("employee_id", "").strip()
+    if not emp_id_str:
+        return JsonResponse({"error": "employee_id mancante"}, status=400)
+    try:
+        employee = Employee.objects.get(id=int(emp_id_str))
+    except (Employee.DoesNotExist, ValueError):
+        return JsonResponse({"error": "Dipendente non trovato"}, status=404)
+    can_edit = (
+        request.user.has_perm("horilla_documents.add_document")
+        or getattr(request.user, "employee_get", None) == employee
+    )
+    if not can_edit:
+        return JsonResponse({"error": "Permesso negato"}, status=403)
+    try:
+        mat = _save_maternita_from_post(employee, request.POST, request.FILES)
+        return JsonResponse({"ok": True, "id": mat.id, "n_figlio": mat.n_figlio, "nome_figlio": mat.nome_figlio or ""})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+
+@login_required
+def get_maternita_detail(request, pk):
+    """Return JSON detail for a single Maternita record."""
+    try:
+        mat = Maternita.objects.get(id=pk)
+    except Maternita.DoesNotExist:
+        return JsonResponse({"error": "Not found"}, status=404)
+
+    def _fmt_date(val):
+        return val.strftime("%Y-%m-%d") if val else ""
+
+    # Find employee id for sostituta select pre-selection
+    sostituta_employee_id = ""
+    if mat.id_sostituta:
+        try:
+            sostituta_emp = Employee.objects.get(badge_id=mat.id_sostituta)
+            sostituta_employee_id = sostituta_emp.id
+        except Employee.DoesNotExist:
+            pass
+
+    return JsonResponse({
+        "id": mat.id,
+        "n_figlio": mat.n_figlio,
+        "nome_figlio": mat.nome_figlio or "",
+        "data_comunicazione": _fmt_date(mat.data_comunicazione),
+        "data_prevista_parto": _fmt_date(mat.data_prevista_parto),
+        "sedia_maternita": mat.sedia_maternita or "",
+        "sostituta": mat.sostituta or "",
+        "id_sostituta": mat.id_sostituta or "",
+        "sostituta_employee_id": sostituta_employee_id,
+        "data_nascita": _fmt_date(mat.data_nascita),
+        "data_rientro": _fmt_date(mat.data_rientro),
+        "note": mat.note or "",
+    })
+
+
+def _document_reload_response(emp_id):
+    """Return an HttpResponse that closes the modal and reloads the document tab without changing the active sub-tab."""
+    script = (
+        '<script>(function(){'
+        'var m=document.getElementById("objectCreateModal");'
+        'if(m)m.classList.remove("oh-modal--show");'
+        'var u=document.getElementById("objectUpdateModal");'
+        'if(u)u.classList.remove("oh-modal--show");'
+        'document.getElementById("reloadMessagesButton")?.click();'
+        f'htmx.ajax("GET","/employee/document-tab/{emp_id}?employee_view=true",'
+        '{target:"#document_target",swap:"innerHTML"});'
+        '})();</script>'
+    )
+    return HttpResponse(script)
+
+
+def _maternita_reload_response(emp_id):
+    """Return an HttpResponse that closes the modal, reloads the document tab, and activates Maternità sub-tab."""
+    script = (
+        '<script>(function(){'
+        'var m=document.getElementById("objectCreateModal");'
+        'if(m)m.classList.remove("oh-modal--show");'
+        'document.getElementById("reloadMessagesButton")?.click();'
+        'function activateMatTab(){'
+        'document.querySelectorAll(\'#doc-subtab-list .oh-general__tab-link\').forEach(function(e){e.classList.remove(\'oh-general__tab-link--active\');});'
+        'document.querySelectorAll(\'[id^="doc-panel-"]\').forEach(function(e){e.classList.add(\'d-none\');});'
+        'var l=document.querySelector(\'#doc-subtab-list a[onclick*="doc-panel-maternita"]\');'
+        'if(l)l.classList.add(\'oh-general__tab-link--active\');'
+        'var p=document.getElementById(\'doc-panel-maternita\');'
+        'if(p)p.classList.remove(\'d-none\');'
+        'var r=document.querySelectorAll(\'.mat-tab-row\');'
+        'if(r.length)r[r.length-1].click();'
+        '}'
+        'var dt=document.getElementById("document_target");'
+        'if(dt){dt.addEventListener("htmx:afterSettle",activateMatTab,{once:true});}'
+        f'htmx.ajax("GET","/employee/document-tab/{emp_id}?employee_view=true",'
+        '{target:"#document_target",swap:"innerHTML"});'
+        '})();</script>'
+    )
+    return HttpResponse(script)
+
+
+@login_required
+@hx_request_required
+def document_update(request, id):
+    document = get_object_or_404(Document, id=id)
+    emp_id = document.employee_id_id
+    form = DocumentForm(instance=document)
+    form.fields["subcategory"].queryset = (
+        DocumentSubCategory.objects.filter(category=document.category)
+        if document.category else DocumentSubCategory.objects.none()
+    )
+    if request.method == "POST":
+        form = DocumentForm(request.POST, request.FILES, instance=document)
+        if form.is_valid():
+            doc = form.save(commit=False)
+            cat = doc.category
+            if cat and cat.name == "MATERNITA'":
+                mat_id = request.POST.get("maternita_id", "").strip()
+                if mat_id:
+                    try:
+                        doc.maternita = Maternita.objects.get(id=int(mat_id))
+                    except (Maternita.DoesNotExist, ValueError):
+                        pass
+            if request.user.has_perm("horilla_documents.add_document"):
+                doc.status = "approved"
+            doc.save()
+            messages.success(request, _("Document updated successfully."))
+            if cat and cat.name == "MATERNITA'":
+                return _maternita_reload_response(emp_id)
+            return _document_reload_response(emp_id)
+    active_employees = Employee.objects.filter(is_active=True).order_by(
+        "employee_last_name", "employee_first_name"
+    )
+    context = {
+        "form": form,
+        "emp_id": emp_id,
+        "document": document,
+        "active_employees": active_employees,
+        "preset_maternita_id": document.maternita_id or "",
+        "preset_category_id": document.category_id or "",
+    }
+    return render(request, "tabs/htmx/document_update_form.html", context=context)
+
+
+@login_required
+@hx_request_required
+def maternita_edit(request, pk):
+    """GET: return edit form for a Maternita. POST: save and reload."""
+    mat = get_object_or_404(Maternita, id=pk)
+    if request.method == "POST":
+        try:
+            updated = _save_maternita_from_post(mat.employee_id, request.POST, request.FILES)
+            messages.success(request, _("Maternità aggiornata con successo."))
+            return _maternita_reload_response(mat.employee_id_id)
+        except Exception as e:
+            messages.error(request, str(e))
+    active_employees = Employee.objects.filter(is_active=True).order_by(
+        "employee_last_name", "employee_first_name"
+    )
+    context = {
+        "mat": mat,
+        "active_employees": active_employees,
+        "emp_id": mat.employee_id_id,
+    }
+    return render(request, "tabs/htmx/maternita_edit_form.html", context=context)
+
+
+@login_required
+@hx_request_required
+def maternita_new_form(request, emp_id):
+    """Render empty Maternita form for a given employee (GET) or save new record (POST)."""
+    employee = get_object_or_404(Employee, id=emp_id)
+    if request.method == "POST":
+        try:
+            _save_maternita_from_post(employee, request.POST, request.FILES)
+            messages.success(request, _("Maternità creata con successo."))
+            return _maternita_reload_response(emp_id)
+        except Exception as e:
+            messages.error(request, str(e))
+    active_employees = Employee.objects.filter(is_active=True).order_by(
+        "employee_last_name", "employee_first_name"
+    )
+    context = {
+        "mat": None,
+        "active_employees": active_employees,
+        "emp_id": emp_id,
+    }
+    return render(request, "tabs/htmx/maternita_edit_form.html", context=context)
+
+
 def update_document_title(request, id):
     """
     This function is used to create documents from employee individual & profile view.
@@ -923,6 +1270,20 @@ def document_delete(request, id):
 
 @login_required
 @hx_request_required
+def maternita_delete(request, pk):
+    """Delete a Maternita record and all its linked Document rows."""
+    mat = get_object_or_404(Maternita, id=pk)
+    emp_id = mat.employee_id_id
+    if request.method == "POST":
+        Document.objects.filter(maternita=mat).delete()
+        mat.delete()
+        messages.success(request, _("Maternità e documenti collegati eliminati con successo."))
+        return _maternita_reload_response(emp_id)
+    return HttpResponse(status=405)
+
+
+@login_required
+@hx_request_required
 def file_upload(request, id):
     """
     This function is used to upload documents of an employee in employee individual & profile view.
@@ -939,7 +1300,9 @@ def file_upload(request, id):
     if request.method == "POST":
         form = DocumentUpdateForm(request.POST, request.FILES, instance=document_item)
         if form.is_valid():
-            form.save()
+            doc = form.save(commit=False)
+            doc.status = "approved"
+            doc.save()
             messages.success(request, _("Document uploaded successfully"))
             try:
                 notify.send(
@@ -958,7 +1321,7 @@ def file_upload(request, id):
                 )
             except:
                 pass
-            return HttpResponse("<script>window.location.reload();</script>")
+            return _document_reload_response(document_item.employee_id_id)
         else:
             logger.error(f"Document upload form errors: {form.errors}")
     context = {"form": form, "document": document_item}

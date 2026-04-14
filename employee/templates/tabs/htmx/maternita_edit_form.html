@@ -1,0 +1,88 @@
+{% load i18n %}
+<div class="oh-modal__dialog-header pb-0">
+  <span class="oh-modal__dialog-title">
+    {% if mat %}
+      {% trans "Modifica Maternità" %} — {% trans "Figlio n°" %}{{ mat.n_figlio }}{% if mat.nome_figlio %} — {{ mat.nome_figlio }}{% endif %}
+    {% else %}
+      {% trans "Nuova Maternità" %}
+    {% endif %}
+  </span>
+  <button class="oh-modal__close" aria-label="Close">
+    <ion-icon name="close-outline" class="md hydrated"></ion-icon>
+  </button>
+</div>
+<div class="oh-modal__dialog-body">
+  <form id="add-form"
+        {% if mat %}
+          hx-post="{% url 'maternita-edit' mat.id %}"
+        {% else %}
+          hx-post="{% url 'maternita-new-form' emp_id %}"
+        {% endif %}
+        hx-target="#objectCreateModalTarget"
+        hx-encoding="multipart/form-data">
+    {% csrf_token %}
+    {% if mat %}<input type="hidden" name="maternita_id" value="{{ mat.id }}">{% endif %}
+    <div class="row">
+      <div class="col-12 col-md-4 mb-3">
+        <label class="oh-label">{% trans "N° Figlio" %}</label>
+        <input type="number" name="mat_n_figlio" class="oh-input w-100" min="1" value="{{ mat.n_figlio }}">
+      </div>
+      <div class="col-12 col-md-4 mb-3">
+        <label class="oh-label">{% trans "Nome Figlio" %}</label>
+        <input type="text" name="mat_nome_figlio" class="oh-input w-100" value="{{ mat.nome_figlio|default:'' }}">
+      </div>
+      <div class="col-12 col-md-4 mb-3">
+        <label class="oh-label">{% trans "Data Comunicazione" %}</label>
+        <input type="date" name="mat_data_comunicazione" class="oh-input w-100 form-control" value="{{ mat.data_comunicazione|date:'Y-m-d'|default:'' }}">
+      </div>
+      <div class="col-12 col-md-4 mb-3">
+        <label class="oh-label">{% trans "Data Prevista Parto" %}</label>
+        <input type="date" name="mat_data_prevista_parto" class="oh-input w-100 form-control" value="{{ mat.data_prevista_parto|date:'Y-m-d'|default:'' }}">
+      </div>
+      <div class="col-12 col-md-4 mb-3">
+        <label class="oh-label">{% trans "Sedia" %}</label>
+        <select name="mat_sedia_maternita" class="oh-select oh-select-2 w-100">
+          <option value="">---</option>
+          <option value="SI" {% if mat.sedia_maternita == "SI" %}selected{% endif %}>{% trans "Sì" %}</option>
+          <option value="NO" {% if mat.sedia_maternita == "NO" %}selected{% endif %}>{% trans "No" %}</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-4 mb-3">
+        <label class="oh-label">{% trans "Sostituta" %}</label>
+        <select name="mat_sostituta_employee_id" class="oh-select oh-select-2 w-100">
+          <option value="">---</option>
+          {% for emp in active_employees %}
+            <option value="{{ emp.id }}"
+              {% if mat.id_sostituta and mat.id_sostituta == emp.badge_id %}selected{% endif %}>
+              {{ emp.employee_last_name }} {{ emp.employee_first_name }}{% if emp.badge_id %} ({{ emp.badge_id }}){% endif %}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-12 col-md-4 mb-3">
+        <label class="oh-label">{% trans "Data Nascita" %}</label>
+        <input type="date" name="mat_data_nascita" class="oh-input w-100 form-control" value="{{ mat.data_nascita|date:'Y-m-d'|default:'' }}">
+      </div>
+      <div class="col-12 col-md-4 mb-3">
+        <label class="oh-label">{% trans "Data Rientro" %}</label>
+        <input type="date" name="mat_data_rientro" class="oh-input w-100 form-control" value="{{ mat.data_rientro|date:'Y-m-d'|default:'' }}">
+      </div>
+      <div class="col-12 col-md-4 mb-3">
+        <label class="oh-label">{% trans "Allegato comunicazione" %}</label>
+        {% if mat.documento %}
+          <div class="mb-1 small">
+            <a href="{{ mat.documento.url }}" target="_blank">{% trans "File attuale" %}</a>
+          </div>
+        {% endif %}
+        <input type="file" name="mat_documento" class="oh-input w-100 form-control">
+      </div>
+      <div class="col-12 mb-3">
+        <label class="oh-label">{% trans "Note" %}</label>
+        <textarea name="mat_note" rows="3" class="oh-input w-100 form-control">{{ mat.note|default:'' }}</textarea>
+      </div>
+    </div>
+    <div class="d-flex flex-row-reverse mt-2">
+      <button type="submit" class="oh-btn oh-btn--secondary">{% trans "Salva" %}</button>
+    </div>
+  </form>
+</div>

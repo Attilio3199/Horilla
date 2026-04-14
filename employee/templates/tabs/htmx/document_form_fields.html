@@ -3,19 +3,19 @@
 
 <div class="row">
 
-  {# ── RIGA 1: Categoria | Sottocategoria ── #}
+  {# RIGA 1: Categoria | Sottocategoria #}
   <div class="col-12 col-md-6 mb-3">
     <label class="oh-label required-star" for="id_category">{% trans "Categoria" %}</label>
     <select name="category" id="id_category" class="oh-select oh-select-2 w-100" required>
       <option value="">---{% trans "Scegli Categoria" %}---</option>
       {% for cat in form.fields.category.queryset %}
-        <option value="{{ cat.id }}" {% if form.instance.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+        <option value="{{ cat.id }}" {% if form.instance.category_id == cat.id or form.initial.category.id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
       {% endfor %}
     </select>
     {% if form.category.errors %}<div class="text-danger small">{{ form.category.errors }}</div>{% endif %}
   </div>
 
-  <div class="col-12 col-md-6 mb-3">
+  <div class="col-12 col-md-6 mb-3" id="subcategory-col">
     <label class="oh-label" for="id_subcategory">{% trans "Sottocategoria" %}</label>
     <select name="subcategory" id="id_subcategory" class="oh-select oh-select-2 w-100">
       <option value="">---{% trans "Scegli Sottocategoria" %}---</option>
@@ -26,59 +26,146 @@
     {% if form.subcategory.errors %}<div class="text-danger small">{{ form.subcategory.errors }}</div>{% endif %}
   </div>
 
-  {# ── RIGA 2: Data Documento (full o metà) | Beneficiario (solo cat. 104) ── #}
-  <div class="col-12 mb-3" id="document-date-col">
-    <label class="oh-label" for="id_document_date">{% trans "Data Documento" %}</label>
-    <input type="date" name="document_date" id="id_document_date" class="oh-input w-100 form-control"
-      value="{{ form.instance.document_date|date:'Y-m-d' }}">
-    {% if form.document_date.errors %}<div class="text-danger small">{{ form.document_date.errors }}</div>{% endif %}
+  {# ── PANNELLO MATERNITA (visibile solo quando categoria = MATERNITA) #}
+  <div id="maternita-panel" class="col-12 d-none mb-3">
+      <p class="mb-2 fw-bold text-uppercase" style="font-size:.75rem;color:var(--oh-color-primary,#e74c3c);letter-spacing:.05em;">
+        <i class="material-icons align-middle me-1" style="font-size:16px">child_care</i>
+        {% trans "Gestione Maternità" %}
+      </p>
+
+      {# Hidden input always in the form, outside the collapsible container #}
+      <input type="hidden" name="maternita_id" id="maternita_id_input" value="{{ preset_maternita_id|default:'' }}">
+
+      <div class="mb-2">
+        <label class="oh-label required-star" for="mat-select-dropdown">{% trans "N° Figlio" %}</label>
+        <select id="mat-select-dropdown" class="oh-select w-100">
+          <option value="">--- {% trans "Caricamento..." %} ---</option>
+        </select>
+      </div>
+
+      <button type="button" id="mat-nuova-btn" class="oh-btn oh-btn--secondary btn-sm mt-1">
+        <i class="material-icons align-middle me-1" style="font-size:16px">add</i>{% trans "Nuova Maternità" %}
+      </button>
+
+      <div id="mat-form-container" class="d-none mt-3 border-top pt-3">
+        <p class="fw-bold mb-3" id="mat-form-title">{% trans "Nuovo record maternità" %}</p>
+        <div class="row">
+          <div class="col-12 col-md-4 mb-2">
+            <label class="oh-label" for="mat_n_figlio">{% trans "N° Figlio" %}</label>
+            <input type="number" id="mat_n_figlio" class="oh-input w-100" min="1">
+          </div>
+          <div class="col-12 col-md-4 mb-2">
+            <label class="oh-label" for="mat_nome_figlio">{% trans "Nome Figlio" %}</label>
+            <input type="text" id="mat_nome_figlio" class="oh-input w-100">
+          </div>
+          <div class="col-12 col-md-4 mb-2">
+            <label class="oh-label" for="mat_data_comunicazione">{% trans "Data Comunicazione" %}</label>
+            <input type="date" id="mat_data_comunicazione" class="oh-input w-100 form-control">
+          </div>
+          <div class="col-12 col-md-4 mb-2">
+            <label class="oh-label" for="mat_data_prevista_parto">{% trans "Data Prevista Parto" %}</label>
+            <input type="date" id="mat_data_prevista_parto" class="oh-input w-100 form-control">
+          </div>
+          <div class="col-12 col-md-4 mb-2">
+            <label class="oh-label" for="mat_sedia_maternita">{% trans "Sedia" %}</label>
+            <select id="mat_sedia_maternita" class="oh-select oh-select-2 w-100">
+              <option value="">---</option>
+              <option value="SI">{% trans "Sì" %}</option>
+              <option value="NO">{% trans "No" %}</option>
+            </select>
+          </div>
+          <div class="col-12 col-md-4 mb-2">
+            <label class="oh-label" for="mat_sostituta_employee_id">{% trans "Sostituta" %}</label>
+            <select id="mat_sostituta_employee_id" class="oh-select oh-select-2 w-100">
+              <option value="">---</option>
+              {% if active_employees %}
+                {% for emp in active_employees %}
+                  <option value="{{ emp.id }}">{{ emp.employee_last_name }} {{ emp.employee_first_name }}{% if emp.badge_id %} ({{ emp.badge_id }}){% endif %}</option>
+                {% endfor %}
+              {% endif %}
+            </select>
+          </div>
+          <div class="col-12 col-md-4 mb-2">
+            <label class="oh-label" for="mat_data_nascita">{% trans "Data Nascita" %}</label>
+            <input type="date" id="mat_data_nascita" class="oh-input w-100 form-control">
+          </div>
+          <div class="col-12 col-md-4 mb-2">
+            <label class="oh-label" for="mat_data_rientro">{% trans "Data Rientro" %}</label>
+            <input type="date" id="mat_data_rientro" class="oh-input w-100 form-control">
+          </div>
+          <div class="col-12 col-md-4 mb-2">
+            <label class="oh-label" for="mat_documento">{% trans "Allegato comunicazione" %}</label>
+            <input type="file" id="mat_documento" class="oh-input w-100 form-control">
+          </div>
+          <div class="col-12 mb-2">
+            <label class="oh-label" for="mat_note">{% trans "Note" %}</label>
+            <textarea id="mat_note" rows="3" class="oh-input w-100 form-control"></textarea>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-2">
+          <button type="button" id="mat-save-btn" class="oh-btn oh-btn--secondary">{% trans "Salva Dati Maternità" %}</button>
+          <button type="button" id="mat-cancel-btn" class="oh-btn oh-btn--light">{% trans "Annulla" %}</button>
+        </div>
+      </div>
   </div>
 
-  <div class="col-12 col-md-6 mb-3 d-none" id="beneficiario-col">
-    <label class="oh-label" for="id_beneficiario">{% trans "Beneficiario" %}</label>
-    <input type="text" name="beneficiario" id="id_beneficiario" class="oh-input w-100"
-      placeholder="{% trans 'Beneficiario' %}" value="{{ form.instance.beneficiario|default_if_none:'' }}">
-    {% if form.beneficiario.errors %}<div class="text-danger small">{{ form.beneficiario.errors }}</div>{% endif %}
-  </div>
+  {# ── CAMPI DOCUMENTO NORMALI (nascosti quando MATERNITA selezionata) #}
+  <div id="normal-doc-fields" class="col-12 p-0 m-0">
+    <div class="row m-0 p-0">
 
-  {# ── RIGA 3: Data Inizio | Data Fine ── #}
-  <div class="col-12 col-md-6 mb-3">
-    <label class="oh-label" for="id_start_date">{% trans "Data Inizio" %}</label>
-    <input type="date" name="start_date" id="id_start_date" class="oh-input w-100 form-control"
-      value="{{ form.instance.start_date|date:'Y-m-d' }}">
-    {% if form.start_date.errors %}<div class="text-danger small">{{ form.start_date.errors }}</div>{% endif %}
-  </div>
+      <div class="col-12 mb-3" id="document-date-col">
+        <label class="oh-label" for="id_document_date">{% trans "Data Documento" %}</label>
+        <input type="date" name="document_date" id="id_document_date" class="oh-input w-100 form-control"
+          value="{{ form.instance.document_date|date:'Y-m-d' }}">
+        {% if form.document_date.errors %}<div class="text-danger small">{{ form.document_date.errors }}</div>{% endif %}
+      </div>
 
-  <div class="col-12 col-md-6 mb-3">
-    <label class="oh-label" for="id_expiry_date">{% trans "Data Fine" %}</label>
-    <input type="date" name="expiry_date" id="id_expiry_date" class="oh-input w-100 form-control"
-      value="{{ form.instance.expiry_date|date:'Y-m-d' }}">
-    {% if form.expiry_date.errors %}<div class="text-danger small">{{ form.expiry_date.errors }}</div>{% endif %}
-  </div>
+      <div class="col-12 col-md-6 mb-3 d-none" id="beneficiario-col">
+        <label class="oh-label" for="id_beneficiario">{% trans "Beneficiario" %}</label>
+        <input type="text" name="beneficiario" id="id_beneficiario" class="oh-input w-100"
+          placeholder="Beneficiario" value="{{ form.instance.beneficiario|default_if_none:'' }}">
+        {% if form.beneficiario.errors %}<div class="text-danger small">{{ form.beneficiario.errors }}</div>{% endif %}
+      </div>
 
-  {# ── RIGA 4: Note | Documento da caricare ── #}
-  <div class="col-12 col-md-6 mb-3">
-    <label class="oh-label" for="id_notes">{% trans "Note" %}</label>
-    <textarea name="notes" id="id_notes" class="oh-input w-100" rows="3"
-      placeholder="{% trans 'Note aggiuntive...' %}">{{ form.instance.notes|default_if_none:'' }}</textarea>
-    {% if form.notes.errors %}<div class="text-danger small">{{ form.notes.errors }}</div>{% endif %}
-  </div>
+      <div class="col-12 col-md-6 mb-3">
+        <label class="oh-label" for="id_start_date">{% trans "Data Inizio" %}</label>
+        <input type="date" name="start_date" id="id_start_date" class="oh-input w-100 form-control"
+          value="{{ form.instance.start_date|date:'Y-m-d' }}">
+        {% if form.start_date.errors %}<div class="text-danger small">{{ form.start_date.errors }}</div>{% endif %}
+      </div>
 
-  <div class="col-12 col-md-6 mb-3">
-    <label class="oh-label" for="id_document">{% trans "Documento da caricare" %}</label>
-    {{ form.document }}
-    {% if form.document.errors %}<div class="text-danger small">{{ form.document.errors }}</div>{% endif %}
+      <div class="col-12 col-md-6 mb-3">
+        <label class="oh-label" for="id_expiry_date">{% trans "Data Fine" %}</label>
+        <input type="date" name="expiry_date" id="id_expiry_date" class="oh-input w-100 form-control"
+          value="{{ form.instance.expiry_date|date:'Y-m-d' }}">
+        {% if form.expiry_date.errors %}<div class="text-danger small">{{ form.expiry_date.errors }}</div>{% endif %}
+      </div>
+
+      <div class="col-12 col-md-6 mb-3">
+        <label class="oh-label" for="id_notes">{% trans "Note" %}</label>
+        <textarea name="notes" id="id_notes" class="oh-input w-100" rows="3"
+          placeholder="Note aggiuntive...">{{ form.instance.notes|default_if_none:'' }}</textarea>
+        {% if form.notes.errors %}<div class="text-danger small">{{ form.notes.errors }}</div>{% endif %}
+      </div>
+
+      <div class="col-12 col-md-6 mb-3">
+        <label class="oh-label" for="id_document">{% trans "Documento da caricare" %}</label>
+        {{ form.document }}
+        {% if form.document.errors %}<div class="text-danger small">{{ form.document.errors }}</div>{% endif %}
+      </div>
+
+    </div>
   </div>
 
 </div>
 
-{# Banner visibile quando si seleziona "VARIAZIONE ORARIA" #}
+{# Banner VARIAZIONE ORARIA #}
 <div id="variazione-oraria-banner" class="alert alert-info d-none" role="alert">
   <i class="material-icons align-middle me-1" style="font-size:18px">info</i>
-  {% trans "Selezionata 'VARIAZIONE ORARIA': verrai reindirizzato al relativo form." %}
+  {% trans "Selezionata VARIAZIONE ORARIA: verrai reindirizzato al relativo form." %}
 </div>
 
-<div class="d-flex flex-row-reverse">
+<div class="d-flex flex-row-reverse" id="doc-submit-row">
   <button type="submit" class="oh-btn oh-btn--secondary mt-2 mr-0 pl-4 pr-5" id="doc-submit-btn">{% trans "Salva" %}</button>
 </div>
 
@@ -87,25 +174,196 @@
   const categorySelect    = document.getElementById("id_category");
   const subcategorySelect = document.getElementById("id_subcategory");
   const submitBtn         = document.getElementById("doc-submit-btn");
+  const submitRow         = document.getElementById("doc-submit-row");
+  const subcategoryCol    = document.getElementById("subcategory-col");
   const varBanner         = document.getElementById("variazione-oraria-banner");
   const beneficiarioCol   = document.getElementById("beneficiario-col");
   const beneficiarioInput = document.getElementById("id_beneficiario");
   const documentDateCol   = document.getElementById("document-date-col");
+  const normalDocFields   = document.getElementById("normal-doc-fields");
+  const maternitaPanel    = document.getElementById("maternita-panel");
+  const maternitaIdInput  = document.getElementById("maternita_id_input");
+  const matDropdown       = document.getElementById("mat-select-dropdown");
+  const matFormContainer  = document.getElementById("mat-form-container");
+  const matFormTitle      = document.getElementById("mat-form-title");
+  const matNuovaBtn       = document.getElementById("mat-nuova-btn");
+  const matSaveBtn        = document.getElementById("mat-save-btn");
+  const matCancelBtn      = document.getElementById("mat-cancel-btn");
   const empId             = "{{ emp_id|default:'' }}";
 
-  function getCategoryName(selectEl) {
-    const opt = selectEl.options[selectEl.selectedIndex];
+  function getCategoryName() {
+    const opt = categorySelect.options[categorySelect.selectedIndex];
     return opt ? opt.text.trim().toUpperCase() : "";
   }
 
-  function updateCategoryDependents() {
-    const name = getCategoryName(categorySelect);
+  function getEmployeeId() {
+    const empSelectEl = document.getElementById("id_employee_id");
+    return empId || (empSelectEl ? empSelectEl.value : "");
+  }
 
-  // VARIAZIONE ORARIA → redirect
+  function getCsrfToken() {
+    const m = document.cookie.match(/csrftoken=([^;]+)/);
+    return m ? m[1] : "";
+  }
+
+  function fillMatForm(data) {
+    document.getElementById("mat_n_figlio").value            = data.n_figlio || "";
+    document.getElementById("mat_nome_figlio").value         = data.nome_figlio || "";
+    document.getElementById("mat_data_comunicazione").value  = data.data_comunicazione || "";
+    document.getElementById("mat_data_prevista_parto").value = data.data_prevista_parto || "";
+    document.getElementById("mat_data_nascita").value        = data.data_nascita || "";
+    document.getElementById("mat_data_rientro").value        = data.data_rientro || "";
+    document.getElementById("mat_note").value                = data.note || "";
+    const siedaEl = document.getElementById("mat_sedia_maternita");
+    siedaEl.value = data.sedia_maternita || "";
+    if ($(siedaEl).data("select2")) $(siedaEl).trigger("change.select2");
+    const sostitutaEl = document.getElementById("mat_sostituta_employee_id");
+    if (sostitutaEl) {
+      sostitutaEl.value = data.sostituta_employee_id || "";
+      if ($(sostitutaEl).data("select2")) $(sostitutaEl).trigger("change.select2");
+    }
+    const fileEl = document.getElementById("mat_documento");
+    if (fileEl) fileEl.value = "";
+    maternitaIdInput.value = data.id || "";
+  }
+
+  function clearMatForm(nextN) {
+    document.getElementById("mat_n_figlio").value            = nextN || "";
+    document.getElementById("mat_nome_figlio").value         = "";
+    document.getElementById("mat_data_comunicazione").value  = "";
+    document.getElementById("mat_data_prevista_parto").value = "";
+    document.getElementById("mat_data_nascita").value        = "";
+    document.getElementById("mat_data_rientro").value        = "";
+    document.getElementById("mat_note").value                = "";
+    const siedaEl = document.getElementById("mat_sedia_maternita");
+    siedaEl.value = "";
+    if ($(siedaEl).data("select2")) $(siedaEl).trigger("change.select2");
+    const sostitutaEl = document.getElementById("mat_sostituta_employee_id");
+    if (sostitutaEl) {
+      sostitutaEl.value = "";
+      if ($(sostitutaEl).data("select2")) $(sostitutaEl).trigger("change.select2");
+    }
+    const fileEl = document.getElementById("mat_documento");
+    if (fileEl) fileEl.value = "";
+    maternitaIdInput.value = "";
+  }
+
+  function showMatForm(title) {
+    matFormTitle.textContent = title;
+    matFormContainer.classList.remove("d-none");
+    matNuovaBtn.classList.add("d-none");
+  }
+
+  function hideMatForm() {
+    matFormContainer.classList.add("d-none");
+    matNuovaBtn.classList.remove("d-none");
+  }
+
+  function loadMaternitaList(employeeId, autoSelectId) {
+    hideMatForm();
+    matDropdown.innerHTML = '<option value="">--- {% trans "Caricamento..." %} ---</option>';
+    fetch(`{% url 'get-maternita-by-employee' %}?employee_id=${employeeId}`)
+      .then(r => r.json())
+      .then(data => {
+        const list = data.maternita || [];
+        matDropdown.innerHTML = "";
+        if (list.length === 0) {
+          const emptyOpt = document.createElement("option");
+          emptyOpt.value = "";
+          emptyOpt.disabled = true;
+          emptyOpt.textContent = "--- {% trans 'Nessuna maternità registrata' %} ---";
+          matDropdown.appendChild(emptyOpt);
+          maternitaIdInput.value = "";
+          return;
+        }
+        const blankOpt = document.createElement("option");
+        blankOpt.value = "";
+        blankOpt.textContent = "--- {% trans 'Seleziona' %} ---";
+        matDropdown.appendChild(blankOpt);
+        list.forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m.id;
+          opt.textContent = "N°" + m.n_figlio + (m.nome_figlio ? " — " + m.nome_figlio : "") + (m.data_prevista_parto ? " (" + m.data_prevista_parto + ")" : "");
+          matDropdown.appendChild(opt);
+        });
+        const selectId = String(autoSelectId || "{{ preset_maternita_id }}" || maternitaIdInput.value || "");
+        if (selectId && matDropdown.querySelector(`option[value="${selectId}"]`)) {
+          matDropdown.value = selectId;
+          selectMaternita(selectId, matDropdown.options[matDropdown.selectedIndex].textContent);
+        } else {
+          maternitaIdInput.value = "";
+        }
+      })
+      .catch(() => {
+        matDropdown.innerHTML = '<option value="">--- {% trans "Errore caricamento" %} ---</option>';
+      });
+  }
+
+  matDropdown.addEventListener("change", function () {
+    const selId = this.value;
+    if (selId) {
+      selectMaternita(selId, this.options[this.selectedIndex].textContent);
+    } else {
+      maternitaIdInput.value = "";
+    }
+  });
+
+  function selectMaternita(id, label) {
+    maternitaIdInput.value = id;
+  }
+
+  submitBtn.addEventListener("click", function (e) {
+    const name = getCategoryName();
+    if ((name === "MATERNITA'" || name === "MATERNITA\'") && !maternitaIdInput.value) {
+      e.preventDefault();
+      e.stopPropagation();
+      alert("{% trans 'Seleziona il figlio a cui collegare il documento prima di salvare.' %}");
+    }
+  });
+
+  function saveMaternitaData() {
+    const curEmpId = getEmployeeId();
+    const fd = new FormData();
+    fd.append("csrfmiddlewaretoken", getCsrfToken());
+    fd.append("employee_id", curEmpId);
+    fd.append("maternita_id", maternitaIdInput.value || "");
+    ["mat_n_figlio","mat_nome_figlio","mat_data_comunicazione","mat_data_prevista_parto",
+     "mat_sedia_maternita","mat_sostituta_employee_id","mat_data_nascita","mat_data_rientro","mat_note"]
+      .forEach(name => {
+        const el = document.getElementById(name);
+        if (el) fd.append(name, el.value || "");
+      });
+    const fileEl = document.getElementById("mat_documento");
+    if (fileEl && fileEl.files && fileEl.files[0]) fd.append("mat_documento", fileEl.files[0]);
+    matSaveBtn.disabled = true;
+    fetch("{% url 'maternita-save' %}", { method: "POST", body: fd })
+      .then(r => r.json())
+      .then(data => {
+        matSaveBtn.disabled = false;
+        if (data.ok) {
+          hideMatForm();
+          loadMaternitaList(curEmpId, data.id);
+        } else {
+          alert(data.error || "{% trans 'Errore durante il salvataggio.' %}");
+        }
+      })
+      .catch(() => {
+        matSaveBtn.disabled = false;
+        alert("{% trans 'Errore di rete.' %}");
+      });
+  }
+
+  matNuovaBtn.addEventListener("click", function () {
+    clearMatForm("");
+    showMatForm("{% trans 'Nuovo record maternità' %}");
+  });
+  matSaveBtn.addEventListener("click", saveMaternitaData);
+  matCancelBtn.addEventListener("click", hideMatForm);
+
+  function updateCategoryDependents() {
+    const name = getCategoryName();
     if (name === "VARIAZIONE ORARIA") {
-      // emp_id dal contesto (vista dipendente) o dal select employee_id (quick form)
-      const empSelectEl = document.getElementById("id_employee_id");
-      const resolvedEmpId = empId || (empSelectEl ? empSelectEl.value : "");
+      const resolvedEmpId = getEmployeeId();
       if (!resolvedEmpId) {
         alert("{% trans 'Seleziona prima un dipendente.' %}");
         categorySelect.value = "";
@@ -118,9 +376,16 @@
       return;
     }
     varBanner.classList.add("d-none");
-    submitBtn.disabled = false;
 
-    // 104 → Data Documento col-md-6 + mostra Beneficiario
+    if (name === "MATERNITA’" || name === "MATERNITA\'") {
+      maternitaPanel.classList.remove("d-none");
+      const resolvedEmpId = getEmployeeId();
+      if (resolvedEmpId) loadMaternitaList(resolvedEmpId);
+    } else {
+      maternitaPanel.classList.add("d-none");
+      hideMatForm();
+    }
+
     if (name === "104") {
       documentDateCol.classList.remove("col-12");
       documentDateCol.classList.add("col-md-6");
@@ -133,7 +398,6 @@
     }
   }
 
-  // ── Carica sottocategorie quando cambia la categoria ──
   function loadSubcategories(catId, selectedId) {
     subcategorySelect.innerHTML = '<option value="">---{% trans "Scegli Sottocategoria" %}---</option>';
     if (!catId) return;
@@ -147,9 +411,7 @@
           if (selectedId && s.id == selectedId) opt.selected = true;
           subcategorySelect.appendChild(opt);
         });
-        if ($(subcategorySelect).data("select2")) {
-          $(subcategorySelect).select2("destroy");
-        }
+        if ($(subcategorySelect).data("select2")) $(subcategorySelect).select2("destroy");
         $(subcategorySelect).select2({ width: "100%" });
       });
   }
@@ -159,10 +421,29 @@
     loadSubcategories(this.value, null);
   });
 
-  // Applica al mount (modifica/pre-selezione)
+  const empSelectEl = document.getElementById("id_employee_id");
+  if (empSelectEl) {
+    $(empSelectEl).on("change", function () {
+      if ((getCategoryName() === "MATERNITA’" || getCategoryName() === "MATERNITA\'") && this.value) loadMaternitaList(this.value);
+    });
+  }
+
   updateCategoryDependents();
   if (categorySelect.value) {
     loadSubcategories(categorySelect.value, subcategorySelect.value || null);
+  }
+  // Force Select2 to reflect the server-side preset category (timing-safe)
+  const presetCategoryId = "{{ preset_category_id|default:'' }}";
+  if (presetCategoryId && categorySelect.value !== presetCategoryId) {
+    setTimeout(function () {
+      if ($(categorySelect).data("select2")) {
+        $(categorySelect).val(presetCategoryId).trigger("change");
+      } else {
+        categorySelect.value = presetCategoryId;
+        updateCategoryDependents();
+        loadSubcategories(presetCategoryId, null);
+      }
+    }, 0);
   }
 })();
 </script>

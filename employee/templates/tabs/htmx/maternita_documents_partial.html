@@ -1,0 +1,120 @@
+{% load i18n %}
+{% load static %}
+
+{% if docs %}
+  {% regroup docs by subcategory as docs_by_sub %}
+  {% for sub_group in docs_by_sub %}
+    {% if sub_group.grouper %}
+      <div class="px-3 py-1" style="font-size:.72rem;color:#6c757d;border-left:3px solid #dee2e6;background:#fafafa;letter-spacing:.03em;">
+        {{ sub_group.grouper.name }}
+      </div>
+    {% endif %}
+    {% for document in sub_group.list %}
+      <div class="oh-user_permission-list_item accordion exclude-accordion-style"
+          style="cursor:pointer; position:relative;">
+        <div class="oh-user_permission-list_profile {% if document.status == 'approved' %}row-status--yellow{% elif document.status == 'rejected' %}row-status--red{% elif document.status == 'requested' %}row-status--blue{% endif %}"
+            style="display:flex; align-items:center;"
+            hx-get="{% url 'view-file' document.id %}"
+            hx-target="#viewFile"
+            data-toggle="oh-modal-toggle"
+            data-target="#viewFileModal"
+            onclick="event.stopPropagation()">
+          <div class="oh-navbar__user-photo oh-user_permission--profile">
+            {% if document.document %}
+              {% if document.status == "approved" %}
+                <span class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2" title="Approvato">
+                  <ion-icon name="checkmark"></ion-icon>
+                </span>
+              {% elif document.status == "rejected" %}
+                <span class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2" title="Rifiutato">
+                  <ion-icon name="alert"></ion-icon>
+                </span>
+              {% else %}
+                <span class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2" title="Caricato">
+                  <ion-icon name="image-outline"></ion-icon>
+                </span>
+              {% endif %}
+            {% else %}
+              <span class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2"
+                  hx-get="{% url 'file-upload' document.id %}"
+                  hx-target="#objectCreateModalTarget"
+                  data-toggle="oh-modal-toggle"
+                  data-target="#objectCreateModal"
+                  onclick="event.stopPropagation()"
+                  title="Allega File">
+                <i class="material-icons" style="font-size:14px;line-height:1;vertical-align:middle;">upload</i>
+              </span>
+            {% endif %}
+          </div>
+          <div class="oh-feedback-card__name-container ms-1 title_form">
+            <span class="oh-card__title oh-card__title--sm fw-bold me-1">
+              {{ document.subcategory.name|default:document.category.name|default:document.title|default:"—" }}
+            </span>
+            {% if document.document_date %}
+              <span class="oh-text--light">{% trans "Data Doc." %}: {{ document.document_date|date:"d/m/Y" }}</span>
+            {% endif %}
+            {% if document.start_date %}
+              <span class="oh-text--light">{% trans "Dal" %}: {{ document.start_date|date:"d/m/Y" }}</span>
+            {% endif %}
+            {% if document.expiry_date %}
+              <span class="oh-text--light">{% trans "Al" %}: {{ document.expiry_date|date:"d/m/Y" }}</span>
+            {% endif %}
+            {% if document.notes %}
+              <span class="oh-text--light fst-italic">{{ document.notes|truncatechars:60 }}</span>
+            {% endif %}
+            {% if not document.document %}
+              <span class="oh-badge oh-badge--warning oh-badge--small ms-1">{% trans "In attesa documento" %}</span>
+            {% endif %}
+          </div>
+          <button type="button" class="oh-btn oh-btn--light btn-sm ms-auto me-1 flex-shrink-0"
+              hx-get="{% url 'document-update' document.id %}"
+              hx-target="#objectCreateModalTarget"
+              data-toggle="oh-modal-toggle"
+              data-target="#objectCreateModal"
+              onclick="event.stopPropagation()"
+              title="{% trans 'Modifica documento' %}">
+            <ion-icon name="create-outline" style="font-size:14px"></ion-icon>
+          </button>
+          <button type="button" class="oh-btn oh-btn--light btn-sm me-1 flex-shrink-0"
+              style="color:#dc3545;"
+              onclick="event.stopPropagation(); deleteDocumentConfirm({{ document.id }})"
+              title="{% trans 'Elimina documento' %}">
+            <ion-icon name="trash-outline" style="font-size:14px"></ion-icon>
+          </button>
+        </div>
+      </div>
+    {% endfor %}
+  {% endfor %}
+{% else %}
+  <div class="d-flex justify-content-center align-items-center" style="height:15vh;">
+    <p class="text-muted small">{% trans "Nessun documento collegato a questa maternità." %}</p>
+  </div>
+{% endif %}
+
+<script>
+function deleteDocumentConfirm(docId) {
+  Swal.fire({
+    html: "{% trans 'Vuoi eliminare questo documento?' %}<br>{% trans 'L\u2019operazione non può essere annullata.' %}",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#008000",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "{% trans 'Sì, elimina' %}",
+    cancelButtonText: "{% trans 'No, annulla' %}",
+  }).then(function(result) {
+    if (!result.isConfirmed) return;
+    htmx.ajax('POST', '/employee/document-delete/' + docId + '/', {
+      target: '#mat-tab-docs-panel',
+      swap: 'innerHTML',
+      headers: { 'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '' }
+    }).then(function() {
+      if (window.currentMatId) {
+        htmx.ajax('GET', '/employee/maternita-documents/' + window.currentMatId, {
+          target: '#mat-tab-docs-panel',
+          swap: 'innerHTML'
+        });
+      }
+    });
+  });
+}
+</script>

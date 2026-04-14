@@ -1,5 +1,21 @@
 {% load i18n %} {% load static %} {% load employee_filter %}
 
+<style>
+  .mat-tab-row:hover { background: #fff3f3; }
+  .oh-sticky-table__tr--active { background: #fde8e8 !important; border-left: 3px solid var(--oh-color-primary, #e74c3c) !important; }
+  /* Maternità card layout */
+  .mat-tab-card { border-bottom: 1px solid #dee2e6; padding: 8px 12px; }
+  .mat-tab-card.oh-sticky-table__tr--active { border-left: 3px solid var(--oh-color-primary, #e74c3c) !important; }
+  .mat-card-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .mat-card-num { font-weight: 700; font-size: .88rem; color: var(--oh-color-primary, #e74c3c); min-width: 16px; }
+  .mat-card-name { flex: 1; font-weight: 600; font-size: .82rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mat-card-actions { display: flex; gap: 2px; flex-shrink: 0; }
+  .mat-card-body { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px 10px; font-size: .75rem; }
+  .mat-field { display: flex; flex-direction: column; }
+  .mat-field--full { grid-column: 1 / -1; }
+  .mat-label { color: #6c757d; font-size: .62rem; text-transform: uppercase; letter-spacing: .03em; line-height: 1.2; }
+</style>
+
 {# ── Sub-tab bar ─────────────────────────────────────────────────────────── #}
 <div style="border-bottom: 1px solid #dee2e6;">
     <ul class="oh-general__tabs oh-general__tabs--border oh-general__tabs--no-grow mt-0 mb-0 px-3" id="doc-subtab-list">
@@ -22,6 +38,13 @@
                role="button"
                onclick="docSubTabSwitch(this, 'doc-panel-contratti')">
                 {% trans "Contratti" %}
+            </a>
+        </li>
+        <li class="oh-general__tab">
+            <a class="oh-general__tab-link"
+               role="button"
+               onclick="docSubTabSwitch(this, 'doc-panel-maternita')">
+                {% trans "Maternità" %}
             </a>
         </li>
         {% for cat in categories %}
@@ -99,7 +122,7 @@
                                                 data-target="#objectCreateModal"
                                                 onclick="event.stopPropagation()"
                                                 title="Allega File">
-                                                <ion-icon name="attach-outline"></ion-icon>
+                                                <i class="material-icons" style="font-size:14px;line-height:1;vertical-align:middle;">upload</i>
                                             </span>
                                         {% endif %}
                                     </div>
@@ -128,26 +151,13 @@
                                     </div>
                                 </div>
                                 <div class="oh-btn-group">
-                                    {% if perms.horilla_document.change_documentrequest %}
-                                        {% if document.status == "approved" %}
-                                            <a class="oh-btn oh-btn--success w-100 oh-btn--disabled" onclick="event.stopPropagation()">
-                                                <ion-icon class="me-1" name="checkmark-outline"></ion-icon>
-                                            </a>
-                                            <a hx-get="{% url 'document-reject' document.id %}" hx-target="#rejectFileForm"
-                                                data-toggle="oh-modal-toggle" data-target="#rejectFileModal"
-                                                title="{% trans 'Rifiuta' %}" class="oh-btn oh-btn--danger w-100" onclick="event.stopPropagation()">
-                                                <ion-icon class="me-1" name="close-circle-outline"></ion-icon>
-                                            </a>
-                                        {% else %}
-                                            <a hx-get="{% url 'document-approve' document.id %}" hx-target="#viewFile"
-                                                title="{% trans 'Approva' %}" class="oh-btn oh-btn--success w-100" onclick="event.stopPropagation()">
-                                                <ion-icon class="me-1" name="checkmark-outline"></ion-icon>
-                                            </a>
-                                            <a class="oh-btn oh-btn--danger w-100 oh-btn--disabled" onclick="event.stopPropagation()">
-                                                <ion-icon class="me-1" name="close-circle-outline"></ion-icon>
-                                            </a>
-                                        {% endif %}
-                                    {% endif %}
+                                    <a hx-get="{% url 'document-update' document.id %}"
+                                        hx-target="#objectUpdateModalTarget"
+                                        data-toggle="oh-modal-toggle"
+                                        data-target="#objectUpdateModal"
+                                        title="{% trans 'Modifica' %}" class="oh-btn oh-btn--success w-100" onclick="event.stopPropagation()">
+                                        <ion-icon class="me-1" name="create-outline"></ion-icon>
+                                    </a>
                                     {% if not document.document_request_id or perms.horilla_document.change_documentrequest %}
                                         <form hx-confirm="{% trans 'Sei sicuro di voler eliminare questo documento?' %}"
                                             hx-post="{% url 'document-delete' document.id %}"
@@ -262,6 +272,189 @@
     </div>
     {% endif %}
 </div>
+
+{# ── Panel: Maternità ────────────────────────────────────────────────────── #}
+<div id="doc-panel-maternita" class="d-none" style="height:calc(100vh - 280px);min-height:300px;">
+  <div class="d-flex h-100">
+
+    {# Colonna sinistra: lista gravidanze #}
+    <div style="width:55%;min-width:200px;border-right:1px solid #dee2e6;overflow-y:auto;" id="mat-tab-left">
+      <div class="px-3 pt-2 pb-1 d-flex justify-content-between align-items-center" style="background:#f8f9fa;border-bottom:1px solid #dee2e6;">
+        <span class="fw-bold text-uppercase" style="font-size:.75rem;color:var(--oh-color-primary,#e74c3c);">
+          <i class="material-icons align-middle me-1" style="font-size:15px">child_care</i>{% trans "Dati Maternità" %}
+        </span>
+        <button class="oh-btn oh-btn--secondary btn-sm"
+            data-toggle="oh-modal-toggle"
+            data-target="#objectCreateModal"
+            hx-get="{% url 'maternita-new-form' emp_id %}"
+            hx-target="#objectCreateModalTarget"
+            onclick="event.preventDefault()"
+            title="{% trans 'Aggiungi Maternità' %}">
+          <ion-icon name="add-sharp"></ion-icon>
+        </button>
+      </div>
+
+      {% if maternita_list %}
+        <div id="mat-tab-tbody">
+          {% for mat in maternita_list %}
+            <div class="mat-tab-card mat-tab-row"
+                 id="mat-tab-row-{{ mat.id }}"
+                 data-mat-id="{{ mat.id }}"
+                 onclick="if(!event.target.closest('.mat-edit-btn') && !event.target.closest('.mat-delete-btn') && !event.target.closest('.mat-doc-link')){ setActiveMatRow({{ mat.id }}); htmx.ajax('GET','{% url 'maternita-documents' mat.id %}',{target:'#mat-tab-docs-panel',swap:'innerHTML'}); }">
+              <div class="mat-card-header">
+                <span class="mat-card-num">{{ mat.n_figlio }}</span>
+                <span class="mat-card-name">{{ mat.nome_figlio|default:"—" }}</span>
+                <div class="mat-card-actions" style="flex-direction:column;align-items:center;">
+                  <div style="display:flex;gap:2px;">
+                    <button type="button" class="oh-btn oh-btn--light btn-sm p-0 px-1 mat-edit-btn"
+                        hx-get="{% url 'maternita-edit' mat.id %}"
+                        hx-target="#objectCreateModalTarget"
+                        data-toggle="oh-modal-toggle"
+                        data-target="#objectCreateModal"
+                        onclick="event.stopPropagation()"
+                        title="{% trans 'Modifica' %}">
+                      <ion-icon name="create-outline" style="font-size:14px"></ion-icon>
+                    </button>
+                    <button type="button" class="oh-btn oh-btn--light btn-sm p-0 px-1 mat-delete-btn"
+                        onclick="event.stopPropagation(); confirmDeleteMaternita({{ mat.id }}, '{% if mat.nome_figlio %}{{ mat.nome_figlio|escapejs }}{% else %}Figlio n°{{ mat.n_figlio }}{% endif %}')"
+                        title="{% trans 'Elimina' %}"
+                        style="color:#dc3545;">
+                      <ion-icon name="trash-outline" style="font-size:14px"></ion-icon>
+                    </button>
+                  </div>
+                  {% if mat.documento %}
+                    <a class="mat-doc-link" href="{{ mat.documento.url }}" target="_blank"
+                       onclick="event.stopPropagation()"
+                       title="{% trans 'Apri documento' %}"
+                       style="color:var(--oh-color-primary,#e74c3c);line-height:1;margin-top:3px;">
+                      <ion-icon name="document-text-outline" style="font-size:32px;vertical-align:middle;"></ion-icon>
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="mat-card-body">
+                <div class="mat-field">
+                  <span class="mat-label">{% trans "Comunicazione" %}</span>
+                  <span>{{ mat.data_comunicazione|date:"d/m/Y"|default:"—" }}</span>
+                </div>
+                <div class="mat-field">
+                  <span class="mat-label">{% trans "Data Prev. Parto" %}</span>
+                  <span>{{ mat.data_prevista_parto|date:"d/m/Y"|default:"—" }}</span>
+                </div>
+                <div class="mat-field">
+                  <span class="mat-label">{% trans "Sedia" %}</span>
+                  <span>{{ mat.sedia_maternita|default:"—" }}</span>
+                </div>
+                <div class="mat-field">
+                  <span class="mat-label">{% trans "Sostituta" %}</span>
+                  <span>{{ mat.sostituta|default:"—" }}</span>
+                </div>
+                <div class="mat-field">
+                  <span class="mat-label">{% trans "Nascita" %}</span>
+                  <span>{{ mat.data_nascita|date:"d/m/Y"|default:"—" }}</span>
+                </div>
+                <div class="mat-field">
+                  <span class="mat-label">{% trans "Rientro" %}</span>
+                  <span>{{ mat.data_rientro|date:"d/m/Y"|default:"—" }}</span>
+                </div>
+                {% if mat.note %}
+                  <div class="mat-field mat-field--full">
+                    <span class="mat-label">{% trans "Note" %}</span>
+                    <span>{{ mat.note }}</span>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="d-flex justify-content-center align-items-center" style="height:20vh;">
+          <p class="text-muted small">{% trans "Nessuna maternità registrata." %}</p>
+        </div>
+      {% endif %}
+    </div>
+
+    {# Colonna destra: documenti collegati #}
+    <div style="flex:1;overflow-y:auto;" id="mat-tab-right">
+      <div class="px-3 pt-2 pb-1 d-flex justify-content-between align-items-center" style="background:#f8f9fa;border-bottom:1px solid #dee2e6;">
+        <span class="fw-bold text-uppercase" style="font-size:.75rem;color:#555;">
+          <i class="material-icons align-middle me-1" style="font-size:15px">folder_open</i>
+          <span id="mat-tab-docs-title">{% trans "Documenti" %}</span>
+        </span>
+        <button class="oh-btn oh-btn--secondary btn-sm"
+            id="mat-tab-add-doc-btn"
+            data-toggle="oh-modal-toggle"
+            data-target="#objectCreateModal"
+            hx-get="{% url 'document-create' emp_id %}{% if maternita_category_id %}?category_id={{ maternita_category_id }}{% endif %}"
+            hx-target="#objectCreateModalTarget"
+            title="{% trans 'Aggiungi Documento' %}">
+          <ion-icon name="add-sharp"></ion-icon>
+        </button>
+      </div>
+      <div id="mat-tab-docs-panel">
+        <div class="d-flex justify-content-center align-items-center" style="height:20vh;">
+          <p class="text-muted small">{% trans "Seleziona una riga dalla lista a sinistra." %}</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  function setActiveMatRow(matId) {
+    document.querySelectorAll(".mat-tab-row").forEach(r => r.classList.remove("oh-sticky-table__tr--active"));
+    const row = document.getElementById("mat-tab-row-" + matId);
+    if (row) row.classList.add("oh-sticky-table__tr--active");
+    window.currentMatId = matId;
+    // Update the + doc button to pre-link the new document to this maternita
+    const addDocBtn = document.getElementById("mat-tab-add-doc-btn");
+    if (addDocBtn && matId) {
+      const catParam = "{% if maternita_category_id %}&category_id={{ maternita_category_id }}{% endif %}";
+      addDocBtn.setAttribute("hx-get", "{% url 'document-create' emp_id %}?maternita_id=" + matId + catParam);
+    }
+  }
+  window.setActiveMatRow = setActiveMatRow;
+
+  function confirmDeleteMaternita(matId, label) {
+    Swal.fire({
+      html: "{% trans 'Vuoi eliminare la maternità' %} \"<strong>" + label + "</strong>\"?<br><br>"
+          + "{% trans 'Verranno eliminati anche tutti i documenti (tipologie maternità) collegati a questa maternità.' %}",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#008000",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "{% trans 'Sì, elimina' %}",
+      cancelButtonText: "{% trans 'No, annulla' %}",
+    }).then(function(result) {
+      if (!result.isConfirmed) return;
+      htmx.ajax('POST', '{% url "maternita-delete" 0 %}'.replace('/0', '/' + matId), {
+        target: '#objectCreateModalTarget',
+        swap: 'innerHTML',
+        headers: {'X-CSRFToken': document.cookie.match(/csrftoken=([^;]+)/)?.[1] || ''}
+      });
+    });
+  }
+  window.confirmDeleteMaternita = confirmDeleteMaternita;
+
+  // Auto-select the row with highest N° Figlio when the tab becomes visible
+  const panel = document.getElementById("doc-panel-maternita");
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      if (!panel.classList.contains("d-none")) {
+        const rows = document.querySelectorAll(".mat-tab-row");
+        if (rows.length > 0) {
+          const lastRow = rows[rows.length - 1];
+          lastRow.click();
+        }
+        observer.disconnect();
+      }
+    });
+  });
+  observer.observe(panel, { attributes: true, attributeFilter: ["class"] });
+})();
+</script>
 
 {# ── Panels per categoria (caricati via HTMX al click) ───────────────────── #}
 {% for cat in categories %}

@@ -4,6 +4,7 @@ var confirmModal = {
     es: "Confirmar",
     en: "Confirm",
     fr: "Confirmer",
+    it: "Sì",
 };
 
 var cancelModal = {
@@ -12,6 +13,7 @@ var cancelModal = {
     es: "Cancelar",
     en: "Cancel",
     fr: "Annuler",
+    it: "No",
 };
 
 function getCookie(name) {

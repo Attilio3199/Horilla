@@ -1,41 +1,14 @@
 {% load i18n %} {% load horillafilters %} {% load static %}
 <div class="d-flex justify-content-end">
 	<div class="oh-btn-group mb-4">
-		<a type="submit" hx-get="{% url 'file-upload' document.id %}" hx-target="#objectCreateModalTarget"
-			data-toggle="oh-modal-toggle" data-target="#objectCreateModal" title="Upload file"
-			class="oh-btn oh-btn--warning w-100">
-			<ion-icon name="attach-outline"></ion-icon>
+		<a hx-get="{% url 'document-update' document.id %}"
+			hx-target="#objectUpdateModalTarget"
+			data-toggle="oh-modal-toggle"
+			data-target="#objectUpdateModal"
+			title="{% trans 'Modifica' %}" class="oh-btn oh-btn--success w-100">
+			<ion-icon class="me-1" name="create-outline"></ion-icon>
 		</a>
 		{% if document.document %}
-			{% if perms.horilla_document.change_documentrequest %}
-				{% if document.status == "approved" %}
-					<a class="oh-btn oh-btn--success w-100 oh-btn--disabled" title="{% trans 'Approved' %}">
-						<ion-icon class="me-1" name="checkmark-outline"></ion-icon>
-					</a>
-				{% else %}
-					<a hx-get="{% url 'document-approve' document.id %}"
-						hx-vals='{
-							"refresh_url": "{% url "view-file" document.id %}",
-							"hx_target": "#viewFile"
-						}'
-						hx-on-htmx-after-request="reloadMessage(this);"
-						title="{% trans 'Approve' %}"
-						class="oh-btn oh-btn--success w-100">
-						<ion-icon class="me-1" name="checkmark-outline"></ion-icon>
-					</a>
-				{% endif %}
-				{% if document.status == "rejected" %}
-					<a class="oh-btn oh-btn--danger w-100 oh-btn--disabled" title="{% trans 'Rejected' %}">
-						<ion-icon class="me-1" name="close-circle-outline"></ion-icon>
-					</a>
-				{% else %}
-					<a type="submit" hx-get="{% url 'document-reject' document.id %}" hx-target="#rejectFileForm"
-						data-target="#rejectFileModal" data-toggle="oh-modal-toggle" title="{% trans 'Reject' %}"
-						class="oh-btn oh-btn--danger w-100">
-						<ion-icon class="me-1" name="close-circle-outline"></ion-icon>
-					</a>
-				{% endif %}
-			{% endif %}
 			<a href="data:{{ content_type }};base64,{{ file_content|base64_encode }}" class="oh-btn oh-btn--info w-100"
 				download="{{document.title}}" title="{% trans 'Download' %}"><ion-icon class="me-1"
 					name="download-outline"></ion-icon>
