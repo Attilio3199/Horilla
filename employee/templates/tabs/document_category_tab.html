@@ -25,26 +25,22 @@
             {% for document in subcat_group.list %}
                 <div id="document-cat{{ active_category.id }}-{{ document.id }}">
                     <div class="oh-user_permission-list_item accordion exclude-accordion-style"
-                        hx-get="{% url 'view-file' document.id %}"
-                        hx-target="#viewFile"
+                        hx-get="{% url 'document-update' document.id %}"
+                        hx-target="#objectUpdateModalTarget"
                         data-toggle="oh-modal-toggle"
-                        data-target="#viewFileModal">
+                        data-target="#objectUpdateModal">
                         <div class="oh-user_permission-list_profile {% if document.status == 'approved' %}row-status--yellow{% elif document.status == 'rejected' %}row-status--red{% elif document.status == 'requested' %}row-status--blue{% endif %}">
                             <div class="oh-navbar__user-photo oh-user_permission--profile">
                                 {% if document.document %}
-                                    {% if document.status == "approved" %}
-                                        <span class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2" onclick="event.stopPropagation()" title="Approvato">
-                                            <ion-icon name="checkmark"></ion-icon>
-                                        </span>
-                                    {% elif document.status == "rejected" %}
-                                        <span class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2" onclick="event.stopPropagation()" title="Rifiutato">
-                                            <ion-icon name="alert"></ion-icon>
-                                        </span>
-                                    {% else %}
-                                        <span class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2" onclick="event.stopPropagation()" title="Caricato">
-                                            <ion-icon name="image-outline"></ion-icon>
-                                        </span>
-                                    {% endif %}
+                                    <span class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2"
+                                        hx-get="{% url 'view-file' document.id %}"
+                                        hx-target="#viewFile"
+                                        data-toggle="oh-modal-toggle"
+                                        data-target="#viewFileModal"
+                                        onclick="event.stopPropagation()"
+                                        title="{% trans 'Visualizza documento' %}">
+                                        <i class="material-icons" style="font-size:14px;line-height:1;vertical-align:middle;">visibility</i>
+                                    </span>
                                 {% else %}
                                     <span class="oh-badge oh-badge--secondary oh-badge--small oh-badge--round ms-2 mr-2"
                                         hx-get="{% url 'file-upload' document.id %}"

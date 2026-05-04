@@ -1703,13 +1703,52 @@ def contract_export(request):
             "payroll/contract/contract_export_filter.html",
             context=content,
         )
-    return export_data(
-        request=request,
-        model=Contract,
-        filter_class=ContractFilter,
-        form_class=ContractExportFieldForm,
-        file_name="Contract_export",
+
+    # Build the queryset (apply filter if query params are present)
+    contracts = ContractFilter(request.GET).qs if request.GET else Contract.objects.all()
+
+    # Map tipo_contratto numeric values to labels
+    tipo_labels = {
+        1: "Tirocinanti",
+        2: "Apprendistato",
+        3: "Determinato",
+        4: "Indeterminato",
+        5: "cocopro",
+        6: "GI GROUP",
+        7: "infojobmetis",
+        8: "ranstad",
+        9: "voucher",
+    }
+
+    rows = []
+    for c in contracts.select_related("employee_id"):
+        rows.append({
+            "Badge ID": c.employee_id.badge_id if c.employee_id else "",
+            "Contract Status": c.contract_status or "",
+            "Tipo Contratto": tipo_labels.get(c.tipo_contratto, c.tipo_contratto) if c.tipo_contratto is not None else "",
+            "Contract Start Date": c.contract_start_date.strftime("%Y-%m-%d") if c.contract_start_date else "",
+            "Contract End Date": c.contract_end_date.strftime("%Y-%m-%d") if c.contract_end_date else "",
+            "Lun": float(c.lun) if c.lun is not None else 0,
+            "Mar": float(c.mar) if c.mar is not None else 0,
+            "Mer": float(c.mer) if c.mer is not None else 0,
+            "Gio": float(c.gio) if c.gio is not None else 0,
+            "Ven": float(c.ven) if c.ven is not None else 0,
+            "Sab": float(c.sab) if c.sab is not None else 0,
+            "Dom": float(c.dom) if c.dom is not None else 0,
+        })
+
+    data_frame = pd.DataFrame(
+        rows,
+        columns=["Badge ID", "Contract Status", "Tipo Contratto",
+                 "Contract Start Date", "Contract End Date",
+                 "Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"],
     )
+
+    today_date = date.today().strftime("%Y-%m-%d")
+    response = HttpResponse(content_type="application/ms-excel")
+    response["Content-Disposition"] = f'attachment; filename="Contract_export_{today_date}.xlsx"'
+    data_frame.to_excel(response, index=False)
+    return response
 
 
 @login_required
