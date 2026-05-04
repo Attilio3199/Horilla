@@ -33,7 +33,7 @@ env = environ.Env(
     CSRF_TRUSTED_ORIGINS=(list, ["http://localhost:8000"]),
 )
 
-env.read_env(os.path.join(BASE_DIR, ".env"), overwrite=True)
+env.read_env(os.path.join(BASE_DIR, ".env"), overwrite=False)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
