@@ -4,10 +4,15 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 8000:8000
+      - ${DOCKER_PORT:-8000}:8000
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
-      DATABASE_URL: "postgres://postgres:postgres@db:5432/horilla"
+      # Dentro Docker il DB è raggiunto tramite il nome del servizio "db"
+      DB_HOST: db
+      # I media dentro il container sono montati in /app/media
+      MEDIA_ROOT: /app/media/
     command: sh ./entrypoint.sh
     volumes:
       - ./horilla:/app/horilla
@@ -19,9 +24,9 @@ services:
   db:
     image: postgres:16-bullseye
     environment:
-      POSTGRES_DB: horilla
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${DB_NAME:-horilla_main}
+      POSTGRES_USER: ${DB_USER:-horilla}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
@@ -30,7 +35,7 @@ services:
     volumes:
       - horilla-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
+      test: ["CMD", "pg_isready", "-U", "${DB_USER:-horilla}"]
       interval: 10s
       timeout: 5s
       retries: 5

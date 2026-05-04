@@ -152,3 +152,4 @@ whoosh_index/
 
 #PyCharm
 .idea/
+horilla_main.dump
