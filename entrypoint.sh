@@ -1,6 +1,24 @@
 #!/bin/bash
 
 echo "Waiting for database to be ready..."
+until python3 - <<'EOF'
+import os, sys
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "horilla.settings")
+import django
+django.setup()
+from django.db import connections
+try:
+    connections["default"].ensure_connection()
+    sys.exit(0)
+except Exception:
+    sys.exit(1)
+EOF
+do
+    echo "Database not ready, retrying in 2 seconds..."
+    sleep 2
+done
+
+echo "Database is ready."
 python3 manage.py makemigrations
 python3 manage.py migrate
 python3 manage.py collectstatic --noinput

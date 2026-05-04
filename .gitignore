@@ -60,6 +60,7 @@ local_settings.py
 TestDB_Horilla.sqlite3
 db.sqlite3
 db.sqlite3-journal
+postgres-init/01_restore.sql
 
 # Flask stuff:
 instance/
