@@ -60,7 +60,29 @@ def _convert_type(col_def: str) -> str:
     for pattern, replacement in _TYPE_MAP:
         col_def = pattern.sub(replacement, col_def)
     col_def = _STRIP_COL_ATTRS.sub("", col_def)
-    return col_def
+    # MySQL: DEFAULT current_timestamp() / DEFAULT current_timestamp(6)
+    # PostgreSQL does not accept current_timestamp() as a function call
+    col_def = re.sub(
+        r"\bDEFAULT\s+current_timestamp\s*\(\s*\d*\s*\)",
+        "DEFAULT CURRENT_TIMESTAMP",
+        col_def,
+        flags=re.I,
+    )
+    # ON UPDATE CURRENT_TIMESTAMP(n) is MySQL-only — strip it entirely
+    col_def = re.sub(
+        r"\bON\s+UPDATE\s+CURRENT_TIMESTAMP\s*(\(\s*\d*\s*\))?",
+        "",
+        col_def,
+        flags=re.I,
+    )
+    # MySQL zero-date defaults are invalid in PostgreSQL — replace with NULL
+    col_def = re.sub(
+        r"DEFAULT\s+'0000-00-00(?:\s+00:00:00)?'",
+        "DEFAULT NULL",
+        col_def,
+        flags=re.I,
+    )
+    return col_def.strip()
 
 
 def _extract_create_table(sql_text: str, table_name: str) -> str | None:
