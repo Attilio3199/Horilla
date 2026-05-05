@@ -216,10 +216,14 @@ def _extract_inserts(sql_text: str, source_table: str) -> list[str]:
     Extract all INSERT INTO `source_table` statements from the dump and
     rewrite them to target `_turni_creati`.
     Handles both single-row and multi-row (VALUES (...),(...),...) inserts.
+
+    The terminator is `);` instead of just `;` so that semicolons that
+    appear inside quoted string values (e.g. 'Turno unico; mattina') are
+    not mistakenly treated as statement terminators.
     """
     pattern = re.compile(
         r"INSERT\s+INTO\s+[`'\"]?" + re.escape(source_table) + r"[`'\"]?"
-        r"\s*(?:\([^)]*\)\s*)?VALUES\s*.+?;",
+        r"\s*(?:\([^)]*\)\s*)?VALUES\s*.+?\)\s*;",
         re.I | re.DOTALL,
     )
     results = []
