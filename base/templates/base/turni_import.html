@@ -1,0 +1,74 @@
+{% extends 'index.html' %}
+{% load static %}
+{% load i18n %}
+{% block content %}
+
+<div class="oh-wrapper">
+  <div class="oh-container">
+
+    <div class="oh-card oh-card--margin mt-4">
+      <div class="oh-card__header d-flex align-items-center justify-content-between">
+        <h2 class="oh-card__title">
+          <ion-icon name="cloud-upload-outline" class="me-2"></ion-icon>
+          {% trans "Importa Turni da MariaDB" %}
+        </h2>
+      </div>
+
+      <div class="oh-card__body mt-3">
+
+        {% if error %}
+        <div class="oh-alert oh-alert--animated oh-alert--danger mb-3">
+          <ion-icon name="alert-circle-outline" class="me-1"></ion-icon>
+          {{ error }}
+        </div>
+        {% endif %}
+
+        {% if success %}
+        <div class="oh-alert oh-alert--animated oh-alert--success mb-3">
+          <ion-icon name="checkmark-circle-outline" class="me-1"></ion-icon>
+          {% blocktrans with n=rows_imported src=source_table %}
+            Importazione completata: {{ n }} statement INSERT eseguiti dalla tabella <strong>{{ src }}</strong> → <strong>_turni_creati</strong> su PostgreSQL.
+          {% endblocktrans %}
+        </div>
+        {% endif %}
+
+        <p class="text-muted mb-4">
+          {% trans "Carica il file <code>.sql</code> esportato da MariaDB. La tabella <code>_turni_creati</code> verrà ricreata su PostgreSQL con i dati del dump." %}
+        </p>
+
+        <form method="post" enctype="multipart/form-data" class="oh-form-group">
+          {% csrf_token %}
+
+          <div class="oh-input-group mb-4">
+            <label class="oh-label" for="dump_file">
+              {% trans "File dump MariaDB (.sql)" %}
+            </label>
+            <input
+              type="file"
+              id="dump_file"
+              name="dump_file"
+              accept=".sql"
+              class="oh-input"
+              required
+            />
+            <small class="text-muted">{% trans "Dimensione massima: 50 MB" %}</small>
+          </div>
+
+          <div class="oh-alert oh-alert--warning mb-4">
+            <ion-icon name="warning-outline" class="me-1"></ion-icon>
+            {% trans "Attenzione: l'importazione <strong>sovrascrive</strong> completamente la tabella <code>_turni_creati</code> esistente." %}
+          </div>
+
+          <button type="submit" class="oh-btn oh-btn--primary">
+            <ion-icon name="cloud-upload-outline" class="me-1"></ion-icon>
+            {% trans "Importa" %}
+          </button>
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

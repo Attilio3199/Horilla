@@ -16,7 +16,7 @@ Including another URLconf
 
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.urls import include, path, re_path
 
 import notifications.urls
@@ -28,7 +28,17 @@ def health_check(request):
     return JsonResponse({"status": "ok"}, status=200)
 
 
+def service_worker(request):
+    sw_path = settings.BASE_DIR / "static" / "sw.js"
+    with open(sw_path, "r") as f:
+        content = f.read()
+    response = HttpResponse(content, content_type="application/javascript")
+    response["Service-Worker-Allowed"] = "/"
+    return response
+
+
 urlpatterns = [
+    path("sw.js", service_worker, name="service_worker"),
     path("admin/", admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
     path("accounts/", include("django.contrib.auth.urls")),

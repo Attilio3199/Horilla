@@ -14,6 +14,7 @@ from urllib.parse import parse_qs
 import pandas as pd
 from django.apps import apps
 from django.contrib import messages
+from django.db import connection as _pg_conn
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, QueryDict
 from django.shortcuts import get_object_or_404, redirect, render
@@ -3407,18 +3408,6 @@ _ORA_COL = {
 }
 
 
-def _mysql_orari_conn():
-    """Apre e restituisce una connessione pymysql al db orari (MySQL)."""
-    import pymysql
-    return pymysql.connect(
-        host="127.0.0.1",
-        port=3306,
-        user="root",
-        password="V@lenza15048!",
-        database="orari",
-        charset="utf8mb4",
-        cursorclass=pymysql.cursors.DictCursor,
-    )
 
 
 @login_required
@@ -3467,25 +3456,22 @@ def controllo_cedolini_presenze(request):
     # --- Dipendenti da MySQL per il periodo ---
     dipendenti_mysql = []
     try:
-        conn = _mysql_orari_conn()
-        try:
-            with conn.cursor() as cur:
-                cur.execute(
-                    """
-                    SELECT CODICEPERSONALE, MIN(Descrizione) AS nome
-                    FROM turni_creati
-                    WHERE Data BETWEEN %s AND %s
-                      AND CODICEPERSONALE IS NOT NULL AND CODICEPERSONALE != ''
-                    GROUP BY CODICEPERSONALE
-                    ORDER BY nome
-                    """,
-                    [data_inizio, data_fine],
-                )
-                dipendenti_mysql = cur.fetchall()
-        finally:
-            conn.close()
+        with _pg_conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT "CODICEPERSONALE", MIN("Descrizione") AS nome
+                FROM "_turni_creati"
+                WHERE "Data" BETWEEN %s AND %s
+                  AND "CODICEPERSONALE" IS NOT NULL AND "CODICEPERSONALE" != ''
+                GROUP BY "CODICEPERSONALE"
+                ORDER BY nome
+                """,
+                [data_inizio, data_fine],
+            )
+            cols = [c[0] for c in cur.description]
+            dipendenti_mysql = [dict(zip(cols, row)) for row in cur.fetchall()]
     except Exception as exc:
-        messages.error(request, _("Errore connessione al database orari: {}").format(exc))
+        messages.error(request, _("Errore lettura turni dal database: {}").format(exc))
         return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
             **ctx_base, "mese": mese, "anno": anno,
         })
@@ -3560,29 +3546,29 @@ def controllo_cedolini_presenze(request):
                     float(r.get(dc) or 0)
                 )
 
-    # Batch query MySQL — tutti i turni del periodo (nessun filtro per tipo)
+    # Batch query PostgreSQL — tutti i turni del periodo (nessun filtro per tipo)
     ph_dip = ",".join(["%s"] * len(selected_dip))
     sql = f"""
         SELECT
-            CODICEPERSONALE,
-            CODICE_TIPO_ORARIO,
-            DAY(Data) AS giorno,
+            "CODICEPERSONALE",
+            "CODICE_TIPO_ORARIO",
+            EXTRACT(DAY FROM "Data")::INTEGER AS giorno,
             SUM(CASE
-                WHEN Ora_Cons_Inizio IS NOT NULL AND Ora_Cons_Fine IS NOT NULL
-                     AND Ora_Cons_Fine > Ora_Cons_Inizio
-                THEN (TIME_TO_SEC(Ora_Cons_Fine) - TIME_TO_SEC(Ora_Cons_Inizio)) / 3600.0
+                WHEN "Ora_Cons_Inizio" IS NOT NULL AND "Ora_Cons_Fine" IS NOT NULL
+                     AND "Ora_Cons_Fine" > "Ora_Cons_Inizio"
+                THEN EXTRACT(EPOCH FROM ("Ora_Cons_Fine" - "Ora_Cons_Inizio")) / 3600.0
                 ELSE 0
             END) AS ore_cons,
             SUM(CASE
-                WHEN Ora_Prev_Inizio IS NOT NULL AND Ora_Prev_Fine IS NOT NULL
-                     AND Ora_Prev_Fine > Ora_Prev_Inizio
-                THEN (TIME_TO_SEC(Ora_Prev_Fine) - TIME_TO_SEC(Ora_Prev_Inizio)) / 3600.0
+                WHEN "Ora_Prev_Inizio" IS NOT NULL AND "Ora_Prev_Fine" IS NOT NULL
+                     AND "Ora_Prev_Fine" > "Ora_Prev_Inizio"
+                THEN EXTRACT(EPOCH FROM ("Ora_Prev_Fine" - "Ora_Prev_Inizio")) / 3600.0
                 ELSE 0
             END) AS ore_prev
-        FROM turni_creati
-        WHERE CODICEPERSONALE IN ({ph_dip})
-          AND Data BETWEEN %s AND %s
-        GROUP BY CODICEPERSONALE, CODICE_TIPO_ORARIO, DAY(Data)
+        FROM "_turni_creati"
+        WHERE "CODICEPERSONALE" IN ({ph_dip})
+          AND "Data" BETWEEN %s AND %s
+        GROUP BY "CODICEPERSONALE", "CODICE_TIPO_ORARIO", EXTRACT(DAY FROM "Data")
     """
     params = selected_dip + [data_inizio, data_fine]
 
@@ -3591,22 +3577,20 @@ def controllo_cedolini_presenze(request):
     # turni_per_day: {(cod_dip, giorno): [(tipo, ore_cons, ore_prev), ...]}
     turni_per_day: dict = {}
     try:
-        conn = _mysql_orari_conn()
-        try:
-            with conn.cursor() as cur:
-                cur.execute(sql, params)
-                for r in cur.fetchall():
-                    cp = r["CODICEPERSONALE"]
-                    tipo = r["CODICE_TIPO_ORARIO"]
-                    g = int(r["giorno"])
-                    oc = float(r["ore_cons"] or 0)
-                    op = float(r["ore_prev"] or 0)
-                    turni_idx[(cp, tipo, g)] = (oc, op)
-                    turni_per_day.setdefault((cp, g), []).append((tipo, oc, op))
-        finally:
-            conn.close()
+        with _pg_conn.cursor() as cur:
+            cur.execute(sql, params)
+            cols = [c[0] for c in cur.description]
+            for row in cur.fetchall():
+                r = dict(zip(cols, row))
+                cp = r["CODICEPERSONALE"]
+                tipo = r["CODICE_TIPO_ORARIO"]
+                g = int(r["giorno"])
+                oc = float(r["ore_cons"] or 0)
+                op = float(r["ore_prev"] or 0)
+                turni_idx[(cp, tipo, g)] = (oc, op)
+                turni_per_day.setdefault((cp, g), []).append((tipo, oc, op))
     except Exception as exc:
-        messages.error(request, _("Errore connessione al database orari: {}").format(exc))
+        messages.error(request, _("Errore lettura turni dal database: {}").format(exc))
         return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
             **ctx_config, "selected_dip": selected_dip,
         })
@@ -4197,42 +4181,41 @@ def _build_risultati_for_export(mese, anno, selected_dip):
                     float(r.get(dc) or 0)
                 )
 
-    # Query MySQL senza filtro tipo → tutti i turni del periodo
+    # Query PostgreSQL senza filtro tipo → tutti i turni del periodo
     ph_dip = ",".join(["%s"] * len(selected_dip))
     sql = f"""
         SELECT
-            CODICEPERSONALE, CODICE_TIPO_ORARIO, DAY(Data) AS giorno,
-            SUM(CASE WHEN Ora_Cons_Inizio IS NOT NULL AND Ora_Cons_Fine IS NOT NULL
-                          AND Ora_Cons_Fine > Ora_Cons_Inizio
-                     THEN (TIME_TO_SEC(Ora_Cons_Fine) - TIME_TO_SEC(Ora_Cons_Inizio)) / 3600.0
+            "CODICEPERSONALE", "CODICE_TIPO_ORARIO",
+            EXTRACT(DAY FROM "Data")::INTEGER AS giorno,
+            SUM(CASE WHEN "Ora_Cons_Inizio" IS NOT NULL AND "Ora_Cons_Fine" IS NOT NULL
+                          AND "Ora_Cons_Fine" > "Ora_Cons_Inizio"
+                     THEN EXTRACT(EPOCH FROM ("Ora_Cons_Fine" - "Ora_Cons_Inizio")) / 3600.0
                      ELSE 0 END) AS ore_cons,
-            SUM(CASE WHEN Ora_Prev_Inizio IS NOT NULL AND Ora_Prev_Fine IS NOT NULL
-                          AND Ora_Prev_Fine > Ora_Prev_Inizio
-                     THEN (TIME_TO_SEC(Ora_Prev_Fine) - TIME_TO_SEC(Ora_Prev_Inizio)) / 3600.0
+            SUM(CASE WHEN "Ora_Prev_Inizio" IS NOT NULL AND "Ora_Prev_Fine" IS NOT NULL
+                          AND "Ora_Prev_Fine" > "Ora_Prev_Inizio"
+                     THEN EXTRACT(EPOCH FROM ("Ora_Prev_Fine" - "Ora_Prev_Inizio")) / 3600.0
                      ELSE 0 END) AS ore_prev
-        FROM turni_creati
-        WHERE CODICEPERSONALE IN ({ph_dip})
-          AND Data BETWEEN %s AND %s
-        GROUP BY CODICEPERSONALE, CODICE_TIPO_ORARIO, DAY(Data)
+        FROM "_turni_creati"
+        WHERE "CODICEPERSONALE" IN ({ph_dip})
+          AND "Data" BETWEEN %s AND %s
+        GROUP BY "CODICEPERSONALE", "CODICE_TIPO_ORARIO", EXTRACT(DAY FROM "Data")
     """
     params = selected_dip + [data_inizio, data_fine]
 
     turni_idx = {}
     turni_per_day: dict = {}
-    conn = _mysql_orari_conn()
-    try:
-        with conn.cursor() as cur:
-            cur.execute(sql, params)
-            for r in cur.fetchall():
-                cp = r["CODICEPERSONALE"]
-                tipo = r["CODICE_TIPO_ORARIO"]
-                g = int(r["giorno"])
-                oc = float(r["ore_cons"] or 0)
-                op = float(r["ore_prev"] or 0)
-                turni_idx[(cp, tipo, g)] = (oc, op)
-                turni_per_day.setdefault((cp, g), []).append((tipo, oc, op))
-    finally:
-        conn.close()
+    with _pg_conn.cursor() as cur:
+        cur.execute(sql, params)
+        cols = [c[0] for c in cur.description]
+        for row in cur.fetchall():
+            r = dict(zip(cols, row))
+            cp = r["CODICEPERSONALE"]
+            tipo = r["CODICE_TIPO_ORARIO"]
+            g = int(r["giorno"])
+            oc = float(r["ore_cons"] or 0)
+            op = float(r["ore_prev"] or 0)
+            turni_idx[(cp, tipo, g)] = (oc, op)
+            turni_per_day.setdefault((cp, g), []).append((tipo, oc, op))
 
     def _tipo_effettivo_exp(cod_dip, giorno, usa_prev):
         righe = turni_per_day.get((cod_dip, giorno), [])
