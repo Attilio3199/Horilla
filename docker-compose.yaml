@@ -60,6 +60,7 @@ services:
     command: sh ./entrypoint.sh
     volumes:
       - ./horilla:/app/horilla
+      - /app/horilla/locale
       - ./media:/app/media
 
 volumes:
