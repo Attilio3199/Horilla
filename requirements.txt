@@ -91,3 +91,4 @@ whitenoise
 django-storages
 boto3
 pymupdf
+python-docx

@@ -176,16 +176,26 @@
     </span>
     {% if risultati %}
     <div class="ms-auto d-flex gap-2">
-      <a href="{% url 'export-controllo-excel' %}?mese={{ mese }}&anno={{ anno }}{% for d in selected_dip %}&dipendenti={{ d }}{% endfor %}"
-         class="oh-btn oh-btn--success oh-btn--sm">
-        <ion-icon name="document-outline" class="mr-1"></ion-icon>
-        {% trans "Scarica Excel" %}
-      </a>
-      <a href="{% url 'export-controllo-docx' %}?mese={{ mese }}&anno={{ anno }}{% for d in selected_dip %}&dipendenti={{ d }}{% endfor %}"
-         class="oh-btn oh-btn--secondary oh-btn--sm">
-        <ion-icon name="document-text-outline" class="mr-1"></ion-icon>
-        {% trans "Scarica Word" %}
-      </a>
+      <form method="post" action="{% url 'export-controllo-excel' %}" style="display:inline;">
+        {% csrf_token %}
+        <input type="hidden" name="mese" value="{{ mese }}">
+        <input type="hidden" name="anno" value="{{ anno }}">
+        {% for d in selected_dip %}<input type="hidden" name="dipendenti" value="{{ d }}">{% endfor %}
+        <button type="submit" class="oh-btn oh-btn--success oh-btn--sm">
+          <ion-icon name="document-outline" class="mr-1"></ion-icon>
+          {% trans "Scarica Excel" %}
+        </button>
+      </form>
+      <form method="post" action="{% url 'export-controllo-docx' %}" style="display:inline;">
+        {% csrf_token %}
+        <input type="hidden" name="mese" value="{{ mese }}">
+        <input type="hidden" name="anno" value="{{ anno }}">
+        {% for d in selected_dip %}<input type="hidden" name="dipendenti" value="{{ d }}">{% endfor %}
+        <button type="submit" class="oh-btn oh-btn--secondary oh-btn--sm">
+          <ion-icon name="document-text-outline" class="mr-1"></ion-icon>
+          {% trans "Scarica Word" %}
+        </button>
+      </form>
     </div>
     {% endif %}
   </div>

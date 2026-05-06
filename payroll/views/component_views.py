@@ -4283,15 +4283,16 @@ def export_controllo_excel(request):
     from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
     from openpyxl.utils import get_column_letter
 
+    params = request.POST if request.method == "POST" else request.GET
     try:
-        mese = int(request.GET.get("mese", 0))
-        anno = int(request.GET.get("anno", 0))
+        mese = int(params.get("mese", 0))
+        anno = int(params.get("anno", 0))
         if not (1 <= mese <= 12):
             raise ValueError
     except (ValueError, TypeError):
         return HttpResponse("Parametri non validi", status=400)
 
-    selected_dip = request.GET.getlist("dipendenti") or None
+    selected_dip = params.getlist("dipendenti") or None
     if not selected_dip:
         selected_dip = list(
             PayslipPresenze.objects
@@ -4371,15 +4372,16 @@ def export_controllo_docx(request):
     from docx.enum.text import WD_ALIGN_PARAGRAPH
     import io
 
+    params = request.POST if request.method == "POST" else request.GET
     try:
-        mese = int(request.GET.get("mese", 0))
-        anno = int(request.GET.get("anno", 0))
+        mese = int(params.get("mese", 0))
+        anno = int(params.get("anno", 0))
         if not (1 <= mese <= 12):
             raise ValueError
     except (ValueError, TypeError):
         return HttpResponse("Parametri non validi", status=400)
 
-    selected_dip = request.GET.getlist("dipendenti") or None
+    selected_dip = params.getlist("dipendenti") or None
     if not selected_dip:
         selected_dip = list(
             PayslipPresenze.objects
