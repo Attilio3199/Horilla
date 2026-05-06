@@ -3685,6 +3685,52 @@ def toggle_dizionario_attivo(request, mapping_id):
     return HttpResponse(status=204)
 
 
+@login_required
+def aggiungi_dizionario(request):
+    """Crea una nuova riga nel dizionario di mappatura."""
+    if request.method != "POST":
+        return HttpResponse(status=405)
+
+    codice_tipo_orario = (request.POST.get("codice_tipo_orario") or "").strip()
+    cod_voce = (request.POST.get("cod_voce") or "").strip() or None
+    tipo_ora = request.POST.get("tipo_ora", "consuntivo")
+    attivo = request.POST.get("attivo") == "1"
+    note = (request.POST.get("note") or "").strip() or None
+
+    if not codice_tipo_orario:
+        messages.error(request, _("Il campo CODICE_TIPO_ORARIO è obbligatorio."))
+    else:
+        PayslipDizionario.objects.create(
+            codice_tipo_orario=codice_tipo_orario,
+            cod_voce=cod_voce,
+            tipo_ora=tipo_ora,
+            attivo=attivo,
+            note=note,
+        )
+        messages.success(request, _("Voce aggiunta al dizionario."))
+
+    mese = request.POST.get("mese", "")
+    anno = request.POST.get("anno", "")
+    base = reverse("controllo-cedolini-presenze")
+    qs = f"?mese={mese}&anno={anno}" if mese and anno else ""
+    return redirect(f"{base}{qs}")
+
+
+@login_required
+def elimina_dizionario(request, mapping_id):
+    """Elimina una riga dal dizionario di mappatura."""
+    if request.method != "POST":
+        return HttpResponse(status=405)
+    m = get_object_or_404(PayslipDizionario, pk=mapping_id)
+    m.delete()
+    messages.success(request, _("Voce eliminata dal dizionario."))
+    mese = request.POST.get("mese", "")
+    anno = request.POST.get("anno", "")
+    base = reverse("controllo-cedolini-presenze")
+    qs = f"?mese={mese}&anno={anno}" if mese and anno else ""
+    return redirect(f"{base}{qs}")
+
+
 # ---------------------------------------------------------------------------
 # Hub controllo cedolini + sotto-pagine
 # ---------------------------------------------------------------------------

@@ -178,6 +178,16 @@ urlpatterns = [
         name="toggle-dizionario-attivo",
     ),
     path(
+        "aggiungi-dizionario/",
+        component_views.aggiungi_dizionario,
+        name="aggiungi-dizionario",
+    ),
+    path(
+        "elimina-dizionario/<int:mapping_id>/",
+        component_views.elimina_dizionario,
+        name="elimina-dizionario",
+    ),
+    path(
         "export-controllo-excel/",
         component_views.export_controllo_excel,
         name="export-controllo-excel",

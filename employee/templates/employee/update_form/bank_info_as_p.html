@@ -1,8 +1,86 @@
-{% load i18n %} {% load basefilters %}{% load widget_tweaks %}
+{% load i18n %}{% load widget_tweaks %}
 {{ form.non_field_errors }}
 
-<!-- ===== SEZIONE: Dati Anagrafici ===== -->
-<h5 class="fw-bold mt-3 mb-3">{% trans "Dati Anagrafici" %}</h5>
+<h5 class="fw-bold mt-3 mb-3">{% trans "Bank Information" %}</h5>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="oh-input__group">
+            <label class="oh-label" for="id_bank_name">{% trans "Bank Name" %}</label>
+            {{ form.bank_name|add_class:'oh-input w-100' }}
+            {{ form.bank_name.errors }}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="oh-input__group">
+            <label class="oh-label" for="id_account_number">{% trans "Account Number (IBAN)" %}</label>
+            {{ form.account_number|add_class:'oh-input w-100' }}
+            {{ form.account_number.errors }}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="oh-input__group">
+            <label class="oh-label" for="id_branch">{% trans "Branch" %}</label>
+            {{ form.branch|add_class:'oh-input w-100' }}
+            {{ form.branch.errors }}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="oh-input__group">
+            <label class="oh-label" for="id_any_other_code1">{% trans "SWIFT / BIC" %}</label>
+            {{ form.any_other_code1|add_class:'oh-input w-100' }}
+            {{ form.any_other_code1.errors }}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="oh-input__group">
+            <label class="oh-label" for="id_address">{% trans "Address" %}</label>
+            {{ form.address|add_class:'oh-input w-100' }}
+            {{ form.address.errors }}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="oh-input__group">
+            <label class="oh-label" for="id_country">{% trans "Country" %}</label>
+            {{ form.country|add_class:'oh-input w-100' }}
+            {{ form.country.errors }}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="oh-input__group">
+            <label class="oh-label" for="id_state">{% trans "State" %}</label>
+            {{ form.state|add_class:'oh-input w-100' }}
+            {{ form.state.errors }}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="oh-input__group">
+            <label class="oh-label" for="id_city">{% trans "City" %}</label>
+            {{ form.city|add_class:'oh-input w-100' }}
+            {{ form.city.errors }}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="oh-input__group">
+            <label class="oh-label" for="id_any_other_code2">{% trans "Other Code" %}</label>
+            {{ form.any_other_code2|add_class:'oh-input w-100' }}
+            {{ form.any_other_code2.errors }}
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-lg-6">
         <div class="oh-input__group">

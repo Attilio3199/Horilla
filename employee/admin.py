@@ -5,6 +5,8 @@ This page is used to register the model with admins site.
 """
 
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
 from simple_history.admin import SimpleHistoryAdmin
 
 from employee.models import (
@@ -86,3 +88,28 @@ admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(EmployeeWorkInformation, EmployeeWorkInformationAdmin)
 admin.site.register(DutyRole)
 admin.site.register(EmployeeDutyHistory)
+
+
+# ── Inline: collega un Dipendente all'Utente direttamente dalla pagina User ──
+
+class EmployeeInline(admin.StackedInline):
+    model = Employee
+    fk_name = "employee_user_id"
+    can_delete = False
+    verbose_name = "Dipendente collegato"
+    verbose_name_plural = "Dipendente collegato"
+    fields = (
+        "employee_first_name",
+        "employee_last_name",
+        "badge_id",
+        "is_active",
+    )
+    extra = 0
+
+
+class CustomUserAdmin(UserAdmin):
+    inlines = [EmployeeInline]
+
+
+admin.site.unregister(User)
+admin.site.register(User, CustomUserAdmin)

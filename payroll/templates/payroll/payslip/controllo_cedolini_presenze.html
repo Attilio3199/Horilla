@@ -100,13 +100,22 @@
     {# ── Voci da controllare (accordion chiuso) ── #}
     <div class="oh-card mb-3">
       <div class="oh-card__header d-flex align-items-center justify-content-between"
-           style="cursor:pointer;" onclick="toggleDizionario()">
-        <h6 class="mb-0 fw-bold">{% trans "Voci da controllare" %}
+           style="cursor:pointer;">
+        <h6 class="mb-0 fw-bold" onclick="toggleDizionario()" style="flex:1;">
+          {% trans "Voci da controllare" %}
           <small class="text-muted ms-2" id="diz-attive-count">
             ({% trans "attive" %}: {{ mappings_attivi_count }})
           </small>
         </h6>
-        <ion-icon name="chevron-down-outline" id="ico-dizionario"></ion-icon>
+        <div class="d-flex align-items-center gap-2">
+          <button type="button"
+                  class="oh-btn oh-btn--secondary oh-btn--sm"
+                  onclick="event.stopPropagation(); document.getElementById('modal-aggiungi-diz').style.display='flex';">
+            <ion-icon name="add-outline" class="mr-1"></ion-icon>
+            {% trans "Aggiungi" %}
+          </button>
+          <ion-icon name="chevron-down-outline" id="ico-dizionario" onclick="toggleDizionario()"></ion-icon>
+        </div>
       </div>
       <div id="dizionario-body" style="display:none;">
         <div class="oh-card__body p-0">
@@ -118,6 +127,7 @@
                   <th>{% trans "CODICE_TIPO_ORARIO" %}</th>
                   <th class="text-center">{% trans "cod_voce" %}</th>
                   <th class="text-center">{% trans "Tipo Ora" %}</th>
+                  <th style="width:44px;"></th>
                 </tr>
               </thead>
               <tbody>
@@ -143,6 +153,19 @@
                     <span class="badge {% if m.tipo_ora == 'consuntivo' %}bg-primary{% else %}bg-secondary{% endif %}">
                       {{ m.tipo_ora }}
                     </span>
+                  </td>
+                  <td class="text-center">
+                    <form method="post" action="{% url 'elimina-dizionario' m.id %}"
+                          onsubmit="return confirm('{% trans "Eliminare questa voce?" %}');"
+                          style="margin:0;">
+                      {% csrf_token %}
+                      <input type="hidden" name="mese" value="{{ mese|default:'' }}">
+                      <input type="hidden" name="anno" value="{{ anno|default:'' }}">
+                      <button type="submit" class="btn btn-sm btn-outline-danger p-0 px-1"
+                              title="{% trans 'Elimina' %}">
+                        <ion-icon name="trash-outline" style="font-size:.95rem;"></ion-icon>
+                      </button>
+                    </form>
                   </td>
                 </tr>
                 {% endfor %}
@@ -333,4 +356,64 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
+
+{# ── Modal: Aggiungi voce al dizionario ── #}
+<div id="modal-aggiungi-diz"
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45);
+            z-index:1055; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:8px; width:100%; max-width:480px;
+              padding:1.5rem; box-shadow:0 8px 32px rgba(0,0,0,.25);">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h5 class="mb-0 fw-bold">{% trans "Aggiungi voce al dizionario" %}</h5>
+      <button type="button" class="btn-close"
+              onclick="document.getElementById('modal-aggiungi-diz').style.display='none';"></button>
+    </div>
+    <form method="post" action="{% url 'aggiungi-dizionario' %}">
+      {% csrf_token %}
+      <input type="hidden" name="mese" value="{{ mese|default:'' }}">
+      <input type="hidden" name="anno" value="{{ anno|default:'' }}">
+      <div class="mb-3">
+        <label class="oh-label" for="new-codice-tipo">{% trans "CODICE_TIPO_ORARIO" %} *</label>
+        <input type="text" id="new-codice-tipo" name="codice_tipo_orario"
+               class="oh-input w-100" required maxlength="100"
+               placeholder="es. FERIE, ROL, MALATTIA…">
+      </div>
+      <div class="mb-3">
+        <label class="oh-label" for="new-cod-voce">{% trans "cod_voce" %}</label>
+        <input type="text" id="new-cod-voce" name="cod_voce"
+               class="oh-input w-100" maxlength="4"
+               placeholder="es. 0300">
+        <small class="text-muted">{% trans "4 cifre con zero padding (lascia vuoto se non applicabile)" %}</small>
+      </div>
+      <div class="mb-3">
+        <label class="oh-label" for="new-tipo-ora">{% trans "Tipo Ora" %}</label>
+        <select id="new-tipo-ora" name="tipo_ora" class="oh-input w-100">
+          <option value="consuntivo">{% trans "Consuntivo" %}</option>
+          <option value="previsionale">{% trans "Previsionale" %}</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="oh-label" for="new-note">{% trans "Note" %}</label>
+        <input type="text" id="new-note" name="note"
+               class="oh-input w-100" maxlength="255">
+      </div>
+      <div class="mb-4 d-flex align-items-center gap-2">
+        <input type="checkbox" id="new-attivo" name="attivo" value="1"
+               class="form-check-input" style="width:1.1em;height:1.1em;">
+        <label for="new-attivo" class="mb-0">{% trans "Attivo" %}</label>
+      </div>
+      <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="oh-btn oh-btn--light"
+                onclick="document.getElementById('modal-aggiungi-diz').style.display='none';">
+          {% trans "Annulla" %}
+        </button>
+        <button type="submit" class="oh-btn oh-btn--secondary">
+          <ion-icon name="save-outline" class="mr-1"></ion-icon>
+          {% trans "Salva" %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 {% endblock %}
