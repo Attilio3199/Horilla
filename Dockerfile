@@ -13,11 +13,15 @@ FROM python:3.12-slim-bookworm AS runtime
 
 ENV PYTHONUNBUFFERED=1
 
+RUN apt-get update && apt-get install -y --no-install-recommends gettext && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app/
 
 COPY --from=builder /install /usr/local
 
 COPY . .
+
+RUN python3 manage.py compilemessages
 
 RUN chmod +x /app/entrypoint.sh
 
