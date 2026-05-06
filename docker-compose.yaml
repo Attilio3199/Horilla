@@ -66,7 +66,9 @@ services:
       - ./media:/app/media
 
   nginx:
-    image: nginx:alpine
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     restart: unless-stopped
     ports:
       - "80:80"
@@ -75,22 +77,6 @@ services:
       - server
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - nginx_certs:/etc/nginx/certs
-    # Genera il certificato self-signed al primo avvio se non esiste.
-    # TODO: quando sarà disponibile un dominio, rimuovere questo comando e
-    #       montare i certificati Let's Encrypt al posto di nginx_certs.
-    command: >
-      sh -c "
-        if [ ! -f /etc/nginx/certs/selfsigned.crt ]; then
-          apk add --no-cache openssl &&
-          openssl req -x509 -nodes -days 3650 -newkey rsa:2048
-            -keyout /etc/nginx/certs/selfsigned.key
-            -out /etc/nginx/certs/selfsigned.crt
-            -subj '/CN=horilla/O=Horilla/C=IT';
-        fi &&
-        nginx -g 'daemon off;'
-      "
 
 volumes:
   postgres_data:
-  nginx_certs:
