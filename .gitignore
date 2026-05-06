@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# SSL certificates (generated locally on each server)
+nginx/certs/
+
 # C extensions
 *.so
 
