@@ -46,10 +46,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # Porta 8000 non esposta direttamente: il traffico passa da nginx
+    # Porta non esposta direttamente: il traffico passa da nginx
     # TODO: quando si aggiunge un dominio, aggiornare CSRF_TRUSTED_ORIGINS nel .env
     expose:
-      - "8000"
+      - "8001"
     restart: unless-stopped
     env_file:
       - .env
