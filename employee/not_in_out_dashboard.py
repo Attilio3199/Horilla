@@ -17,7 +17,7 @@ from django.shortcuts import render
 
 from base.backends import ConfiguredEmailBackend
 from base.forms import MailTemplateForm
-from base.methods import export_data, generate_pdf
+from base.methods import export_data, generate_pdf, sanitize_mail_template_body
 from base.models import HorillaMailTemplate
 from employee.filters import EmployeeFilter
 from employee.models import Employee
@@ -185,6 +185,10 @@ def get_mail_preview(request):
     if not body:
         return HttpResponse("No body provided", status=400)
 
+    # Strip template constructs that could leak password hashes or request
+    # metadata via attribute traversal in the Django template engine.
+    body = sanitize_mail_template_body(body)
+
     emp_id = request.GET.get("emp_id")
     employee_ids = request.POST.getlist("employees")
 
@@ -196,7 +200,8 @@ def get_mail_preview(request):
         if not employee_obj:
             return HttpResponse("Employee not found", status=404)
 
-    # Build context
+    # Build context — `request` is intentionally omitted to prevent
+    # attribute traversal to request.user.password / request.META.
     context = {
         "instance": employee_obj,
         "model_instance": employee_obj,
