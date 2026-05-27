@@ -1204,6 +1204,7 @@ class RotatingShiftAssignExport(APIView):
 class RotatingShiftAssignBulkArchive(APIView):
     permission_classes = [IsAuthenticated]
 
+    @method_decorator(permission_required("base.change_rotatingshiftassign"))
     def put(self, request, status):
         ids = request.data.get("ids", None)
         try:
@@ -1217,6 +1218,7 @@ class RotatingShiftAssignBulkArchive(APIView):
 class RotatingShiftAssignBulkDelete(APIView):
     permission_classes = [IsAuthenticated]
 
+    @method_decorator(permission_required("base.delete_rotatingshiftassign"))
     def delete(self, request):
         ids = request.data.get("ids", None)
         try:
