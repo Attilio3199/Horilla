@@ -82,6 +82,7 @@ from payroll.models.models import (
     Deduction,
     LoanAccount,
     PayslipControlloRegola,
+    PayslipControlloRegolaDestinazione,
     Payslip,
     PayslipDizionario,
     PayslipImporti,
@@ -3436,6 +3437,12 @@ def controllo_cedolini_presenze(request):
         "periodi": periodi,
         "mappings": mappings,
         "mappings_attivi_count": sum(1 for m in mappings if m.attivo),
+        "regole_controllo": list(
+            PayslipControlloRegola.objects
+            .all()
+            .prefetch_related("destinazioni")
+            .order_by("direzione", "priorita", "sorgente_valore")
+        ),
     }
 
     if not mese_str or not anno_str:
@@ -3563,6 +3570,152 @@ def elimina_dizionario(request, mapping_id):
     m = get_object_or_404(PayslipDizionario, pk=mapping_id)
     m.delete()
     messages.success(request, _("Voce eliminata dal dizionario."))
+    mese = request.POST.get("mese", "")
+    anno = request.POST.get("anno", "")
+    base = reverse("controllo-cedolini-presenze")
+    qs = f"?mese={mese}&anno={anno}" if mese and anno else ""
+    return redirect(f"{base}{qs}")
+
+
+@login_required
+def toggle_regola_controllo_attiva(request, regola_id):
+    """HTMX: inverte il flag attiva di una regola avanzata."""
+    if request.method != "POST":
+        return HttpResponse(status=405)
+    reg = get_object_or_404(PayslipControlloRegola, pk=regola_id)
+    reg.attivo = not reg.attivo
+    reg.save(update_fields=["attivo"])
+    return HttpResponse(status=204)
+
+
+@login_required
+def aggiungi_regola_controllo(request):
+    """Crea una nuova regola avanzata (tabella payslip_controllo_regole)."""
+    if request.method != "POST":
+        return HttpResponse(status=405)
+
+    direzione = (request.POST.get("direzione") or "").strip()
+    sorgente_valore = (request.POST.get("sorgente_valore") or "").strip()
+    modalita = (request.POST.get("modalita") or "").strip()
+    no_somma_stesso_giorno = request.POST.get("no_somma_stesso_giorno") == "1"
+    attiva = request.POST.get("attiva") == "1"
+    note = (request.POST.get("note") or "").strip() or None
+    priorita_raw = (request.POST.get("priorita") or "").strip() or "100"
+    destinazioni_raw = (request.POST.get("destinazioni") or "").strip()
+
+    if not direzione or not sorgente_valore or not modalita:
+        messages.error(request, _("Direzione, sorgente e modalita sono obbligatorie."))
+    else:
+        try:
+            priorita = int(priorita_raw)
+        except (ValueError, TypeError):
+            priorita = 100
+
+        try:
+            regola, created = PayslipControlloRegola.objects.get_or_create(
+                direzione=direzione,
+                sorgente_valore=sorgente_valore,
+                defaults={
+                    "modalita": modalita,
+                    "no_somma_stesso_giorno": no_somma_stesso_giorno,
+                    "attivo": attiva,
+                    "priorita": priorita,
+                    "note": note,
+                },
+            )
+            if not created:
+                regola.modalita = modalita
+                regola.no_somma_stesso_giorno = no_somma_stesso_giorno
+                regola.attivo = attiva
+                regola.priorita = priorita
+                regola.note = note
+                regola.save(
+                    update_fields=[
+                        "modalita",
+                        "no_somma_stesso_giorno",
+                        "attivo",
+                        "priorita",
+                        "note",
+                    ]
+                )
+
+            if destinazioni_raw:
+                valori = [v.strip() for v in destinazioni_raw.split(",") if v.strip()]
+                for val in valori:
+                    PayslipControlloRegolaDestinazione.objects.get_or_create(
+                        regola=regola,
+                        destinazione_valore=val,
+                        defaults={"attivo": True},
+                    )
+            messages.success(request, _("Regola controllo salvata."))
+        except Exception as exc:
+            messages.error(request, _("Errore nel salvataggio della regola: {}" ).format(exc))
+
+    mese = request.POST.get("mese", "")
+    anno = request.POST.get("anno", "")
+    base = reverse("controllo-cedolini-presenze")
+    qs = f"?mese={mese}&anno={anno}" if mese and anno else ""
+    return redirect(f"{base}{qs}")
+
+
+@login_required
+def elimina_regola_controllo(request, regola_id):
+    """Elimina una regola avanzata (e le sue destinazioni)."""
+    if request.method != "POST":
+        return HttpResponse(status=405)
+    reg = get_object_or_404(PayslipControlloRegola, pk=regola_id)
+    reg.delete()
+    messages.success(request, _("Regola eliminata."))
+    mese = request.POST.get("mese", "")
+    anno = request.POST.get("anno", "")
+    base = reverse("controllo-cedolini-presenze")
+    qs = f"?mese={mese}&anno={anno}" if mese and anno else ""
+    return redirect(f"{base}{qs}")
+
+
+@login_required
+def toggle_regola_destinazione_attiva(request, destinazione_id):
+    """HTMX: inverte il flag attiva di una destinazione regola."""
+    if request.method != "POST":
+        return HttpResponse(status=405)
+    d = get_object_or_404(PayslipControlloRegolaDestinazione, pk=destinazione_id)
+    d.attivo = not d.attivo
+    d.save(update_fields=["attivo"])
+    return HttpResponse(status=204)
+
+
+@login_required
+def aggiungi_regola_destinazione(request, regola_id):
+    """Aggiunge una destinazione a una regola esistente."""
+    if request.method != "POST":
+        return HttpResponse(status=405)
+    reg = get_object_or_404(PayslipControlloRegola, pk=regola_id)
+    val = (request.POST.get("destinazione_valore") or "").strip()
+    if not val:
+        messages.error(request, _("Destinazione obbligatoria."))
+    else:
+        PayslipControlloRegolaDestinazione.objects.get_or_create(
+            regola=reg,
+            destinazione_valore=val,
+            defaults={"attivo": True},
+        )
+        messages.success(request, _("Destinazione aggiunta."))
+
+    mese = request.POST.get("mese", "")
+    anno = request.POST.get("anno", "")
+    base = reverse("controllo-cedolini-presenze")
+    qs = f"?mese={mese}&anno={anno}" if mese and anno else ""
+    return redirect(f"{base}{qs}")
+
+
+@login_required
+def elimina_regola_destinazione(request, destinazione_id):
+    """Elimina una destinazione da una regola."""
+    if request.method != "POST":
+        return HttpResponse(status=405)
+    d = get_object_or_404(PayslipControlloRegolaDestinazione, pk=destinazione_id)
+    d.delete()
+    messages.success(request, _("Destinazione eliminata."))
     mese = request.POST.get("mese", "")
     anno = request.POST.get("anno", "")
     base = reverse("controllo-cedolini-presenze")

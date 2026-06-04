@@ -188,6 +188,36 @@ urlpatterns = [
         name="elimina-dizionario",
     ),
     path(
+        "toggle-regola-controllo-attiva/<int:regola_id>/",
+        component_views.toggle_regola_controllo_attiva,
+        name="toggle-regola-controllo-attiva",
+    ),
+    path(
+        "aggiungi-regola-controllo/",
+        component_views.aggiungi_regola_controllo,
+        name="aggiungi-regola-controllo",
+    ),
+    path(
+        "elimina-regola-controllo/<int:regola_id>/",
+        component_views.elimina_regola_controllo,
+        name="elimina-regola-controllo",
+    ),
+    path(
+        "toggle-regola-destinazione-attiva/<int:destinazione_id>/",
+        component_views.toggle_regola_destinazione_attiva,
+        name="toggle-regola-destinazione-attiva",
+    ),
+    path(
+        "aggiungi-regola-destinazione/<int:regola_id>/",
+        component_views.aggiungi_regola_destinazione,
+        name="aggiungi-regola-destinazione",
+    ),
+    path(
+        "elimina-regola-destinazione/<int:destinazione_id>/",
+        component_views.elimina_regola_destinazione,
+        name="elimina-regola-destinazione",
+    ),
+    path(
         "export-controllo-excel/",
         component_views.export_controllo_excel,
         name="export-controllo-excel",

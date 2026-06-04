@@ -176,6 +176,133 @@
       </div>
     </div>
 
+    {# ── Regole avanzate ANY/SUM (non 1:1) ── #}
+    <div class="oh-card mb-3">
+      <div class="oh-card__header d-flex align-items-center justify-content-between"
+           style="cursor:pointer;">
+        <h6 class="mb-0 fw-bold" onclick="toggleRegoleAvanzate()" style="flex:1;">
+          {% trans "Regole avanzate ANY/SUM" %}
+          <small class="text-muted ms-2">
+            ({% trans "non 1:1" %}: {{ regole_controllo|length }})
+          </small>
+        </h6>
+        <div class="d-flex align-items-center gap-2">
+          <button type="button"
+                  class="oh-btn oh-btn--secondary oh-btn--sm"
+                  onclick="event.stopPropagation(); document.getElementById('modal-aggiungi-regola').style.display='flex';">
+            <ion-icon name="add-outline" class="mr-1"></ion-icon>
+            {% trans "Aggiungi Regola" %}
+          </button>
+          <ion-icon name="chevron-down-outline" id="ico-regole-avanzate" onclick="toggleRegoleAvanzate()"></ion-icon>
+        </div>
+      </div>
+      <div id="regole-avanzate-body" style="display:none;">
+        <div class="oh-card__body p-0">
+          <div class="table-responsive">
+            <table class="oh-table table table-sm table-bordered mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width:44px;" class="text-center">{% trans "Attiva" %}</th>
+                  <th>{% trans "Direzione" %}</th>
+                  <th>{% trans "Sorgente" %}</th>
+                  <th class="text-center">{% trans "Modalita" %}</th>
+                  <th class="text-center">{% trans "No somma" %}</th>
+                  <th>{% trans "Destinazioni" %}</th>
+                  <th style="width:44px;"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in regole_controllo %}
+                <tr id="regola-row-{{ r.id }}" class="{% if not r.attivo %}text-muted{% endif %}">
+                  <td class="text-center">
+                    <input
+                      type="checkbox"
+                      {% if r.attivo %}checked{% endif %}
+                      hx-post="{% url 'toggle-regola-controllo-attiva' r.id %}"
+                      hx-trigger="change"
+                      hx-swap="none"
+                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                      onchange="toggleRegolaRowStyle({{ r.id }}, this.checked)"
+                      class="form-check-input"
+                      style="cursor:pointer;width:1.1em;height:1.1em;"
+                    >
+                  </td>
+                  <td>{{ r.direzione }}</td>
+                  <td>
+                    <strong>{{ r.sorgente_valore }}</strong>
+                    {% if r.note %}<div class="small text-muted">{{ r.note }}</div>{% endif %}
+                  </td>
+                  <td class="text-center">
+                    <span class="badge {% if r.modalita == 'SUM' %}bg-warning text-dark{% else %}bg-primary{% endif %}">
+                      {{ r.modalita }}
+                    </span>
+                  </td>
+                  <td class="text-center">{% if r.no_somma_stesso_giorno %}✓{% else %}—{% endif %}</td>
+                  <td>
+                    <div class="d-flex flex-wrap gap-1 mb-2">
+                      {% for d in r.destinazioni.all %}
+                      <span class="badge {% if d.attivo %}bg-secondary{% else %}bg-light text-muted{% endif %}">
+                        {{ d.destinazione_valore }}
+                        <input
+                          type="checkbox"
+                          {% if d.attivo %}checked{% endif %}
+                          hx-post="{% url 'toggle-regola-destinazione-attiva' d.id %}"
+                          hx-trigger="change"
+                          hx-swap="none"
+                          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                          style="margin-left:6px; vertical-align:middle;"
+                        >
+                        <form method="post" action="{% url 'elimina-regola-destinazione' d.id %}" style="display:inline; margin-left:4px;">
+                          {% csrf_token %}
+                          <input type="hidden" name="mese" value="{{ mese|default:'' }}">
+                          <input type="hidden" name="anno" value="{{ anno|default:'' }}">
+                          <button type="submit" class="btn btn-link p-0 text-danger"
+                                  onclick="return confirm('{% trans "Eliminare destinazione?" %}');"
+                                  style="font-size:.75rem; line-height:1;">x</button>
+                        </form>
+                      </span>
+                      {% empty %}
+                      <span class="text-muted small">{% trans "Nessuna destinazione" %}</span>
+                      {% endfor %}
+                    </div>
+
+                    <form method="post" action="{% url 'aggiungi-regola-destinazione' r.id %}" class="d-flex gap-2">
+                      {% csrf_token %}
+                      <input type="hidden" name="mese" value="{{ mese|default:'' }}">
+                      <input type="hidden" name="anno" value="{{ anno|default:'' }}">
+                      <input type="text" name="destinazione_valore" class="oh-input oh-input--sm" maxlength="100"
+                             placeholder="{% trans 'Aggiungi destinazione' %}">
+                      <button type="submit" class="oh-btn oh-btn--light oh-btn--sm">{% trans "Aggiungi" %}</button>
+                    </form>
+                  </td>
+                  <td class="text-center">
+                    <form method="post" action="{% url 'elimina-regola-controllo' r.id %}"
+                          onsubmit="return confirm('{% trans "Eliminare questa regola?" %}');"
+                          style="margin:0;">
+                      {% csrf_token %}
+                      <input type="hidden" name="mese" value="{{ mese|default:'' }}">
+                      <input type="hidden" name="anno" value="{{ anno|default:'' }}">
+                      <button type="submit" class="btn btn-sm btn-outline-danger p-0 px-1"
+                              title="{% trans 'Elimina regola' %}">
+                        <ion-icon name="trash-outline" style="font-size:.95rem;"></ion-icon>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-3">
+                    {% trans "Nessuna regola avanzata configurata." %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
     {# ── Avvia Controllo ── #}
     <div class="d-flex justify-content-end mb-4">
       <button type="submit" class="oh-btn oh-btn--warning">
@@ -312,6 +439,21 @@ function toggleRowStyle(id, checked) {
   checked ? tr.classList.remove('text-muted') : tr.classList.add('text-muted');
 }
 
+function toggleRegoleAvanzate() {
+  var body = document.getElementById('regole-avanzate-body');
+  var ico  = document.getElementById('ico-regole-avanzate');
+  if (!body) return;
+  var open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : '';
+  if (ico) ico.setAttribute('name', open ? 'chevron-down-outline' : 'chevron-up-outline');
+}
+
+function toggleRegolaRowStyle(id, checked) {
+  var tr = document.getElementById('regola-row-' + id);
+  if (!tr) return;
+  checked ? tr.classList.remove('text-muted') : tr.classList.add('text-muted');
+}
+
 /* ── Ricerca dipendenti (live) ── */
 var dipSearch = document.getElementById('dip-search');
 if (dipSearch) {
@@ -410,6 +552,86 @@ document.addEventListener('DOMContentLoaded', function() {
         <button type="submit" class="oh-btn oh-btn--secondary">
           <ion-icon name="save-outline" class="mr-1"></ion-icon>
           {% trans "Salva" %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{# ── Modal: Aggiungi regola avanzata ── #}
+<div id="modal-aggiungi-regola"
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45);
+            z-index:1055; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:8px; width:100%; max-width:560px;
+              padding:1.5rem; box-shadow:0 8px 32px rgba(0,0,0,.25);">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h5 class="mb-0 fw-bold">{% trans "Aggiungi regola avanzata" %}</h5>
+      <button type="button" class="btn-close"
+              onclick="document.getElementById('modal-aggiungi-regola').style.display='none';"></button>
+    </div>
+    <form method="post" action="{% url 'aggiungi-regola-controllo' %}">
+      {% csrf_token %}
+      <input type="hidden" name="mese" value="{{ mese|default:'' }}">
+      <input type="hidden" name="anno" value="{{ anno|default:'' }}">
+
+      <div class="mb-3">
+        <label class="oh-label">{% trans "Direzione" %} *</label>
+        <select name="direzione" class="oh-input w-100" required>
+          <option value="APP_TO_CED">APP_TO_CED</option>
+          <option value="CED_TO_APP">CED_TO_APP</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="oh-label">{% trans "Sorgente" %} *</label>
+        <input type="text" name="sorgente_valore" class="oh-input w-100" maxlength="100" required
+               placeholder="Es: LAVORATO oppure 0300">
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="oh-label">{% trans "Modalita" %} *</label>
+          <select name="modalita" class="oh-input w-100" required>
+            <option value="ANY">ANY</option>
+            <option value="SUM">SUM</option>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="oh-label">{% trans "Priorita" %}</label>
+          <input type="number" name="priorita" class="oh-input w-100" value="100">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="oh-label">{% trans "Destinazioni" %}</label>
+        <input type="text" name="destinazioni" class="oh-input w-100" maxlength="255"
+               placeholder="Valori separati da virgola, es: 0300,0354 oppure LAVORATO,CORSO AI DIPENDENTI">
+      </div>
+
+      <div class="mb-3">
+        <label class="oh-label">{% trans "Note" %}</label>
+        <input type="text" name="note" class="oh-input w-100" maxlength="255">
+      </div>
+
+      <div class="mb-4 d-flex gap-3 align-items-center">
+        <label class="d-flex align-items-center gap-1 mb-0">
+          <input type="checkbox" name="no_somma_stesso_giorno" value="1" class="form-check-input">
+          <span>{% trans "No somma stesso giorno" %}</span>
+        </label>
+        <label class="d-flex align-items-center gap-1 mb-0">
+          <input type="checkbox" name="attiva" value="1" class="form-check-input" checked>
+          <span>{% trans "Attiva" %}</span>
+        </label>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="oh-btn oh-btn--light"
+                onclick="document.getElementById('modal-aggiungi-regola').style.display='none';">
+          {% trans "Annulla" %}
+        </button>
+        <button type="submit" class="oh-btn oh-btn--secondary">
+          <ion-icon name="save-outline" class="mr-1"></ion-icon>
+          {% trans "Salva Regola" %}
         </button>
       </div>
     </form>
