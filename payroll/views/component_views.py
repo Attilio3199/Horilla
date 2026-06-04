@@ -3433,16 +3433,24 @@ def controllo_cedolini_presenze(request):
     mese_str = (request.POST.get("mese") or request.GET.get("mese", "")).strip()
     anno_str = (request.POST.get("anno") or request.GET.get("anno", "")).strip()
 
-    ctx_base = {
-        "periodi": periodi,
-        "mappings": mappings,
-        "mappings_attivi_count": sum(1 for m in mappings if m.attivo),
-        "regole_controllo": list(
+    regole_controllo = []
+    try:
+        regole_controllo = list(
             PayslipControlloRegola.objects
             .all()
             .prefetch_related("destinazioni")
             .order_by("direzione", "priorita", "sorgente_valore")
-        ),
+        )
+    except Exception:
+        # La pagina deve restare accessibile anche prima della migration
+        # delle tabelle avanzate di controllo.
+        regole_controllo = []
+
+    ctx_base = {
+        "periodi": periodi,
+        "mappings": mappings,
+        "mappings_attivi_count": sum(1 for m in mappings if m.attivo),
+        "regole_controllo": regole_controllo,
     }
 
     if not mese_str or not anno_str:
