@@ -3,6 +3,7 @@ from django.urls import path, re_path
 from django.utils.translation import gettext_lazy as _
 
 from base import announcement, request_and_approve, turni_views, views
+from payroll.views import component_views as payroll_component_views
 from base.forms import (
     HolidayForm,
     MailTemplateForm,
@@ -36,6 +37,11 @@ from horilla_audit.models import AuditTag
 
 urlpatterns = [
     path("", views.home, name="home-page"),
+    path(
+        "payroll/controllo-cedolini/presenze/",
+        payroll_component_views.controllo_cedolini_presenze,
+        name="controllo-cedolini-presenze-fallback",
+    ),
     path("turni/import", turni_views.turni_import, name="turni-import"),
     path("initialize-database", views.initialize_database, name="initialize-database"),
     path("load-demo-database", views.load_demo_database, name="load-demo-database"),
