@@ -81,6 +81,7 @@ from payroll.models.models import (
     Contract,
     Deduction,
     LoanAccount,
+    PayslipControlloRegola,
     Payslip,
     PayslipDizionario,
     PayslipImporti,
@@ -3491,177 +3492,15 @@ def controllo_cedolini_presenze(request):
     all_cod_dip_mysql = [d["CODICEPERSONALE"] for d in dipendenti_mysql]
     selected_dip = request.POST.getlist("dipendenti") or all_cod_dip_mysql
 
-    mappings_attivi = [m for m in mappings if m.attivo and m.cod_voce]
+    risultati, mappings_attivi, n_controllati = _build_risultati_for_export(
+        mese, anno, selected_dip
+    )
     if not mappings_attivi:
         messages.warning(request, _("Nessuna voce attiva nel dizionario."))
         return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
-            **ctx_config, "selected_dip": selected_dip,
+            **ctx_config,
+            "selected_dip": selected_dip,
         })
-
-    # Raggruppa per codice_tipo_orario → lista di mapping (es. ROL → [0303, 0336])
-    from collections import defaultdict as _defaultdict
-    tipo_orario_to_mappings: dict = _defaultdict(list)
-    for _m in mappings_attivi:
-        tipo_orario_to_mappings[_m.codice_tipo_orario].append(_m)
-    # Tutti i cod_voce attivi come interi (per la query presenze)
-    cod_voce_int_set = {int(m.cod_voce) for m in mappings_attivi}
-    # mappa tipo_orario → usa_prev per leggere le ore corrette
-    tipo_ora_map = {m.codice_tipo_orario: (m.tipo_ora == "previsionale") for m in mappings_attivi}
-
-    # Dipendenti presenti in payslip_presenze per il periodo e la selezione
-    day_cols = [f"day_{i}" for i in range(1, num_giorni + 1)]
-    dipendenti_qs = (
-        PayslipPresenze.objects
-        .filter(mese=mese, anno=anno, cod_dip__in=selected_dip)
-        .exclude(cod_dip__isnull=True).exclude(cod_dip="")
-        .values("cod_dip", "lavoratore", "matricola")
-        .distinct().order_by("lavoratore")
-    )
-    dipendenti_list = list(dipendenti_qs)
-    all_cod_dip = [d["cod_dip"] for d in dipendenti_list]
-
-    if not all_cod_dip:
-        messages.warning(request, _("Nessun dipendente trovato in payslip_presenze per la selezione."))
-        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
-            **ctx_config, "selected_dip": selected_dip,
-        })
-
-    presenze_qs = (
-        PayslipPresenze.objects
-        .filter(mese=mese, anno=anno,
-                cod_voce__in=list(cod_voce_int_set),
-                cod_dip__in=all_cod_dip)
-        .values("cod_dip", "cod_voce", *day_cols)
-    )
-    # Se esistono più righe con stesso (cod_dip, cod_voce) sommiamo i valori giornalieri
-    presenze_idx = {}
-    for r in presenze_qs:
-        key = (r["cod_dip"], r["cod_voce"])
-        if key not in presenze_idx:
-            presenze_idx[key] = dict(r)
-        else:
-            for dc in day_cols:
-                presenze_idx[key][dc] = (
-                    float(presenze_idx[key].get(dc) or 0) +
-                    float(r.get(dc) or 0)
-                )
-
-    # Batch query PostgreSQL — tutti i turni del periodo (nessun filtro per tipo)
-    ph_dip = ",".join(["%s"] * len(selected_dip))
-    sql = f"""
-        SELECT
-            "CODICEPERSONALE",
-            "CODICE_TIPO_ORARIO",
-            EXTRACT(DAY FROM "Data")::INTEGER AS giorno,
-            SUM(CASE
-                WHEN "Ora_Cons_Inizio" IS NOT NULL AND "Ora_Cons_Fine" IS NOT NULL
-                     AND "Ora_Cons_Fine" > "Ora_Cons_Inizio"
-                THEN EXTRACT(EPOCH FROM ("Ora_Cons_Fine" - "Ora_Cons_Inizio")) / 3600.0
-                ELSE 0
-            END) AS ore_cons,
-            SUM(CASE
-                WHEN "Ora_Prev_Inizio" IS NOT NULL AND "Ora_Prev_Fine" IS NOT NULL
-                     AND "Ora_Prev_Fine" > "Ora_Prev_Inizio"
-                THEN EXTRACT(EPOCH FROM ("Ora_Prev_Fine" - "Ora_Prev_Inizio")) / 3600.0
-                ELSE 0
-            END) AS ore_prev
-        FROM "_turni_creati"
-        WHERE "CODICEPERSONALE" IN ({ph_dip})
-          AND "Data" BETWEEN %s AND %s
-        GROUP BY "CODICEPERSONALE", "CODICE_TIPO_ORARIO", EXTRACT(DAY FROM "Data")
-    """
-    params = selected_dip + [data_inizio, data_fine]
-
-    # turni_idx: {(cod_dip, tipo_orario, giorno): (ore_cons, ore_prev)}
-    turni_idx = {}
-    # turni_per_day: {(cod_dip, giorno): [(tipo, ore_cons, ore_prev), ...]}
-    turni_per_day: dict = {}
-    try:
-        with _pg_conn.cursor() as cur:
-            cur.execute(sql, params)
-            cols = [c[0] for c in cur.description]
-            for row in cur.fetchall():
-                r = dict(zip(cols, row))
-                cp = r["CODICEPERSONALE"]
-                tipo = r["CODICE_TIPO_ORARIO"]
-                g = int(r["giorno"])
-                oc = float(r["ore_cons"] or 0)
-                op = float(r["ore_prev"] or 0)
-                turni_idx[(cp, tipo, g)] = (oc, op)
-                turni_per_day.setdefault((cp, g), []).append((tipo, oc, op))
-    except Exception as exc:
-        messages.error(request, _("Errore lettura turni dal database: {}").format(exc))
-        return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
-            **ctx_config, "selected_dip": selected_dip,
-        })
-
-    def _tipo_effettivo(cod_dip, giorno, usa_prev):
-        """Restituisce i tipi turno effettivamente presenti quel giorno (es. 'FERIE')."""
-        righe = turni_per_day.get((cod_dip, giorno), [])
-        if not righe:
-            return "—"
-        nomi = [tipo for tipo, oc, op in righe
-                if (op if tipo_ora_map.get(tipo, usa_prev) else oc) > 0]
-        return ", ".join(nomi) if nomi else righe[0][0]
-
-    def _ore_effettive(cod_dip, giorno):
-        """Somma le ore di tutti i tipi presenti quel giorno, ognuno con il suo tipo_ora."""
-        righe = turni_per_day.get((cod_dip, giorno), [])
-        totale = 0.0
-        for tipo, oc, op in righe:
-            usa_p = tipo_ora_map.get(tipo, False)
-            totale += op if usa_p else oc
-        return round(totale, 2)
-
-    SOGLIA = 0.05
-    risultati = []
-    n_controllati = 0
-
-    for dip in dipendenti_list:
-        cod_dip = dip["cod_dip"]
-        discrepanze_dip = []
-
-        for tipo_orario, tipo_mappings in tipo_orario_to_mappings.items():
-            usa_prev = tipo_mappings[0].tipo_ora == "previsionale"
-            # Tutti i cod_voce (interi) associati a questo tipo_orario
-            cod_voci = [int(m.cod_voce) for m in tipo_mappings]
-            cod_voce_label = " + ".join(m.cod_voce for m in tipo_mappings)
-
-            for giorno in range(1, num_giorni + 1):
-                # Somma le ore di TUTTE le cod_voce associate a questo tipo_orario
-                ore_ced = sum(
-                    float((presenze_idx.get((cod_dip, cv)) or {}).get(f"day_{giorno}") or 0)
-                    for cv in cod_voci
-                )
-                ore_cons_m, ore_prev_m = turni_idx.get(
-                    (cod_dip, tipo_orario, giorno), (0.0, 0.0)
-                )
-                ore_mapped_app = ore_prev_m if usa_prev else ore_cons_m
-                # Salta solo se entrambi sono zero (nessuna delle due parti ha ore)
-                if ore_ced <= SOGLIA and ore_mapped_app <= SOGLIA:
-                    continue
-
-                if abs(ore_ced - ore_mapped_app) > SOGLIA:
-                    ore_app_display = _ore_effettive(cod_dip, giorno)
-                    discrepanze_dip.append({
-                        "codice_tipo_orario": tipo_orario,
-                        "tipo_effettivo_app": _tipo_effettivo(cod_dip, giorno, usa_prev),
-                        "cod_voce": cod_voce_label,
-                        "desc_voce_cedolino": cod_voce_label,
-                        "giorno": giorno,
-                        "ore_cedolino": round(ore_ced, 2),
-                        "ore_turni":   ore_app_display,
-                        "delta":       round(ore_ced - ore_app_display, 2),
-                    })
-
-        n_controllati += 1
-        if discrepanze_dip:
-            risultati.append({
-                "lavoratore": dip.get("lavoratore") or "",
-                "cod_dip":    cod_dip,
-                "matricola":  dip.get("matricola") or "",
-                "discrepanze": sorted(discrepanze_dip, key=lambda x: (x["giorno"], x["codice_tipo_orario"])),
-            })
 
     return render(request, "payroll/payslip/controllo_cedolini_presenze.html", {
         **ctx_config,
@@ -4171,27 +4010,103 @@ def controllo_cedolini_malattie(request):
 def _build_risultati_for_export(mese, anno, selected_dip):
     """
     Ricostruisce i risultati del controllo per un dato periodo e lista dipendenti.
-    Restituisce (risultati, mappings_attivi) nel formato usato dalla view principale.
+    Restituisce (risultati, mappings_attivi, n_controllati) nel formato usato dalla view principale.
+
+    Gestisce:
+    - fallback standard da payslip_dizionario (utile per i casi 1:1)
+    - regole avanzate ANY/SUM da payslip_controllo_regole (+ destinazioni)
+      per i casi non 1:1.
     """
     import calendar
     from datetime import date as _date
+    from collections import defaultdict as _defaultdict
 
     num_giorni = calendar.monthrange(anno, mese)[1]
     data_inizio = _date(anno, mese, 1)
     data_fine   = _date(anno, mese, num_giorni)
 
-    mappings_attivi = list(PayslipDizionario.objects.filter(attivo=True, cod_voce__isnull=False))
+    mappings_attivi = [
+        m
+        for m in PayslipDizionario.objects.filter(attivo=True).order_by("codice_tipo_orario")
+        if m.cod_voce
+    ]
     if not mappings_attivi or not selected_dip:
-        return [], mappings_attivi
+        return [], mappings_attivi, 0
 
-    # Raggruppa per codice_tipo_orario → lista di mapping (es. ROL → [0303, 0336])
-    from collections import defaultdict as _defaultdict
+    # Raggruppa per codice_tipo_orario → lista di mapping (es. ROL → [0303, 0336]).
     tipo_orario_to_mappings: dict = _defaultdict(list)
+    cod_voce_to_tipi: dict = _defaultdict(set)
     for _m in mappings_attivi:
         tipo_orario_to_mappings[_m.codice_tipo_orario].append(_m)
-    cod_voce_int_set = {int(m.cod_voce) for m in mappings_attivi}
+        try:
+            cod_voce_to_tipi[int(str(_m.cod_voce).strip())].add(_m.codice_tipo_orario)
+        except (TypeError, ValueError):
+            continue
+
+    cod_voce_int_set = set()
+    for m in mappings_attivi:
+        try:
+            cod_voce_int_set.add(int(str(m.cod_voce).strip()))
+        except (TypeError, ValueError):
+            continue
+
     # mappa tipo_orario → usa_prev
     tipo_ora_map = {m.codice_tipo_orario: (m.tipo_ora == "previsionale") for m in mappings_attivi}
+
+    # Regole avanzate ANY/SUM (se le tabelle non esistono ancora, fallback automatico).
+    regole_attive = []
+    try:
+        regole_attive = list(
+            PayslipControlloRegola.objects
+            .filter(attivo=True)
+            .prefetch_related("destinazioni")
+            .order_by("direzione", "priorita", "sorgente_valore")
+        )
+    except Exception:
+        regole_attive = []
+
+    app_to_ced_rules = {}
+    ced_to_app_rules = {}
+
+    for reg in regole_attive:
+        dest_vals = [
+            (d.destinazione_valore or "").strip()
+            for d in reg.destinazioni.all() if d.attivo and (d.destinazione_valore or "").strip()
+        ]
+        if not dest_vals:
+            continue
+
+        src = (reg.sorgente_valore or "").strip()
+        if not src:
+            continue
+
+        if reg.direzione == PayslipControlloRegola.DIR_APP_TO_CED:
+            cods = []
+            for v in dest_vals:
+                try:
+                    cv = int(v)
+                    cods.append(cv)
+                    cod_voce_int_set.add(cv)
+                except ValueError:
+                    continue
+            if cods:
+                app_to_ced_rules[src] = {
+                    "modalita": reg.modalita,
+                    "no_somma_stesso_giorno": bool(reg.no_somma_stesso_giorno),
+                    "dest_cod_voci": cods,
+                }
+
+        elif reg.direzione == PayslipControlloRegola.DIR_CED_TO_APP:
+            try:
+                cod_src = int(src)
+            except ValueError:
+                continue
+            cod_voce_int_set.add(cod_src)
+            ced_to_app_rules[cod_src] = {
+                "modalita": reg.modalita,
+                "no_somma_stesso_giorno": bool(reg.no_somma_stesso_giorno),
+                "dest_tipi": dest_vals,
+            }
 
     day_cols = [f"day_{i}" for i in range(1, num_giorni + 1)]
 
@@ -4205,7 +4120,7 @@ def _build_risultati_for_export(mese, anno, selected_dip):
     dipendenti_list = list(dipendenti_qs)
     all_cod_dip = [d["cod_dip"] for d in dipendenti_list]
     if not all_cod_dip:
-        return [], mappings_attivi
+        return [], mappings_attivi, 0
 
     presenze_qs = (
         PayslipPresenze.objects
@@ -4271,47 +4186,121 @@ def _build_risultati_for_export(mese, anno, selected_dip):
                 if (op if tipo_ora_map.get(tipo, usa_prev) else oc) > 0]
         return ", ".join(nomi) if nomi else righe[0][0]
 
-    def _ore_effettive_exp(cod_dip, giorno):
-        righe = turni_per_day.get((cod_dip, giorno), [])
-        totale = 0.0
-        for tipo, oc, op in righe:
-            usa_p = tipo_ora_map.get(tipo, False)
-            totale += op if usa_p else oc
-        return round(totale, 2)
+    def _ore_turno(cod_dip, tipo_orario, giorno):
+        ore_cons_m, ore_prev_m = turni_idx.get((cod_dip, tipo_orario, giorno), (0.0, 0.0))
+        return ore_prev_m if tipo_ora_map.get(tipo_orario, False) else ore_cons_m
+
+    def _ore_cod_voce(cod_dip, cod_voce_int, giorno):
+        return float((presenze_idx.get((cod_dip, cod_voce_int)) or {}).get(f"day_{giorno}") or 0)
 
     SOGLIA = 0.05
     risultati = []
+    n_controllati = 0
+
+    # Fallback legacy: tipi non coperti da regola APP_TO_CED
+    fallback_tipi = [
+        t for t in tipo_orario_to_mappings.keys()
+        if t not in app_to_ced_rules
+    ]
+
     for dip in dipendenti_list:
         cod_dip = dip["cod_dip"]
         discrepanze_dip = []
-        for tipo_orario, tipo_mappings in tipo_orario_to_mappings.items():
-            usa_prev = tipo_mappings[0].tipo_ora == "previsionale"
-            cod_voci = [int(m.cod_voce) for m in tipo_mappings]
-            cod_voce_label = " + ".join(m.cod_voce for m in tipo_mappings)
+
+        # 1) Regole direzionali APP_TO_CED (tipo_orario -> cod_voce)
+        for tipo_orario, reg in app_to_ced_rules.items():
+            cod_voci = reg["dest_cod_voci"]
+            cod_voce_label = " o ".join(f"{cv:04d}" for cv in cod_voci)
             for giorno in range(1, num_giorni + 1):
-                # Somma le ore di TUTTE le cod_voce associate a questo tipo_orario
-                ore_ced = sum(
-                    float((presenze_idx.get((cod_dip, cv)) or {}).get(f"day_{giorno}") or 0)
-                    for cv in cod_voci
-                )
-                ore_cons_m, ore_prev_m = turni_idx.get(
-                    (cod_dip, tipo_orario, giorno), (0.0, 0.0))
-                ore_mapped_app = ore_prev_m if usa_prev else ore_cons_m
-                # Salta solo se entrambi sono zero (nessuna delle due parti ha ore)
-                if ore_ced <= SOGLIA and ore_mapped_app <= SOGLIA:
+                ore_app = _ore_turno(cod_dip, tipo_orario, giorno)
+                ore_dest = [_ore_cod_voce(cod_dip, cv, giorno) for cv in cod_voci]
+
+                if reg["modalita"] == PayslipControlloRegola.MOD_SUM:
+                    ore_ced = sum(ore_dest)
+                    valido = abs(ore_app - ore_ced) <= SOGLIA
+                else:
+                    ore_ced = max(ore_dest) if ore_dest else 0.0
+                    valido = any(abs(ore_app - v) <= SOGLIA for v in ore_dest)
+
+                if ore_app <= SOGLIA and ore_ced <= SOGLIA:
                     continue
-                if abs(ore_ced - ore_mapped_app) > SOGLIA:
-                    ore_app_display = _ore_effettive_exp(cod_dip, giorno)
+
+                if not valido:
                     discrepanze_dip.append({
-                        "codice_tipo_orario": tipo_orario,
-                        "tipo_effettivo_app": _tipo_effettivo_exp(cod_dip, giorno, usa_prev),
+                        "codice_tipo_orario": f"{tipo_orario} ({reg['modalita']})",
+                        "tipo_effettivo_app": _tipo_effettivo_exp(cod_dip, giorno, tipo_ora_map.get(tipo_orario, False)),
                         "cod_voce": cod_voce_label,
                         "desc_voce_cedolino": cod_voce_label,
                         "giorno": giorno,
                         "ore_cedolino": round(ore_ced, 2),
-                        "ore_turni":    ore_app_display,
-                        "delta":        round(ore_ced - ore_app_display, 2),
+                        "ore_turni": round(ore_app, 2),
+                        "delta": round(ore_ced - ore_app, 2),
                     })
+
+        # 2) Fallback legacy per i tipi non coperti da regola.
+        for tipo_orario in fallback_tipi:
+            tipo_mappings = tipo_orario_to_mappings[tipo_orario]
+            cod_voci = []
+            for m in tipo_mappings:
+                try:
+                    cod_voci.append(int(str(m.cod_voce).strip()))
+                except (TypeError, ValueError):
+                    continue
+            if not cod_voci:
+                continue
+
+            cod_voce_label = " + ".join(f"{cv:04d}" for cv in cod_voci)
+            for giorno in range(1, num_giorni + 1):
+                ore_ced = sum(_ore_cod_voce(cod_dip, cv, giorno) for cv in cod_voci)
+                ore_app = _ore_turno(cod_dip, tipo_orario, giorno)
+                if ore_ced <= SOGLIA and ore_app <= SOGLIA:
+                    continue
+                if abs(ore_ced - ore_app) > SOGLIA:
+                    discrepanze_dip.append({
+                        "codice_tipo_orario": tipo_orario,
+                        "tipo_effettivo_app": _tipo_effettivo_exp(cod_dip, giorno, tipo_ora_map.get(tipo_orario, False)),
+                        "cod_voce": cod_voce_label,
+                        "desc_voce_cedolino": cod_voce_label,
+                        "giorno": giorno,
+                        "ore_cedolino": round(ore_ced, 2),
+                        "ore_turni": round(ore_app, 2),
+                        "delta": round(ore_ced - ore_app, 2),
+                    })
+
+        # 3) Regole direzionali CED_TO_APP (cod_voce -> tipo_orario)
+        for cod_voce_src, reg in ced_to_app_rules.items():
+            dest_tipi = reg["dest_tipi"]
+            if not dest_tipi:
+                continue
+            tipo_label = " + ".join(dest_tipi)
+            for giorno in range(1, num_giorni + 1):
+                ore_ced = _ore_cod_voce(cod_dip, cod_voce_src, giorno)
+                ore_dest = [_ore_turno(cod_dip, t, giorno) for t in dest_tipi]
+
+                if reg["modalita"] == PayslipControlloRegola.MOD_SUM:
+                    ore_app = sum(ore_dest)
+                    valido = abs(ore_ced - ore_app) <= SOGLIA
+                else:
+                    ore_app = max(ore_dest) if ore_dest else 0.0
+                    valido = any(abs(ore_ced - v) <= SOGLIA for v in ore_dest)
+
+                if ore_ced <= SOGLIA and ore_app <= SOGLIA:
+                    continue
+
+                if not valido:
+                    discrepanze_dip.append({
+                        "codice_tipo_orario": f"cod_voce {cod_voce_src:04d} ({reg['modalita']})",
+                        "tipo_effettivo_app": tipo_label,
+                        "cod_voce": f"{cod_voce_src:04d}",
+                        "desc_voce_cedolino": f"{cod_voce_src:04d}",
+                        "giorno": giorno,
+                        "ore_cedolino": round(ore_ced, 2),
+                        "ore_turni": round(ore_app, 2),
+                        "delta": round(ore_ced - ore_app, 2),
+                    })
+
+        n_controllati += 1
+
         if discrepanze_dip:
             risultati.append({
                 "lavoratore": dip.get("lavoratore") or "",
@@ -4319,7 +4308,8 @@ def _build_risultati_for_export(mese, anno, selected_dip):
                 "matricola":  dip.get("matricola") or "",
                 "discrepanze": sorted(discrepanze_dip, key=lambda x: (x["giorno"], x["codice_tipo_orario"])),
             })
-    return risultati, mappings_attivi
+
+    return risultati, mappings_attivi, n_controllati
 
 
 @login_required
@@ -4347,7 +4337,7 @@ def export_controllo_excel(request):
             .values_list("cod_dip", flat=True).distinct()
         )
 
-    risultati, _ = _build_risultati_for_export(mese, anno, selected_dip)
+    risultati, _, _ = _build_risultati_for_export(mese, anno, selected_dip)
 
     wb = Workbook()
     ws = wb.active
@@ -4436,7 +4426,7 @@ def export_controllo_docx(request):
             .values_list("cod_dip", flat=True).distinct()
         )
 
-    risultati, _ = _build_risultati_for_export(mese, anno, selected_dip)
+    risultati, _, _ = _build_risultati_for_export(mese, anno, selected_dip)
 
     doc = Document()
 

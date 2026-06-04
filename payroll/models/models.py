@@ -2332,6 +2332,102 @@ class PayslipDizionario(models.Model):
         return f"[{stato}] {self.codice_tipo_orario} → cod_voce {cod} ({self.tipo_ora})"
 
 
+class PayslipControlloRegola(models.Model):
+    """
+    Regole avanzate di controllo usate solo per i casi non 1:1.
+
+    - APP_TO_CED: sorgente = CODICE_TIPO_ORARIO, destinazioni = cod_voce
+    - CED_TO_APP: sorgente = cod_voce, destinazioni = CODICE_TIPO_ORARIO
+    """
+
+    DIR_APP_TO_CED = "APP_TO_CED"
+    DIR_CED_TO_APP = "CED_TO_APP"
+    DIREZIONE_CHOICES = [
+        (DIR_APP_TO_CED, _("App (turni) -> Cedolino")),
+        (DIR_CED_TO_APP, _("Cedolino -> App (turni)")),
+    ]
+
+    MOD_ANY = "ANY"
+    MOD_SUM = "SUM"
+    MODALITA_CHOICES = [
+        (MOD_ANY, _("Any (almeno una destinazione)")),
+        (MOD_SUM, _("Somma (somma destinazioni)")),
+    ]
+
+    direzione = models.CharField(
+        max_length=20,
+        choices=DIREZIONE_CHOICES,
+        verbose_name=_("Direzione controllo"),
+    )
+    sorgente_valore = models.CharField(
+        max_length=100,
+        verbose_name=_("Sorgente"),
+        help_text=_("Valore sorgente: CODICE_TIPO_ORARIO (APP_TO_CED) oppure cod_voce (CED_TO_APP)."),
+    )
+    modalita = models.CharField(
+        max_length=10,
+        choices=MODALITA_CHOICES,
+        default=MOD_ANY,
+        verbose_name=_("Modalita"),
+    )
+    no_somma_stesso_giorno = models.BooleanField(
+        default=False,
+        verbose_name=_("No somma stesso giorno"),
+        help_text=_("Se attivo, nel controllo ANY non consente copertura tramite somma di piu destinazioni."),
+    )
+    attivo = models.BooleanField(default=True, verbose_name=_("Attiva"))
+    priorita = models.IntegerField(default=100, verbose_name=_("Priorita"))
+    note = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Note"))
+
+    objects = models.Manager()
+
+    class Meta:
+        db_table = "payslip_controllo_regole"
+        verbose_name = _("Regola controllo cedolini")
+        verbose_name_plural = _("Regole controllo cedolini")
+        ordering = ["direzione", "priorita", "sorgente_valore"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["direzione", "sorgente_valore"],
+                name="uniq_controllo_regola_direzione_sorgente",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.direzione} | {self.sorgente_valore} | {self.modalita}"
+
+
+class PayslipControlloRegolaDestinazione(models.Model):
+    """Destinazioni abilitate per una regola avanzata di controllo."""
+
+    regola = models.ForeignKey(
+        PayslipControlloRegola,
+        on_delete=models.CASCADE,
+        related_name="destinazioni",
+        verbose_name=_("Regola"),
+    )
+    destinazione_valore = models.CharField(max_length=100, verbose_name=_("Destinazione"))
+    attivo = models.BooleanField(default=True, verbose_name=_("Attiva"))
+    note = models.CharField(max_length=255, blank=True, null=True, verbose_name=_("Note"))
+
+    objects = models.Manager()
+
+    class Meta:
+        db_table = "payslip_controllo_regole_destinazioni"
+        verbose_name = _("Destinazione regola controllo")
+        verbose_name_plural = _("Destinazioni regole controllo")
+        ordering = ["regola_id", "destinazione_valore"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["regola", "destinazione_valore"],
+                name="uniq_controllo_regola_destinazione",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.regola_id} -> {self.destinazione_valore}"
+
+
 class PayslipCorpo(models.Model):
     """
     Corpo della busta paga importato da CSV.
