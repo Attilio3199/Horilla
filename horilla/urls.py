@@ -20,6 +20,7 @@ from django.http import JsonResponse, HttpResponse
 from django.urls import include, path, re_path
 
 import notifications.urls
+from payroll.views import component_views as payroll_component_views
 
 from . import settings
 
@@ -53,6 +54,11 @@ urlpatterns = [
         "^inbox/notifications/", include(notifications.urls, namespace="notifications")
     ),
     path("i18n/", include("django.conf.urls.i18n")),
+    path(
+        "payroll/controllo-cedolini/presenze/",
+        payroll_component_views.controllo_cedolini_presenze,
+        name="controllo-cedolini-presenze-direct",
+    ),
     path("health/", health_check),
 ]
 
