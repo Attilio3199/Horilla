@@ -2,6 +2,9 @@ services:
   db:
     image: postgres:17
     restart: unless-stopped
+    # ⬇️ AGGIUNTO: Espone la porta a tutta la rete locale (0.0.0.0)
+    ports:
+      - "0.0.0.0:5432:5432"
     env_file:
       - .env
     environment:
