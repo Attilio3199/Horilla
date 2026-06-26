@@ -1862,4 +1862,16 @@ class NotificationSound(models.Model):
     sound_enabled = models.BooleanField(default=False)
 
 
-User.add_to_class("is_new_employee", models.BooleanField(default=False))
+def _get_user_is_new_employee(user):
+    employee = getattr(user, "employee_get", None)
+    return getattr(employee, "is_new_employee", False)
+
+
+def _set_user_is_new_employee(user, value):
+    employee = getattr(user, "employee_get", None)
+    if employee is not None and employee.is_new_employee != value:
+        employee.is_new_employee = value
+        employee.save(update_fields=["is_new_employee"])
+
+
+User.add_to_class("is_new_employee", property(_get_user_is_new_employee, _set_user_is_new_employee))

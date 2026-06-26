@@ -167,6 +167,7 @@ class Employee(models.Model):
     emergency_contact_name = models.CharField(max_length=20, null=True, blank=True)
     emergency_contact_relation = models.CharField(max_length=20, null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    is_new_employee = models.BooleanField(default=True)
     additional_info = models.JSONField(null=True, blank=True)
     is_from_onboarding = models.BooleanField(
         default=False, null=True, blank=True, editable=False
@@ -628,7 +629,6 @@ class Employee(models.Model):
                 username=username,
                 email=username,
                 password=password,
-                is_new_employee=True,
             )
             if not user:
                 user = User.objects.create_user(

@@ -136,8 +136,8 @@ dmypy.json
 
 # migration files
 **/migrations/**
-!**/migrations
-!**/migrations/__init__.py
+!**/migrations/
+!**/migrations/*.py
 
 # media file
 media/

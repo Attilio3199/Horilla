@@ -20,7 +20,10 @@ do
 done
 
 echo "Database is ready."
-python3 manage.py migrate --noinput
-python3 manage.py collectstatic --noinput
+python3 manage.py migrate --noinput --fake-initial
+python3 manage.py collectstatic --noinput \
+    --ignore "admin/*" \
+    --ignore "recruitment/candidate.js" \
+    --ignore "pipeline/pipeline.js"
 python3 manage.py createhorillauser --first_name admin --last_name admin --username admin --password admin --email admin@example.com --phone 1234567890
 gunicorn --bind 0.0.0.0:${DOCKER_PORT:-8000} --workers 4 --threads 2 --timeout 120 horilla.wsgi:application
