@@ -215,9 +215,7 @@ DROP_VIEW_SQL = f"DROP VIEW IF EXISTS {VIEW_NAME};"
 
 
 class Migration(migrations.Migration):
-    dependencies = [
-        ("payroll", "0001_payslip_controllo_regole"),
-    ]
+    dependencies = []
 
     operations = [
         migrations.RunSQL(
