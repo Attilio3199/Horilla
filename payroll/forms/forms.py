@@ -15,6 +15,7 @@ from employee.models import Employee
 from payroll.context_processors import get_active_employees
 from payroll.models.models import (
     Contract,
+    ContractLevel,
     EncashmentGeneralSettings,
     PayrollGeneralSetting,
     ReimbursementFile,
@@ -210,6 +211,40 @@ class VarzioneOrariaForm(ContractForm):
             "editing_variazione": getattr(self, "editing_variazione", False),
         }
         return render_to_string("variazione_oraria_contract_form.html", context)
+
+
+class ContractLevelForm(ModelForm):
+    verbose_name = _("Livello")
+    data_decorrenza = forms.DateField(
+        input_formats=DATE_INPUT_FORMATS,
+        widget=forms.DateInput(
+            format="%d/%m/%Y",
+            attrs={"type": "text", "placeholder": "DD/MM/YYYY", "autocomplete": "off"},
+        ),
+    )
+
+    class Meta:
+        model = ContractLevel
+        fields = ["employee_id", "lvl", "data_decorrenza", "note"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["employee_id"].widget = forms.HiddenInput()
+        self.fields["lvl"].widget.attrs.update(
+            {"class": "oh-input w-100", "min": 0, "step": 1}
+        )
+        self.fields["note"].required = False
+        self.fields["note"].widget = forms.Textarea(
+            attrs={
+                "class": "form-control",
+                "rows": 3,
+                "placeholder": _("Inserisci una nota"),
+            }
+        )
+        if self.instance and self.instance.data_decorrenza:
+            self.initial["data_decorrenza"] = self.instance.data_decorrenza.strftime(
+                "%d/%m/%Y"
+            )
 
 
 class ReimbursementRequestCommentForm(ModelForm):

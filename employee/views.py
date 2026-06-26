@@ -446,12 +446,18 @@ def about_tab(request, obj_id, **kwargs):
         else None
     )
     variazioni_orarie = None
+    contract_levels = None
     if apps.is_installed("payroll"):
-        from payroll.models.models import VarzioneOraria
+        from payroll.models.models import ContractLevel, VarzioneOraria
         variazioni_orarie = list(
             VarzioneOraria.objects.entire()
             .filter(employee_id_id=employee.id)
             .order_by("-contract_start_date")
+        )
+        contract_levels = list(
+            ContractLevel.objects.entire()
+            .filter(employee_id_id=employee.id)
+            .order_by("-data_decorrenza", "-id")
         )
     employee_leaves = (
         employee.available_leave.all() if apps.is_installed("leave") else None
@@ -464,6 +470,7 @@ def about_tab(request, obj_id, **kwargs):
             "employee_leaves": employee_leaves,
             "contracts": contracts,
             "variazioni_orarie": variazioni_orarie,
+            "contract_levels": contract_levels,
         },
     )
 

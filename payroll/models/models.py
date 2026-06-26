@@ -11,6 +11,7 @@ from django import forms
 from django.apps import apps
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.http import QueryDict
 from django.utils import timezone
@@ -645,6 +646,42 @@ class VarzioneOraria(HorillaModel):
         ordering = ["-contract_start_date"]
         verbose_name = _("Variazione Oraria")
         verbose_name_plural = _("Variazioni Orarie")
+
+
+class ContractLevel(HorillaModel):
+    employee_id = models.ForeignKey(
+        Employee,
+        on_delete=models.CASCADE,
+        related_name="contract_levels",
+        verbose_name=_("Employee"),
+    )
+    badge_id = models.CharField(max_length=50, verbose_name=_("Badge ID"))
+    lvl = models.IntegerField(
+        validators=[MinValueValidator(0)],
+        verbose_name=_("Livello"),
+    )
+    data_decorrenza = models.DateField(verbose_name=_("Data decorrenza"))
+    note = models.TextField(
+        null=True,
+        blank=True,
+        max_length=255,
+        verbose_name=_("Note"),
+    )
+
+    objects = HorillaCompanyManager("employee_id__employee_work_info__company_id")
+
+    def save(self, *args, **kwargs):
+        self.badge_id = self.employee_id.badge_id or ""
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.badge_id} - L{self.lvl} - {self.data_decorrenza}"
+
+    class Meta:
+        db_table = "payroll_contract_lvl"
+        ordering = ["-data_decorrenza", "-id"]
+        verbose_name = _("Livello Contratto")
+        verbose_name_plural = _("Livelli Contratto")
 
 
 class WorkRecord(models.Model):

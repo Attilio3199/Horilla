@@ -9,6 +9,7 @@ from django.contrib import admin
 from payroll.models.models import (
     Allowance,
     Contract,
+    ContractLevel,
     Deduction,
     FilingStatus,
     LoanAccount,
@@ -26,6 +27,7 @@ from payroll.models.tax_models import PayrollSettings, TaxBracket
 admin.site.register(FilingStatus)
 admin.site.register(TaxBracket)
 admin.site.register(Contract)
+admin.site.register(ContractLevel)
 admin.site.register(Allowance)
 admin.site.register(Deduction)
 admin.site.register(Payslip)

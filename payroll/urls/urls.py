@@ -25,6 +25,16 @@ urlpatterns = [
         name="variazione-oraria-delete",
     ),
     path(
+        "contract-level/<int:employee_id>/",
+        views.contract_level_create,
+        name="contract-level-create",
+    ),
+    path(
+        "contract-level-delete/<int:level_id>/",
+        views.contract_level_delete,
+        name="contract-level-delete",
+    ),
+    path(
         "update-contract/<int:contract_id>",
         views.contract_update,
         name="update-contract",

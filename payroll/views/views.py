@@ -54,6 +54,7 @@ from payroll.forms.component_forms import (
 from payroll.methods.methods import paginator_qry, save_payslip
 from payroll.models.models import (
     Contract,
+    ContractLevel,
     FilingStatus,
     PayrollGeneralSetting,
     Payslip,
@@ -382,6 +383,73 @@ def variazione_oraria_delete(request, variazione_id):
     variazione.delete()
     messages.success(request, _("Variazione Oraria eliminata con successo."))
 
+    if next_url:
+        return redirect(next_url)
+    return redirect("employee-view-individual", obj_id=employee_id)
+
+
+@login_required
+@permission_required("payroll.change_contract")
+def contract_level_create(request, employee_id):
+    from payroll.forms.forms import ContractLevelForm
+
+    employee = get_object_or_404(Employee, id=employee_id)
+    next_url = request.GET.get("next") or request.POST.get("next")
+    if next_url and not url_has_allowed_host_and_scheme(
+        next_url, allowed_hosts={request.get_host()}
+    ):
+        next_url = None
+
+    level_id = request.GET.get("level_id") or request.POST.get("level_id")
+    level_instance = None
+    if level_id:
+        level_instance = get_object_or_404(
+            ContractLevel, id=level_id, employee_id=employee
+        )
+
+    initial = {"employee_id": employee.id}
+    form = ContractLevelForm(instance=level_instance, initial=initial)
+
+    if request.method == "POST":
+        form = ContractLevelForm(request.POST, instance=level_instance)
+        if form.is_valid():
+            contract_level = form.save(commit=False)
+            contract_level.employee_id = employee
+            contract_level.badge_id = employee.badge_id or ""
+            contract_level.save()
+            messages.success(
+                request,
+                _("Livello aggiornato con successo.")
+                if level_instance
+                else _("Livello salvato con successo."),
+            )
+            if next_url:
+                return redirect(next_url)
+            return redirect("employee-view-individual", obj_id=employee.id)
+
+    return render(
+        request,
+        "payroll/common/form.html",
+        {"form": form, "next_url": next_url},
+    )
+
+
+@login_required
+@permission_required("payroll.change_contract")
+def contract_level_delete(request, level_id):
+    if request.method != "POST":
+        return redirect("employee-view")
+
+    level_instance = get_object_or_404(ContractLevel, id=level_id)
+    employee_id = level_instance.employee_id_id
+    next_url = request.POST.get("next")
+    if next_url and not url_has_allowed_host_and_scheme(
+        next_url, allowed_hosts={request.get_host()}
+    ):
+        next_url = None
+
+    level_instance.delete()
+    messages.success(request, _("Livello eliminato con successo."))
     if next_url:
         return redirect(next_url)
     return redirect("employee-view-individual", obj_id=employee_id)
