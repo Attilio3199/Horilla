@@ -56,6 +56,16 @@ from horilla import horilla_middlewares
 from horilla_audit.models import AccountBlockUnblock
 
 logger = logging.getLogger(__name__)
+MULTISPACE_RE = re.compile(r"\s{2,}")
+
+
+def normalize_whitespace(value):
+    """
+    Normalize user-entered whitespace by trimming ends and collapsing runs.
+    """
+    if not isinstance(value, str):
+        return value
+    return MULTISPACE_RE.sub(" ", value.strip())
 
 
 class ModelForm(forms.ModelForm):
@@ -173,6 +183,12 @@ class ModelForm(forms.ModelForm):
                         company_field.initial = (
                             company if company in queryset else queryset.first()
                         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        for field_name, value in list(cleaned_data.items()):
+            cleaned_data[field_name] = normalize_whitespace(value)
+        return cleaned_data
 
 
 class UserForm(ModelForm):
@@ -312,8 +328,10 @@ class EmployeeForm(ModelForm):
         return render_to_string("employee/create_form/personal_info_as_p.html", context)
 
     def clean(self):
-        super().clean()
-        email = self.cleaned_data["email"]
+        cleaned_data = super().clean()
+        email = cleaned_data.get("email")
+        if not email:
+            return cleaned_data
         query = Employee.objects.entire().filter(email=email)
         if self.instance and self.instance.id:
             query = query.exclude(id=self.instance.id)
@@ -338,6 +356,7 @@ class EmployeeForm(ModelForm):
                 error_message = _("An Employee with this Email already exists")
 
             raise forms.ValidationError({"email": error_message})
+        return cleaned_data
 
     def get_next_badge_id(self):
         """

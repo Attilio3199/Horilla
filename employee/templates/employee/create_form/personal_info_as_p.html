@@ -271,15 +271,145 @@
 
 <script>
 (function () {
+    var NORMALIZE_SPACES = function (value) {
+        if (typeof value !== "string") {
+            return value;
+        }
+        return value.replace(/\s+/g, " ").trim();
+    };
+
+    var ZIP_LOOKUP_DELAY = 450;
+
     function setFieldValue(targetId, value) {
         var field = document.getElementById(targetId);
         if (!field) return;
-        field.value = value || "";
+        var normalizedValue = typeof value === "string" ? NORMALIZE_SPACES(value) : (value || "");
+        field.value = normalizedValue;
         field.setAttribute("data-selected", value || "");
         field.dispatchEvent(new Event("change", { bubbles: true }));
         if (window.jQuery) {
             window.jQuery(field).trigger("change");
         }
+    }
+
+    function normalizeFieldValue(field) {
+        if (!field || typeof field.value !== "string") return;
+        field.value = NORMALIZE_SPACES(field.value);
+    }
+
+    function isItalianCountry(countryValue) {
+        var value = NORMALIZE_SPACES(countryValue || "").toLowerCase();
+        return value === "" || value === "italy" || value === "italia" || value === "it";
+    }
+
+    function extractPostcode(result) {
+        if (!result) return "";
+        if (result.address && result.address.postcode) {
+            return NORMALIZE_SPACES(result.address.postcode);
+        }
+        return "";
+    }
+
+    function buildLookupQuery(addressField, cityField) {
+        var address = addressField ? NORMALIZE_SPACES(addressField.value) : "";
+        var city = cityField ? NORMALIZE_SPACES(cityField.value) : "";
+        if (!address || !city) return "";
+        return address + ", " + city;
+    }
+
+    function scheduleZipLookup(config) {
+        if (!config) return;
+        window.clearTimeout(config.timerId);
+        config.timerId = window.setTimeout(function () {
+            lookupZipCode(config);
+        }, ZIP_LOOKUP_DELAY);
+    }
+
+    function lookupZipCode(config) {
+        var addressField = document.getElementById(config.addressId);
+        var cityField = document.getElementById(config.cityId);
+        var countryField = document.getElementById(config.countryId);
+        var zipField = document.getElementById(config.zipId);
+
+        if (!addressField || !cityField || !zipField) return;
+
+        normalizeFieldValue(addressField);
+        normalizeFieldValue(cityField);
+
+        if (!isItalianCountry(countryField ? countryField.value : "")) return;
+        if (zipField.dataset.manualZip === "true" && NORMALIZE_SPACES(zipField.value || "") !== "") return;
+
+        var query = buildLookupQuery(addressField, cityField);
+        if (!query) return;
+
+        var url = "https://nominatim.openstreetmap.org/search?q="
+            + encodeURIComponent(query)
+            + "&format=json&addressdetails=1&countrycodes=it&limit=1";
+
+        fetch(url, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        })
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error("Zip lookup failed");
+                }
+                return response.json();
+            })
+            .then(function (results) {
+                if (!Array.isArray(results) || !results.length) return;
+                var postcode = extractPostcode(results[0]);
+                if (!postcode) return;
+                if (zipField.dataset.manualZip === "true" && NORMALIZE_SPACES(zipField.value || "") !== "") return;
+                zipField.value = postcode;
+                zipField.dataset.manualZip = "false";
+            })
+            .catch(function () {
+                return null;
+            });
+    }
+
+    function initializeZipAutofill(config) {
+        var addressField = document.getElementById(config.addressId);
+        var cityField = document.getElementById(config.cityId);
+        var countryField = document.getElementById(config.countryId);
+        var zipField = document.getElementById(config.zipId);
+
+        if (!addressField || !cityField || !zipField) return;
+
+        [addressField, cityField].forEach(function (field) {
+            field.addEventListener("blur", function () {
+                normalizeFieldValue(field);
+                scheduleZipLookup(config);
+            });
+            field.addEventListener("change", function () {
+                normalizeFieldValue(field);
+                scheduleZipLookup(config);
+            });
+        });
+
+        if (countryField) {
+            countryField.addEventListener("change", function () {
+                scheduleZipLookup(config);
+            });
+        }
+
+        zipField.dataset.manualZip = NORMALIZE_SPACES(zipField.value || "") ? "true" : "false";
+        zipField.addEventListener("input", function () {
+            normalizeFieldValue(zipField);
+            zipField.dataset.manualZip = NORMALIZE_SPACES(zipField.value || "") ? "true" : "false";
+        });
+    }
+
+    function normalizeFormFields() {
+        var fields = document.querySelectorAll(
+            "input:not([type='file']):not([type='checkbox']):not([type='radio']), textarea"
+        );
+        fields.forEach(function (field) {
+            normalizeFieldValue(field);
+        });
     }
 
     function copyResidenzaToDomicilio() {
@@ -298,12 +428,44 @@
         setFieldValue("id_domicilio_address", residenzaAddress ? residenzaAddress.value : "");
         setFieldValue("id_domicilio_zip", residenzaZip ? residenzaZip.value : "");
         setFieldValue("id_domicilio_citta", residenzaCitta ? residenzaCitta.value : "");
+        var domicilioZip = document.getElementById("id_domicilio_zip");
+        if (domicilioZip) {
+            domicilioZip.dataset.manualZip = NORMALIZE_SPACES(domicilioZip.value || "") ? "true" : "false";
+        }
     }
 
     document.addEventListener("click", function (event) {
         if (event.target && event.target.id === "copy-residenza-to-domicilio") {
             copyResidenzaToDomicilio();
         }
+    });
+
+    document.addEventListener("blur", function (event) {
+        if (event.target && (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA")) {
+            normalizeFieldValue(event.target);
+        }
+    }, true);
+
+    document.addEventListener("submit", function (event) {
+        if (event.target && event.target.tagName === "FORM") {
+            normalizeFormFields();
+        }
+    });
+
+    initializeZipAutofill({
+        addressId: "id_residenza_address",
+        cityId: "id_residenza_citta",
+        countryId: "id_residenza_country",
+        zipId: "id_residenza_zip",
+        timerId: null
+    });
+
+    initializeZipAutofill({
+        addressId: "id_domicilio_address",
+        cityId: "id_domicilio_citta",
+        countryId: "id_domicilio_country",
+        zipId: "id_domicilio_zip",
+        timerId: null
     });
 })();
 </script>
