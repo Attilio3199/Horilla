@@ -424,9 +424,6 @@
 
         if (!addressField || !cityField || !zipField) return;
 
-        normalizeFieldValue(addressField);
-        normalizeFieldValue(cityField);
-
         if (!isItalianCountry(countryField ? countryField.value : "")) return;
         if (zipField.dataset.manualZip === "true" && NORMALIZE_SPACES(zipField.value || "") !== "") return;
 
