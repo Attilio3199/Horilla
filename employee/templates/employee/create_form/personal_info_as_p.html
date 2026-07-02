@@ -478,7 +478,6 @@
 
         if (!cityField || !listEl) return;
 
-        normalizeFieldValue(cityField);
         var term = NORMALIZE_SPACES(cityField.value || "");
         if (term.length < 1) {
             listEl.innerHTML = "";
@@ -486,9 +485,10 @@
             return;
         }
 
-        var url = "https://nominatim.openstreetmap.org/search?city="
+        var url = "https://nominatim.openstreetmap.org/search?q="
             + encodeURIComponent(term)
             + "&format=json&addressdetails=1&limit=6"
+            + "&dedupe=1"
             + getCountryFilterParams(countryField ? countryField.value : "");
 
         fetch(url, {
@@ -509,9 +509,18 @@
                 var options = [];
 
                 results.forEach(function (item) {
+                    var type = NORMALIZE_SPACES((item && item.type) || "").toLowerCase();
+                    if (
+                        ["city", "administrative", "town", "village", "hamlet", "municipality", "suburb"].indexOf(type) === -1
+                    ) {
+                        return;
+                    }
                     var cityName = item && item.address
                         ? (item.address.city || item.address.town || item.address.village || item.address.municipality || "")
                         : "";
+                    if (!cityName && item && item.display_name) {
+                        cityName = item.display_name.split(",")[0] || "";
+                    }
                     cityName = NORMALIZE_SPACES(cityName);
                     if (!cityName || seen[cityName.toLowerCase()]) return;
                     seen[cityName.toLowerCase()] = true;
@@ -537,7 +546,6 @@
 
         [addressField, cityField].forEach(function (field) {
             field.addEventListener("input", function () {
-                normalizeFieldValue(field);
                 scheduleZipLookup(config);
             });
             field.addEventListener("blur", function () {
@@ -558,6 +566,9 @@
 
         zipField.dataset.manualZip = NORMALIZE_SPACES(zipField.value || "") ? "true" : "false";
         zipField.addEventListener("input", function () {
+            zipField.dataset.manualZip = NORMALIZE_SPACES(zipField.value || "") ? "true" : "false";
+        });
+        zipField.addEventListener("blur", function () {
             normalizeFieldValue(zipField);
             zipField.dataset.manualZip = NORMALIZE_SPACES(zipField.value || "") ? "true" : "false";
         });
@@ -576,8 +587,10 @@
         });
         cityField.addEventListener("change", function () {
             normalizeFieldValue(cityField);
+            scheduleCityLookup(config);
         });
         cityField.addEventListener("blur", function () {
+            normalizeFieldValue(cityField);
             window.setTimeout(function () {
                 var listEl = document.getElementById(config.listId);
                 if (listEl) {
