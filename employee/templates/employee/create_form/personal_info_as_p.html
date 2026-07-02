@@ -1,224 +1,309 @@
 {% load i18n %} {% load basefilters %}{% load widget_tweaks %}
 {{ form.non_field_errors }}
 
-<!-- ===== SEZIONE: Dati Anagrafici ===== -->
-<h5 class="fw-bold mt-3 mb-3">{% trans "Dati Anagrafici" %}</h5>
-<div class="row">
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_employee_first_name">{% trans "First Name" %}</label>
-            {{ form.employee_first_name|add_class:'form-control' }}
-            {{ form.employee_first_name.errors }}
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_employee_last_name">{% trans "Last Name" %}</label>
-            {{ form.employee_last_name|add_class:'form-control' }}
-            {{ form.employee_last_name.errors }}
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label required-star" for="id_email">{% trans "Email" %}</label>
-            {{ form.email|add_class:'form-control' }}
-            {{ form.email.errors }}
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_phone">{% trans "Phone" %}</label>
-            {{ form.phone|add_class:'form-control' }}
-            {{ form.phone.errors }}
-        </div>
-    </div>
-</div>
+<style>
+    .employee-form-section {
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+    }
 
-<!-- --- Sub-sezione: Domicilio --- -->
-<h6 class="fw-bold mt-4 mb-2">{% trans "Domicilio" %}</h6>
-<div class="row">
-    <div class="col-lg-6">
-        <label class="oh-label" for="id_domicilio_country">{% trans "domicilio_country" %}</label>
-        <select name="domicilio_country" class="w-100 country-dropdown" id="id_domicilio_country"
-            data-selected="{{ form.domicilio_country.value|default:'Italy' }}">
-        </select>
-        {{ form.domicilio_country.errors }}
-    </div>
-    <div class="col-lg-6">
-        <label class="oh-label d-block" for="id_domicilio_state">{% trans "domicilio_state" %}</label>
-        <select name="domicilio_state" class="w-100 country-dropdown" id="id_domicilio_state"
-            data-selected="{{ form.domicilio_state.value|default:'' }}">
-        </select>
-        {{ form.domicilio_state.errors }}
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-12">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_domicilio_address">{% trans "domicilio_address" %}</label>
-            {{ form.domicilio_address }}
-            {{ form.domicilio_address.errors }}
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_domicilio_zip">{% trans "domicilio_zip" %}</label>
-            {{ form.domicilio_zip|add_class:'form-control' }}
-            {{ form.domicilio_zip.errors }}
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_domicilio_citta">{% trans "domicilio_citta" %}</label>
-            {{ form.domicilio_citta|add_class:'form-control' }}
-            {{ form.domicilio_citta.errors }}
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_docimicilio_provincia">{% trans "docimicilio_provincia" %}</label>
-            <select name="docimicilio_provincia" id="id_docimicilio_provincia" class="w-100 country-dropdown"
-                data-selected="{{ form.docimicilio_provincia.value|default:'' }}">
-                {% if form.docimicilio_provincia.value %}
-                    <option value="{{ form.docimicilio_provincia.value }}" selected>{{ form.docimicilio_provincia.value }}</option>
-                {% endif %}
-            </select>
-            {{ form.docimicilio_provincia.errors }}
-        </div>
-    </div>
-</div>
+    .employee-form-section__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
 
-<!-- --- Sub-sezione: Residenza --- -->
-<h6 class="fw-bold mt-4 mb-2">{% trans "Residenza" %}</h6>
-<div class="row">
-    <div class="col-lg-6">
-        <label class="oh-label" for="id_residenza_country">{% trans "residenza_country" %}</label>
-        <select name="residenza_country" class="w-100 country-dropdown" id="id_residenza_country"
-            data-selected="{{ form.residenza_country.value|default:'Italy' }}">
-        </select>
-        {{ form.residenza_country.errors }}
-    </div>
-    <div class="col-lg-6">
-        <label class="oh-label d-block" for="id_residenza_state">{% trans "residenza_state" %}</label>
-        <select name="residenza_state" class="w-100 country-dropdown" id="id_residenza_state"
-            data-selected="{{ form.residenza_state.value|default:'' }}">
-        </select>
-        {{ form.residenza_state.errors }}
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-12">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_residenza_address">{% trans "residenza_address" %}</label>
-            {{ form.residenza_address }}
-            {{ form.residenza_address.errors }}
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_residenza_zip">{% trans "residenza_zip" %}</label>
-            {{ form.residenza_zip|add_class:'form-control' }}
-            {{ form.residenza_zip.errors }}
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_residenza_citta">{% trans "residenza_citta" %}</label>
-            {{ form.residenza_citta|add_class:'form-control' }}
-            {{ form.residenza_citta.errors }}
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_residenza_provincia">{% trans "residenza_provincia" %}</label>
-            <select name="residenza_provincia" id="id_residenza_provincia" class="w-100 country-dropdown"
-                data-selected="{{ form.residenza_provincia.value|default:'' }}">
-                {% if form.residenza_provincia.value %}
-                    <option value="{{ form.residenza_provincia.value }}" selected>{{ form.residenza_provincia.value }}</option>
-                {% endif %}
-            </select>
-            {{ form.residenza_provincia.errors }}
-        </div>
-    </div>
-</div>
+    .employee-form-section__title {
+        margin: 0;
+    }
+</style>
 
-<!-- ===== SEZIONE: Dati Personali ===== -->
-<h5 class="fw-bold mt-5 mb-3">{% trans "Dati Personali" %}</h5>
-<div class="row">
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_dob">{% trans "Date of Birth" %}</label>
-            {{ form.dob|add_class:'form-control' }}
-            {{ form.dob.errors }}
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_gender">{% trans "Gender" %}</label>
-            {{ form.gender }}
-            {{ form.gender.errors }}
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_nascita_provincia">{% trans "nascita_provincia" %}</label>
-            {{ form.nascita_provincia|add_class:'form-control' }}
-            {{ form.nascita_provincia.errors }}
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_nascita_citta">{% trans "nascita_citta" %}</label>
-            {{ form.nascita_citta|add_class:'form-control' }}
-            {{ form.nascita_citta.errors }}
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_codice_fiscale">{% trans "Codice Fiscale" %}</label>
-            {{ form.codice_fiscale|add_class:'form-control' }}
-            {{ form.codice_fiscale.errors }}
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <div class="form-check">
-                {{ form.categoria_protetta|add_class:'form-check-input' }}
-                <label class="form-check-label" for="id_categoria_protetta">{% trans "Categoria Protetta" %}</label>
+<div class="oh-card oh-card--border employee-form-section">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_badge_id">{% trans "Badge Id" %}</label>
+                {{ form.badge_id|add_class:'form-control' }}
+                {{ form.badge_id.errors }}
             </div>
-            {{ form.categoria_protetta.errors }}
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_codice_paghe">{% trans "Codice Paghe" %}</label>
-            {{ form.codice_paghe|add_class:'form-control' }}
-            {{ form.codice_paghe.errors }}
         </div>
     </div>
 </div>
-<div class="row">
-    <div class="col-lg-6">
-        <div class="oh-input__group">
-            <label class="oh-label" for="id_account_number">{% trans "IBAN" %}</label>
-            {{ form.account_number|add_class:'form-control' }}
-            {{ form.account_number.errors }}
+
+<div class="oh-card oh-card--border employee-form-section">
+    <div class="employee-form-section__header">
+        <h5 class="fw-bold employee-form-section__title">{% trans "Dati Anagrafici" %}</h5>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_employee_first_name">{% trans "First Name" %}</label>
+                {{ form.employee_first_name|add_class:'form-control' }}
+                {{ form.employee_first_name.errors }}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_employee_last_name">{% trans "Last Name" %}</label>
+                {{ form.employee_last_name|add_class:'form-control' }}
+                {{ form.employee_last_name.errors }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label required-star" for="id_email">{% trans "Email" %}</label>
+                {{ form.email|add_class:'form-control' }}
+                {{ form.email.errors }}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_phone">{% trans "Phone" %}</label>
+                {{ form.phone|add_class:'form-control' }}
+                {{ form.phone.errors }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_account_number">{% trans "IBAN" %}</label>
+                {{ form.account_number|add_class:'form-control' }}
+                {{ form.account_number.errors }}
+            </div>
         </div>
     </div>
 </div>
+
+<div class="oh-card oh-card--border employee-form-section">
+    <div class="employee-form-section__header">
+        <h5 class="fw-bold employee-form-section__title">{% trans "Dati Personali" %}</h5>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_dob">{% trans "Date of Birth" %}</label>
+                {{ form.dob|add_class:'form-control' }}
+                {{ form.dob.errors }}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_gender">{% trans "Gender" %}</label>
+                {{ form.gender }}
+                {{ form.gender.errors }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_nascita_citta">{% trans "nascita_citta" %}</label>
+                {{ form.nascita_citta|add_class:'form-control' }}
+                {{ form.nascita_citta.errors }}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_nascita_provincia">{% trans "nascita_provincia" %}</label>
+                {{ form.nascita_provincia|add_class:'form-control' }}
+                {{ form.nascita_provincia.errors }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_codice_fiscale">{% trans "Codice Fiscale" %}</label>
+                {{ form.codice_fiscale|add_class:'form-control' }}
+                {{ form.codice_fiscale.errors }}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_codice_paghe">{% trans "Codice Paghe" %}</label>
+                {{ form.codice_paghe|add_class:'form-control' }}
+                {{ form.codice_paghe.errors }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <div class="form-check mt-4">
+                    {{ form.categoria_protetta|add_class:'form-check-input' }}
+                    <label class="form-check-label" for="id_categoria_protetta">{% trans "Categoria Protetta" %}</label>
+                </div>
+                {{ form.categoria_protetta.errors }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="oh-card oh-card--border employee-form-section">
+    <div class="employee-form-section__header">
+        <h5 class="fw-bold employee-form-section__title">{% trans "Residenza" %}</h5>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <label class="oh-label" for="id_residenza_country">{% trans "residenza_country" %}</label>
+            <select name="residenza_country" class="w-100 country-dropdown" id="id_residenza_country"
+                data-selected="{{ form.residenza_country.value|default:'Italy' }}">
+            </select>
+            {{ form.residenza_country.errors }}
+        </div>
+        <div class="col-lg-6">
+            <label class="oh-label d-block" for="id_residenza_state">{% trans "residenza_state" %}</label>
+            <select name="residenza_state" class="w-100 country-dropdown" id="id_residenza_state"
+                data-selected="{{ form.residenza_state.value|default:'' }}">
+            </select>
+            {{ form.residenza_state.errors }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_residenza_address">{% trans "residenza_address" %}</label>
+                {{ form.residenza_address }}
+                {{ form.residenza_address.errors }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_residenza_citta">{% trans "residenza_citta" %}</label>
+                {{ form.residenza_citta|add_class:'form-control' }}
+                {{ form.residenza_citta.errors }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_residenza_provincia">{% trans "residenza_provincia" %}</label>
+                <select name="residenza_provincia" id="id_residenza_provincia" class="w-100 country-dropdown"
+                    data-selected="{{ form.residenza_provincia.value|default:'' }}">
+                    {% if form.residenza_provincia.value %}
+                        <option value="{{ form.residenza_provincia.value }}" selected>{{ form.residenza_provincia.value }}</option>
+                    {% endif %}
+                </select>
+                {{ form.residenza_provincia.errors }}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_residenza_zip">{% trans "residenza_zip" %}</label>
+                {{ form.residenza_zip|add_class:'form-control' }}
+                {{ form.residenza_zip.errors }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="oh-card oh-card--border employee-form-section">
+    <div class="employee-form-section__header">
+        <h5 class="fw-bold employee-form-section__title">{% trans "Domicilio" %}</h5>
+        <button type="button" class="oh-btn oh-btn--secondary" id="copy-residenza-to-domicilio">
+            {% trans "Residenza=Domicilio" %}
+        </button>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <label class="oh-label" for="id_domicilio_country">{% trans "domicilio_country" %}</label>
+            <select name="domicilio_country" class="w-100 country-dropdown" id="id_domicilio_country"
+                data-selected="{{ form.domicilio_country.value|default:'Italy' }}">
+            </select>
+            {{ form.domicilio_country.errors }}
+        </div>
+        <div class="col-lg-6">
+            <label class="oh-label d-block" for="id_domicilio_state">{% trans "domicilio_state" %}</label>
+            <select name="domicilio_state" class="w-100 country-dropdown" id="id_domicilio_state"
+                data-selected="{{ form.domicilio_state.value|default:'' }}">
+            </select>
+            {{ form.domicilio_state.errors }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_domicilio_address">{% trans "domicilio_address" %}</label>
+                {{ form.domicilio_address }}
+                {{ form.domicilio_address.errors }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_domicilio_citta">{% trans "domicilio_citta" %}</label>
+                {{ form.domicilio_citta|add_class:'form-control' }}
+                {{ form.domicilio_citta.errors }}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_docimicilio_provincia">{% trans "docimicilio_provincia" %}</label>
+                <select name="docimicilio_provincia" id="id_docimicilio_provincia" class="w-100 country-dropdown"
+                    data-selected="{{ form.docimicilio_provincia.value|default:'' }}">
+                    {% if form.docimicilio_provincia.value %}
+                        <option value="{{ form.docimicilio_provincia.value }}" selected>{{ form.docimicilio_provincia.value }}</option>
+                    {% endif %}
+                </select>
+                {{ form.docimicilio_provincia.errors }}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="oh-input__group">
+                <label class="oh-label" for="id_domicilio_zip">{% trans "domicilio_zip" %}</label>
+                {{ form.domicilio_zip|add_class:'form-control' }}
+                {{ form.domicilio_zip.errors }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    function setFieldValue(targetId, value) {
+        var field = document.getElementById(targetId);
+        if (!field) return;
+        field.value = value || "";
+        field.setAttribute("data-selected", value || "");
+        field.dispatchEvent(new Event("change", { bubbles: true }));
+        if (window.jQuery) {
+            window.jQuery(field).trigger("change");
+        }
+    }
+
+    function copyResidenzaToDomicilio() {
+        var residenzaCountry = document.getElementById("id_residenza_country");
+        var residenzaState = document.getElementById("id_residenza_state");
+        var residenzaProvincia = document.getElementById("id_residenza_provincia");
+        var residenzaAddress = document.getElementById("id_residenza_address");
+        var residenzaZip = document.getElementById("id_residenza_zip");
+        var residenzaCitta = document.getElementById("id_residenza_citta");
+
+        setFieldValue("id_domicilio_country", residenzaCountry ? residenzaCountry.value : "");
+        setTimeout(function () {
+            setFieldValue("id_domicilio_state", residenzaState ? residenzaState.value : "");
+            setFieldValue("id_docimicilio_provincia", residenzaProvincia ? residenzaProvincia.value : "");
+        }, 150);
+        setFieldValue("id_domicilio_address", residenzaAddress ? residenzaAddress.value : "");
+        setFieldValue("id_domicilio_zip", residenzaZip ? residenzaZip.value : "");
+        setFieldValue("id_domicilio_citta", residenzaCitta ? residenzaCitta.value : "");
+    }
+
+    document.addEventListener("click", function (event) {
+        if (event.target && event.target.id === "copy-residenza-to-domicilio") {
+            copyResidenzaToDomicilio();
+        }
+    });
+})();
+</script>
