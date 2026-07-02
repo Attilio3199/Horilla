@@ -68,6 +68,18 @@ def normalize_whitespace(value):
     return MULTISPACE_RE.sub(" ", value.strip())
 
 
+def normalize_text_value(field_name, value):
+    """
+    Normalize whitespace and uppercase text values except email fields.
+    """
+    value = normalize_whitespace(value)
+    if not isinstance(value, str):
+        return value
+    if "email" in (field_name or "").lower():
+        return value
+    return value.upper()
+
+
 class ModelForm(forms.ModelForm):
     """
     Override of Django ModelForm to add initial styling and defaults.
@@ -187,7 +199,7 @@ class ModelForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         for field_name, value in list(cleaned_data.items()):
-            cleaned_data[field_name] = normalize_whitespace(value)
+            cleaned_data[field_name] = normalize_text_value(field_name, value)
         return cleaned_data
 
 

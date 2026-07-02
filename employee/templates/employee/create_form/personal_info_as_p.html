@@ -373,7 +373,20 @@
 
     function normalizeFieldValue(field) {
         if (!field || typeof field.value !== "string") return;
-        field.value = NORMALIZE_SPACES(field.value);
+        var normalizedValue = NORMALIZE_SPACES(field.value);
+        if (shouldUppercaseField(field)) {
+            normalizedValue = normalizedValue.toUpperCase();
+        }
+        field.value = normalizedValue;
+    }
+
+    function shouldUppercaseField(field) {
+        if (!field) return false;
+        var fieldName = ((field.name || "") + " " + (field.id || "")).toLowerCase();
+        if (field.type === "email" || fieldName.indexOf("email") !== -1) {
+            return false;
+        }
+        return field.tagName === "INPUT" || field.tagName === "TEXTAREA";
     }
 
     function isItalianCountry(countryValue) {
