@@ -31,7 +31,8 @@
     .employee-form-section .form-control,
     .employee-form-section .country-dropdown,
     .employee-form-section .oh-select,
-    .employee-form-section .select2-container .select2-selection--single {
+    .employee-form-section .select2-container .select2-selection--single,
+    .employee-form-section select {
         width: 100% !important;
         min-height: 44px;
     }
@@ -48,6 +49,52 @@
     .employee-form-section .select2-container .select2-selection--single {
         display: flex;
         align-items: center;
+        min-height: 44px;
+        border: 1px solid #ced4da;
+    }
+
+    .employee-form-section .select2-container .select2-selection--single .select2-selection__rendered {
+        line-height: 42px;
+        padding-left: 0.75rem;
+    }
+
+    .employee-form-section .select2-container .select2-selection--single .select2-selection__arrow {
+        height: 42px;
+    }
+
+    .employee-city-suggestions {
+        position: relative;
+    }
+
+    .employee-city-suggestions__list {
+        position: absolute;
+        top: calc(100% + 0.25rem);
+        left: 0;
+        right: 0;
+        z-index: 20;
+        display: none;
+        margin: 0;
+        padding: 0.25rem 0;
+        list-style: none;
+        background: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 0.5rem;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        max-height: 220px;
+        overflow-y: auto;
+    }
+
+    .employee-city-suggestions__list.is-visible {
+        display: block;
+    }
+
+    .employee-city-suggestions__item {
+        padding: 0.5rem 0.75rem;
+        cursor: pointer;
+    }
+
+    .employee-city-suggestions__item:hover {
+        background: #f1f5f9;
     }
 </style>
 
@@ -129,8 +176,10 @@
         <div class="col-lg-6">
             <div class="oh-input__group">
                 <label class="oh-label" for="id_nascita_citta">{% trans "nascita_citta" %}</label>
-                {{ form.nascita_citta|add_class:'form-control'|attr:"list:nascita-citta-suggestions" }}
-                <datalist id="nascita-citta-suggestions"></datalist>
+                <div class="employee-city-suggestions">
+                    {{ form.nascita_citta|add_class:'form-control'|attr:"autocomplete:off" }}
+                    <ul id="nascita-citta-suggestions" class="employee-city-suggestions__list"></ul>
+                </div>
                 {{ form.nascita_citta.errors }}
             </div>
         </div>
@@ -204,8 +253,10 @@
         <div class="col-lg-6">
             <div class="oh-input__group">
                 <label class="oh-label" for="id_residenza_citta">{% trans "Città" %}</label>
-                {{ form.residenza_citta|add_class:'form-control'|attr:"list:residenza-citta-suggestions" }}
-                <datalist id="residenza-citta-suggestions"></datalist>
+                <div class="employee-city-suggestions">
+                    {{ form.residenza_citta|add_class:'form-control'|attr:"autocomplete:off" }}
+                    <ul id="residenza-citta-suggestions" class="employee-city-suggestions__list"></ul>
+                </div>
                 {{ form.residenza_citta.errors }}
             </div>
         </div>
@@ -267,8 +318,10 @@
         <div class="col-lg-6">
             <div class="oh-input__group">
                 <label class="oh-label" for="id_domicilio_citta">{% trans "Città" %}</label>
-                {{ form.domicilio_citta|add_class:'form-control'|attr:"list:domicilio-citta-suggestions" }}
-                <datalist id="domicilio-citta-suggestions"></datalist>
+                <div class="employee-city-suggestions">
+                    {{ form.domicilio_citta|add_class:'form-control'|attr:"autocomplete:off" }}
+                    <ul id="domicilio-citta-suggestions" class="employee-city-suggestions__list"></ul>
+                </div>
                 {{ form.domicilio_citta.errors }}
             </div>
         </div>
@@ -427,8 +480,9 @@
 
         normalizeFieldValue(cityField);
         var term = NORMALIZE_SPACES(cityField.value || "");
-        if (term.length < 2) {
+        if (term.length < 1) {
             listEl.innerHTML = "";
+            listEl.classList.remove("is-visible");
             return;
         }
 
@@ -461,13 +515,15 @@
                     cityName = NORMALIZE_SPACES(cityName);
                     if (!cityName || seen[cityName.toLowerCase()]) return;
                     seen[cityName.toLowerCase()] = true;
-                    options.push('<option value="' + cityName.replace(/"/g, "&quot;") + '"></option>');
+                    options.push('<li class="employee-city-suggestions__item" data-city-value="' + cityName.replace(/"/g, "&quot;") + '">' + cityName + '</li>');
                 });
 
                 listEl.innerHTML = options.join("");
+                listEl.classList.toggle("is-visible", options.length > 0);
             })
             .catch(function () {
                 listEl.innerHTML = "";
+                listEl.classList.remove("is-visible");
             });
     }
 
@@ -480,6 +536,10 @@
         if (!addressField || !cityField || !zipField) return;
 
         [addressField, cityField].forEach(function (field) {
+            field.addEventListener("input", function () {
+                normalizeFieldValue(field);
+                scheduleZipLookup(config);
+            });
             field.addEventListener("blur", function () {
                 normalizeFieldValue(field);
                 scheduleZipLookup(config);
@@ -516,6 +576,14 @@
         });
         cityField.addEventListener("change", function () {
             normalizeFieldValue(cityField);
+        });
+        cityField.addEventListener("blur", function () {
+            window.setTimeout(function () {
+                var listEl = document.getElementById(config.listId);
+                if (listEl) {
+                    listEl.classList.remove("is-visible");
+                }
+            }, 200);
         });
 
         if (countryField) {
@@ -572,6 +640,31 @@
         if (event.target && event.target.tagName === "FORM") {
             normalizeFormFields();
         }
+    });
+
+    document.addEventListener("click", function (event) {
+        var suggestion = event.target.closest(".employee-city-suggestions__item");
+        if (suggestion) {
+            var cityValue = suggestion.getAttribute("data-city-value") || "";
+            var listEl = suggestion.closest(".employee-city-suggestions__list");
+            if (!listEl) return;
+            var wrapper = listEl.closest(".employee-city-suggestions");
+            var input = wrapper ? wrapper.querySelector("input") : null;
+            if (input) {
+                input.value = cityValue;
+                input.dispatchEvent(new Event("input", { bubbles: true }));
+                input.dispatchEvent(new Event("change", { bubbles: true }));
+                input.dispatchEvent(new Event("blur", { bubbles: true }));
+            }
+            listEl.classList.remove("is-visible");
+            return;
+        }
+
+        document.querySelectorAll(".employee-city-suggestions__list").forEach(function (listEl) {
+            if (!listEl.contains(event.target)) {
+                listEl.classList.remove("is-visible");
+            }
+        });
     });
 
     initializeZipAutofill({

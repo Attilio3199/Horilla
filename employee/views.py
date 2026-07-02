@@ -27,7 +27,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import models
+from django.db import models, transaction
 from django.db.models import F, ProtectedError
 from django.db.models.query import QuerySet
 from django.forms import DateInput, Select
@@ -2232,25 +2232,34 @@ def employee_create_update_personal_info(request, obj_id=None):
     """
     employee = Employee.objects.filter(id=obj_id).first()
     form = EmployeeForm(request.POST, request.FILES, instance=employee)
+    work_form = EmployeeWorkInformationForm(request.POST or None)
+    if obj_id is not None:
+        work_form = EmployeeWorkInformationForm(
+            request.POST or None,
+            instance=EmployeeWorkInformation.objects.filter(employee_id=employee).first(),
+        )
     if form.is_valid():
-        form.save()
+        if obj_id is None and not work_form.is_valid():
+            return render(
+                request,
+                "employee/create_form/form_view.html",
+                {"form": form, "work_form": work_form},
+            )
         if obj_id is None:
+            with transaction.atomic():
+                form.save()
+                employee = form.instance
+                work_instance = work_form.save(commit=False)
+                work_instance.employee_id = employee
+                work_instance.save()
+                if "tags" in work_form.cleaned_data:
+                    work_instance.tags.set(request.POST.getlist("tags"))
             messages.success(request, _("New Employee Added."))
             form = EmployeeForm(request.POST, instance=form.instance)
-            work_form = EmployeeWorkInformationForm(
-                instance=EmployeeWorkInformation.objects.filter(
-                    employee_id=employee
-                ).first()
-            )
-            bank_form = EmployeeBankDetailsForm(
-                instance=EmployeeBankDetails.objects.filter(
-                    employee_id=employee
-                ).first()
-            )
             return redirect(
-                f"employee-view-update/{form.instance.id}/",
-                data={"form": form, "work_form": work_form, "bank_form": bank_form},
+                f"employee-view-update/{form.instance.id}/"
             )
+        form.save()
         return HttpResponse(
             """
                 <div class="oh-alert-container">
@@ -2267,6 +2276,7 @@ def employee_create_update_personal_info(request, obj_id=None):
             "employee/create_form/form_view.html",
             {
                 "form": form,
+                "work_form": work_form,
             },
         )
     errors = "\n".join(
