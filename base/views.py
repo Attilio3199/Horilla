@@ -7581,4 +7581,31 @@ def protected_media(request, path):
             )
             return redirect("login")
 
-    return FileResponse(open(media_path, "rb"))
+    import mimetypes
+
+    filename = os.path.basename(media_path)
+    mime_type, _ = mimetypes.guess_type(media_path)
+    if not mime_type:
+        mime_type = "application/octet-stream"
+
+    # Types that browsers will render as active content — force download so
+    # uploaded files can never execute scripts in the application's origin.
+    FORCE_DOWNLOAD_TYPES = {
+        "text/html",
+        "application/xhtml+xml",
+        "image/svg+xml",
+        "text/xml",
+        "application/xml",
+        "application/javascript",
+        "text/javascript",
+    }
+
+    response = FileResponse(open(media_path, "rb"), content_type=mime_type)
+    response["X-Content-Type-Options"] = "nosniff"
+
+    if mime_type in FORCE_DOWNLOAD_TYPES or mime_type == "application/octet-stream":
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    else:
+        response["Content-Disposition"] = f'inline; filename="{filename}"'
+
+    return response
