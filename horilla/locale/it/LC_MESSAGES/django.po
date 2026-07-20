@@ -33,7 +33,7 @@ msgid "Exclude Employees"
 msgstr "Escludi Dipendenti"
 
 msgid "Job Position"
-msgstr "Posizione Lavoro"
+msgstr "Posizione Di Lavoro"
 
 msgid "Department"
 msgstr "Dipartimento"
@@ -72,7 +72,7 @@ msgid "Actions"
 msgstr "Azioni"
 
 msgid "You won't be able to revert this!"
-msgstr "Non sarai in grado di ripristinare questo!"
+msgstr "Non sarai in grado di ripristinarlo!"
 
 msgid "Yes"
 msgstr "Sì"
@@ -81,7 +81,7 @@ msgid "Clear it"
 msgstr "Puliscilo"
 
 msgid "Clear Filter"
-msgstr "Pulisci Filtro"
+msgstr "Rimuovi Filtro"
 
 msgid "Restrict All"
 msgstr "Limita Tutti"
@@ -102,22 +102,22 @@ msgid "All filter cleared"
 msgstr "Tutti i filtri cancellati"
 
 msgid "---Choose Batch No.---"
-msgstr "---Scegli Batch No.---"
+msgstr "---Scegli Lotto No.---"
 
 msgid "Create new batch number"
 msgstr "Crea nuovo numero di lotto"
 
 msgid "Assign Condition Images"
-msgstr "Assegna Immagini Condizione"
+msgstr "Assegna immagini delle condizioni"
 
 msgid "on returns the laptop. However, it has suffered minor damage."
-msgstr "su restituisce il computer portatile. Tuttavia, ha subito danni minori."
+msgstr "restituisce il laptop. Tuttavia, ha subito danni minori."
 
 msgid "Return Condition Images"
-msgstr "Condizioni Di Reso Immagini"
+msgstr "Immagini delle condizioni di reso"
 
 msgid "Return date cannot be in the future."
-msgstr "La data di ritorno non può essere in futuro."
+msgstr "La data di reso non può essere nel futuro."
 
 msgid "Name"
 msgstr "Nome"
@@ -126,40 +126,40 @@ msgid "Description"
 msgstr "Descrizione"
 
 msgid "Asset Category"
-msgstr "Categoria Asset"
+msgstr "Categoria asset"
 
 msgid "Asset Categories"
-msgstr "Categorie Di Asset"
+msgstr "Categorie asset"
 
 msgid "Batch Number"
-msgstr "Numero Del Lotto"
+msgstr "Numero di lotto"
 
 msgid "Asset Batch"
-msgstr "Gruppo Asset"
+msgstr "Lotto asset"
 
 msgid "Asset Batches"
-msgstr "Lotti Asset"
+msgstr "Lotti asset"
 
 msgid "In Use"
-msgstr "In Uso"
+msgstr "In uso"
 
 msgid "Available"
 msgstr "Disponibile"
 
 msgid "Not-Available"
-msgstr "Non Disponibile"
+msgstr "Non disponibile"
 
 msgid "Asset Name"
-msgstr "Nome Asset"
+msgstr "Nome asset"
 
 msgid "Current User"
-msgstr "Utente Attuale"
+msgstr "Utente attuale"
 
 msgid "Tracking Id"
-msgstr "Id Di Monitoraggio"
+msgstr "ID di tracciamento"
 
 msgid "Purchase Date"
-msgstr "Data Di Acquisto"
+msgstr "Data di acquisto"
 
 msgid "Cost"
 msgstr "Costo"
@@ -171,13 +171,13 @@ msgid "Status"
 msgstr "Stato"
 
 msgid "Batch No"
-msgstr "Numero Del Gruppo"
+msgstr "N. lotto"
 
 msgid "Expiry Date"
-msgstr "Expiry Date"
+msgstr "Data di scadenza"
 
 msgid "Notify Before (days)"
-msgstr "Notifica Prima (Giorni)"
+msgstr "Notifica prima (giorni)"
 
 msgid "Asset"
 msgstr "Asset"
@@ -189,40 +189,40 @@ msgid "An asset with this tracking ID already exists."
 msgstr "Esiste già un asset con questo ID di tracciamento."
 
 msgid "Asset Document"
-msgstr "Documento Asset"
+msgstr "Documento asset"
 
 msgid "Asset Documents"
-msgstr "Documenti Asset"
+msgstr "Documenti asset"
 
 msgid "Minor damage"
 msgstr "Danno minore"
 
 msgid "Major damage"
-msgstr "Danni gravi"
+msgstr "Danno grave"
 
 msgid "Healthy"
-msgstr "Sano"
+msgstr "In buono stato"
 
 msgid "Assigned To"
-msgstr "Assegnato A"
+msgstr "Assegnato a"
 
 msgid "Assigned By"
-msgstr "Assegnato Da"
+msgstr "Assegnato da"
 
 msgid "Return Date"
-msgstr "Data Di Reso"
+msgstr "Data di reso"
 
 msgid "Return Condition"
-msgstr "Condizione Ritorno"
+msgstr "Condizione al reso"
 
 msgid "Return Status"
-msgstr "Stato Reso"
+msgstr "Stato del reso"
 
 msgid "Asset Allocation"
-msgstr "Assegnazione Risorse"
+msgstr "Assegnazione asset"
 
 msgid "Asset Allocations"
-msgstr "Asset Allocations"
+msgstr "Assegnazioni asset"
 
 msgid "Requested"
 msgstr "Richiesto"
@@ -231,28 +231,28 @@ msgid "Approved"
 msgstr "Approvato"
 
 msgid "Rejected"
-msgstr "Respinto"
+msgstr "Rifiutato"
 
 msgid "Requesting User"
-msgstr "Utente Richiesta"
+msgstr "Utente richiedente"
 
 msgid "Asset Request"
-msgstr "Richiesta Asset"
+msgstr "Richiesta asset"
 
 msgid "Asset Requests"
-msgstr "Richieste Asset"
+msgstr "Richieste asset"
 
 msgid "Dashboard"
 msgstr "Dashboard"
 
 msgid "Asset View"
-msgstr "Vista Asset"
+msgstr "Vista asset"
 
 msgid "Request and Allocation"
 msgstr "Richiesta e assegnazione"
 
 msgid "Asset History"
-msgstr "Cronologia Risorse"
+msgstr "Cronologia asset"
 
 msgid "Create"
 msgstr "Crea"
@@ -261,7 +261,7 @@ msgid "Save"
 msgstr "Salva"
 
 msgid "Import Assets"
-msgstr "Importa Risorse"
+msgstr "Importa asset"
 
 msgid "Upload a File"
 msgstr "Carica un file"
@@ -270,16 +270,16 @@ msgid "Drag and drop files here"
 msgstr "Trascina qui i file"
 
 msgid "Download Template"
-msgstr "Scarica Modello"
+msgstr "Scarica modello"
 
 msgid "Upload"
 msgstr "Carica"
 
 msgid "by "
-msgstr "di "
+msgstr "da "
 
 msgid "Reports"
-msgstr "Relazioni"
+msgstr "Report"
 
 msgid "Edit"
 msgstr "Modifica"
@@ -294,10 +294,10 @@ msgid "Update"
 msgstr "Aggiorna"
 
 msgid "Duplicate"
-msgstr "Duplicate"
+msgstr "Duplica"
 
 msgid "Asset Report"
-msgstr "Rapporto Risorse"
+msgstr "Report asset"
 
 msgid "Page"
 msgstr "Pagina"
@@ -318,7 +318,7 @@ msgid "Last"
 msgstr "Ultimo"
 
 msgid "Add Asset Report"
-msgstr "Aggiungi Rapporto Risorse"
+msgstr "Aggiungi report asset"
 
 msgid "Title"
 msgstr "Titolo"
@@ -327,13 +327,13 @@ msgid "File"
 msgstr "File"
 
 msgid "Asset Return Form"
-msgstr "Modulo Restituzione Risorse"
+msgstr "Modulo di reso asset"
 
 msgid "Add Report"
-msgstr "Aggiungi Report"
+msgstr "Aggiungi report"
 
 msgid "Add Fine"
-msgstr "Aggiungi Fine"
+msgstr "Aggiungi sanzione"
 
 msgid "Report added successfully."
 msgstr "Report aggiunto con successo."
@@ -348,157 +348,43 @@ msgid "Asset request"
 msgstr "Richiesta asset"
 
 msgid "Assets in use"
-msgstr "Attività in uso"
+msgstr "Asset in uso"
 
 msgid "Asset Chart"
-msgstr "Grafico Risorse"
+msgstr "Grafico asset"
 
 msgid "Asset Requests To Approve"
-msgstr "Richieste Di Asset Per Approvare"
+msgstr "Richieste asset da approvare"
 
 msgid "Assets In Use"
-msgstr "Attività In Uso"
+msgstr "Asset in uso"
 
 msgid "Allocated Assets"
-msgstr "Attività Assegnate"
+msgstr "Asset assegnati"
 
 msgid "Allocated User"
-msgstr "Utente Assegnato"
+msgstr "Utente assegnatario"
 
 msgid "Assigned Date"
-msgstr "Data Assegnata"
+msgstr "Data di assegnazione"
 
 msgid "No Records found."
 msgstr "Nessun record trovato."
 
 msgid "There is no asset allocation at this moment."
-msgstr "Al momento non esiste alcuna allocazione di risorse."
+msgstr "Al momento non è presente alcuna assegnazione di asset."
 
 msgid "Request User"
-msgstr "Richiedi Utente"
+msgstr "Utente richiedente"
 
 msgid "Request Date"
-msgstr "Data Richiesta"
+msgstr "Data della richiesta"
 
 msgid "Do you want to reject this request?"
-msgstr "Vuoi respingere questa richiesta?"
+msgstr "Vuoi rifiutare questa richiesta?"
 
 msgid "No records available at the moment."
-msgstr "Nessun record disponibile al momento."
-
-msgid "Asset Allocated Date"
-msgstr "Data Asset Allocated"
-
-msgid "Allocated By"
-msgstr "Allocato Da"
-
-msgid "Advanced"
-msgstr "Avanzate"
-
-msgid "Return Date Greater Or Equal"
-msgstr "Data Di Ritorno Maggiore O Uguale"
-
-msgid "Assign Date Greater Or Equal"
-msgstr "Assegna Data Maggiore O Uguale"
-
-msgid "Return Date lesser Or Equal"
-msgstr "Data di reso minore o uguale"
-
-msgid "Assign Date Lesser Or Equal"
-msgstr "Assegna Data Minore O Uguale"
-
-msgid "Filter"
-msgstr "Filtro"
-
-msgid "Returned date"
-msgstr "Data restituita"
-
-msgid "Returned Date"
-msgstr "Data Ritorno"
-
-msgid "No asset history available."
-msgstr "Nessuna cronologia degli asset disponibile."
-
-msgid "Search"
-msgstr "Cerca"
-
-msgid "Group By"
-msgstr "Raggruppa Per"
-
-msgid "Field"
-msgstr "Campo"
-
-msgid "Asset Details"
-msgstr "Dettagli Asset"
-
-msgid "Returned Status"
-msgstr "Stato Restituito"
-
-msgid "Allocated Date"
-msgstr "Data Assegnata"
-
-msgid "Return Description"
-msgstr "Descrizione Reso"
-
-msgid "Selected Assets"
-msgstr "Risorse Selezionate"
-
-msgid "Asset Batch Number"
-msgstr "Numero Gruppo Asset"
-
-msgid "No Asset Batches have been created."
-msgstr "Nessun lotto di asset è stato creato."
-
-msgid "Do you want to delete this batch number ?"
-msgstr "Vuoi eliminare questo numero di lotto?"
-
-msgid "Do you want to delete this category?"
-msgstr "Vuoi eliminare questa categoria?"
-
-msgid "Search in :Asset"
-msgstr "Cerca in :Asset"
-
-msgid "Search in :Asset Category"
-msgstr "Cerca nella categoria :Asset"
-
-msgid "Category Name"
-msgstr "Nome Categoria"
-
-msgid "Purchase Cost"
-msgstr "Costo Acquisto"
-
-msgid "Do you want to download template ?"
-msgstr "Vuoi scaricare il template ?"
-
-msgid "Import"
-msgstr "Importa"
-
-msgid "Export"
-msgstr "Esporta"
-
-msgid "No Asset Categories or Assets have been created."
-msgstr "Nessuna categoria di beni o attività è stata creata."
-
-msgid "Export Assets"
-msgstr "Esporta Risorse"
-
-msgid "Purchased Date"
-msgstr "Data Acquistata"
-
-msgid "Return"
-msgstr "Ritorno"
-
-msgid "Requested to return"
-msgstr "Richiesto il ritorno"
-
-msgid "Are you sure you want to return this asset?"
-msgstr "Sei sicuro di voler restituire questo asset?"
-
-msgid "Return Request"
-msgstr "Richiesta Di Reso"
-
-msgid "No assets have been assigned to you."
-msgstr "Nessun asset è stato assegnato a te."
+msgstr "Nessun record disponibile
 
 msgid "Confirmation"
 msgstr "Conferma"
@@ -615,16 +501,16 @@ msgid "Return request for {} initiated."
 msgstr "Richiesta di reso per {} iniziata."
 
 msgid "Asset Return Successful !."
-msgstr "Ritorno Risorse Riuscito!."
+msgstr "Reso dell'asset completato con successo!"
 
 msgid "Asset Return Successful!."
-msgstr "Ritorno Risorse Riuscito!."
+msgstr "Reso dell'asset completato con successo!"
 
 msgid "Successfully imported Assets"
 msgstr "Asset importati con successo"
 
 msgid "File Error"
-msgstr "Errore File"
+msgstr "Errore del file"
 
 msgid "There are no assets to export."
 msgstr "Non ci sono asset da esportare."
@@ -636,28 +522,28 @@ msgid "This batch number is already in-use"
 msgstr "Questo numero di lotto è già in uso"
 
 msgid "Batch updated successfully."
-msgstr "Gruppo aggiornato con successo."
+msgstr "Lotto aggiornato con successo."
 
 msgid "Batch number in-use"
-msgstr "Numero del lotto in uso"
+msgstr "Numero di lotto in uso"
 
 msgid "Batch number deleted"
 msgstr "Numero di lotto eliminato"
 
 msgid "Batch number not found"
-msgstr "Numero del lotto non trovato"
+msgstr "Numero di lotto non trovato"
 
 msgid "You cannot delete this Batch number."
-msgstr "Non puoi eliminare questo numero di lotto."
+msgstr "Non è possibile eliminare questo numero di lotto."
 
 msgid "asset"
 msgstr "asset"
 
 msgid "Oops!! No Asset found..."
-msgstr "Oops!! Nessun Asset trovato..."
+msgstr "Oops!! Nessun asset trovato..."
 
 msgid "assets in use"
-msgstr "attività in uso"
+msgstr "asset in uso"
 
 msgid "January"
 msgstr "Gennaio"
@@ -702,7 +588,7 @@ msgid "This field is required"
 msgstr "Questo campo è obbligatorio"
 
 msgid "Employee not chosen"
-msgstr "Dipendente non scelto"
+msgstr "Dipendente non selezionato"
 
 msgid "Month"
 msgstr "Mese"
@@ -711,238 +597,238 @@ msgid "Year"
 msgstr "Anno"
 
 msgid "Worked Hours"
-msgstr "Ore Lavorate"
+msgstr "Ore lavorate"
 
 msgid "Pending Hours"
-msgstr "Ore In Attesa"
+msgstr "Ore in attesa"
 
 msgid "Overtime"
-msgstr "straordinari"
+msgstr "Straordinari"
 
 msgid "<span title='Do not Auto Validate Attendance if an Employee Works More Than this Amount of Duration'>{}</span>"
-msgstr "<span title='Do not Auto Validate Attendance if an Employee Works More Than this Amount of Duration'>{}</span>"
+msgstr "<span title='Non convalidare automaticamente la presenza se un dipendente lavora più di questa durata'>{}</span>"
 
 msgid "Worked Hours(At Work) Auto Approve Till"
-msgstr "Ore Di Lavoro (Al Lavoro) Auto Approva Fino A"
+msgstr "Approvazione automatica ore lavorate fino a"
 
 msgid "Minimum Hour to Approve Overtime"
-msgstr "Ora minima per approvare gli straordinari"
+msgstr "Ore minime per approvare lo straordinario"
 
 msgid "Maximum Allowed Overtime Per Day"
-msgstr "Eccessi Massimi Consentiti Al Giorno"
+msgstr "Massimo straordinario giornaliero consentito"
 
 msgid "Create Bulk"
-msgstr "Crea Bulk"
+msgstr "Creazione multipla"
 
 msgid "Employee work info not found"
-msgstr "Informazioni sul lavoro del dipendente non trovate"
+msgstr "Informazioni lavorative del dipendente non trovate"
 
 msgid "Allcocate this grace time for Check-In Attendance"
-msgstr "Allcocate questo tempo di grazia per la presenza di Check-in"
+msgstr "Alloca questo periodo di tolleranza per il check-in delle presenze"
 
 msgid "Assign Shifts"
-msgstr "Assegna I Maiuscoli"
+msgstr "Assegna turni"
 
 msgid "From Date"
-msgstr "Dalla Data"
+msgstr "Dalla data"
 
 msgid "To Date"
-msgstr "A Data"
+msgstr "Alla data"
 
 msgid "To date should be after from date"
-msgstr "Ad oggi dovrebbe essere dopo la data"
+msgstr "La data finale deve essere successiva alla data iniziale"
 
 msgid "There is no valid date to create attendance request between this date range"
-msgstr "Non c'è una data valida per creare una richiesta di partecipazione tra questo intervallo di date"
+msgstr "Non ci sono date valide per creare una richiesta di presenza in questo intervallo di date"
 
 msgid "Create attendance batch"
-msgstr "Crea gruppo di presenze"
+msgstr "Crea lotto presenze"
 
 msgid "Update attendance batch"
-msgstr "Aggiorna gruppo di presenze"
+msgstr "Aggiorna lotto presenze"
 
 msgid "Invalid format, it should be HH:MM:SS format"
-msgstr "Formato non valido, dovrebbe essere formato HH:MM:SS"
+msgstr "Formato non valido, deve essere nel formato HH:MM:SS"
 
 msgid "Invalid format, it should be HH:MM format"
-msgstr "Formato non valido, dovrebbe essere formato HH:MM"
+msgstr "Formato non valido, deve essere nel formato HH:MM"
 
 msgid "Invalid time"
-msgstr "Ora non valida"
+msgstr "Orario non valido"
 
 msgid "Invalid time, excepted MM:SS"
-msgstr "Tempo non valido, escluso MM:SS"
+msgstr "Orario non valido, previsto MM:SS"
 
 msgid "Invalid format"
 msgstr "Formato non valido"
 
 msgid "Check date format."
-msgstr "Formato della data di controllo."
+msgstr "Verificare il formato della data."
 
 msgid "You cannot choose a future date."
-msgstr "Non puoi scegliere una data futura."
+msgstr "Non è possibile selezionare una data futura."
 
 msgid "Invalid format, it should be MM:SS format"
-msgstr "Formato non valido, dovrebbe essere formato MM:SS"
+msgstr "Formato non valido, deve essere nel formato MM:SS"
 
 msgid "Invalid format,  excepted MM:SS"
-msgstr "Formato non valido, tranne MM:SS"
+msgstr "Formato non valido, previsto MM:SS"
 
 msgid "Attendance Date"
-msgstr "Data Di Partecipazione"
+msgstr "Data di presenza"
 
 msgid "Shift Day"
-msgstr "Giorno Maiusc"
+msgstr "Giorno del turno"
 
 msgid "In Date"
-msgstr "In Data"
+msgstr "Data di ingresso"
 
 msgid "Check In"
-msgstr "Check In"
+msgstr "Check-in"
 
 msgid "Out Date"
-msgstr "Data Di Uscita"
+msgstr "Data di uscita"
 
 msgid "Check Out"
-msgstr "Check Out"
+msgstr "Check-out"
 
 msgid "Create Request"
-msgstr "Crea Richiesta"
+msgstr "Crea richiesta"
 
 msgid "Update Request"
-msgstr "Aggiorna Richiesta"
+msgstr "Aggiorna richiesta"
 
 msgid "Re-validate Request"
-msgstr "Ri-Valuta Richiesta"
+msgstr "Riconvalida richiesta"
 
 msgid "Attendance date"
-msgstr "Data di partecipazione"
+msgstr "Data di presenza"
 
 msgid "Attendance day"
-msgstr "Giorno di partecipazione"
+msgstr "Giorno di presenza"
 
 msgid "Check-In Date"
-msgstr "Data Di Arrivo"
+msgstr "Data check-in"
 
 msgid "Check-In"
-msgstr "Check-In"
+msgstr "Check-in"
 
 msgid "First Check-In Time"
-msgstr "Primo Tempo Di Arrivo"
+msgstr "Orario del primo check-in"
 
 msgid "Check-Out Date"
-msgstr "Data Di Partenza"
+msgstr "Data check-out"
 
 msgid "Check-Out"
-msgstr "Check-Out"
+msgstr "Check-out"
 
 msgid "Last Check-Out Time"
-msgstr "Ultimo Tempo Di Partenza"
+msgstr "Orario dell'ultimo check-out"
 
 msgid "Minimum hour"
-msgstr "Ora minima"
+msgstr "Ore minime"
 
 msgid "Batch Attendance"
-msgstr "Partecipazione Al Gruppo"
+msgstr "Presenze per lotto"
 
 msgid "Overtime Approve"
-msgstr "Ultime Approva"
+msgstr "Approvazione straordinari"
 
 msgid "Attendance Validate"
-msgstr "Attendance Validate"
+msgstr "Convalida presenza"
 
 msgid "Overtime In Second"
-msgstr "straordinari Nel Secondo"
+msgstr "Straordinari in secondi"
 
 msgid "Is validate request"
-msgstr "È richiesta di convalida"
+msgstr "È una richiesta di convalida"
 
 msgid "Is validate request approved"
-msgstr "È approvata la richiesta di convalida"
+msgstr "La richiesta di convalida è approvata"
 
 msgid "Attendance"
-msgstr "Partecipazione"
+msgstr "Presenza"
 
 msgid "Attendances"
-msgstr "Partecipazioni"
+msgstr "Presenze"
 
 msgid "Comment"
 msgstr "Commento"
 
 msgid "Overtime Hours"
-msgstr "Ore Di Eccedenza"
+msgstr "Ore di straordinario"
 
 msgid "Worked Seconds"
-msgstr "Secondi Lavorati"
+msgstr "Secondi lavorati"
 
 msgid "Pending Seconds"
-msgstr "Secondi In Attesa"
+msgstr "Secondi in attesa"
 
 msgid "Overtime Seconds"
-msgstr "Secondi straordinari"
+msgstr "Secondi di straordinario"
 
 msgid "Hour Account"
-msgstr "Account Ora"
+msgstr "Conto ore"
 
 msgid "Hour Accounts"
-msgstr "Account Ora"
+msgstr "Conti ore"
 
 msgid "Year must be an integer value between 1900 and 2100"
-msgstr "L'anno deve essere un valore intero tra 1900 e 2100"
+msgstr "L'anno deve essere un valore intero compreso tra 1900 e 2100"
 
 msgid "Late Come"
-msgstr "Tardo Vieni"
+msgstr "Ingresso in ritardo"
 
 msgid "Early Out"
-msgstr "Early Out"
+msgstr "Uscita anticipata"
 
 msgid "Type"
 msgstr "Tipo"
 
 msgid "Worked Hours Auto Approve Till"
-msgstr "Ore Lavorate Auto Approva Fino A"
+msgstr "Approvazione automatica ore lavorate fino a"
 
 msgid "Auto Approve OT"
-msgstr "Auto Approva OT"
+msgstr "Approvazione automatica straordinari"
 
 msgid "You cannot add more conditions."
-msgstr "Non puoi aggiungere altre condizioni."
+msgstr "Non è possibile aggiungere ulteriori condizioni."
 
 msgid "Allowed Time"
-msgstr "Tempo Consentito"
+msgstr "Orario consentito"
 
 msgid "Allowed Clock-In"
-msgstr "Orologio Consentito"
+msgstr "Ingresso consentito"
 
 msgid "Allcocate this grace time for Check-Out Attendance"
-msgstr "Allcocate questo tempo di grazia per la partecipazione Check-Out"
+msgstr "Alloca questo periodo di tolleranza per il check-out delle presenze"
 
 msgid "Allowed Clock-Out"
-msgstr "Orologio Consentito"
+msgstr "Uscita consentita"
 
 msgid "There is already a default grace time that exists."
-msgstr "C'è già un tempo di grazia predefinito che esiste."
+msgstr "Esiste già un tempo di tolleranza predefinito."
 
 msgid "There is already an existing grace time with this allowed time."
-msgstr "C'è già un tempo di grazia esistente con questo tempo permesso."
+msgstr "Esiste già un tempo di tolleranza per questo orario consentito."
 
 msgid "Enable Check in/Check out"
-msgstr "Abilita check in/check out"
+msgstr "Abilita Check-in/Check-out"
 
 msgid "Enabling this feature allows employees to record their attendance using the Check-In/Check-Out button."
-msgstr "L'attivazione di questa funzione consente ai dipendenti di registrare la loro presenza utilizzando il pulsante Check-In/Check-out."
+msgstr "L'abilitazione di questa funzione consente ai dipendenti di registrare la presenza tramite il pulsante Check-In/Check-Out."
 
 msgid "Present"
 msgstr "Presente"
 
 msgid "Half Day Present"
-msgstr "Regalo Di Mezza Giornata"
+msgstr "Presente mezza giornata"
 
 msgid "Absent"
 msgstr "Assente"
 
 msgid "Holiday/Company Leave"
-msgstr "Congedo Vacanza/Azienda"
+msgstr "Festività/Ferie aziendali"
 
 msgid "Conflict"
 msgstr "Conflitto"
@@ -954,52 +840,52 @@ msgid "Day percentage must be between 0.0 and 1.0"
 msgstr "La percentuale del giorno deve essere compresa tra 0.0 e 1.0"
 
 msgid "Work Record"
-msgstr "Record Lavoro"
+msgstr "Registro di lavoro"
 
 msgid "Work Records"
-msgstr "Record Di Lavoro"
+msgstr "Registri di lavoro"
 
 msgid "Attendance Requests"
-msgstr "Richieste Di Partecipazione"
+msgstr "Richieste di presenza"
 
 msgid "Attendance Activities"
-msgstr "Attività Di Partecipazione"
+msgstr "Attività di presenza"
 
 msgid "Late Come Early Out"
-msgstr "Tardo Vieni All'Uscita"
+msgstr "Ingresso in ritardo / Uscita anticipata"
 
 msgid "My Attendances"
-msgstr "Le Mie Partecipazioni"
+msgstr "Le mie presenze"
 
 msgid "Validate the attendance"
-msgstr "Validare la presenza"
+msgstr "Convalida la presenza"
 
 msgid "Incomplete minimum hour"
-msgstr "Ora minima incompleta"
+msgstr "Ore minime non raggiunte"
 
 msgid "Incomplete half minimum hour"
-msgstr "Metà ora minima incompleta"
+msgstr "Metà delle ore minime non raggiunta"
 
 msgid "Half day leave"
-msgstr "Congedo di mezza giornata"
+msgstr "Permesso di mezza giornata"
 
 msgid "An approved leave exists"
-msgstr "Esiste un congedo approvato"
+msgstr "Esiste già un congedo approvato"
 
 msgid "Currently working"
-msgstr "Attualmente in funzione"
+msgstr "Attualmente al lavoro"
 
 msgid "Activities"
 msgstr "Attività"
 
 msgid "Clock In"
-msgstr "Orologio In Arrivo"
+msgstr "Ingresso (Clock-In)"
 
 msgid "Clock Out"
-msgstr "Orologio Fuori"
+msgstr "Uscita (Clock-Out)"
 
 msgid "Add to batch"
-msgstr "Aggiungi al gruppo"
+msgstr "Aggiungi al lotto"
 
 msgid "Batch"
 msgstr "Lotto"
@@ -1008,82 +894,82 @@ msgid "Dynamic create"
 msgstr "Creazione dinamica"
 
 msgid "Add Attendances"
-msgstr "Aggiungi Partecipazioni"
+msgstr "Aggiungi presenze"
 
 msgid "Import Attendances"
-msgstr "Importa Partecipazioni"
+msgstr "Importa presenze"
 
 msgid "Uploading..."
-msgstr "Caricamento..."
+msgstr "Caricamento in corso..."
 
 msgid "There are no attendance records to display."
-msgstr "Non ci sono record di presenze da visualizzare."
+msgstr "Non ci sono record di presenza da visualizzare."
 
 msgid "Work Info"
-msgstr "Informazioni Lavoro"
+msgstr "Informazioni di lavoro"
 
 msgid "Reporting Manager"
-msgstr "Gestore Segnalazioni"
+msgstr "Manager di riferimento"
 
 msgid "Work Location"
-msgstr "Posizione Lavoro"
+msgstr "Luogo di lavoro"
 
 msgid "In Time"
-msgstr "In Tempo"
+msgstr "Orario di ingresso"
 
 msgid "Validated?"
 msgstr "Convalidato?"
 
 msgid "Min Hour"
-msgstr "Ora Minima"
+msgstr "Ore min."
 
 msgid "Out Time"
-msgstr "Tempo Di Uscita"
+msgstr "Orario di uscita"
 
 msgid "OT Approved?"
-msgstr "OT Approvato?"
+msgstr "Straordinario approvato?"
 
 msgid "Attendance From"
-msgstr "Partecipazione Da"
+msgstr "Presenze da"
 
 msgid "In From"
-msgstr "In Da"
+msgstr "Ingresso da"
 
 msgid "Out From"
-msgstr "Uscita Da"
+msgstr "Uscita da"
 
 msgid "At Work Greater or Equal"
-msgstr "Al lavoro maggiore o uguale"
+msgstr "Tempo al lavoro maggiore o uguale"
 
 msgid "Pending Hour Greater or Equal"
-msgstr "Ora in sospeso maggiore o uguale"
+msgstr "Ore in sospeso maggiore o uguale"
 
 msgid "OT Greater or Equal"
-msgstr "OT Maggiore o uguale"
+msgstr "Straordinario maggiore o uguale"
 
 msgid "Attendance Till"
-msgstr "Attendance Till"
+msgstr "Presenze fino a"
 
 msgid "In Till"
-msgstr "In Till"
+msgstr "Ingresso fino a"
 
 msgid "Out Till"
-msgstr "Fuori Fino A"
+msgstr "Uscita fino a"
 
 msgid "At Work Less Than or Equal"
-msgstr "Al lavoro meno di o uguale"
+msgstr "Tempo al lavoro minore o uguale"
 
 msgid "Pending Hour Less Than or Equal"
-msgstr "Ora in sospeso meno di o uguale"
+msgstr "Ore in sospeso minore o uguale"
 
 msgid "OT Less Than or Equal"
-msgstr "OT minore o uguale"
+msgstr "Straordinario minore o uguale"
 
 msgid "Search in : Day"
-msgstr "Cerca in : Giorno"
+msgstr "Cerca in: Giorno"
 
 msgid "Search in : Shift"
-msgstr "Cerca in: Maiusc"
+msgstr "Cerca in: Turno"
 
 msgid "Search in : Work Type"
 msgstr "Cerca in: Tipo di lavoro"
@@ -1092,7 +978,7 @@ msgid "Search in : Department"
 msgstr "Cerca in: Dipartimento"
 
 msgid "Search in : Job Position"
-msgstr "Cerca in: Posizione del lavoro"
+msgstr "Cerca in: Posizione lavorativa"
 
 msgid "Search in : Company"
 msgstr "Cerca in: Azienda"
@@ -1101,7 +987,7 @@ msgid "Batches"
 msgstr "Lotti"
 
 msgid "Select All"
-msgstr "Seleziona Tutto"
+msgstr "Seleziona tutto"
 
 msgid "Date"
 msgstr "Data"
@@ -1110,7 +996,7 @@ msgid "Day"
 msgstr "Giorno"
 
 msgid "At Work"
-msgstr "Al Lavoro"
+msgstr "Al lavoro"
 
 msgid "Are you sure want to delete this attendance?"
 msgstr "Sei sicuro di voler eliminare questa presenza?"
@@ -1119,13 +1005,13 @@ msgid "Remove"
 msgstr "Rimuovi"
 
 msgid "Check In Date"
-msgstr "Data Di Arrivo"
+msgstr "Data check-in"
 
 msgid "Check Out Date"
-msgstr "Data Di Partenza"
+msgstr "Data check-out"
 
 msgid "View Activities"
-msgstr "Visualizza Attività"
+msgstr "Visualizza attività"
 
 msgid "Activity"
 msgstr "Attività"
@@ -1134,7 +1020,7 @@ msgid "Are you sure?"
 msgstr "Sei sicuro?"
 
 msgid "This does not satisfy the minimum OT requirement!"
-msgstr "Questo non soddisfa il requisito minimo di OT!"
+msgstr "Questo non soddisfa il requisito minimo di straordinario!"
 
 msgid "Approved!"
 msgstr "Approvato!"
@@ -1143,28 +1029,28 @@ msgid "Your action has been approved."
 msgstr "La tua azione è stata approvata."
 
 msgid "Approve Overtime"
-msgstr "Approva Gli straordinari"
+msgstr "Approva straordinari"
 
 msgid " Are you sure want to delete this attendance?"
 msgstr " Sei sicuro di voler eliminare questa presenza?"
 
 msgid "Validate"
-msgstr "Validate"
+msgstr "Convalida"
 
 msgid "Attendance To Validate "
-msgstr "Partecipazione Alla Convalida "
+msgstr "Presenze da convalidare "
 
 msgid "OT Attendances"
-msgstr "Tendenze OT"
+msgstr "Presenze con straordinario"
 
 msgid "Approve OT"
-msgstr "Approva OT"
+msgstr "Approva straordinari"
 
 msgid "Validated Attendances"
-msgstr "Partecipazioni Convalidate"
+msgstr "Presenze convalidate"
 
 msgid "Attendance Batches"
-msgstr "Partite Di Partecipazione"
+msgstr "Lotti presenze"
 
 msgid "No of Attendances"
 msgstr "Numero di presenze"
@@ -1173,28 +1059,28 @@ msgid "Action"
 msgstr "Azione"
 
 msgid "Are you sure want to delete this batch?"
-msgstr "Sei sicuro di voler eliminare questo batch?"
+msgstr "Sei sicuro di voler eliminare questo lotto?"
 
 msgid "There are no batches at the moment."
 msgstr "Non ci sono lotti al momento."
 
 msgid "Export Attendances"
-msgstr "Esporta Partecipazioni"
+msgstr "Esporta presenze"
 
 msgid "Excel columns"
-msgstr "Excel columns"
+msgstr "Colonne Excel"
 
 msgid "Edit Attendance"
-msgstr "Modifica Partecipazione"
+msgstr "Modifica presenza"
 
 msgid "No group result found!"
 msgstr "Nessun risultato di gruppo trovato!"
 
 msgid "Atwork"
-msgstr "Approcci"
+msgstr "Al lavoro"
 
 msgid "Pending Hour"
-msgstr "Ora In Attesa"
+msgstr "Ora in sospeso"
 
 msgid "No search result found!"
 msgstr "Nessun risultato di ricerca trovato!"
@@ -1203,80 +1089,80 @@ msgid "At work"
 msgstr "Al lavoro"
 
 msgid "No validated attendance to show."
-msgstr "Nessuna partecipazione convalidata da mostrare."
+msgstr "Nessuna presenza convalidata da mostrare."
 
 #, python-format
 msgid "The attendances for this employee in %(month_name)s has not been validated."
-msgstr "Le presenze per questo dipendente in %(month_name)s non sono state convalidate."
+msgstr "Le presenze per questo dipendente nel mese di %(month_name)s non sono state convalidate."
 
 msgid "Export Hour Accounts"
-msgstr "Esporta Account Ora"
+msgstr "Esporta conti ore"
 
 msgid "Worked Hours Greater or Equal"
-msgstr "Ore lavorate maggiore o uguale"
+msgstr "Ore lavorate maggiori o uguali"
 
 msgid "Pending Hours Greater or Equal"
-msgstr "Ore in sospeso Greater or Equal"
+msgstr "Ore in sospeso maggiori o uguali"
 
 msgid "OT Account Greater or Equal"
-msgstr "Conto OT maggiore o uguale"
+msgstr "Conto straordinari maggiore o uguale"
 
 msgid "Worked Hours Less Than or Equal"
-msgstr "Ore lavorate meno di o uguale"
+msgstr "Ore lavorate minori o uguali"
 
 msgid "Pending Hours Less Than or Equal"
-msgstr "Ore in attesa di meno di o uguale"
+msgstr "Ore in attesa minori o uguali"
 
 msgid "OT Account Less Than or Equal"
-msgstr "Account OT minore o uguale"
+msgstr "Conto straordinari minore o uguale"
 
 msgid "Selected Attendance"
-msgstr "Partecipazione Selezionata"
+msgstr "Presenza selezionata"
 
 msgid "Select All Records"
-msgstr "Seleziona Tutti I Record"
+msgstr "Seleziona tutti i record"
 
 msgid "Unselect All Records"
-msgstr "Deseleziona Tutti I Record"
+msgstr "Deseleziona tutti i record"
 
 msgid "Export Records"
-msgstr "Esporta Record"
+msgstr "Esporta record"
 
 msgid "Are you sure want to delete this hour account?"
-msgstr "Sei sicuro di voler eliminare questo account ora?"
+msgstr "Sei sicuro di voler eliminare questo conto ore?"
 
 msgid "Hours to Validate"
-msgstr "Ore di convalida"
+msgstr "Ore da convalidare"
 
 msgid "Not Approved OT Hours"
-msgstr "Ore Ot Non Approvate"
+msgstr "Ore di straordinario non approvate"
 
 msgid "Attendance Activity"
-msgstr "Attività Di Partecipazione"
+msgstr "Attività di presenza"
 
 msgid "There are no attendance activity records to display."
-msgstr "Non ci sono record di attività di partecipazione da visualizzare."
+msgstr "Non ci sono record di attività di presenza da visualizzare."
 
 msgid "Select All Attendance"
-msgstr "Seleziona Tutta La Partecipazione"
+msgstr "Seleziona tutte le presenze"
 
 msgid "Unselect All Attendance"
-msgstr "Deseleziona Tutta La Partecipazione"
+msgstr "Deseleziona tutte le presenze"
 
 msgid "Export Attendance"
-msgstr "Esporta Partecipazione"
+msgstr "Esporta presenze"
 
 msgid "Export Attendance Activities"
-msgstr "Esporta Attività Di Partecipazione"
+msgstr "Esporta attività di presenza"
 
 msgid "Attendnace Date"
-msgstr "Data Partecipazione"
+msgstr "Data presenza"
 
 msgid "No group result found."
-msgstr "Nessun risultato gruppo trovato."
+msgstr "Nessun risultato di gruppo trovato."
 
 msgid "Import Attendance Activities"
-msgstr "Importa Attività Di Partecipazione"
+msgstr "Importa attività di presenza"
 
 msgid "Don't refresh the page"
 msgstr "Non aggiornare la pagina"
@@ -1288,40 +1174,40 @@ msgid "Confirm"
 msgstr "Conferma"
 
 msgid "Error downloading file"
-msgstr "Errore nel scaricare il file"
+msgstr "Errore durante lo scaricamento del file"
 
 msgid "Do you really want to delete all the selected activities?"
 msgstr "Vuoi davvero eliminare tutte le attività selezionate?"
 
 msgid "Break Point Condition"
-msgstr "Condizione Punto Di Interruzione"
+msgstr "Condizione del punto di interruzione"
 
 msgid "Auto Validate Till"
-msgstr "Auto Validate Till"
+msgstr "Approvazione automatica fino a"
 
 msgid "Min Hour To Approve OT"
-msgstr "Ora Minima Per Approvare Ot"
+msgstr "Ore minime per approvare straordinari"
 
 msgid "OT Cut-Off/Day"
-msgstr "OT Cut-Off/Giorno"
+msgstr "Limite straordinari/giorno"
 
 msgid "There is no attendance conditions at this moment."
-msgstr "Al momento non vi sono condizioni di presenza."
+msgstr "Al momento non ci sono condizioni di presenza."
 
 msgid "Update Attendance condition "
-msgstr "Aggiorna condizione di frequenza "
+msgstr "Aggiorna condizione di presenza "
 
 msgid "Create Attendance condition "
 msgstr "Crea condizione di presenza "
 
 msgid "Today's Attendances"
-msgstr "Presenze Di Oggi"
+msgstr "Presenze di oggi"
 
 msgid "On Time"
-msgstr "In Tempo"
+msgstr "In orario"
 
 msgid "Attendance Analytic"
-msgstr "Frequenza Analitica"
+msgstr "Analisi delle presenze"
 
 msgid "Weekly"
 msgstr "Settimanale"
@@ -1330,49 +1216,49 @@ msgid "Monthly"
 msgstr "Mensile"
 
 msgid "Date range"
-msgstr "Date range"
+msgstr "Intervallo di date"
 
 msgid "Offline Employees"
-msgstr "Dipendenti Offline"
+msgstr "Dipendenti offline"
 
 msgid "Hours Chart"
-msgstr "Grafico Ore"
+msgstr "Grafico delle ore"
 
 msgid "On Break"
-msgstr "In Pausa"
+msgstr "In pausa"
 
 msgid "Overtime To Approve"
-msgstr "Ultime Da Approvare"
+msgstr "Straordinari da approvare"
 
 msgid "Attendance To Validate"
-msgstr "Partecipazione Alla Convalida"
+msgstr "Presenze da convalidare"
 
 msgid "Department Overtime Chart"
-msgstr "Dipartizione Overtime Grafico"
+msgstr "Grafico straordinari per dipartimento"
 
 msgid "Send Mail"
-msgstr "Invia Email"
+msgstr "Invia email"
 
 msgid "No employees are currently taking a break."
-msgstr "Nessun dipendente sta prendendo una pausa."
+msgstr "Nessun dipendente è attualmente in pausa."
 
 msgid "No overtime records pending validation."
-msgstr "Nessun record di straordinari in attesa di convalida."
+msgstr "Nessun record di straordinario in attesa di convalida."
 
 msgid "No pending attendance to validate."
-msgstr "Nessuna partecipazione in attesa da convalidare."
+msgstr "Nessuna presenza in attesa di convalida."
 
 msgid "Update grace time"
-msgstr "Aggiorna ora di grazia"
+msgstr "Aggiorna periodo di tolleranza"
 
 msgid "Create grace time"
-msgstr "Crea tempo di grazia"
+msgstr "Crea periodo di tolleranza"
 
 msgid "Shifts"
-msgstr "Spostamenti"
+msgstr "Turni"
 
 msgid "Default Grace Time"
-msgstr "Tempo Di Grazia Predefinito"
+msgstr "Periodo di tolleranza predefinito"
 
 msgid "Allowed time"
 msgstr "Tempo consentito"
@@ -1381,91 +1267,91 @@ msgid "Is active"
 msgstr "È attivo"
 
 msgid "Applicable on clock-in"
-msgstr "Applicabile all'orologio"
+msgstr "Applicabile all'ingresso (clock-in)"
 
 msgid "Applicable on clock-out"
-msgstr "Applicabile su clock out"
+msgstr "Applicabile all'uscita (clock-out)"
 
 msgid "Hours"
 msgstr "Ore"
 
 msgid "Are you sure you want to delete this grace time?"
-msgstr "Sei sicuro di voler eliminare questo tempo di grazia?"
+msgstr "Sei sicuro di voler eliminare questo periodo di tolleranza?"
 
 msgid "There is no default grace time at this moment."
-msgstr "Non c'è tempo di grazia predefinito in questo momento."
+msgstr "Al momento non è presente alcun periodo di tolleranza predefinito."
 
 msgid "Grace Time"
-msgstr "Tempo Di Grazia"
+msgstr "Periodo di tolleranza"
 
 msgid "Assigned Shifts"
-msgstr "Trasferimenti Assegnati"
+msgstr "Turni assegnati"
 
 msgid "Nil"
-msgstr "Nil"
+msgstr "Nessuno"
 
 msgid "Assign shift"
-msgstr "Assegna spostamento"
+msgstr "Assegna turno"
 
 msgid "There is no grace time at this moment."
-msgstr "Non c'è tempo di grazia in questo momento."
+msgstr "Al momento non sono presenti periodi di tolleranza."
 
 msgid "Add more IP address.."
-msgstr "Aggiungi altro indirizzo IP."
+msgstr "Aggiungi altri indirizzi IP..."
 
 msgid "IP Restriction"
 msgstr "Restrizione IP"
 
 msgid "IP Login Restriction"
-msgstr "Restrizione Login IP"
+msgstr "Restrizione di accesso IP"
 
 msgid "Add IP"
 msgstr "Aggiungi IP"
 
 msgid "Sl.No"
-msgstr "Sl.No"
+msgstr "N. prod."
 
 msgid "IPs"
 msgstr "IP"
 
 msgid "Edit Allowed IPs"
-msgstr "Modifica Ip Consentiti"
+msgstr "Modifica IP consentiti"
 
 msgid "Add Allowed IPs"
-msgstr "Aggiungi IP Consentiti"
+msgstr "Aggiungi IP consentiti"
 
 msgid "Export Late Come Early Out"
-msgstr "Esporta In Tardo Avanti"
+msgstr "Esporta ingressi in ritardo / uscite anticipate"
 
 msgid "Late Come/Early Out"
-msgstr "Scadenza Tardiva/Early Out"
+msgstr "Ingresso in ritardo / Uscita anticipata"
 
 msgid "Penalties"
 msgstr "Sanzioni"
 
 msgid "Penalty"
-msgstr "Penalità"
+msgstr "Sanzione"
 
 msgid "In-Date"
-msgstr "In-Date"
+msgstr "Data di ingresso"
 
 msgid "Out-Date"
-msgstr "Out-Date"
+msgstr "Data di uscita"
 
 msgid "Details 123231"
 msgstr "Dettagli 123231"
 
 msgid "Attendance validated"
-msgstr "Partecipazione convalidata"
+msgstr "Presenza convalidata"
 
 msgid "Penalties "
 msgstr "Sanzioni "
 
 msgid "No penalties found."
-msgstr "Nessuna penalità trovata."
+msgstr "Nessuna sanzione trovata."
 
 msgid "Tracking Enable"
-msgstr "Attivazione Tracciamento"
+msgstr "Abilita tracciamento"
 
 msgid "Approved request"
 msgstr "Richiesta approvata"
@@ -1480,31 +1366,31 @@ msgid "Requested?"
 msgstr "Richiesto?"
 
 msgid "Approved Request"
-msgstr "Richiesta Approvata"
+msgstr "Richiesta approvata"
 
 msgid "Leave Type"
-msgstr "Lascia Il Tipo"
+msgstr "Tipo di congedo"
 
 msgid "Available Days"
-msgstr "Giorni Disponibili"
+msgstr "Giorni disponibili"
 
 msgid "Carry Forward Days"
-msgstr "Carry Forward Days"
+msgstr "Giorni riportati"
 
 msgid "Leave type is optional when 'minus leave' is 0"
-msgstr "Il tipo di congedo è facoltativo quando 'meno congedo' è 0"
+msgstr "Il tipo di congedo è facoltativo quando il 'congedo in negativo' è 0"
 
 msgid "Penalty amount will affect payslip on the date"
-msgstr "La quantità di sanzione influenzerà il cedolino alla data"
+msgstr "L'importo della sanzione influirà sul cedolino in questa data"
 
 msgid "By default minus leave will cut/deduct from available leaves"
-msgstr "Per impostazione predefinita meno congedo taglierà/dedurre dalle foglie disponibili"
+msgstr "Per impostazione predefinita, il congedo in negativo verrà dedotto dai congedi disponibili"
 
 msgid "Enable Check In/Check out"
-msgstr "Abilita Check In/Check out"
+msgstr "Abilita Check-in/Check-out"
 
 msgid "Check in/Check out"
-msgstr "Check in/Check out"
+msgstr "Check-in/Check-out"
 
 msgid "All company"
 msgstr "Tutta l'azienda"
@@ -1516,16 +1402,16 @@ msgid "At-Work Tracker"
 msgstr "Tracker At-Work"
 
 msgid "By enabling this feature user's will be able to see their current day worked hours in live on the navbar (inside the check in button)."
-msgstr "Abilitando questa funzione l'utente sarà in grado di vedere le ore lavorate del giorno corrente in diretta sulla barra di navigazione (all'interno del pulsante di spegnimento)."
+msgstr "Abilitando questa funzione, gli utenti potranno vedere in tempo reale le ore lavorate nella giornata corrente sulla barra di navigazione (all'interno del pulsante di check-in)."
 
 msgid "save"
 msgstr "salva"
 
 msgid "Leave"
-msgstr "Abbandona"
+msgstr "Congedo"
 
 msgid "On leave, But attendance exist"
-msgstr "In congedo, Ma la presenza esiste"
+msgstr "In congedo, ma è presente una registrazione di presenza"
 
 msgid "record_type_name"
 msgstr "nome_tipo_record"
@@ -1537,43 +1423,43 @@ msgid "Comments"
 msgstr "Commenti"
 
 msgid "by"
-msgstr "di"
+msgstr "da"
 
 msgid "'s attendance request"
-msgstr "richiesta di presenza"
+msgstr "richiesta di presenza di"
 
 msgid "There are no comments to show."
 msgstr "Non ci sono commenti da mostrare."
 
 msgid "Add Comment"
-msgstr "Aggiungi Commento"
+msgstr "Aggiungi commento"
 
 msgid "There is no comments to show."
 msgstr "Non ci sono commenti da mostrare."
 
 msgid "Delete Comment"
-msgstr "Elimina Commento"
+msgstr "Elimina commento"
 
 msgid "By"
 msgstr "Da"
 
 msgid "Date & Time"
-msgstr "Data E Ora"
+msgstr "Data e ora"
 
 msgid "on"
 msgstr "il"
 
 msgid "at"
-msgstr "a"
+msgstr "alle"
 
 msgid "Batch Name"
-msgstr "Nome Gruppo"
+msgstr "Nome lotto"
 
 msgid "Attendance Update Request"
-msgstr "Richiesta Di Aggiornamento Partecipazione"
+msgstr "Richiesta di aggiornamento presenza"
 
 msgid "Add / View Comment"
-msgstr "Aggiungi / Visualizza Commento"
+msgstr "Aggiungi / Visualizza commento"
 
 msgid "View and Edit"
 msgstr "Visualizza e modifica"
@@ -1582,22 +1468,22 @@ msgid "Are you sure want to cancel the request?"
 msgstr "Sei sicuro di voler annullare la richiesta?"
 
 msgid "Edit Request"
-msgstr "Modifica Richiesta"
+msgstr "Modifica richiesta"
 
 msgid "Current Value"
-msgstr "Valore Attuale"
+msgstr "Valore attuale"
 
 msgid "Requested Value"
-msgstr "Valore Richiesto"
+msgstr "Valore richiesto"
 
 msgid "Validate Attendances Request"
-msgstr "Convalida Richiesta Partecipazioni"
+msgstr "Convalida richiesta presenze"
 
 msgid "Bulk Approve"
-msgstr "Approva In Massa"
+msgstr "Approvazione di massa"
 
 msgid "Bulk Reject"
-msgstr "Rifiuto Bulk"
+msgstr "Rifiuto di massa"
 
 msgid "View"
 msgstr "Visualizza"
@@ -1609,247 +1495,247 @@ msgid " Are you sure want to cancel the request?"
 msgstr " Sei sicuro di voler annullare la richiesta?"
 
 msgid "New Attendances Request"
-msgstr "Nuova Richiesta Di Partecipazioni"
+msgstr "Nuova richiesta di presenza"
 
 msgid "Request"
 msgstr "Richiesta"
 
 msgid "All Attendances"
-msgstr "Tutte Le Partecipazioni"
+msgstr "Tutte le presenze"
 
 msgid "There are no attendance requests to display."
-msgstr "Non ci sono richieste di presenze da visualizzare."
+msgstr "Non ci sono richieste di presenza da visualizzare."
 
 msgid "Bulk-Requests"
-msgstr "Bulk-Requests"
+msgstr "Richieste multiple"
 
 msgid "Not-Validated"
-msgstr "Non Validato"
+msgstr "Non convalidato"
 
 msgid "Requested Attendances"
-msgstr "Partecipazioni Richieste"
+msgstr "Presenze richieste"
 
 msgid "Attendance added."
-msgstr "Partecipazione aggiunta."
+msgstr "Presenza aggiunta."
 
 msgid "Attendance Updated."
-msgstr "Partecipazione Aggiornata."
+msgstr "Presenza aggiornata."
 
 msgid "Attendance deleted."
-msgstr "Presenza cancellata."
+msgstr "Presenza eliminata."
 
 msgid "You cannot delete this attendance"
-msgstr "Non puoi eliminare questa partecipazione"
+msgstr "Non è possibile eliminare questa presenza"
 
 msgid "Attendance Deleted"
-msgstr "Presenza Eliminata"
+msgstr "Presenza eliminata"
 
 #, python-format
 msgid "You cannot delete this %(attendance)s"
-msgstr "Non puoi eliminare questo %(attendance)s"
+msgstr "Non è possibile eliminare questo %(attendance)s"
 
 msgid "Attendance account added."
-msgstr "Conto di partecipazione aggiunto."
+msgstr "Conto presenze aggiunto."
 
 msgid "Attendance account updated successfully."
-msgstr "Account di partecipazione aggiornato con successo."
+msgstr "Conto presenze aggiornato con successo."
 
 msgid "OT account deleted."
-msgstr "Account OT eliminato."
+msgstr "Conto straordinari eliminato."
 
 msgid "You cannot delete this attendance OT"
-msgstr "Non puoi eliminare questa partecipazione OT"
+msgstr "Non è possibile eliminare questo straordinario"
 
 msgid "Attendance activity deleted"
-msgstr "Attività di partecipazione eliminata"
+msgstr "Attività di presenza eliminata"
 
 msgid "You cannot delete this activity"
-msgstr "Non puoi eliminare questa attività"
+msgstr "Non è possibile eliminare questa attività"
 
 msgid "Late-in early-out deleted"
-msgstr "Ritardato cancellato"
+msgstr "Ingresso in ritardo / Uscita anticipata eliminati"
 
 msgid "You cannot delete this Late-in early-out"
-msgstr "Non puoi eliminare questo Late-in early out"
+msgstr "Non è possibile eliminare questo ingresso in ritardo / uscita anticipata"
 
 msgid "validation condition deleted."
 msgstr "condizione di convalida eliminata."
 
 msgid "You cannot delete this validation condition."
-msgstr "Non puoi eliminare questa condizione di convalida."
+msgstr "Non è possibile eliminare questa condizione di convalida."
 
 msgid "Attendance validated."
-msgstr "Partecipazione convalidata."
+msgstr "Presenza convalidata."
 
 msgid "Overtime approved"
-msgstr "Orario di lavoro straordinario approvato"
+msgstr "Straordinario approvato"
 
 msgid "You cannot mark attendance from this network"
-msgstr "Non puoi segnare la frequenza da questa rete"
+msgstr "Non è possibile registrare la presenza da questa rete"
 
 msgid "You Don't have work information filled or your employee detail neither entered "
-msgstr "Non hai riempito le informazioni di lavoro o i dettagli del tuo dipendente non inseriti "
+msgstr "Le informazioni lavorative o i dettagli del dipendente non sono stati inseriti "
 
 msgid "Check in/Check out feature is not enabled."
-msgstr "La funzione Check in/Check out non è abilitata."
+msgstr "La funzione di Check-in/Check-out non è abilitata."
 
 msgid "No validated Overtimes were found"
-msgstr "Non sono stati trovati Overtimes convalidati"
+msgstr "Non sono stati trovati straordinari convalidati"
 
 msgid "Penalty/Fine added"
-msgstr "Sanzione/Fine aggiunta"
+msgstr "Sanzione aggiunta"
 
 msgid "Attendance request created"
-msgstr "Richiesta di partecipazione creata"
+msgstr "Richiesta di presenza creata"
 
 msgid "New attendance request created"
-msgstr "Nuova richiesta di partecipazione creata"
+msgstr "Nuova richiesta di presenza creata"
 
 msgid "Update request updated"
-msgstr "Richiesta di aggiornamento aggiornata"
+msgstr "Richiesta di aggiornamento modificata"
 
 msgid "Attendance batch created successfully."
-msgstr "Presenza batch creata con successo."
+msgstr "Lotto presenze creato con successo."
 
 msgid "Batch attendance title updated sucessfully."
-msgstr "Titolo di partecipazione di gruppo aggiornato in modo sicuro."
+msgstr "Titolo del lotto presenze aggiornato con successo."
 
 msgid "You don't have permission."
-msgstr "Non hai il permesso."
+msgstr "Non hai i permessi necessari."
 
 msgid "Something went wrong."
 msgstr "Qualcosa è andato storto."
 
 msgid "This {} is already in use for {}."
-msgstr "Questo {} è già in uso per {}."
+msgstr) "Questo {} è già in uso per {}."
 
 msgid "Attendance update request created."
-msgstr "Richiesta di aggiornamento partecipazione creata."
+msgstr "Richiesta di aggiornamento presenza creata."
 
 msgid "Attendance request has been approved"
-msgstr "La richiesta di partecipazione è stata approvata"
+msgstr "La richiesta di presenza è stata approvata"
 
 msgid "The requested attendance is removed."
-msgstr "La frequenza richiesta è rimossa."
+msgstr "La presenza richiesta è stata rimossa."
 
 msgid "Attendance request has been rejected"
-msgstr "La richiesta di partecipazione è stata respinta"
+msgstr "La richiesta di presenza è stata rifiutata"
 
 msgid "Attendance request not found"
-msgstr "Richiesta di partecipazione non trovata"
+msgstr "Richiesta di presenza non trovata"
 
 msgid "The requested attendance is rejected."
-msgstr "La partecipazione richiesta è respinta."
+msgstr "La presenza richiesta è stata rifiutata."
 
 msgid "Attendance Does not exists.."
-msgstr "La presenza non esiste.."
+msgstr "La presenza non esiste..."
 
 msgid "Hour account deleted."
-msgstr "Account ora eliminato."
+msgstr "Conto ore eliminato."
 
 msgid "Hour account not found"
-msgstr "Account ora non trovato"
+msgstr "Conto ore non trovato"
 
 msgid "You cannot delete this hour account"
-msgstr "Non puoi eliminare questo account ora"
+msgstr "Non è possibile eliminare questo conto ore"
 
 #, python-brace-format
 msgid "{employee} hour account deleted."
-msgstr "Account {employee} ora eliminato."
+msgstr "Conto ore del dipendente {employee} eliminato."
 
 msgid "Hour account not found."
-msgstr "Account ora non trovato."
+msgstr "Conto ore non trovato."
 
 #, python-brace-format
 msgid "You cannot delete {hour_account}"
-msgstr "Non puoi eliminare {hour_account}"
+msgstr "Non è possibile eliminare {hour_account}"
 
 msgid "Attendance activity Does not exists.."
-msgstr "Attività di partecipazione Non esiste.."
+msgstr "L'attività di presenza non esiste..."
 
 msgid "Invalid list of IDs provided."
 msgstr "Elenco di ID fornito non valido."
 
 msgid "No attendance activities selected for deletion."
-msgstr "Nessuna attività di partecipazione selezionata per la cancellazione."
+msgstr "Nessuna attività di presenza selezionata per l'eliminazione."
 
 #, python-brace-format
 msgid "{count} attendance activities deleted successfully."
-msgstr "Attività di partecipazione {count} cancellate con successo."
+msgstr "{count} attività di presenza eliminate con successo."
 
 msgid "No matching attendance activities were found to delete."
-msgstr "Nessuna attività di partecipazione corrispondente è stata trovata per eliminare."
+msgstr "Non sono state trovate attività di presenza corrispondenti da eliminare."
 
 #, python-brace-format
 msgid "Failed to delete attendance activities: {error}"
 msgstr "Impossibile eliminare le attività di presenza: {error}"
 
 msgid "Attendance activity imported successfully"
-msgstr "Attività di partecipazione importata con successo"
+msgstr "Attività di presenza importata con successo"
 
 msgid "Late-in early-out does not exists.."
-msgstr "In ritardo non esiste.."
+msgstr "Il record di ingresso in ritardo / uscita anticipata non esiste..."
 
 #, python-brace-format
 msgid "{employee} Late-in early-out deleted."
-msgstr "{employee} Late-in early out eliminato."
+msgstr "Ingresso in ritardo / Uscita anticipata di {employee} eliminati."
 
 msgid "Attendance not found."
-msgstr "Frequenza non trovata."
+msgstr "Presenza non trovata."
 
 msgid "validation condition Does not exists.."
-msgstr "condizione di convalida Non esiste.."
+msgstr "La condizione di convalida non esiste..."
 
 msgid "Pending attendance update request for {}'s attendance on {}!"
-msgstr "Richiesta di aggiornamento in attesa per {}'s attendance on {}!"
+msgstr "Richiesta di aggiornamento presenza in sospeso per {} in data {}!"
 
 msgid "Attendance not found"
-msgstr "Frequenza non trovata"
+msgstr "Presenza non trovata"
 
 msgid "Invalid attendance ID"
-msgstr "Invalid attendance ID"
+msgstr "ID presenza non valido"
 
 msgid "{} Attendances validated."
-msgstr "{} Partecipazioni convalidate."
+msgstr "{} presenze convalidate."
 
 msgid "Grace time created successfully."
-msgstr "Tempo di grazia creato con successo."
+msgstr "Periodo di tolleranza creato con successo."
 
 msgid "Grace time added to shifts successfully."
-msgstr "Tempo di grazia aggiunto ai cambiamenti con successo."
+msgstr "Periodo di tolleranza aggiunto ai turni con successo."
 
 msgid "Grace time updated successfully."
-msgstr "Tempo di grazia aggiornato con successo."
+msgstr "Periodo di tolleranza aggiornato con successo."
 
 msgid "Grace time deleted successfully."
-msgstr "Tempo di grazia eliminato con successo."
+msgstr "Periodo di tolleranza eliminato con successo."
 
 msgid "Grace Time Does not exists.."
-msgstr "Grace Time non esiste.."
+msgstr "Il periodo di tolleranza non esiste..."
 
 msgid "Related datas exists."
 msgstr "Esistono dati correlati."
 
 msgid "Gracetime activated successfully."
-msgstr "Gracetime attivato con successo."
+msgstr "Periodo di tolleranza attivato con successo."
 
 msgid "Gracetime deactivated successfully."
-msgstr "Gracetime disattivato con successo."
+msgstr "Periodo di tolleranza disattivato con successo."
 
 msgid "Gracetime applicable on clock-In successfully."
-msgstr "Gracetime applicabile su clock-In con successo."
+msgstr "Periodo di tolleranza applicato all'ingresso (clock-in) con successo."
 
 msgid "Gracetime unapplicable on clock-In  successfully."
-msgstr "Gracetime inapplicabile su clock-In con successo."
+msgstr "Periodo di tolleranza rimosso dall'ingresso (clock-in) con successo."
 
 msgid "Gracetime applicable on clock-out successfully."
-msgstr "Gracetime applicabile su clock-out con successo."
+msgstr "Periodo di tolleranza applicato all'uscita (clock-out) con successo."
 
 msgid "Gracetime unapplicable on clock-out successfully."
-msgstr "Gracetime inapplicabile su clock-out con successo."
+msgstr "Periodo di tolleranza rimosso dall'uscita (clock-out) con successo."
 
 msgid "Something went wrong ."
-msgstr "Qualcosa è andato storto ."
+msgstr "Qualcosa è andato storto."
 
 msgid "Comment added successfully!"
 msgstr "Commento aggiunto con successo!"
@@ -1867,25 +1753,25 @@ msgid "disabled"
 msgstr "disabilitato"
 
 msgid "Tracking late come early out {} successfully"
-msgstr "Tracking late come early out {} correttamente"
+msgstr "Tracciamento ingressi in ritardo / uscite anticipate {} configurato con successo"
 
 msgid "Check In/Check Out has been successfully {}."
-msgstr "Check In/Check Out è stato correttamente {}."
+msgstr "Il Check-in/Check-out è stato impostato su {} con successo."
 
 msgid "Attendance Break-point settings created."
-msgstr "Impostazioni Frequenza Break-point create."
+msgstr "Impostazioni del punto di interruzione presenze create."
 
 msgid "Attendance Break-point settings updated."
-msgstr "Frequenza Break-point impostazioni aggiornate."
+msgstr "Impostazioni del punto di interruzione presenze aggiornate."
 
 msgid "Your department was mentioned in an announcement."
-msgstr "Il suo dipartimento è stato menzionato in un annuncio."
+msgstr "Il tuo dipartimento è stato menzionato in un annuncio."
 
 msgid "Your job position was mentioned in an announcement."
-msgstr "La sua posizione di lavoro è stata menzionata in un annuncio."
+msgstr "La tua posizione lavorativa è stata menzionata in un annuncio."
 
 msgid "You have been mentioned in an announcement."
-msgstr "Lei è stato citato in un annuncio."
+msgstr "Sei stato menzionato in un annuncio."
 
 msgid "Announcement created successfully."
 msgstr "Annuncio creato con successo."
@@ -1903,33 +1789,33 @@ msgid "You commented a post."
 msgstr "Hai commentato un post."
 
 msgid "Employee is not working in the selected company."
-msgstr "Il dipendente non lavora nella società selezionata."
+msgstr "Il dipendente non lavora nell'azienda selezionata."
 
 msgid "Profile Edit Access"
-msgstr "Accesso Modifica Profilo"
+msgstr "Accesso modifica profilo"
 
 #, python-brace-format
 msgid "---Choose {label}---"
 msgstr "---Scegli {label}---"
 
 msgid "Job position already exists under {}"
-msgstr "La posizione del lavoro esiste già in {}"
+msgstr "La posizione lavorativa esiste già sotto {}"
 
 msgid "---Choose Work Type---"
-msgstr "---Scegli Tipo Di Lavoro---"
+msgstr "---Scegli il tipo di lavoro---"
 
 msgid "Automatic punch out time is required when automatic punch out is enabled."
-msgstr "Il tempo di uscita automatico è richiesto quando il pugno fuori automatico è abilitato."
+msgstr "L'orario di uscita automatico è richiesto quando il check-out automatico è abilitato."
 
 msgid "Automatic punch out time cannot be earlier than the end time."
-msgstr "Il tempo di uscita automatico non può essere prima dell'ora di fine."
+msgstr "L'orario di uscita automatico non può essere antecedente all'orario di fine."
 
 #, python-brace-format
 msgid "Shift schedule is already exist for {day}"
-msgstr "La pianificazione dello spostamento esiste già per {day}"
+msgstr "La pianificazione del turno esiste già per il giorno {day}"
 
 msgid "---Choose Shift---"
-msgstr "---Scegli Maiusc---"
+msgstr "---Scegli il turno---"
 
 msgid "Start date"
 msgstr "Data di inizio"
@@ -1938,7 +1824,7 @@ msgid "Old password"
 msgstr "Vecchia password"
 
 msgid "Enter Old Password"
-msgstr "Inserisci La Vecchia Password"
+msgstr "Inserisci la vecchia password"
 
 msgid "Enter your old password."
 msgstr "Inserisci la tua vecchia password."
@@ -1947,25 +1833,25 @@ msgid "New password"
 msgstr "Nuova password"
 
 msgid "Enter New Password"
-msgstr "Inserisci Nuova Password"
+msgstr "Inserisci la nuova password"
 
 msgid "New password confirmation"
 msgstr "Conferma nuova password"
 
 msgid "Re-Enter Password"
-msgstr "Reinserisci Password"
+msgstr "Reinserisci la password"
 
 msgid "New password and confirm password do not match"
-msgstr "La nuova password e la conferma della password non corrispondono"
+msgstr "La nuova password e la password di conferma non corrispondono"
 
 msgid "Old Username"
-msgstr "Vecchio Nome Utente"
+msgstr "Vecchio nome utente"
 
 msgid "Username"
-msgstr "Username"
+msgstr "Nome utente"
 
 msgid "Enter New Username"
-msgstr "Inserisci Nuovo Nome Utente"
+msgstr "Inserisci il nuovo nome utente"
 
 msgid "Enter your username."
 msgstr "Inserisci il tuo nome utente."
@@ -1974,61 +1860,61 @@ msgid "Password"
 msgstr "Password"
 
 msgid "Enter Password"
-msgstr "Inserisci La Password"
+msgstr "Inserisci la password"
 
 msgid "Enter your password."
 msgstr "Inserisci la tua password."
 
 msgid "Enter Strong Password"
-msgstr "Inserisci La Password Forte"
+msgstr "Inserisci una password sicura"
 
 msgid "Enter your new password."
 msgstr "Inserisci la tua nuova password."
 
 msgid "Enter the same password as before, for verification."
-msgstr "Inserire la stessa password di prima, per la verifica."
+msgstr "Inserisci la stessa password di prima per verifica."
 
 msgid "Password changed successfully"
 msgstr "Password modificata con successo"
 
 msgid "Password must be same."
-msgstr "La password deve essere la stessa."
+msgstr "Le password devono corrispondere."
 
 msgid "Equal (==)"
-msgstr "Pari (==)"
+msgstr "Uguale (==)"
 
 msgid "Not Equal (!=)"
-msgstr "Non Uguale (!=)"
+msgstr "Non uguale (!=)"
 
 msgid "Range"
-msgstr "Range"
+msgstr "Intervallo (Range)"
 
 msgid "Less Than (<)"
-msgstr "Meno Di (<)"
+msgstr "Minore di (<)"
 
 msgid "Greater Than (>)"
-msgstr "Maggiore Di (>)"
+msgstr "Maggiore di (>)"
 
 msgid "Less Than or Equal To (<=)"
-msgstr "Meno di o uguale a (<=)"
+msgstr "Minore o uguale a (<=)"
 
 msgid "Greater Than or Equal To (>=)"
-msgstr "Maggiore di o uguale a (>=)"
+msgstr "Maggiore o uguale a (>=)"
 
 msgid "Contains"
 msgstr "Contiene"
 
 msgid "Approval Manager"
-msgstr "Responsabile Approvazione"
+msgstr "Manager responsabile dell'approvazione"
 
 msgid "Attachments"
 msgstr "Allegati"
 
 msgid "You must select at least one of: Employees, Department, or Job Position."
-msgstr "È necessario selezionare almeno uno di: Dipendenti, Dipartimento o Posizione di lavoro."
+msgstr "È necessario selezionare almeno uno tra: Dipendenti, Dipartimento o Posizione lavorativa."
 
 msgid "End date should not be earlier than the start date."
-msgstr "La data di fine non deve essere prima della data di inizio."
+msgstr "La data di fine non deve essere antecedente alla data di inizio."
 
 msgid "Male"
 msgstr "Maschio"
@@ -2046,13 +1932,13 @@ msgid "Expired"
 msgstr "Scaduto"
 
 msgid "Terminated"
-msgstr "Terminato"
+msgstr "Cessato"
 
 msgid "After"
 msgstr "Dopo"
 
 msgid "Semi-Monthly"
-msgstr "Semi-mensile"
+msgstr "Quindicinale"
 
 msgid "Hourly"
 msgstr "Orario"
@@ -2061,40 +1947,40 @@ msgid "Daily"
 msgstr "Giornaliero"
 
 msgid "Full Day"
-msgstr "Giorno Intero"
+msgstr "Giorno intero"
 
 msgid "First Half"
-msgstr "Prima Metà"
+msgstr "Prima metà"
 
 msgid "Second Half"
-msgstr "Seconda Metà"
+msgstr "Seconda metà"
 
 msgid "Cancelled"
 msgstr "Annullato"
 
 msgid "Cancelled & Rejected"
-msgstr "Annullato & Rifiutato"
+msgstr "Annullato e rifiutato"
 
 msgid "No"
 msgstr "No"
 
 msgid "An employee related to this user's credentials does not exist."
-msgstr "Un dipendente collegato alle credenziali di questo utente non esiste."
+msgstr "Non esiste alcun dipendente associato alle credenziali di questo utente."
 
 msgid "First Week"
-msgstr "Prima Settimana"
+msgstr "Prima settimana"
 
 msgid "Second Week"
-msgstr "Seconda Settimana"
+msgstr "Seconda settimana"
 
 msgid "Third Week"
-msgstr "Terza Settimana"
+msgstr "Terza settimana"
 
 msgid "Fourth Week"
-msgstr "Quarta Settimana"
+msgstr "Quarta settimana"
 
 msgid "Fifth Week"
-msgstr "Quinta Settimana"
+msgstr "Quinta settimana"
 
 msgid "Monday"
 msgstr "Lunedì"
@@ -2108,7 +1994,7 @@ msgstr "Mercoledì"
 msgid "Thursday"
 msgstr "Giovedì"
 
-msgid "Friday"
+msgid Friday"
 msgstr "Venerdì"
 
 msgid "Saturday"
@@ -2118,10 +2004,10 @@ msgid "Sunday"
 msgstr "Domenica"
 
 msgid "Invalid time, excepted HH:MM"
-msgstr "Tempo non valido, escluso HH:MM"
+msgstr "Orario non valido, previsto HH:MM"
 
 msgid "Invalid format,  excepted HH:MM"
-msgstr "Formato non valido, escluso HH:MM"
+msgstr "Formato non valido, previsto HH:MM"
 
 msgid "Companies"
 msgstr "Aziende"
@@ -2130,211 +2016,211 @@ msgid "Departments"
 msgstr "Dipartimenti"
 
 msgid "Job Positions"
-msgstr "Posizioni Lavoro"
+msgstr "Posizioni lavorative"
 
 msgid "Job Roles"
-msgstr "Ruoli Di Lavoro"
+msgstr "Ruoli aziendali"
 
 msgid "Work Types"
-msgstr "Tipi Di Lavoro"
+msgstr "Tipi di lavoro"
 
 msgid "Work Type 1"
-msgstr "Tipo Di Lavoro 1"
+msgstr "Tipo di lavoro 1"
 
 msgid "Work Type 2"
-msgstr "Tipo Di Lavoro 2"
+msgstr "Tipo di lavoro 2"
 
 msgid "Rotating Work Type"
-msgstr "Tipo Di Lavoro Rotante"
+msgstr "Tipo di lavoro a rotazione"
 
 msgid "Rotating Work Types"
-msgstr "Tipi Di Lavoro Rotanti"
+msgstr "Tipi di lavoro a rotazione"
 
 msgid "Select different work type continuously"
-msgstr "Seleziona continuamente diverso tipo di lavoro"
+msgstr "Seleziona continuamente un tipo di lavoro diverso"
 
 msgid "Last Day"
-msgstr "Ultimo Giorno"
+msgstr "Ultimo giorno"
 
 msgid "Weekend"
-msgstr "Weekend"
+msgstr "Fine settimana"
 
 msgid "Start Date"
-msgstr "Data Di Inizio"
+msgstr "Data di inizio"
 
 msgid "Next Switch"
-msgstr "Interruttore Successivo"
+msgstr "Prossimo cambio"
 
 msgid "Current Work Type"
-msgstr "Tipo Di Lavoro Corrente"
+msgstr "Tipo di lavoro corrente"
 
 msgid "Next Work Type"
-msgstr "Prossimo Tipo Di Lavoro"
+msgstr "Prossimo tipo di lavoro"
 
 msgid "Based On"
-msgstr "Basato Su"
+msgstr "Basato su"
 
 msgid "Rotate After Day"
-msgstr "Ruota Dopo Il Giorno"
+msgstr "Ruota dopo il giorno"
 
 msgid "Rotate Every Weekend"
-msgstr "Ruota Ogni Fine Settimana"
+msgstr "Ruota ogni fine settimana"
 
 msgid "Rotate Every Month"
-msgstr "Ruota Ogni Mese"
+msgstr "Ruota ogni mese"
 
 msgid "Rotating Work Type Assign"
-msgstr "Tipo Di Lavoro Rotante Assegna"
+msgstr "Assegnazione tipo di lavoro a rotazione"
 
 msgid "Rotating Work Type Assigns"
-msgstr "Tipo Di Lavoro Rotante Assegna"
+msgstr "Assegnazioni tipo di lavoro a rotazione"
 
 msgid "Only one active record allowed per employee"
-msgstr "Solo un record attivo consentito per dipendente"
+msgstr "È consentito un solo record attivo per dipendente"
 
 msgid "Date must be greater than or equal to today"
 msgstr "La data deve essere maggiore o uguale a oggi"
 
 msgid "Employee Types"
-msgstr "Tipi Di Dipendenti"
+msgstr "Tipi di dipendenti"
 
 msgid "Employee Shift Day"
-msgstr "Giorno Di Maiusc Dipendente"
+msgstr "Giorno del turno del dipendente"
 
 msgid "Employee Shift Days"
-msgstr "Giorni Di Maiusc Dipendente"
+msgstr "Giorni del turno del dipendente"
 
 msgid "Employee Shift"
-msgstr "Spostamento Dipendente"
+msgstr "Turno del dipendente"
 
 msgid "Employee Shifts"
-msgstr "Trasferimenti Dipendenti"
+msgstr "Turni dei dipendenti"
 
 msgid "Minimum Working Hours"
-msgstr "Ore Minime Di Lavoro"
+msgstr "Ore minime di lavoro"
 
 msgid "Start Time"
-msgstr "Ora Di Inizio"
+msgstr "Orario di inizio"
 
 msgid "End Time"
-msgstr "Ora Di Fine"
+msgstr "Orario di fine"
 
 msgid "Night Shift"
-msgstr "Spostamento Notturno"
+msgstr "Turno notturno"
 
 msgid "Enable Automatic Check Out"
-msgstr "Abilita Check Out Automatico"
+msgstr "Abilita check-out automatico"
 
 msgid "Enable this to trigger automatic check out."
-msgstr "Abilita questa opzione per attivare il check out automatico."
+msgstr "Abilita questa opzione per attivare il check-out automatico."
 
 msgid "Automatic Check Out Time"
-msgstr "Tempo Di Partenza Automatico"
+msgstr "Orario di check-out automatico"
 
 msgid "Time at which the horilla will automatically check out the employee attendance if they forget."
-msgstr "Il tempo in cui l'horilla controllerà automaticamente la presenza dei dipendenti se dimenticheranno."
+msgstr "Orario in cui il sistema esegue automaticamente il check-out della presenza del dipendente in caso di dimenticanza."
 
 msgid "Employee Shift Schedule"
-msgstr "Pianificazione Maiusc Dipendente"
+msgstr "Pianificazione turni dipendente"
 
 msgid "Employee Shift Schedules"
-msgstr "Pianificazioni Maiusc Dipendenti"
+msgstr "Pianificazioni turni dipendenti"
 
 msgid "Shift 1"
-msgstr "Maiusc 1"
+msgstr "Turno 1"
 
 msgid "Shift 2"
-msgstr "Maiusc 2"
+msgstr "Turno 2"
 
 msgid "Rotating Shift"
-msgstr "Maiusc Rotante"
+msgstr "Turno a rotazione"
 
 msgid "Rotating Shifts"
-msgstr "Spostamenti Rotanti"
+msgstr "Turni a rotazione"
 
 msgid "Select different shift continuously"
-msgstr "Seleziona uno spostamento diverso continuamente"
+msgstr "Seleziona continuamente un turno diverso"
 
 msgid "Current Shift"
-msgstr "Spostamento Corrente"
+msgstr "Turno corrente"
 
 msgid "Next Shift"
-msgstr "Prossimo Maiusc"
+msgstr "Prossimo turno"
 
 msgid "Rotating Shift Assign"
-msgstr "Assegnazione Maiusc Rotante"
+msgstr "Assegnazione turno a rotazione"
 
 msgid "Rotating Shift Assigns"
-msgstr "Assegnazione Maiusc Rotante"
+msgstr "Assegnazioni turni a rotazione"
 
 msgid "Requesting Work Type"
-msgstr "Tipo Di Lavoro Richiesto"
+msgstr "Tipo di lavoro richiesto"
 
 msgid "Previous Work Type"
-msgstr "Tipo Lavoro Precedente"
+msgstr "Tipo di lavoro precedente"
 
 msgid "Requested Till"
-msgstr "Fino A Richiesta"
+msgstr "Richiesto fino al"
 
 msgid "Permanent Request"
-msgstr "Richiesta Permanente"
+msgstr "Richiesta permanente"
 
 msgid "Canceled"
 msgstr "Annullato"
 
 msgid "Work Type Request"
-msgstr "Richiesta Tipo Di Lavoro"
+msgstr "Richiesta tipo di lavoro"
 
 msgid "Work Type Requests"
-msgstr "Richieste Tipo Di Lavoro"
+msgstr "Richieste tipo di lavoro"
 
 msgid "End date must be greater than or equal to start date"
-msgstr "La data di fine deve essere maggiore o uguale alla data di inizio"
+msgstr "La data di fine deve essere successiva o uguale alla data di inizio"
 
 msgid "A work type request already exists during this time period."
-msgstr "Una richiesta di tipo di lavoro esiste già durante questo periodo di tempo."
+msgstr "Esiste già una richiesta di tipo di lavoro per questo periodo di tempo."
 
 msgid "Requested till field is required."
-msgstr "Richiesto finché il campo è obbligatorio."
+msgstr "Il campo 'Richiesto fino al' è obbligatorio."
 
 msgid "Requesting Shift"
-msgstr "Richiesta Maiusc"
+msgstr "Turno richiesto"
 
 msgid "Previous Shift"
-msgstr "Maiusc Precedente"
+msgstr "Turno precedente"
 
 msgid "Reallocate Employee"
-msgstr "Rialloca Dipendente"
+msgstr "Rialloca dipendente"
 
 msgid "Shift Request"
-msgstr "Richiesta Maiusc"
+msgstr "Richiesta di turno"
 
 msgid "Shift Requests"
-msgstr "Richieste Di Maiusc"
+msgstr "Richieste di turno"
 
 msgid "An approved shift request already exists during this time period."
-msgstr "Una richiesta di spostamento approvata esiste già durante questo periodo di tempo."
+msgstr "Esiste già una richiesta di turno approvata per questo periodo di tempo."
 
 msgid "Tag"
 msgstr "Tag"
 
 msgid "Email Host"
-msgstr "Host Email"
+msgstr "Host email"
 
 msgid "Email Port"
-msgstr "Porta Email"
+msgstr "Porta email"
 
 msgid "Default From Email"
-msgstr "Email Predefinita"
+msgstr "Email mittente predefinita"
 
 msgid "Email Host Username"
-msgstr "Email Host Username"
+msgstr "Nome utente dell'host email"
 
 msgid "Display Name"
-msgstr "Nome Visualizzato"
+msgstr "Nome visualizzato"
 
 msgid "Email Authentication Password"
-msgstr "Password Di Autenticazione Email"
+msgstr "Password di autenticazione email"
 
 msgid "Use TLS"
 msgstr "Usa TLS"
@@ -2343,73 +2229,73 @@ msgid "Use SSL"
 msgstr "Usa SSL"
 
 msgid "Fail Silently"
-msgstr "Fallito Silenziosamente"
+msgstr "Ignora errori (Fail Silently)"
 
 msgid "Primary Mail Server"
-msgstr "Server Di Posta Primario"
+msgstr "Server di posta primario"
 
 msgid "By enabling this the display name will take from who triggered the mail"
-msgstr "Abilitando questo il nome del display prenderà da chi ha attivato la posta"
+msgstr "Abilitando questa opzione, il nome visualizzato corrisponderà a colui che ha inviato l'email"
 
 msgid "Email Send Timeout (seconds)"
-msgstr "Invia Email Timeout (secondi)"
+msgstr "Timeout invio email (secondi)"
 
 msgid "\"Use TLS\" and \"Use SSL\" are mutually exclusive, so only set one of those settings to True."
-msgstr "\"Usa TLS\" e \"Usa SSL\" si escludono a vicenda, quindi imposta solo una di queste impostazioni a True."
+msgstr "\"Usa TLS\" e \"Usa SSL\" si escludono a vicenda, pertanto impostare a True solo una delle due opzioni."
 
 msgid "Email Configuration"
-msgstr "Email Configuration"
+msgstr "Configurazione email"
 
 msgid "Leave Requested Days"
-msgstr "Abbandona Giorni Richiesti"
+msgstr "Giorni di congedo richiesti"
 
 msgid "Condition Value"
-msgstr "Valore Della Condizione"
+msgstr "Valore della condizione"
 
 msgid "Starting Value"
-msgstr "Valore Iniziale"
+msgstr "Valore iniziale"
 
 msgid "Ending Value"
-msgstr "Valore Finale"
+msgstr "Valore finale"
 
 msgid "A condition with the provided fields already exists"
-msgstr "Una condizione con i campi forniti esiste già"
+msgstr "Esiste già una condizione con i campi specificati"
 
 msgid "Please enter a numeric value for condition value"
-msgstr "Inserisci un valore numerico per il valore della condizione"
+msgstr "Inserire un valore numerico per il valore della condizione"
 
 msgid "Please enter a valid numeric value for the condition value when the condition field is Leave Requested Days."
-msgstr "Inserisci un valore numerico valido per il valore della condizione quando il campo di condizione è Lascia giorni richiesti."
+msgstr "Inserire un valore numerico valido per il valore della condizione quando il campo corrisponde a 'Giorni di congedo richiesti'."
 
 msgid "Please specify condition value range"
-msgstr "Specificare l'intervallo di valori di condizione"
+msgstr "Specificare l'intervallo del valore della condizione"
 
 msgid "Please enter a valid numeric value for the starting value when the condition field is Leave Requested Days."
-msgstr "Inserisci un valore numerico valido per il valore iniziale quando il campo di condizione è Lascia giorni richiesti."
+msgstr "Inserire un valore numerico valido per il valore iniziale quando il campo corrisponde a 'Giorni di congedo richiesti'."
 
 msgid "Please enter a valid numeric value for the ending value when the condition field is Leave Requested Days."
-msgstr "Inserisci un valore numerico valido per il valore finale quando il campo di condizione è Lascia giorni richiesti."
+msgstr "Inserire un valore numerico valido per il valore finale quando il campo corrisponde a 'Giorni di congedo richiesti'."
 
 msgid "End value must be different from the start value in a range."
-msgstr "Il valore finale deve essere diverso dal valore iniziale in un intervallo."
+msgstr "All'interno di un intervallo, il valore finale deve essere diverso dal valore iniziale."
 
 msgid "End value must be greater than the start value in a range."
-msgstr "Il valore finale deve essere maggiore del valore iniziale in un intervallo."
+msgstr "All'interno di un intervallo, il valore finale deve essere maggiore del valore iniziale."
 
 msgid "Multiple Approval Managers"
-msgstr "Gestori Di Approvazione Multipli"
+msgstr "Responsabili di approvazione multipli"
 
 msgid "User"
 msgstr "Utente"
 
 msgid "Disable Comments"
-msgstr "Disabilita Commenti"
+msgstr "Disabilita commenti"
 
 msgid "Show Comments to All"
 msgstr "Mostra commenti a tutti"
 
 msgid "If enabled, all employees can view each other's comments."
-msgstr "Se abilitata, tutti i dipendenti possono visualizzare i rispettivi commenti."
+msgstr "Se abilitata, tutti i dipendenti potranno visualizzare i commenti reciproci."
 
 msgid "Announcement"
 msgstr "Annuncio"
@@ -2418,67 +2304,67 @@ msgid "Announcements"
 msgstr "Annunci"
 
 msgid "Excluded Charts"
-msgstr "Grafici Escluse"
+msgstr "Grafici esclusi"
 
 msgid "Dashboard Employee Charts"
-msgstr "Grafici Dipendenti Dashboard"
+msgstr "Grafici dipendenti della dashboard"
 
 msgid "Enable"
 msgstr "Abilita"
 
 msgid "By enabling this, you track the late comes and early outs of employees in their attendance."
-msgstr "Abilitando questo, si traccia il ritardo viene e primi fuori dei dipendenti nella loro presenza."
+msgstr "Abilitando questa opzione, verranno tracciati gli ingressi in ritardo e le uscite anticipate dei dipendenti nel registro delle presenze."
 
 msgid "Track Late Come Early Out"
-msgstr "Traccia I Tardi In Avanti"
+msgstr "Traccia ingressi in ritardo / uscite anticipate"
 
 msgid "Track Late Come Early Outs"
-msgstr "Traccia I Tardi"
+msgstr "Traccia ingressi in ritardo / uscite anticipate"
 
 msgid "Only one TrackLateComeEarlyOut instance is allowed."
-msgstr "È consentita solo un'istanza TrackLateComeEarlyOut."
+msgstr "È consentita una sola istanza di TrackLateComeEarlyOut."
 
 msgid "End Date"
-msgstr "Data Di Fine"
+msgstr "Data di fine"
 
 msgid "Recurring"
 msgstr "Ricorrente"
 
 msgid "Holiday"
-msgstr "Vacanza"
+msgstr "Festività"
 
 msgid "Holidays"
-msgstr "Vacanze"
+msgstr "Festività"
 
 msgid "Based On Week"
-msgstr "Basato Sulla Settimana"
+msgstr "In base alla settimana"
 
 msgid "Based On Week Day"
-msgstr "Basato Il Giorno Della Settimana"
+msgstr "In base al giorno della settimana"
 
 msgid "Company Leave"
-msgstr "Abbandono Azienda"
+msgstr "Congedo aziendale"
 
 msgid "Company Leaves"
-msgstr "Foglie Aziendali"
+msgstr "Congedi aziendali"
 
 msgid "Specify the leave type to deduct the leave."
-msgstr "Specificare il tipo di congedo per dedurre il foglio."
+msgstr "Specificare il tipo di congedo da cui effettuare la deduzione."
 
 msgid "If a leave type is chosen for a penalty, minus leaves are required."
-msgstr "Se un tipo di congedo è scelto per una penalità, meno foglie sono richieste."
+msgstr "Se viene scelto un tipo di congedo per una sanzione, sono richiesti giorni di congedo in negativo."
 
 msgid "Either minus leaves or a penalty amount is required"
-msgstr "O meno foglie o è richiesto un importo di penalità"
+msgstr "È richiesto un valore di congedo in negativo o un importo per la sanzione"
 
 msgid "Leave type is required"
-msgstr "Il tipo di uscita è obbligatorio"
+msgstr "Il tipo di congedo è obbligatorio"
 
 msgid "Penalty Account"
-msgstr "Conto Penale"
+msgstr "Conto sanzioni"
 
 msgid "Penalty Accounts"
-msgstr "Conti Di Penalità"
+msgstr "Conti sanzioni"
 
 msgid "Create "
 msgstr "Crea "
@@ -2487,13 +2373,13 @@ msgid "Are you sure you want to delete this announcement?"
 msgstr "Sei sicuro di voler eliminare questo annuncio?"
 
 msgid " Views"
-msgstr " Viste"
+msgstr " Visualizzazioni"
 
 msgid "Posted on"
 msgstr "Pubblicato il"
 
 msgid "View Attachment"
-msgstr "Visualizza Allegato"
+msgstr "Visualizza allegato"
 
 msgid "There are no announcements at the moment."
 msgstr "Al momento non ci sono annunci."
@@ -2505,79 +2391,79 @@ msgid "Are you sure do you want to delete this file ?"
 msgstr "Sei sicuro di voler eliminare questo file?"
 
 msgid "'s comments"
-msgstr "'s commenti"
+msgstr "Commenti di"
 
 msgid "Comments have been disabled for this announcement."
 msgstr "I commenti sono stati disabilitati per questo annuncio."
 
 msgid "Announcement Expire"
-msgstr "Scadenza Annuncio"
+msgstr "Scadenza annuncio"
 
 msgid "Default Expire Days"
-msgstr "Giorni Predefiniti Di Scadenza"
+msgstr "Giorni di scadenza predefiniti"
 
 msgid "Set default announcement expire days"
-msgstr "Imposta i giorni di scadenza predefiniti"
+msgstr "Imposta i giorni di scadenza predefiniti per gli annunci"
 
 msgid "Days"
 msgstr "Giorni"
 
 msgid "Save Changes"
-msgstr "Salva Modifiche"
+msgstr "Salva modifiche"
 
 msgid "Viewed By"
-msgstr "Visualizzato Da"
+msgstr "Visualizzato da"
 
 msgid "Action Type"
-msgstr "Tipo Di Azione"
+msgstr "Tipo di azione"
 
 msgid "There is no disciplinary action type at this moment."
-msgstr "Al momento non esiste alcun tipo di azione disciplinare."
+msgstr "Al momento non è presente alcun tipo di azione disciplinare."
 
 msgid "Update Action Type"
-msgstr "Aggiorna Tipo Azione"
+msgstr "Aggiorna tipo di azione"
 
 msgid "Create Action Type"
-msgstr "Crea Tipo Azione"
+msgstr "Crea tipo di azione"
 
 msgid "Login block"
-msgstr "Blocco di login"
+msgstr "Blocco dell'accesso"
 
 msgid "Are you sure you want to delete this action type?"
 msgstr "Sei sicuro di voler eliminare questo tipo di azione?"
 
 msgid "History Tag Update"
-msgstr "Aggiornamento Tag Cronologia"
+msgstr "Aggiornamento tag cronologia"
 
 msgid "Create History Tag"
-msgstr "Crea Tag Cronologia"
+msgstr "Crea tag cronologia"
 
 msgid "Highlight"
 msgstr "Evidenzia"
 
 msgid "Are you sure you want to delete this history tag ?"
-msgstr "Sei sicuro di voler eliminare questo tag di cronologia?"
+msgstr "Sei sicuro di voler eliminare questo tag della cronologia?"
 
 msgid "Employee Account Restrictions"
-msgstr "Restrizioni Account Dipendenti"
+msgstr "Restrizioni account dipendenti"
 
 msgid "Restrict Login Account"
-msgstr "Limita Account Login"
+msgstr "Limita accesso all'account"
 
 msgid "By enabling this feature, you can block or unblock an employee account."
-msgstr "Abilitando questa funzione, puoi bloccare o sbloccare un account dipendente."
+msgstr "Abilitando questa funzione, è possibile bloccare o sbloccare l'account di un dipendente."
 
 msgid "Restrict Profile Edit"
-msgstr "Restringi Modifica Profilo"
+msgstr "Limita modifica profilo"
 
 msgid "By enabling this feature, you can restrict an employee from editing their profile."
-msgstr "Abilitando questa funzione, è possibile limitare un dipendente dalla modifica del proprio profilo."
+msgstr "Abilitando questa funzione, è possibile impedire a un dipendente di modificare il proprio profilo."
 
 msgid "Are you sure you want to restrict all employees from editing their profiles?"
-msgstr "Sei sicuro di voler limitare tutti i dipendenti dalla modifica dei loro profili?"
+msgstr "Sei sicuro di voler impedire a tutti i dipendenti di modificare il proprio profilo?"
 
 msgid "Are you sure you want to allow all employees to edit their profiles?"
-msgstr "Sei sicuro di voler consentire a tutti i dipendenti di modificare i loro profili?"
+msgstr "Sei sicuro di voler consentire a tutti i dipendenti di modificare il proprio profilo?"
 
 msgid "Please Confirm"
 msgstr "Conferma"
@@ -2589,34 +2475,34 @@ msgid "Error"
 msgstr "Errore"
 
 msgid "Something went wrong while updating."
-msgstr "Qualcosa è andato storto durante l'aggiornamento."
+msgstr "Si è verificato un errore durante l'aggiornamento."
 
 msgid "Employee History Tracking"
-msgstr "Tracciamento Cronologia Dipendenti"
+msgstr "Tracciamento cronologia dipendenti"
 
 msgid "Tracking Fields"
-msgstr "Campi Di Monitoraggio"
+msgstr "Campi da tracciare"
 
 msgid "Employee history will be stored during updation of the fields that selected here."
-msgstr "La cronologia dei dipendenti verrà memorizzata durante l'updation dei campi selezionati qui."
+msgstr "La cronologia del dipendente verrà memorizzata al momento dell'aggiornamento dei campi selezionati qui."
 
 msgid "Work Information Tracking"
-msgstr "Monitoraggio Delle Informazioni Lavoro"
+msgstr "Tracciamento informazioni lavorative"
 
 msgid "By enabling this feature, you can save the history of employee work information during updates."
-msgstr "Abilitando questa funzione, è possibile salvare la cronologia delle informazioni sul lavoro dei dipendenti durante gli aggiornamenti."
+msgstr "Abilitando questa funzione, è possibile salvare la cronologia delle informazioni lavorative del dipendente durante gli aggiornamenti."
 
 msgid "Group Permissions"
-msgstr "Permessi Di Gruppo"
+msgstr "Permessi di gruppo"
 
 msgid "Group Assign"
-msgstr "Assegnazione Gruppo"
+msgstr "Assegnazione gruppo"
 
 msgid "Group"
 msgstr "Gruppo"
 
 msgid "Reveal"
-msgstr "Rivela"
+msgstr "Mostra"
 
 msgid "Collapse"
 msgstr "Comprimi"
@@ -2625,40 +2511,40 @@ msgid "Total"
 msgstr "Totale"
 
 msgid "users in this group"
-msgstr "utenti di questo gruppo"
+msgstr "utenti in questo gruppo"
 
 msgid "There is no employee group at this moment."
-msgstr "Non c'è nessun gruppo di dipendenti in questo momento."
+msgstr "Al momento non sono presenti gruppi di dipendenti."
 
 msgid "Are you sure you want to delete this group?"
 msgstr "Sei sicuro di voler eliminare questo gruppo?"
 
 msgid "Change Password"
-msgstr "Cambia Password"
+msgstr "Cambia password"
 
 msgid "Old Password"
-msgstr "Vecchia Password"
+msgstr "Vecchia password"
 
 msgid "Show Password"
-msgstr "Mostra Password"
+msgstr "Mostra password"
 
 msgid "Hide Password"
-msgstr "Nascondi Password"
+msgstr "Nascondi password"
 
 msgid "New Password"
-msgstr "Nuova Password"
+msgstr "Nuova password"
 
 msgid "Confirm Password"
-msgstr "Conferma Password"
+msgstr "Conferma password"
 
 msgid "Save Password"
-msgstr "Salva Password"
+msgstr "Salva password"
 
 msgid "Forgot password"
 msgstr "Password dimenticata"
 
 msgid "Employee Permissions"
-msgstr "Permessi Dipendenti"
+msgstr "Permessi dipendente"
 
 msgid "Assign"
 msgstr "Assegna"
@@ -2676,19 +2562,19 @@ msgid "Can delete"
 msgstr "Può eliminare"
 
 msgid "Two Factor Authentication"
-msgstr "Autenticazione A Due Fattori"
+msgstr "Autenticazione a due fattori"
 
 msgid "Enter the OTP send to your email: "
-msgstr "Inserisci l'OTP invia alla tua email: "
+msgstr "Inserisci il codice OTP inviato alla tua email: "
 
 msgid "Enter OTP"
 msgstr "Inserisci OTP"
 
 msgid "Resend OTP in"
-msgstr "Reinvia OTP in"
+msgstr "Reinvia OTP tra"
 
 msgid "Authenticate"
-msgstr "Autenticazione"
+msgstr "Autentica"
 
 msgid "Send OTP"
 msgstr "Invia OTP"
@@ -2697,19 +2583,19 @@ msgid "Resend"
 msgstr "Reinvia"
 
 msgid "Change Username"
-msgstr "Cambia Nome Utente"
+msgstr "Cambia nome utente"
 
 msgid "Old  Username"
-msgstr "Vecchio Nome Utente"
+msgstr "Vecchio nome utente"
 
 msgid "There is no companies at this moment."
-msgstr "Non ci sono aziende in questo momento."
+msgstr "Al momento non sono presenti aziende."
 
 msgid "Close"
 msgstr "Chiudi"
 
 msgid "Is Hq"
-msgstr "È Hq"
+msgstr "È sede principale"
 
 msgid "Address"
 msgstr "Indirizzo"
@@ -2718,94 +2604,94 @@ msgid "Country"
 msgstr "Paese"
 
 msgid "State"
-msgstr "Stato"
+msgstr "Stato/Provincia"
 
 msgid "City"
 msgstr "Città"
 
 msgid "Zip"
-msgstr "Zip"
+msgstr "CAP"
 
 msgid "Are you sure you want to delete this company?"
 msgstr "Sei sicuro di voler eliminare questa azienda?"
 
 msgid "Attendance Condition"
-msgstr "Condizione Di Partecipazione"
+msgstr "Condizione di presenza"
 
 msgid "Date Format"
-msgstr "Formato Data"
+msgstr "Formato data"
 
 msgid "Select Date Format:"
-msgstr "Seleziona Formato Data:"
+msgstr "Seleziona formato data:"
 
 msgid "Day, Month, Year (e.g., 30-12-2023)"
-msgstr "Giorno, Mese, Anno (Es., 30-12-2023)"
+msgstr "Giorno, Mese, Anno (es., 30-12-2023)"
 
 msgid "Day, Month, Year (e.g., 30.12.2023)"
-msgstr "Giorno, Mese, Anno (es. 30.12.2023)"
+msgstr "Giorno, Mese, Anno (es., 30.12.2023)"
 
 msgid "Day, Month, Year (e.g., 30/12/2023)"
-msgstr "Giorno, Mese, Anno (Es., 30/12/2023)"
+msgstr "Giorno, Mese, Anno (es., 30/12/2023)"
 
 msgid "Month, Day, Year (e.g., 12/30/2023)"
-msgstr "Mese, Giorno, Anno (Es., 12/30/2023)"
+msgstr "Mese, Giorno, Anno (es., 12/30/2023)"
 
 msgid "Year, Month, Day (e.g., 2023-12-30)"
-msgstr "Anno, Mese, Giorno (es. 2023-12-30)"
+msgstr "Anno, Mese, Giorno (es., 2023-12-30)"
 
 msgid "Year, Month, Day (e.g., 2023/12/30)"
-msgstr "Anno, Mese, Giorno (es. 2023/12/30)"
+msgstr "Anno, Mese, Giorno (es., 2023/12/30)"
 
 msgid "Full Month Name, Day, Year (e.g., January 1, 2023)"
-msgstr "Nome Completo Del Mese, Giorno, Anno (Es., 1 Gennaio 2023)"
+msgstr "Nome mese esteso, Giorno, Anno (es., 1 Gennaio 2023)"
 
 msgid "Day, Full Month Name, Year (e.g., 1 January, 2023)"
-msgstr "Giorno, Nome Del Mese Completo, Anno (Es., 1 Gennaio, 2023)"
+msgstr "Giorno, Nome mese esteso, Anno (es., 1 Gennaio 2023)"
 
 msgid "Abbreviated Month Name, Day, Year (e.g., Jan. 1, 2023)"
-msgstr "Nome Mese Abbreviato, Giorno, Anno (ad es. Gen. 1, 2023)"
+msgstr "Nome mese abbreviato, Giorno, Anno (es., Gen 1, 2023)"
 
 msgid "Day, Abbreviated Month Name, Year (e.g., 1 Jan. 2023)"
-msgstr "Giorno, Nome Mese Abbreviato, Anno (ad es. 1 Gen. 2023)"
+msgstr "Giorno, Nome mese abbreviato, Anno (es., 1 Gen 2023)"
 
 msgid "Full Day Name, Full Month Name, Day, Year (e.g., Monday, January 1, 2023)"
-msgstr "Nome Di Giorno Completo, Nome Di Mese Completo, Giorno, Anno (Es., Lunedì, 1 Gennaio 2023)"
+msgstr "Nome giorno esteso, Nome mese esteso, Giorno, Anno (es., Lunedì, 1 Gennaio 2023)"
 
 msgid "Save Date Format"
-msgstr "Salva Formato Data"
+msgstr "Salva formato data"
 
 msgid "Current Date Format"
-msgstr "Formato Data Attuale"
+msgstr "Formato data attuale"
 
 msgid "Time Format"
-msgstr "Formato Ora"
+msgstr "Formato ora"
 
 msgid "Select Time Format:"
-msgstr "Seleziona Formato Orario:"
+msgstr "Seleziona formato ora:"
 
 msgid "12 Hr. (e.g., 06:00 AM or 06:00 PM)"
-msgstr "12 ore (es. 06:00 AM o 06:00 PM)"
+msgstr "12 ore (es., 06:00 AM o 06:00 PM)"
 
 msgid "24 Hr. (e.g., 06:00 or 18:00)"
-msgstr "24 ore (es. 06:00 o 18:00)"
+msgstr "24 ore (es., 06:00 o 18:00)"
 
 msgid "Save Time Format"
-msgstr "Salva Formato Ora"
+msgstr "Salva formato ora"
 
 msgid "Current Time Format"
-msgstr "Formato Ora Corrente"
+msgstr "Formato ora attuale"
 
 msgid "Currency"
 msgstr "Valuta"
 
 msgid "There is no department at this moment."
-msgstr "Non c'è nessun dipartimento in questo momento."
+msgstr "Al momento non sono presenti dipartimenti."
 
 msgid "Are you sure you want to delete this department?"
-msgstr "Sei sicuro di voler eliminare questo reparto?"
+msgstr "Sei sicuro di voler eliminare questo dipartimento?"
 
 msgid "Default Records Per Page"
-msgstr "Record Predefiniti Per Pagina"
+msgstr "Record predefiniti per pagina"
 
 msgid "Pagination"
 msgstr "Paginazione"
@@ -2814,28 +2700,28 @@ msgid "Default pagination for all views."
 msgstr "Paginazione predefinita per tutte le viste."
 
 msgid "Update Employee Tag"
-msgstr "Aggiorna Tag Dipendente"
+msgstr "Aggiorna tag dipendente"
 
 msgid "Create Employee Tag"
-msgstr "Crea Tag Dipendente"
+msgstr "Crea tag dipendente"
 
 msgid "Color"
 msgstr "Colore"
 
 msgid "Are you sure you want to delete this employee tag ?"
-msgstr "Sei sicuro di voler eliminare questo tag dipendente ?"
+msgstr "Sei sicuro di voler eliminare questo tag dipendente?"
 
 msgid "There is no employee type at this moment."
-msgstr "Non c'è nessun tipo di dipendente in questo momento."
+msgstr "Al momento non sono presenti tipi di dipendente."
 
 msgid "Are you sure you want to delete this employee type?"
 msgstr "Sei sicuro di voler eliminare questo tipo di dipendente?"
 
 msgid "Biometric Attendance"
-msgstr "Partecipazione Biometrica"
+msgstr "Presenze biometriche"
 
 msgid "Activate Biometric Attendance"
-msgstr "Attiva Presenza Biometrica"
+msgstr "Attiva presenze biometriche"
 
 msgid "Activated"
 msgstr "Attivato"
@@ -2844,73 +2730,73 @@ msgid "Activate"
 msgstr "Attiva"
 
 msgid "There is no job positions at this moment."
-msgstr "Non ci sono posti di lavoro in questo momento."
+msgstr "Al momento non sono presenti posizioni lavorative."
 
 msgid "Are you sure you want to delete this job position?"
-msgstr "Sei sicuro di voler eliminare questa posizione di lavoro?"
+msgstr "Sei sicuro di voler eliminare questa posizione lavorativa?"
 
 msgid "There is no Job roles at this moment."
-msgstr "Non ci sono ruoli Job in questo momento."
+msgstr "Al momento non sono presenti ruoli aziendali."
 
 msgid "Are you sure you want to delete this job role?"
-msgstr "Sei sicuro di voler eliminare questo ruolo di lavoro?"
+msgstr "Sei sicuro di voler eliminare questo ruolo aziendale?"
 
 msgid "Mail Server"
-msgstr "Mail Server"
+msgstr "Server di posta"
 
 msgid "Send Test Email"
-msgstr "Invia Email Di Prova"
+msgstr "Invia email di prova"
 
 msgid "Send Email"
-msgstr "Invia Email"
+msgstr "Invia email"
 
 msgid "Sending email..."
-msgstr "Invio email..."
+msgstr "Invio email in corso..."
 
 msgid "Mail Servers"
-msgstr "Server Posta"
+msgstr "Server di posta"
 
 msgid "There is no mail server at this moment."
-msgstr "Non c'è nessun server di posta in questo momento."
+msgstr "Al momento non sono presenti server di posta."
 
 msgid "Primary mail is not configured! "
-msgstr "La posta primaria non è configurata! "
+msgstr "L'email primaria non è configurata! "
 
 msgid "Host User"
-msgstr "Utente Host"
+msgstr "Utente host"
 
 msgid "Host"
 msgstr "Host"
 
 msgid "Test email"
-msgstr "Test email"
+msgstr "Email di prova"
 
 msgid "Do you want to delete this mail server configuration?"
 msgstr "Vuoi eliminare questa configurazione del server di posta?"
 
 msgid "This mail is assigned as primary mail.Replace primary mail to delete"
-msgstr "Questa posta è assegnata come posta primaria.Sostituisci la posta primaria per eliminare"
+msgstr "Questa email è impostata come primaria. Sostituisci l'email primaria prima di eliminarla"
 
 msgid "Select mail"
-msgstr "Seleziona posta"
+msgstr "Seleziona email"
 
 msgid "Submit"
 msgstr "Invia"
 
 msgid "Is Active"
-msgstr "È Attivo"
+msgstr "È attivo"
 
 msgid "Add more shifts.."
-msgstr "Aggiungi altri spostamenti.."
+msgstr "Aggiungi altri turni..."
 
 msgid "Select All Shifts"
-msgstr "Seleziona Tutti I Spostamenti"
+msgstr "Seleziona tutti i turni"
 
 msgid "Unselect All Shifts"
-msgstr "Deseleziona Tutti I Shift"
+msgstr "Deseleziona tutti i turni"
 
 msgid "Export Shifts"
-msgstr "Esporta I Maiuscoli"
+msgstr "Esporta turni"
 
 msgid "Rotate"
 msgstr "Ruota"
@@ -2934,193 +2820,193 @@ msgid "Rotate every last day of month"
 msgstr "Ruota ogni ultimo giorno del mese"
 
 msgid "Do you want to archive this rotating shift assign?"
-msgstr "Archiviare questo turno di rotazione assegnato?"
+msgstr "Vuoi archiviare questa assegnazione del turno a rotazione?"
 
 msgid "Archive"
-msgstr "Archivio"
+msgstr "Archivia"
 
 msgid "Do you Want to un-archive this rotating shift assign?"
-msgstr "Vuoi annullare l'archivio di questo turno di rotazione assegnato?"
+msgstr "Vuoi ripristinare dall'archivio questa assegnazione del turno a rotazione?"
 
 msgid "Un-Archive"
-msgstr "Un-Archive"
+msgstr "Ripristina dall'archivio"
 
 msgid "Are you sure you want to delete this rotating shift assign?"
-msgstr "Sei sicuro di voler eliminare questo turno di rotazione assegnato?"
+msgstr "Sei sicuro di voler eliminare questa assegnazione del turno a rotazione?"
 
 msgid "Add more shift.."
-msgstr "Aggiungi più spostamenti.."
+msgstr "Aggiungi altri turni..."
 
 msgid "Rotating Shift Assign Update"
-msgstr "Maiusc Ruotante Assegna Aggiornamento"
+msgstr "Aggiornamento assegnazione turno a rotazione"
 
 msgid "st day of month"
-msgstr "st giorno del mese"
+msgstr "° giorno del mese"
 
 msgid "nd day of month"
-msgstr "o giorno del mese"
+msgstr "° giorno del mese"
 
 msgid "rd day of month"
-msgstr "giorno del mese"
+msgstr "° giorno del mese"
 
 msgid "th day of month"
-msgstr "giorno del mese"
+msgstr "° giorno del mese"
 
 msgid "Next Change Date"
-msgstr "Prossima Modifica Data"
+msgstr "Data del prossimo cambio"
 
 msgid "Archived"
 msgstr "Archiviato"
 
 msgid "Do you want to un-archive this rotating shift assign?"
-msgstr "Annullare l'archivio di questo turno di rotazione assegnato?"
+msgstr "Vuoi ripristinare dall'archivio questa assegnazione del turno a rotazione?"
 
 msgid "Un-archive"
-msgstr "Annullare"
+msgstr "Ripristina dall'archivio"
 
 msgid "There are no rotating shift assigned to this employee."
-msgstr "Non ci sono turni di rotazione assegnati a questo dipendente."
+msgstr "Non ci sono turni a rotazione assegnati a questo dipendente."
 
 msgid "There is no rotating shifts at this moment."
-msgstr "In questo momento non ci sono turni di rotazione."
+msgstr "Al momento non sono presenti turni a rotazione."
 
 msgid "Selected Shifts"
-msgstr "Spostamenti Selezionati"
+msgstr "Turni selezionati"
 
 msgid "No Employees Assigned to Rotating Shifts."
-msgstr "Nessun dipendente assegnato a spostamenti di rotazione."
+msgstr "Nessun dipendente assegnato a turni a rotazione."
 
 msgid "Export Rotating Shift Assigns"
-msgstr "Esporta Maiusc Rotante Assegna"
+msgstr "Esporta assegnazioni turni a rotazione"
 
 msgid "Import Rotating Shift"
-msgstr "Importa Maiusc Rotante"
+msgstr "Importa turni a rotazione"
 
 msgid "False"
 msgstr "Falso"
 
 msgid "Additional Shifts"
-msgstr "Spostamenti Aggiuntivi"
+msgstr "Turni aggiuntivi"
 
 msgid "Are you sure you want to delete this rotating shift?"
-msgstr "Sei sicuro di voler eliminare questo turno di rotazione?"
+msgstr "Sei sicuro di voler eliminare questo turno a rotazione?"
 
 msgid "Add more work types.."
-msgstr "Aggiungi altri tipi di lavoro.."
+msgstr "Aggiungi altri tipi di lavoro..."
 
 msgid "Select All Worktypes"
-msgstr "Seleziona Tutti I Tipi Di Lavoro"
+msgstr "Seleziona tutti i tipi di lavoro"
 
 msgid "Unselect All Worktypes"
-msgstr "Deseleziona Tutti I Tipi Di Lavoro"
+msgstr "Deseleziona tutti i tipi di lavoro"
 
 msgid "Export Worktypes"
-msgstr "Esporta Tipi Di Lavoro"
+msgstr "Esporta tipi di lavoro"
 
 msgid "Do you Want to archive this rotating work type assign?"
-msgstr "Vuoi archiviare questo tipo di lavoro rotante assegnato?"
+msgstr "Vuoi archiviare questa assegnazione del tipo di lavoro a rotazione?"
 
 msgid "Do you Want to un-archive this rotating work type assign?"
-msgstr "Vuoi annullare l'archiviazione di questo tipo di lavoro rotante assegnare?"
+msgstr "Vuoi ripristinare dall'archivio questa assegnazione del tipo di lavoro a rotazione?"
 
 msgid "Are you sure you want to delete this rotating work type assign?"
-msgstr "Sei sicuro di voler eliminare questo tipo di lavoro rotante assegnato?"
+msgstr "Sei sicuro di voler eliminare questa assegnazione del tipo di lavoro a rotazione?"
 
 msgid "Do you want to archive this rotating work type assign?"
-msgstr "Archiviare questo tipo di lavoro rotante assegnato?"
+msgstr "Vuoi archiviare questa assegnazione del tipo di lavoro a rotazione?"
 
 msgid "There are no rotating work type assigned to this employee."
-msgstr "Non ci sono tipi di lavoro rotanti assegnati a questo dipendente."
+msgstr "Non ci sono tipi di lavoro a rotazione assegnati a questo dipendente."
 
 msgid "There is no rotating work types at this moment."
-msgstr "Non ci sono tipi di lavoro rotanti in questo momento."
+msgstr "Al momento non sono presenti tipi di lavoro a rotazione."
 
 msgid "Selected Worktypes"
-msgstr "Tipi Di Lavoro Selezionati"
+msgstr "Tipi di lavoro selezionati"
 
 msgid "No Employees Assigned to Rotating Work Types."
-msgstr "Nessun dipendente assegnato a tipi di lavoro rotanti."
+msgstr "Nessun dipendente assegnato a tipi di lavoro a rotazione."
 
 msgid "Export Rotating Work Type Assigns"
-msgstr "Esporta Tipo Di Lavoro Rotante Assegna"
+msgstr "Esporta assegnazioni tipi di lavoro a rotazione"
 
 msgid "Do you want to un-archive this rotating work type assign?"
-msgstr "Annullare l'archivio di questo tipo di lavoro rotante assegnato?"
+msgstr "Vuoi ripristinare dall'archivio questa assegnazione del tipo di lavoro a rotazione?"
 
 msgid "Are you sure you want to delete this rotating work type?"
-msgstr "Sei sicuro di voler eliminare questo tipo di lavoro rotante?"
+msgstr "Sei sicuro di voler eliminare questo tipo di lavoro a rotazione?"
 
 msgid "Shift Schedule"
-msgstr "Pianificazione Maiusc"
+msgstr "Pianificazione turni"
 
 msgid "There is no shift schedule at this moment."
-msgstr "In questo momento non è previsto alcun turno."
+msgstr "Al momento non è presente alcuna pianificazione dei turni."
 
 msgid "Schedules"
 msgstr "Pianificazioni"
 
 msgid "Are you sure you want to delete this schedule?"
-msgstr "Sei sicuro di voler eliminare questo programma?"
+msgstr "Sei sicuro di voler eliminare questa pianificazione?"
 
 msgid "Weekly Full Time"
-msgstr "Tempo Completo Settimanale"
+msgstr "Full-time settimanale"
 
 msgid "Full Time"
-msgstr "Tempo Intero"
+msgstr "Full-time"
 
 msgid "Are you sure you want to delete this shift?"
 msgstr "Sei sicuro di voler eliminare questo turno?"
 
 msgid "There is no employee shifts at this moment."
-msgstr "Non ci sono spostamenti dei dipendenti in questo momento."
+msgstr "Al momento non sono presenti turni dei dipendenti."
 
 msgid "Employee Tags"
-msgstr "Tag Dipendenti"
+msgstr "Tag dipendenti"
 
 msgid "There is no employee tags at this moment."
-msgstr "Non ci sono tag dipendenti in questo momento."
+msgstr "Al momento non sono presenti tag dipendenti."
 
 msgid "Helpdesk Tags"
-msgstr "Tag Helpdesk"
+msgstr "Tag helpdesk"
 
 msgid "There is no helpdesk tags at this moment."
-msgstr "Non ci sono tag helpdesk in questo momento."
+msgstr "Al momento non sono presenti tag helpdesk."
 
 msgid "Create Helpdesk Tag"
-msgstr "Crea Tag Helpdesk"
+msgstr "Crea tag helpdesk"
 
 msgid "Update Helpdesk Tag"
-msgstr "Aggiorna Tag Helpdesk"
+msgstr "Aggiorna tag helpdesk"
 
 msgid "History Tags"
-msgstr "Tag Cronologia"
+msgstr "Tag cronologia"
 
 msgid "There is no history tags at this moment."
-msgstr "Non ci sono tag di cronologia in questo momento."
+msgstr "Al momento non sono presenti tag cronologia."
 
 msgid "Are you sure you want to delete this tag ?"
 msgstr "Sei sicuro di voler eliminare questo tag?"
 
 msgid "Ticket Type"
-msgstr "Tipo Di Ticket"
+msgstr "Tipo di ticket"
 
 msgid "There is no ticket types at this moment."
-msgstr "Non ci sono tipi di biglietto in questo momento."
+msgstr "Al momento non sono presenti tipi di ticket."
 
 msgid "Create Ticket Type"
-msgstr "Crea Tipo Ticket"
+msgstr "Crea tipo di ticket"
 
 msgid "Update Ticket Type"
-msgstr "Aggiorna Tipo Ticket"
+msgstr "Aggiorna tipo di ticket"
 
 msgid "Prefix"
 msgstr "Prefisso"
 
 msgid "Are you sure you want to delete this ticket type?"
-msgstr "Sei sicuro di voler eliminare questo tipo di biglietto?"
+msgstr "Sei sicuro di voler eliminare questo tipo di ticket?"
 
 msgid "There is no work types at this moment."
-msgstr "Non ci sono tipi di lavoro in questo momento."
+msgstr "Al momento non sono presenti tipi di lavoro."
 
 msgid "Are you sure you want to delete this work type?"
 msgstr "Sei sicuro di voler eliminare questo tipo di lavoro?"
@@ -3129,133 +3015,133 @@ msgid "All"
 msgstr "Tutti"
 
 msgid "Are you sure you want to delete ?"
-msgstr "Sei sicuro di voler eliminare?"
+msgstr "Sei sicuro di voler procedere con l'eliminazione?"
 
 msgid "There are no company leaves at the moment."
-msgstr "Al momento non ci sono foglie aziendali."
+msgstr "Al momento non sono presenti congedi aziendali."
 
 msgid "Configure your email server."
 msgstr "Configura il tuo server email."
 
 msgid "Email Username"
-msgstr "Email Username"
+msgstr "Nome utente email"
 
 msgid "Email Password"
-msgstr "Password Email"
+msgstr "Password email"
 
 msgid "Use Tls"
-msgstr "Usa Tls"
+msgstr "Usa TLS"
 
 msgid "Configure"
 msgstr "Configura"
 
 msgid "Select All Holidays"
-msgstr "Seleziona Tutte Le Feste"
+msgstr "Seleziona tutte le festività"
 
 msgid "Unselect All Holidays"
-msgstr "Deseleziona Tutte Le Feste"
+msgstr "Deseleziona tutte le festività"
 
 msgid "Export Holidays"
-msgstr "Esporta Vacanze"
+msgstr "Esporta festività"
 
 msgid "Holiday Name"
-msgstr "Nome Festività"
+msgstr "Nome festività"
 
 msgid "Are you sure you want to delete this holiday?"
 msgstr "Sei sicuro di voler eliminare questa festività?"
 
 msgid "There are no holidays at the moments."
-msgstr "Non ci sono vacanze nei momenti."
+msgstr "Al momento non sono presenti festività."
 
 msgid "Selected Holidays"
-msgstr "Vacanze Selezionate"
+msgstr "Festività selezionate"
 
 msgid "There are no holidays at the moment."
-msgstr "Non ci sono vacanze al momento."
+msgstr "Al momento non sono presenti festività."
 
 msgid "Import Holidays"
-msgstr "Importa Vacanze"
+msgstr "Importa festività"
 
 msgid "No more holidays scheduled for this month."
-msgstr "Niente più vacanze in programma per questo mese."
+msgstr "Non ci sono altre festività programmate per questo mese."
 
 msgid "Mail Templates"
-msgstr "Modelli Di Mail"
+msgstr "Modelli email"
 
 msgid "There are currently no email templates available."
-msgstr "Al momento non ci sono modelli di email disponibili."
+msgstr "Al momento non ci sono modelli email disponibili."
 
 msgid "Add Template"
-msgstr "Aggiungi Modello"
+msgstr "Aggiungi modello"
 
 msgid "Body"
-msgstr "Corpo"
+msgstr "Corpo del testo"
 
 msgid "Hint: Type '{' to get sender or receiver data"
-msgstr "Suggerimento: digita '{' per ottenere i dati del mittente o del destinatario"
+msgstr "Suggerimento: digita '{' per inserire i dati del mittente o del destinatario"
 
 msgid "Save Duplicate"
-msgstr "Salva Duplicato"
+msgstr "Salva duplicato"
 
 msgid "View Template"
-msgstr "Visualizza Modello"
+msgstr "Visualizza modello"
 
 msgid "Add more managers.."
-msgstr "Aggiungi altri manager.."
+msgstr "Aggiungi altri responsabili..."
 
 msgid "Multiple Approval Condition"
-msgstr "Condizione Di Approvazione Multipla"
+msgstr "Condizione di approvazione multipla"
 
 msgid "Condition Field"
-msgstr "Campo Condizione"
+msgstr "Campo condizione"
 
 msgid "Condition Operator"
-msgstr "Operatore Condizione"
+msgstr "Operatore condizione"
 
 msgid "Approval Managers"
-msgstr "Responsabili Approvazione"
+msgstr "Responsabili approvazione"
 
 msgid "Apply"
 msgstr "Applica"
 
 msgid "There are currently no multiple approvals to consider."
-msgstr "Al momento non ci sono più approvazioni da considerare."
+msgstr "Al momento non ci sono approvazioni multiple da considerare."
 
 msgid "Minus Days"
-msgstr "Minus Days"
+msgstr "Giorni in negativo"
 
 msgid "Deducted From "
-msgstr "Deducido Da "
+msgstr "Dedotto da "
 
 msgid "CFD"
-msgstr "CFD"
+msgstr "CFD (Giorni riportati)"
 
 msgid "Penalty amount"
 msgstr "Importo della sanzione"
 
 msgid "Created Date"
-msgstr "Data Di Creazione"
+msgstr "Data di creazione"
 
 msgid "No penalties found"
-msgstr "Nessuna penale trovata"
+msgstr "Nessuna sanzione trovata"
 
 msgid "Requested Shift"
-msgstr "Trasferimento Richiesto"
+msgstr "Turno richiesto"
 
 msgid "Previous/ Current Shift"
-msgstr "Spostamento Precedente/ Corrente"
+msgstr "Turno precedente / attuale"
 
 msgid "Do you want to approve this shift request?"
-msgstr "Vuoi approvare questa richiesta di spostamento?"
+msgstr "Vuoi approvare questa richiesta di turno?"
 
 msgid "Do you want to cancel this request?"
 msgstr "Vuoi annullare questa richiesta?"
 
 msgid "Requested Work Type"
-msgstr "Tipo Lavoro Richiesto"
+msgstr "Tipo di lavoro richiesto"
 
 msgid "Previous/ Current Work Type"
-msgstr "Precedente/ Tipo Di Lavoro Corrente"
+msgstr "Tipo di lavoro precedente / attuale"
 
 msgid "Do you want to approve this request?"
 msgstr "Vuoi approvare questa richiesta?"
@@ -3267,94 +3153,94 @@ msgid "User availability"
 msgstr "Disponibilità utente"
 
 msgid "Not Available"
-msgstr "Non Disponibile"
+msgstr "Non disponibile"
 
 msgid "Not Marked"
-msgstr "Non Contrassegnato"
+msgstr "Non contrassegnato"
 
 msgid "Requested shift"
-msgstr "Spostamento richiesto"
+msgstr "Turno richiesto"
 
 msgid "Previous shift"
-msgstr "Spostamento precedente"
+msgstr "Turno precedente"
 
 msgid "Requested date"
 msgstr "Data richiesta"
 
 msgid "Requested till"
-msgstr "Richiesto fino a"
+msgstr "Richiesto fino al"
 
 msgid "Are you sure you want to delete this shift request?"
-msgstr "Sei sicuro di voler eliminare questa richiesta di spostamento?"
+msgstr "Sei sicuro di voler eliminare questa richiesta di turno?"
 
 msgid "Allocated Employee"
-msgstr "Dipendente Assegnato"
+msgstr "Dipendente assegnato"
 
 msgid "Previous/Current Shift"
-msgstr "Spostamento Precedente/Corrente"
+msgstr "Turno precedente / attuale"
 
 msgid "There are currently no shift requests to consider."
-msgstr "Attualmente non ci sono richieste di spostamento da considerare."
+msgstr "Al momento non ci sono richieste di turno da considerare."
 
 msgid "User Availability"
-msgstr "Disponibilità Utente"
+msgstr "Disponibilità utente"
 
 msgid "Are you available for this shift reallocation?"
-msgstr "Sei disponibile per questa ridistribuzione a turno?"
+msgstr "Sei disponibile per questa riassegnazione del turno?"
 
 msgid "Are you not available for this shift reallocation?"
-msgstr "Non sei disponibile per questa ridistribuzione a turno?"
+msgstr "Non sei disponibile per questa riassegnazione del turno?"
 
 msgid "Not available"
 msgstr "Non disponibile"
 
 msgid " Are you sure you want to delete this shift request?"
-msgstr " Sei sicuro di voler eliminare questa richiesta di spostamento?"
+msgstr " Sei sicuro di voler eliminare questa richiesta di turno?"
 
 msgid " Do you want to reject this request?"
-msgstr " Vuoi respingere questa richiesta?"
+msgstr " Vuoi rifiutare questa richiesta?"
 
 msgid "'s shift request"
-msgstr "'s richiesta di spostamento"
+msgstr "Richiesta di turno di"
 
 msgid "Is permenent shift"
-msgstr "È spostamento permenent"
+msgstr "È un turno permanente"
 
 msgid "Create Shift Request"
-msgstr "Crea Richiesta Maiusc"
+msgstr "Crea richiesta di turno"
 
 msgid "Export Shift Requests"
-msgstr "Esporta Richieste Di Maiusc"
+msgstr "Esporta richieste di turno"
 
 msgid "Gender"
-msgstr "Sesso"
+msgstr "Genere"
 
 msgid "Requested Date From"
-msgstr "Data Richiesta Da"
+msgstr "Data richiesta da"
 
 msgid "Requested Date Till"
-msgstr "Data Richiesta Fino A"
+msgstr "Data richiesta fino al"
 
 msgid "Approve Requests"
-msgstr "Approva Richieste"
+msgstr "Approva richieste"
 
 msgid "Reject Requests"
-msgstr "Rifiuta Richieste"
+msgstr "Rifiuta richieste"
 
 msgid "Allocated Shift Requests"
-msgstr "Richieste Di Maiusc Assegnate"
+msgstr "Richieste di turno assegnate"
 
 msgid "There are currently no work type requests to consider."
 msgstr "Al momento non ci sono richieste di tipo di lavoro da considerare."
 
 msgid "Previous/Current Work Type"
-msgstr "Tipo Di Lavoro Precedente/Corrente"
+msgstr "Tipo di lavoro precedente / attuale"
 
 msgid "Are you sure you want to delete this work type request?"
 msgstr "Sei sicuro di voler eliminare questa richiesta di tipo di lavoro?"
 
 msgid "'s worktype request"
-msgstr "richiesta di tipo di lavoro"
+msgstr "Richiesta tipo di lavoro di"
 
 msgid "Requested work type"
 msgstr "Tipo di lavoro richiesto"
@@ -3363,28 +3249,28 @@ msgid "Previous work type"
 msgstr "Tipo di lavoro precedente"
 
 msgid "Is permenent work type"
-msgstr "È tipo di lavoro permenent"
+msgstr "È un tipo di lavoro permanente"
 
 msgid "There are no work type requets to display."
-msgstr "Non ci sono requet di tipo di lavoro da visualizzare."
+msgstr "Non ci sono richieste di tipo di lavoro da visualizzare."
 
 msgid "Export Work Type Requests"
-msgstr "Esporta Richieste Di Tipo Lavoro"
+msgstr "Esporta richieste tipo di lavoro"
 
 msgid "monday"
-msgstr "lunedi"
+msgstr "lunedì"
 
 msgid "tuesday"
 msgstr "martedì"
 
 msgid "wednesday"
-msgstr "mercoledino"
+msgstr "mercoledì"
 
 msgid "thursday"
 msgstr "giovedì"
 
 msgid "friday"
-msgstr "venerdi"
+msgstr "venerdì"
 
 msgid "saturday"
 msgstr "sabato"
@@ -3402,49 +3288,49 @@ msgid "monthly"
 msgstr "mensile"
 
 msgid "Employee First Name"
-msgstr "Nome Dipendente"
+msgstr "Nome dipendente"
 
 msgid "Employee Last Name"
-msgstr "Cognome Dipendente"
+msgstr "Cognome dipendente"
 
 msgid "Bank Code #1"
-msgstr "Codice Bancario #1"
+msgstr "Codice bancario n. 1"
 
 msgid "Bank Code #2"
-msgstr "Codice Bancario #2"
+msgstr "Codice bancario n. 2"
 
 msgid "RECRUITMENT"
-msgstr "REGOLAMENTO"
+msgstr "RECRUITMENT"
 
 msgid "ONBOARDING"
 msgstr "ONBOARDING"
 
 msgid "EMPLOYEE"
-msgstr "OCCUPAZIONE"
+msgstr "DIPENDENTE"
 
 msgid "PAYROLL"
 msgstr "PAYROLL"
 
 msgid "ATTENDANCE"
-msgstr "ATTENDANZA"
+msgstr "PRESENZE"
 
 msgid "LEAVE"
-msgstr "LEAVE"
+msgstr "CONGEDI"
 
 msgid "ASSET"
 msgstr "ASSET"
 
 msgid "Your asset request approved!."
-msgstr "La tua richiesta di asset approvata!."
+msgstr "La tua richiesta di asset è stata approvata!"
 
 msgid "Your asset request rejected!."
-msgstr "La tua richiesta di asset rifiutata!."
+msgstr "La tua richiesta di asset è stata rifiutata!"
 
 msgid "You are added to rotating work type"
-msgstr "Sei stato aggiunto al tipo di lavoro rotante"
+msgstr "Sei stato aggiunto a un tipo di lavoro a rotazione"
 
 msgid "You are added to rotating shift"
-msgstr "Sei stato aggiunto al turno"
+msgstr "Sei stato aggiunto a un turno a rotazione"
 
 msgid "Your work type request has been canceled."
 msgstr "La tua richiesta di tipo di lavoro è stata annullata."
@@ -3456,13 +3342,13 @@ msgid "Your work type request has been deleted."
 msgstr "La tua richiesta di tipo di lavoro è stata eliminata."
 
 msgid "Your shift request has been canceled."
-msgstr "La tua richiesta di spostamento è stata annullata."
+msgstr "La tua richiesta di turno è stata annullata."
 
 msgid "Your shift request has been approved."
-msgstr "La tua richiesta di spostamento è stata approvata."
+msgstr "La tua richiesta di turno è stata approvata."
 
 msgid "Your shift request has been deleted."
-msgstr "La tua richiesta di spostamento è stata eliminata."
+msgstr "La tua richiesta di turno è stata eliminata."
 
 msgid "Your work details has been updated."
 msgstr "I dettagli del tuo lavoro sono stati aggiornati."
@@ -3471,7 +3357,7 @@ msgid "You have a new leave request to validate."
 msgstr "Hai una nuova richiesta di congedo da convalidare."
 
 msgid "New leave type is assigned to you"
-msgstr "Il nuovo tipo di congedo ti è assegnato"
+msgstr "Ti è stato assegnato un nuovo tipo di congedo"
 
 msgid "Your Leave request has been cancelled"
 msgstr "La tua richiesta di congedo è stata annullata"
@@ -3480,43 +3366,43 @@ msgid "Your Leave request has been approved"
 msgstr "La tua richiesta di congedo è stata approvata"
 
 msgid "You are chosen as onboarding stage manager"
-msgstr "Sei stato scelto come manager dello stage di onboarding"
+msgstr "Sei stato scelto come responsabile della fase di onboarding"
 
 msgid "You are chosen as onboarding task manager"
-msgstr "Sei stato scelto come manager di attività di onboarding"
+msgstr "Sei stato scelto come responsabile delle attività di onboarding"
 
 msgid "You got an OKR!."
-msgstr "Hai un OKR!."
+msgstr "Ti è stato assegnato un OKR!"
 
 msgid "You have received feedback!"
 msgstr "Hai ricevuto un feedback!"
 
 msgid "You have been assigned as a manager in a feedback!"
-msgstr "Sei stato assegnato come manager in un feedback!"
+msgstr "Sei stato assegnato come responsabile in un feedback!"
 
 msgid "You have been assigned as a subordinate in a feedback!"
-msgstr "Sei stato assegnato come subordinato in un feedback!"
+msgstr "Sei stato assegnato come collaboratore in un feedback!"
 
 msgid "You have been assigned as a colleague in a feedback!"
 msgstr "Sei stato assegnato come collega in un feedback!"
 
 msgid "You are chosen as one of recruitment manager"
-msgstr "Sei scelto come uno dei manager di reclutamento"
+msgstr "Sei stato scelto come uno dei responsabili del reclutamento"
 
 msgid "Your attendance for the date "
 msgstr "La tua presenza per la data "
 
 msgid " is validated"
-msgstr " è convalidato"
+msgstr " è convalidata"
 
 msgid "Select"
 msgstr "Seleziona"
 
 msgid "One time date"
-msgstr "Data unica volta"
+msgstr "Data singola"
 
 msgid "Is condition based"
-msgstr "È basato sulle condizioni"
+msgstr "È basato su condizioni"
 
 msgid "Is taxable"
 msgstr "È imponibile"
@@ -3528,19 +3414,19 @@ msgid "Value"
 msgstr "Valore"
 
 msgid "If choice"
-msgstr "Se scelta"
+msgstr "In caso di opzione"
 
 msgid "Is tax"
-msgstr "È imposta"
+msgstr "È una tassa/imposta"
 
 msgid "If amount"
-msgstr "Se importo"
+msgstr "In caso di importo"
 
 msgid "If condition"
-msgstr "Se condizione"
+msgstr "In caso di condizione"
 
 msgid "Employer rate"
-msgstr "Tasso di datore di lavoro"
+msgstr "Aliquota a carico del datore"
 
 msgid "Contract name"
 msgstr "Nome del contratto"
@@ -3549,70 +3435,70 @@ msgid "Contract start date"
 msgstr "Data inizio contratto"
 
 msgid "Contract end date"
-msgstr "Data di fine contratto"
+msgstr "Data fine contratto"
 
 msgid "Wage type"
-msgstr "Tipo di salario"
+msgstr "Tipo di retribuzione"
 
 msgid "Calculate daily leave amount"
-msgstr "Calcola l'importo giornaliero delle ferie"
+msgstr "Calcola l'importo giornaliero del congedo"
 
 msgid "Deduction for one leave amount"
-msgstr "Detrazione per un importo di congedo"
+msgstr "Detrazione per singolo congedo"
 
 msgid "Deduct leave from basic pay"
-msgstr "Partenza deeducente dalla retribuzione di base"
+msgstr "Deduci il congedo dalla retribuzione di base"
 
 msgid "Job role"
-msgstr "Ruolo del lavoro"
+msgstr "Ruolo aziendale"
 
 msgid "Work type"
 msgstr "Tipo di lavoro"
 
 msgid "Pay frequency"
-msgstr "Frequenza paga"
+msgstr "Frequenza di pagamento"
 
 msgid "Filing status"
-msgstr "Stato di archiviazione"
+msgstr "Stato fiscale/di archiviazione"
 
 msgid "Contract status"
 msgstr "Stato del contratto"
 
 msgid "Contract document"
-msgstr "Documento di contratto"
+msgstr "Documento del contratto"
 
 msgid "Update compensation"
-msgstr "Aggiorna la compensazione"
+msgstr "Aggiorna compenso"
 
 msgid "Is pretax"
-msgstr "È preimposta"
+msgstr "È prima delle tasse (lordo)"
 
 msgid "DASHBOARD"
 msgstr "DASHBOARD"
 
 msgid "SHIFT REQUESTS"
-msgstr "RICHIESTE DI SHIFT"
+msgstr "RICHIESTE DI TURNO"
 
 msgid "WORK TYPE REQUESTS"
-msgstr "RICHIESTE DI TIPO DI LAVORO"
+msgstr "RICHIESTE TIPO DI LAVORO"
 
 msgid "Single"
-msgstr "Singolo"
+msgstr "Celibe/Nubile"
 
 msgid "Married"
-msgstr "Sposato"
+msgstr "Coniugato/a"
 
 msgid "Divorced"
-msgstr "Divorziato"
+msgstr "Divorziato/a"
 
 msgid "Rotate every weekend"
 msgstr "Ruota ogni fine settimana"
 
 msgid "Request description"
-msgstr "Richiedi descrizione"
+msgstr "Descrizione della richiesta"
 
 msgid "Employment Type"
-msgstr "Tipo Di Occupazione"
+msgstr "Tipo di impiego"
 
 msgid "Jan"
 msgstr "Gen"
@@ -3651,31 +3537,31 @@ msgid "Additional info"
 msgstr "Informazioni aggiuntive"
 
 msgid "Schedule date"
-msgstr "Data di pianificazione"
+msgstr "Data pianificata"
 
 msgid "End date"
 msgstr "Data di fine"
 
 msgid "Recruitment managers"
-msgstr "Dirigenti reclutamento"
+msgstr "Responsabili reclutamento"
 
 msgid "Stage managers"
-msgstr "Stage manager"
+msgstr "Responsabili della fase"
 
 msgid "Stage type"
-msgstr "Tipo di stadio"
+msgstr "Tipo di fase"
 
 msgid "Scheduled from"
 msgstr "Pianificato da"
 
 msgid "Scheduled till"
-msgstr "Pianificato fino a"
+msgstr "Pianificato fino al"
 
 msgid "Start from"
 msgstr "Inizia da"
 
 msgid "End till"
-msgstr "End till"
+msgstr "Finisce al"
 
 msgid "Employee first name"
 msgstr "Nome del dipendente"
@@ -3684,106 +3570,106 @@ msgid "Employee last name"
 msgstr "Cognome del dipendente"
 
 msgid "Reporting manager"
-msgstr "Responsabile segnalante"
+msgstr "Responsabile diretto"
 
 msgid "Gte"
-msgstr "Gte"
+msgstr "Maggiore o uguale a (>=)"
 
 msgid "Lte"
-msgstr "Lte"
+msgstr "Minore o uguale a (<=)"
 
 msgid "Current shift"
-msgstr "Spostamento corrente"
+msgstr "Turno corrente"
 
 msgid "Rotating shift"
-msgstr "Spostamento di rotazione"
+msgstr "Turno a rotazione"
 
 msgid "Next change date"
-msgstr "Prossima modifica data"
+msgstr "Data del prossimo cambio"
 
 msgid "Next shift"
-msgstr "Spostamento successivo"
+msgstr "Prossimo turno"
 
 msgid "Current work type"
-msgstr "Tipo di lavoro attuale"
+msgstr "Tipo di lavoro corrente"
 
 msgid "Next work type"
-msgstr "Tipo di lavoro successivo"
+msgstr "Prossimo tipo di lavoro"
 
 msgid "Start date from"
 msgstr "Data di inizio da"
 
 msgid "Start date till"
-msgstr "Start date till"
+msgstr "Data di inizio fino al"
 
 msgid "End date from"
 msgstr "Data di fine da"
 
 msgid "End date till"
-msgstr "End date till"
+msgstr "Data di fine fino al"
 
 msgid "Location"
-msgstr "Posizione"
+msgstr "Sede"
 
 msgid "Attendance clock in"
-msgstr "Orologio di frequenza in"
+msgstr "Orario ingresso presenza"
 
 msgid "Attendance clock out"
-msgstr "Orologio di presenza fuori"
+msgstr "Orario uscita presenza"
 
 msgid "Attendance overtime approve"
-msgstr "Approvazione frequenza straordinari"
+msgstr "Approvazione straordinari presenza"
 
 msgid "Hour account"
-msgstr "Account ora"
+msgstr "Conto ore"
 
 msgid "Clock out date"
-msgstr "Data uscita"
+msgstr "Data di check-out"
 
 msgid "Clock in date"
-msgstr "Data orologio"
+msgstr "Data di check-in"
 
 msgid "Shift day"
-msgstr "Shift day"
+msgstr "Giorno del turno"
 
 msgid "Attendance date from"
-msgstr "Data di partecipazione da"
+msgstr "Data presenze da"
 
 msgid "In from"
-msgstr "In da"
+msgstr "Ingresso da"
 
 msgid "Out from"
 msgstr "Uscita da"
 
 msgid "Attendance date till"
-msgstr "Attendance date till"
+msgstr "Data presenze fino al"
 
 msgid "Out till"
-msgstr "Uscita fino a"
+msgstr "Uscita fino al"
 
 msgid "In till"
-msgstr "In till"
+msgstr "Ingresso fino al"
 
 msgid "Leave type"
-msgstr "Lascia il tipo"
+msgstr "Tipo di congedo"
 
 msgid "From date"
 msgstr "Dalla data"
 
 msgid "To date"
-msgstr "Ad oggi"
+msgstr "Alla data"
 
 msgid "Assigned date"
-msgstr "Data assegnata"
+msgstr "Data assegnazione"
 
 msgid "Based on week"
-msgstr "Basato su settimana"
+msgstr "In base alla settimana"
 
 msgid "Based on week day"
-msgstr "Basato sul giorno della settimana"
+msgstr "In base al giorno della settimana"
 
 msgid "Emp obj"
-msgstr "Emp obj"
+msgstr "Oggetto dipendente (Emp obj)"
 
 msgid "Updated at"
 msgstr "Aggiornato il"
@@ -3792,70 +3678,70 @@ msgid "Created at"
 msgstr "Creato il"
 
 msgid "Created at date range"
-msgstr "Creato all'intervallo di date"
+msgstr "Intervallo data di creazione"
 
 msgid "Review cycle"
-msgstr "Ciclo di revisione"
+msgstr "Ciclo di valutazione"
 
 msgid "Asset list"
-msgstr "Elenco risorse"
+msgstr "Elenco asset"
 
 msgid "Query"
-msgstr "Interrogazione"
+msgstr "Query"
 
 msgid "Asset category name"
-msgstr "Nome categoria attività"
+msgstr "Nome categoria asset"
 
 msgid "Asset category description"
-msgstr "Descrizione categoria attività"
+msgstr "Descrizione categoria asset"
 
 msgid "Asset name"
 msgstr "Nome asset"
 
 msgid "Asset tracking"
-msgstr "Monitoraggio asset"
+msgstr "Tracciamento asset"
 
 msgid "Asset purchase date"
-msgstr "Data di acquisto beni"
+msgstr "Data acquisto asset"
 
 msgid "Asset purchase cost"
-msgstr "Costo acquisto beni"
+msgstr "Costo acquisto asset"
 
 msgid "Asset lot number"
-msgstr "Numero del lotto dell'asset"
+msgstr "Numero lotto asset"
 
 msgid "Asset category"
-msgstr "Categoria attività"
+msgstr "Categoria asset"
 
 msgid "Asset status"
-msgstr "Asset status"
+msgstr "Stato asset"
 
 msgid "True"
 msgstr "Vero"
 
 msgid "Onboarding Portal S…"
-msgstr "Portale Di Onboarding S…"
+msgstr "Portale di onboarding S…"
 
 msgid "Employee work information"
-msgstr "Informazioni sul lavoro dipendente"
+msgstr "Informazioni lavorative dipendente"
 
 msgid "Rotating work type assign"
-msgstr "Tipo di lavoro rotante assegnare"
+msgstr "Assegnazione tipo di lavoro a rotazione"
 
 msgid "Employee shift schedule"
-msgstr "Pianificazione turni dipendenti"
+msgstr "Pianificazione turni dipendente"
 
 msgid "Rotating shift assign"
-msgstr "Assegnazione turno"
+msgstr "Assegnazione turno a rotazione"
 
 msgid "Onboarding portal"
-msgstr "Portale di Onboarding"
+msgstr "Portale di onboarding"
 
 msgid "Start date breakdown"
-msgstr "Disaggregazione per data di inizio"
+msgstr "Dettaglio data di inizio"
 
 msgid "End date breakdown"
-msgstr "Disaggregazione per data di fine"
+msgstr "Dettaglio data di fine"
 
 msgid "Payment"
 msgstr "Pagamento"
@@ -3870,7 +3756,7 @@ msgid "recruitment-survey-question-template-view"
 msgstr "recruitment-survey-question-template-view"
 
 msgid "candidate-view"
-msgstr "candidato-view"
+msgstr "candidate-view"
 
 msgid "recruitment-view"
 msgstr "recruitment-view"
@@ -3885,25 +3771,25 @@ msgid "onboarding-view"
 msgstr "onboarding-view"
 
 msgid "candidates-view"
-msgstr "candidati-view"
+msgstr "candidates-view"
 
 msgid "employee-profile"
-msgstr "profilo dipendente"
+msgstr "employee-profile"
 
 msgid "employee-view"
-msgstr "dipendente-view"
+msgstr "employee-view"
 
 msgid "shift-request-view"
 msgstr "shift-request-view"
 
 msgid "work-type-request-view"
-msgstr "work-typerequest-view"
+msgstr "work-type-request-view"
 
 msgid "rotating-shift-assign"
 msgstr "rotating-shift-assign"
 
 msgid "rotating-work-type-assign"
-msgstr "rotazione del tipo di lavoro"
+msgstr "rotating-work-type-assign"
 
 msgid "view-payroll-dashboard"
 msgstr "view-payroll-dashboard"
@@ -3924,28 +3810,28 @@ msgid "filing-status-view"
 msgstr "filing-status-view"
 
 msgid "attendance-view"
-msgstr "presentazione-vista"
+msgstr "attendance-view"
 
 msgid "request-attendance-view"
-msgstr "richiesta-presenza-vista"
+msgstr "request-attendance-view"
 
 msgid "attendance-overtime-view"
-msgstr "presentazione-overtime"
+msgstr "attendance-overtime-view"
 
 msgid "attendance-activity-view"
-msgstr "presenza-attività-vista"
+msgstr "attendance-activity-view"
 
 msgid "late-come-early-out-view"
 msgstr "late-come-early-out-view"
 
 msgid "view-my-attendance"
-msgstr "vista-mio-presenze"
+msgstr "view-my-attendance"
 
 msgid "leave-dashboard"
 msgstr "leave-dashboard"
 
 msgid "leave-employee-dashboard"
-msgstr "leave-dipendente-dashboard"
+msgstr "leave-employee-dashboard"
 
 msgid "user-leave"
 msgstr "user-leave"
@@ -3954,31 +3840,31 @@ msgid "user-request-view"
 msgstr "user-request-view"
 
 msgid "type-view"
-msgstr "type view"
+msgstr "type-view"
 
 msgid "assign-view"
-msgstr "assegna-vista"
+msgstr "assign-view"
 
 msgid "request-view"
 msgstr "request-view"
 
 msgid "holiday-view"
-msgstr "vacanza-vista"
+msgstr "holiday-view"
 
 msgid "company-leave-view"
 msgstr "company-leave-view"
 
 msgid "dashboard-view"
-msgstr "vista dashboard"
+msgstr "dashboard-view"
 
 msgid "objective-list-view"
-msgstr "targete-list-view"
+msgstr "objective-list-view"
 
 msgid "feedback-view"
 msgstr "feedback-view"
 
 msgid "period-view"
-msgstr "periodo-vista"
+msgstr "period-view"
 
 msgid "question-template-view"
 msgstr "question-template-view"
@@ -3990,37 +3876,37 @@ msgid "asset-request-allocation-view"
 msgstr "asset-request-allocation-view"
 
 msgid "recruitment"
-msgstr "reclutamento"
+msgstr "recruitment"
 
 msgid "update-contract"
 msgstr "update-contract"
 
 msgid "update-allowance"
-msgstr "aggiornamento-indennità"
+msgstr "update-allowance"
 
 msgid "update-deduction"
 msgstr "update-deduction"
 
 msgid "type-update"
-msgstr "aggiornamento"
+msgstr "type-update"
 
 msgid "type-creation"
-msgstr "creazione del tipo"
+msgstr "type-creation"
 
 msgid "asset-batch-view"
 msgstr "asset-batch-view"
 
 msgid "create-deduction"
-msgstr "create-deduzione"
+msgstr "create-deduction"
 
 msgid "create-allowance"
-msgstr "indennità di creazione"
+msgstr "create-allowance"
 
 msgid "pms"
 msgstr "pms"
 
 msgid "leave"
-msgstr "lascia"
+msgstr "congedi"
 
 msgid "attendance"
 msgstr "presenze"
@@ -4029,7 +3915,7 @@ msgid "payroll"
 msgstr "payroll"
 
 msgid "employee"
-msgstr "dipendente"
+msgstr "dipendenti"
 
 msgid "onboarding"
 msgstr "onboarding"
@@ -4038,7 +3924,7 @@ msgid "settings"
 msgstr "impostazioni"
 
 msgid "department-view"
-msgstr "reparto-view"
+msgstr "department-view"
 
 msgid "job-position-view"
 msgstr "job-position-view"
@@ -4047,25 +3933,25 @@ msgid "job-role-view"
 msgstr "job-role-view"
 
 msgid "work-type-view"
-msgstr "work-typeview"
+msgstr "work-type-view"
 
 msgid "rotating-work-type-view"
-msgstr "rotating-work-type view"
+msgstr "rotating-work-type-view"
 
 msgid "employee-type-view"
-msgstr "tipo di dipendente"
+msgstr "employee-type-view"
 
 msgid "employee-shift-view"
-msgstr "dipendente-shift-view"
+msgstr "employee-shift-view"
 
 msgid "employee-shift-schedule-view"
-msgstr "dipendente-shift-schedule-view"
+msgstr "employee-shift-schedule-view"
 
 msgid "rotating-shift-view"
 msgstr "rotating-shift-view"
 
 msgid "attendance-settings-view"
-msgstr "presenza-impostazioni-vista"
+msgstr "attendance-settings-view"
 
 msgid "user-group-view"
 msgstr "user-group-view"
@@ -4074,7 +3960,7 @@ msgid "company-view"
 msgstr "company-view"
 
 msgid "employee-permission-assign"
-msgstr "dipendente-permission-assign"
+msgstr "employee-permission-assign"
 
 msgid "currency"
 msgstr "valuta"
@@ -4083,19 +3969,19 @@ msgid "leave-allocation-request-view"
 msgstr "leave-allocation-request-view"
 
 msgid "employee-view-update"
-msgstr "dipendente-visualizzazione-aggiornamento"
+msgstr "employee-view-update"
 
 msgid "employee-bulk-update"
-msgstr "dipendente-bulk-update"
+msgstr "employee-bulk-update"
 
 msgid "not_set"
-msgstr "not_imposta"
+msgstr "non_impostato"
 
 msgid "objective-creation"
-msgstr "creazione oggettiva"
+msgstr "creazione_obiettivo"
 
 msgid "feedback-creation"
-msgstr "feedback-creation"
+msgstr "creazione_feedback"
 
 msgid "helpdesk"
 msgstr "helpdesk"
@@ -4110,7 +3996,7 @@ msgid "ticket-view"
 msgstr "ticket-view"
 
 msgid "ticket-detail"
-msgstr "dettaglio del biglietto"
+msgstr "ticket-detail"
 
 msgid "ticket-type-view"
 msgstr "tipo di biglietto"
