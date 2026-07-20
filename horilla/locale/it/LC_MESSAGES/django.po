@@ -3999,7 +3999,7 @@ msgid "ticket-detail"
 msgstr "ticket-detail"
 
 msgid "ticket-type-view"
-msgstr "tipo di biglietto"
+msgstr "ticket-type-view"
 
 msgid "tag-view"
 msgstr "tag-view"
@@ -4008,10 +4008,10 @@ msgid "mail-server-conf"
 msgstr "mail-server-conf"
 
 msgid "configuration"
-msgstr "configurazione"
+msgstr "configuration"
 
 msgid "multiple-approval-condition"
-msgstr "multiomologazione-condizione"
+msgstr "multiple-approval-condition"
 
 msgid "skill-zone-view"
 msgstr "skill-zone-view"
@@ -4023,10 +4023,10 @@ msgid "view-loan"
 msgstr "view-loan"
 
 msgid "view-reimbursement"
-msgstr "visto-rimborso"
+msgstr "view-reimbursement"
 
 msgid "department-manager-view"
-msgstr "reparto-manager-view"
+msgstr "department-manager-view"
 
 msgid "date-settings"
 msgstr "date-settings"
@@ -4038,13 +4038,13 @@ msgid "department"
 msgstr "reparto"
 
 msgid "job_position"
-msgstr "posizione_lavoro"
+msgstr "posizione_lavorativa"
 
 msgid "job_role"
-msgstr "ruolo_lavoro"
+msgstr "ruolo_aziendale"
 
 msgid "shift"
-msgstr "shift"
+msgstr "turno"
 
 msgid "work_type"
 msgstr "tipo_lavoro"
@@ -4053,7 +4053,7 @@ msgid "company"
 msgstr "azienda"
 
 msgid "employee-create-personal-info"
-msgstr "dipendente-create-personal-info"
+msgstr "employee-create-personal-info"
 
 msgid "offboarding"
 msgstr "offboarding"
@@ -4068,25 +4068,25 @@ msgid "organisation-chart"
 msgstr "organisation-chart"
 
 msgid "document-request-view"
-msgstr "documento-richiesta-vista"
+msgstr "document-request-view"
 
 msgid "disciplinary-actions"
 msgstr "azioni disciplinari"
 
 msgid "view-policies"
-msgstr "politiche di visione"
+msgstr "view-policies"
 
 msgid "resignation-requests-view"
 msgstr "resignation-requests-view"
 
 msgid "action-type"
-msgstr "tipo di azione"
+msgstr "action-type"
 
 msgid "general-settings"
 msgstr "general-settings"
 
 msgid "candidate-update"
-msgstr "candidato-aggiornamento"
+msgstr "candidate-update"
 
 msgid "create-payslip"
 msgstr "create-payslip"
@@ -4098,10 +4098,10 @@ msgid "edit-profile"
 msgstr "edit-profile"
 
 msgid "candidate-reject-reasons"
-msgstr "motivazione-rifiuto-candidatura-"
+msgstr "candidate-reject-reasons"
 
 msgid "employee-tag-view"
-msgstr "dipendente-tag-view"
+msgstr "employee-tag-view"
 
 msgid "grace-settings-view"
 msgstr "grace-settings-view"
@@ -4131,7 +4131,7 @@ msgid "false"
 msgstr "falso"
 
 msgid "candidate-create"
-msgstr "creazione-candidato"
+msgstr "candidate-create"
 
 msgid "compensatory-leave-settings-view"
 msgstr "compensatory-leave-settings-view"
@@ -4140,37 +4140,37 @@ msgid "view-compensatory-leave"
 msgstr "view-compensatory-leave"
 
 msgid "interview-view"
-msgstr "intervista-vista"
+msgstr "interview-view"
 
 msgid "view-meetings"
-msgstr "osservazioni-riunioni"
+msgstr "view-meetings"
 
 msgid "view-key-result"
 msgstr "view-key-result"
 
 msgid "asset-history"
-msgstr "cronologia attività"
+msgstr "cronologia asset"
 
 msgid "restrict-view"
-msgstr "restrizione-view"
+msgstr "restrict-view"
 
 msgid "auto-payslip-settings-view"
 msgstr "auto-payslip-settings-view"
 
 msgid "bonus-point-setting"
-msgstr "impostazione-punto bonus"
+msgstr "bonus-point-setting"
 
 msgid "employee-past-leave-restriction"
-msgstr "dipendente-passata-congedo-restrizione"
+msgstr "employee-past-leave-restriction"
 
 msgid "track-late-come-early-out"
 msgstr "track-late-come-early-out"
 
 msgid "enable-biometric-attendance"
-msgstr "partecipazione-biometrica-partecipazione"
+msgstr "enable-biometric-attendance"
 
 msgid "allowed-ips"
-msgstr "ips consentite"
+msgstr "indirizzi IP consentiti"
 
 msgid "self-tracking-feature"
 msgstr "self-tracking-feature"
@@ -4179,7 +4179,7 @@ msgid "skills-view"
 msgstr "skills-view"
 
 msgid "employee-bonus-point"
-msgstr "dipendente-bonus-point"
+msgstr "employee-bonus-point"
 
 msgid "mail-automations"
 msgstr "mail-automations"
@@ -4188,7 +4188,7 @@ msgid "check-in-check-out-setting"
 msgstr "check-in-check-out-setting"
 
 msgid "user-accessibility"
-msgstr "accessibilità utente"
+msgstr "user-accessibility"
 
 msgid "project"
 msgstr "progetto"
@@ -4215,31 +4215,31 @@ msgid "gdrive"
 msgstr "gdrive"
 
 msgid "horilla-theme"
-msgstr "orilla-tema"
+msgstr "horilla-theme"
 
 msgid "color-settings"
 msgstr "color-settings"
 
 msgid "report"
-msgstr "rapporto"
+msgstr "report"
 
 msgid "recruitment-report"
 msgstr "recruitment-report"
 
 msgid "employee-report"
-msgstr "rapporto dipendente"
+msgstr "report dipendenti"
 
 msgid "attendance-report"
-msgstr "relazione di partecipazione"
+msgstr "report presenze"
 
 msgid "leave-report"
-msgstr "resoconto di congedo"
+msgstr "report congedi"
 
 msgid "payroll-report"
 msgstr "payroll-report"
 
 msgid "asset-report"
-msgstr "resoconto attività"
+msgstr "report asset"
 
 msgid "pms-report"
 msgstr "pms-report"
@@ -4248,19 +4248,19 @@ msgid "Database loaded successfully."
 msgstr "Database caricato con successo."
 
 msgid "Database Authentication Failed"
-msgstr "Autenticazione Database Non Riuscita"
+msgstr "Autenticazione del database fallita"
 
 msgid "The password you entered is incorrect. Please try again."
 msgstr "La password inserita non è corretta. Riprova."
 
 msgid "Access Denied: Your account is blocked."
-msgstr "Accesso negato: Il tuo account è bloccato."
+msgstr "Accesso negato: il tuo account è bloccato."
 
 msgid "Invalid username or password."
 msgstr "Nome utente o password non validi."
 
 msgid "This user is archived. Please contact the manager for more information."
-msgstr "Questo utente è stato archiviato. Si prega di contattare il manager per ulteriori informazioni."
+msgstr "Questo utente è stato archiviato. Contattare il responsabile per ulteriori informazioni."
 
 msgid "Login successful."
 msgstr "Accesso riuscito."
@@ -4269,10 +4269,10 @@ msgid "Primary mail server is not configured"
 msgstr "Il server di posta primario non è configurato"
 
 msgid "Password reset link sent successfully"
-msgstr "Link per reimpostare la password inviato correttamente"
+msgstr "Link per la reimpostazione della password inviato con successo"
 
 msgid "No user found with the username"
-msgstr "Nessun utente trovato con il nome utente"
+msgstr "Nessun utente trovato con questo nome utente"
 
 msgid "No user with the given username"
 msgstr "Nessun utente con il nome utente specificato"
@@ -4287,22 +4287,22 @@ msgid "User group assigned."
 msgstr "Gruppo utente assegnato."
 
 msgid "The {} has been deleted successfully."
-msgstr "Il {} è stato eliminato con successo."
+msgstr "L'elemento {} è stato eliminato con successo."
 
 msgid "{} not found."
 msgstr "{} non trovato."
 
 msgid "Test mail from Horilla"
-msgstr "Test mail da Horilla"
+msgstr "Email di prova da Horilla"
 
 msgid "Something went wrong :"
-msgstr "Qualcosa è andato storto:"
+msgstr "Si è verificato un errore:"
 
 msgid "Mail sent successfully"
-msgstr "Mail inviata con successo"
+msgstr "Email inviata con successo"
 
 msgid "Can't Delete"
-msgstr "Impossibile Eliminare"
+msgstr "Impossibile eliminare"
 
 msgid "Company has been created successfully!"
 msgstr "L'azienda è stata creata con successo!"
@@ -4311,22 +4311,22 @@ msgid "Company updated"
 msgstr "Azienda aggiornata"
 
 msgid "Department has been created successfully!"
-msgstr "Il reparto è stato creato con successo!"
+msgstr "Il dipartimento è stato creato con successo!"
 
 msgid "Department updated."
 msgstr "Dipartimento aggiornato."
 
 msgid "Job Position has been created successfully!"
-msgstr "La posizione del lavoro è stata creata con successo!"
+msgstr "La posizione lavorativa è stata creata con successo!"
 
 msgid "Job position updated."
-msgstr "Posizione lavoro aggiornata."
+msgstr "Posizione lavorativa aggiornata."
 
 msgid "Job role has been created successfully!"
-msgstr "Il ruolo del lavoro è stato creato con successo!"
+msgstr "Il ruolo aziendale è stato creato con successo!"
 
 msgid "Job role updated."
-msgstr "Ruolo del lavoro aggiornato."
+msgstr "Ruolo aziendale aggiornato."
 
 msgid "Work Type has been created successfully!"
 msgstr "Tipo di lavoro creato con successo!"
@@ -4335,36 +4335,36 @@ msgid "Work type updated."
 msgstr "Tipo di lavoro aggiornato."
 
 msgid "Rotating work type created."
-msgstr "Tipo di lavoro rotante creato."
+msgstr "Tipo di lavoro a rotazione creato."
 
 msgid "Rotating work type updated."
-msgstr "Tipo di lavoro rotante aggiornato."
+msgstr "Tipo di lavoro a rotazione aggiornato."
 
 msgid "Rotating work type assigned."
-msgstr "Tipo di lavoro rotante assegnato."
+msgstr "Tipo di lavoro a rotazione assegnato."
 
 msgid "Rotating work type assign updated."
-msgstr "Tipo di lavoro rotante assegnato aggiornato."
+msgstr "Assegnazione del tipo di lavoro a rotazione aggiornata."
 
 msgid "un-archived"
-msgstr "non archiviato"
+msgstr "ripristinato dall'archivio"
 
 msgid "archived"
 msgstr "archiviato"
 
 msgid "Rotating work type assign is {}"
-msgstr "Il tipo di lavoro rotante assegnato è {}"
+msgstr "L'assegnazione del tipo di lavoro a rotazione è {}"
 
 msgid "Rotating work type assign not found."
-msgstr "Tipo di lavoro rotante assegnato non trovato."
+msgstr "Assegnazione del tipo di lavoro a rotazione non trovata."
 
 #, python-brace-format
 msgid "Rotating work type for {employee_id} already exists"
-msgstr "Il tipo di lavoro rotante per {employee_id} esiste già"
+msgstr "Il tipo di lavoro a rotazione per {employee_id} esiste già"
 
 #, python-brace-format
 msgid "Rotating work type for {count} employees is {message}"
-msgstr "Il tipo di lavoro rotante per i dipendenti {count} è {message}"
+msgstr "Il tipo di lavoro a rotazione per {count} dipendenti è {message}"
 
 #, python-brace-format
 msgid "{employee} deleted."
@@ -4376,13 +4376,13 @@ msgstr "{rwork_type_assign} non trovato."
 
 #, python-brace-format
 msgid "You cannot delete {rwork_type_assign}"
-msgstr "Non puoi eliminare {rwork_type_assign}"
+msgstr "Impossibile eliminare {rwork_type_assign}"
 
 msgid "Rotating work type assign deleted."
-msgstr "Tipo di lavoro rotante assegna eliminato."
+msgstr "Assegnazione del tipo di lavoro a rotazione eliminata."
 
 msgid "You cannot delete this rotating work type."
-msgstr "Non è possibile eliminare questo tipo di lavoro rotante."
+msgstr "Impossibile eliminare questo tipo di lavoro a rotazione."
 
 msgid "Employee type created."
 msgstr "Tipo di dipendente creato."
@@ -4391,46 +4391,46 @@ msgid "Employee type updated."
 msgstr "Tipo di dipendente aggiornato."
 
 msgid "Employee Shift has been created successfully!"
-msgstr "Il dipendente Shift è stato creato con successo!"
+msgstr "Il turno del dipendente è stato creato con successo!"
 
 msgid "Shift updated"
-msgstr "Maiusc aggiornato"
+msgstr "Turno aggiornato"
 
 msgid "Employee Shift Schedule has been created successfully!"
-msgstr "La pianificazione dello spostamento dei dipendenti è stata creata con successo!"
+msgstr "La pianificazione dei turni del dipendente è stata creata con successo!"
 
 msgid "Shift schedule created."
-msgstr "Pianificazione spostamento creata."
+msgstr "Pianificazione dei turni creata."
 
 msgid "Rotating shift created."
-msgstr "Spostamento di rotazione creato."
+msgstr "Turno a rotazione creato."
 
 msgid "Rotating shift updated."
-msgstr "Spostamento di rotazione aggiornato."
+msgstr "Turno a rotazione aggiornato."
 
 msgid "Rotating shift assigned."
-msgstr "Spostamento di rotazione assegnato."
+msgstr "Turno a rotazione assegnato."
 
 msgid "Rotating shift assign updated."
-msgstr "Spostamento rotante assegnato aggiornato."
+msgstr "Assegnazione del turno a rotazione aggiornata."
 
 msgid "Rotating shift assign is {}"
-msgstr "L'assegnazione dello spostamento rotante è {}"
+msgstr "L'assegnazione del turno a rotazione è {}"
 
 msgid "Rotating shift assign not found."
-msgstr "Assegnazione turno non trovata."
+msgstr "Assegnazione del turno a rotazione non trovata."
 
 #, python-brace-format
 msgid "Rotating shift for {employee} is {message}"
-msgstr "Il turno di rotazione per {employee} è {message}"
+msgstr "Il turno a rotazione per {employee} è {message}"
 
 #, python-brace-format
 msgid "Rotating shift for {employee} is already exists"
-msgstr "Lo spostamento di rotazione per {employee} è già esistente"
+msgstr "Il turno a rotazione per {employee} esiste già"
 
 #, python-brace-format
 msgid "{employee} assign deleted."
-msgstr "{employee} assegna eliminato."
+msgstr "Assegnazione di {employee} eliminata."
 
 #, python-brace-format
 msgid "{rshift_assign} not found."
@@ -4438,87 +4438,87 @@ msgstr "{rshift_assign} non trovato."
 
 #, python-brace-format
 msgid "You cannot delete {rshift_assign}"
-msgstr "Non puoi eliminare {rshift_assign}"
+msgstr "Impossibile eliminare {rshift_assign}"
 
 msgid "Rotating shift assign deleted."
-msgstr "Spostamento di rotazione assegnato eliminato."
+msgstr "Assegnazione del turno a rotazione eliminata."
 
 msgid "You cannot delete this rotating shift assign."
-msgstr "Non puoi eliminare questo turno di rotazione assegnato."
+msgstr "Non puoi eliminare questa assegnazione del turno a rotazione."
 
 msgid "Employee permission assigned."
-msgstr "Autorizzazione dipendente assegnata."
+msgstr "Permessi dipendente assegnati."
 
 msgid "Work type request added."
 msgstr "Richiesta tipo di lavoro aggiunta."
 
 msgid "Work type request not found."
-msgstr "Richiesta tipo lavoro non trovata."
+msgstr "Richiesta tipo di lavoro non trovata."
 
 msgid "You don't have permission"
-msgstr "Non hai il permesso"
+msgstr "Non hai i permessi necessari"
 
 msgid "Work type request has been rejected."
 msgstr "La richiesta di tipo di lavoro è stata rifiutata."
 
 msgid "Work type request has been canceled."
-msgstr "Richiesta tipo lavoro annullata."
+msgstr "Richiesta tipo di lavoro annullata."
 
 msgid "Work type request has been approved."
 msgstr "La richiesta di tipo di lavoro è stata approvata."
 
 msgid "An approved work type request already exists during this time period."
-msgstr "Una richiesta di tipo di lavoro approvata esiste già durante questo periodo di tempo."
+msgstr "Esiste già una richiesta di tipo di lavoro approvata per questo periodo di tempo."
 
 msgid "Request Updated Successfully"
-msgstr "Richiesta Aggiornata Con Successo"
+msgstr "Richiesta aggiornata con successo"
 
 msgid "Work type request deleted."
-msgstr "Richiesta tipo lavoro eliminata."
+msgstr "Richiesta tipo di lavoro eliminata."
 
 msgid "You cannot delete this work type request."
 msgstr "Non puoi eliminare questa richiesta di tipo di lavoro."
 
 #, python-brace-format
 msgid "You cannot delete {employee} work type request for the date {date}."
-msgstr "Non puoi eliminare la richiesta di tipo di lavoro {employee} per la data {date}."
+msgstr "Impossibile eliminare la richiesta di tipo di lavoro di {employee} per la data {date}."
 
 msgid "Shift request added"
-msgstr "Richiesta di spostamento aggiunta"
+msgstr "Richiesta di turno aggiunta"
 
 msgid "Request Added"
-msgstr "Richiesta Aggiunta"
+msgstr "Richiesta aggiunta"
 
 msgid "Can't edit approved shift request"
-msgstr "Impossibile modificare la richiesta di spostamento approvata"
+msgstr "Impossibile modificare una richiesta di turno già approvata"
 
 msgid "Shift request not found."
-msgstr "Richiesta di spostamento non trovata."
+msgstr "Richiesta di turno non trovata."
 
 msgid "Shift request rejected"
-msgstr "Richiesta di spostamento rifiutata"
+msgstr "Richiesta di turno rifiutata"
 
 msgid "Shift request canceled"
-msgstr "Richiesta di spostamento annullata"
+msgstr "Richiesta di turno annullata"
 
 msgid "Shift has been approved."
-msgstr "Maiusc è stato approvato."
+msgstr "Il turno è stato approvato."
 
 msgid "You are available for shift reallocation."
-msgstr "Sei disponibile per la riallocazione dei turni."
+msgstr "Sei disponibile per la riassegnazione del turno."
 
 msgid "Shifts have been approved."
 msgstr "I turni sono stati approvati."
 
 msgid "You cannot delete this shift request."
-msgstr "Non è possibile eliminare questa richiesta di spostamento."
+msgstr "Non è possibile eliminare questa richiesta di turno."
 
 msgid "Shift request deleted."
-msgstr "Richiesta di spostamento eliminata."
+msgstr "Richiesta di turno eliminata."
 
 #, python-brace-format
 msgid "You cannot delete {employee} shift request for the date {date}."
-msgstr "Non puoi eliminare la richiesta di spostamento {employee} per la data {date}."
+msgstr "Impossibile eliminare la richiesta di turno di {employee} per la data {date}."
 
 msgid "Unread notifications removed."
 msgstr "Notifiche non lette rimosse."
@@ -4527,7 +4527,7 @@ msgid "All notifications removed."
 msgstr "Tutte le notifiche rimosse."
 
 msgid "Notification deleted."
-msgstr "Notifica cancellata."
+msgstr "Notifica eliminata."
 
 msgid "Notifications marked as read"
 msgstr "Notifiche contrassegnate come lette"
@@ -4536,28 +4536,28 @@ msgid "Settings updated."
 msgstr "Impostazioni aggiornate."
 
 msgid "Please select a valid date format."
-msgstr "Seleziona un formato di data valido."
+msgstr "Seleziona un formato data valido."
 
 msgid "Date format saved successfully."
 msgstr "Formato data salvato con successo."
 
 msgid "Please update the company field for the user."
-msgstr "Si prega di aggiornare il campo azienda per l'utente."
+msgstr "Aggiorna il campo azienda per l'utente."
 
 msgid "Date format cannot saved. You are not in the company."
-msgstr "Il formato data non può essere salvato. Non sei nell'azienda."
+msgstr "Impossibile salvare il formato data. Non sei associato all'azienda."
 
 msgid "Please select a valid time format."
-msgstr "Seleziona un formato orario valido."
+msgstr "Seleziona un formato ora valido."
 
 msgid "Time format saved successfully."
-msgstr "Formato dell'ora salvato con successo."
+msgstr "Formato ora salvato con successo."
 
 msgid "Time format cannot saved. You are not in the company."
-msgstr "Il formato dell'ora non può essere salvato. Non sei nell'azienda."
+msgstr "Impossibile salvare il formato ora. Non sei associato all'azienda."
 
 msgid "Profile edit accessibility feature has been removed."
-msgstr "La funzione di accessibilità della modifica del profilo è stata rimossa."
+msgstr "La funzione di accessibilità per la modifica del profilo è stata rimossa."
 
 msgid "Tag has been created successfully!"
 msgstr "Tag creato con successo!"
@@ -4566,16 +4566,16 @@ msgid "Tag has been updated successfully!"
 msgstr "Tag aggiornato con successo!"
 
 msgid "Multiple approval condition created successfully"
-msgstr "Condizioni multiple di approvazione create con successo"
+msgstr "Condizione di approvazione multipla creata con successo"
 
 msgid "Approval Manager {}"
-msgstr "Responsabile Dell'Approvazione {}"
+msgstr "Responsabile approvazione {}"
 
 msgid "Multiple approval condition updated successfully"
-msgstr "Condizioni di approvazione multiple aggiornate con successo"
+msgstr "Condizione di approvazione multipla aggiornata con successo"
 
 msgid "Multiple approval condition deleted successfully"
-msgstr "Condizioni di approvazione multiple eliminate con successo"
+msgstr "Condizione di approvazione multipla eliminata con successo"
 
 msgid "Default pagination updated."
 msgstr "Paginazione predefinita aggiornata."
@@ -4587,124 +4587,124 @@ msgid "Action has been updated successfully!"
 msgstr "L'azione è stata aggiornata con successo!"
 
 msgid "This action type is in use in disciplinary actions and cannot be deleted."
-msgstr "Questo tipo di azione è in uso nelle azioni disciplinari e non può essere eliminato."
+msgstr "Questo tipo di azione è utilizzato in alcuni procedimenti disciplinari e non può essere eliminato."
 
 msgid "Action has been deleted successfully!"
 msgstr "L'azione è stata eliminata con successo!"
 
 msgid "Online Employees"
-msgstr "Dipendenti Online"
+msgstr "Dipendenti online"
 
 msgid "Overall Leave Chart"
-msgstr "Grafico Di Abbandono Globale"
+msgstr "Grafico globale congedi"
 
 msgid "Hired Candidates"
-msgstr "Candidati Assunti"
+msgstr "Candidati assunti"
 
 msgid "Onboarding Candidates"
-msgstr "Onboarding Candidates"
+msgstr "Candidati in onboarding"
 
 msgid "Recruitment Analytics"
-msgstr "Analisi Reclutamento"
+msgstr "Analisi reclutamento"
 
 msgid "Attendance analytics"
-msgstr "Analisi della frequenza"
+msgstr "Analisi presenze"
 
 msgid "Employees Chart"
-msgstr "Grafico Dei Dipendenti"
+msgstr "Grafico dipendenti"
 
 msgid "Department Chart"
-msgstr "Grafico Dipartimento"
+msgstr "Grafico dipartimenti"
 
 msgid "Gender Chart"
-msgstr "Grafico Di Genere"
+msgstr "Grafico per genere"
 
 msgid "Objective Status"
-msgstr "Stato Obiettivo"
+msgstr "Stato obiettivi"
 
 msgid "Key Result Status"
-msgstr "Stato Risultato Chiave"
+msgstr "Stato risultati chiave"
 
 msgid "Feedback Status"
-msgstr "Stato Feedback"
+msgstr "Stato feedback"
 
 msgid "Shift Request to Approve"
-msgstr "Richiesta di spostamento da approvare"
+msgstr "Richieste di turno da approvare"
 
 msgid "Work Type Request to Approve"
-msgstr "Richiesta di tipo di lavoro da approvare"
+msgstr "Richieste tipo di lavoro da approvare"
 
 msgid "Overtime to Approve"
-msgstr "straordinari da approvare"
+msgstr "Straordinari da approvare"
 
 msgid "Attendance to Validate"
-msgstr "Partecipazione alla convalida"
+msgstr "Presenze da convalidare"
 
 msgid "Leave Request to Approve"
-msgstr "Lascia la richiesta per approvare"
+msgstr "Richieste di congedo da approvare"
 
 msgid "Leave Allocation to Approve"
-msgstr "Lascia l'assegnazione per approvare"
+msgstr "Assegnazioni congedo da approvare"
 
 msgid "Feedbacks to Answer"
-msgstr "Feedback a Risposta"
+msgstr "Feedback a cui rispondere"
 
 msgid "Asset Request to Approve"
-msgstr "Richiesta Asset da approvare"
+msgstr "Richieste asset da approvare"
 
 msgid "The biometric attendance feature has been activated successfully."
-msgstr "La funzione di presenze biometriche è stata attivata con successo."
+msgstr "La funzione di rilevazione presenze biometrica è stata attivata con successo."
 
 msgid "The biometric attendance feature has been deactivated successfully."
-msgstr "La funzione di presenze biometriche è stata disattivata con successo."
+msgstr "La funzione di rilevazione presenze biometrica è stata disattivata con successo."
 
 msgid "New holiday created successfully.."
-msgstr "Nuova vacanza creata con successo.."
+msgstr "Nuova festività creata con successo..."
 
 msgid "Invalid start date format."
-msgstr "Formato data di inizio non valido."
+msgstr "Formato della data di inizio non valido."
 
 msgid "Invalid end date format."
-msgstr "Formato data di fine non valido."
+msgstr "Formato della data di fine non valido."
 
 msgid "Recurring must be yes or no."
-msgstr "Ricorrente deve essere sì o no."
+msgstr "Il campo ricorrente deve essere sì o no."
 
 msgid "Invalid start date format {}"
-msgstr "Formato data di inizio non valido {}"
+msgstr "Formato della data di inizio non valido {}"
 
 msgid "Invalid end date format {}"
-msgstr "Formato data di fine non valido {}"
+msgstr "Formato della data di fine non valido {}"
 
 msgid "Recurring must be {} or {}"
-msgstr "Il ricorrente deve essere {} o {}"
+msgstr "Il campo ricorrente deve essere {} o {}"
 
 msgid "The file you attempted to import is unsupported"
-msgstr "Il file che hai tentato di importare non è supportato"
+msgstr "Il file che si è tentato di importare non è supportato"
 
 msgid "Holidays updated successfully.."
-msgstr "Vacanze aggiornate con successo.."
+msgstr "Festività aggiornate con successo..."
 
 msgid "Holidays deleted successfully.."
-msgstr "Vacanze cancellate con successo.."
+msgstr "Festività eliminate con successo..."
 
 msgid "Holidays not found."
-msgstr "Vacanze non trovate."
+msgstr "Festività non trovate."
 
 msgid "Related entries exists"
-msgstr "Voci correlate esistono"
+msgstr "Esistono voci correlate"
 
 msgid "{} Holidays have been successfully deleted."
-msgstr "{} Vacanze sono state cancellate con successo."
+msgstr "{} festività sono state eliminate con successo."
 
 msgid "New company leave created successfully.."
-msgstr "Nuovo congedo aziendale creato con successo.."
+msgstr "Nuovo congedo aziendale creato con successo..."
 
 msgid "Company leave updated successfully.."
-msgstr "Congedo aziendale aggiornato con successo.."
+msgstr "Congedo aziendale aggiornato con successo..."
 
 msgid "Company leave deleted successfully.."
-msgstr "Congedo aziendale eliminato con successo.."
+msgstr "Congedo aziendale eliminato con successo..."
 
 msgid "Company leave not found."
 msgstr "Congedo aziendale non trovato."
@@ -4713,83 +4713,83 @@ msgid "Enter the duration in the format HH:MM"
 msgstr "Inserisci la durata nel formato HH:MM"
 
 msgid "Employee Name"
-msgstr "Nome Dipendente"
+msgstr "Nome dipendente"
 
 msgid "15 characters max."
-msgstr "15 caratteri max."
+msgstr "Massimo 15 caratteri."
 
 msgid "Card Number"
-msgstr "Numero Carta"
+msgstr "Numero tessera"
 
 msgid "User ID"
-msgstr "Id Utente"
+msgstr "ID utente"
 
 msgid "Card Status"
-msgstr "Stato Carta"
+msgstr "Stato tessera"
 
 msgid "Card Type"
-msgstr "Tipo Di Carta"
+msgstr "Tipo tessera"
 
 msgid "Valid Date Start"
-msgstr "Data Di Inizio Valido"
+msgstr "Data inizio validità"
 
 msgid "Valid Date End"
-msgstr "Data Di Fine Valida"
+msgstr "Data fine validità"
 
 msgid "This Card Number already exists."
-msgstr "Questo numero di carta esiste già."
+msgstr "Questo numero di tessera esiste già."
 
 msgid "This User ID already exists."
 msgstr "Questo ID utente esiste già."
 
 #, python-format
 msgid "This biometric %(label)s is already mapped with an employee"
-msgstr ""
+msgstr "Questo dato biometrico %(label)s è già associato a un dipendente"
 
 msgid "Both hour and minute cannot be zero"
-msgstr "Sia l'ora che il minuto non possono essere zero"
+msgstr "L'ora e i minuti non possono essere entrambi zero"
 
 msgid "ZKTeco / eSSL Biometric"
-msgstr "ZKTeco / eSSL Biometrico"
+msgstr "Biometrico ZKTeco / eSSL"
 
 msgid "Anviz Biometric"
-msgstr "Anviz Biometrico"
+msgstr "Biometrico Anviz"
 
 msgid "Matrix COSEC Biometric"
-msgstr "Matrix COSEC Biometrico"
+msgstr "Biometrico Matrix COSEC"
 
 msgid "Dahua Biometric"
-msgstr "Dahua Biometrico"
+msgstr "Biometrico Dahua"
 
 msgid "e-Time Office"
 msgstr "e-Time Office"
 
 msgid "In Device"
-msgstr "Nel Dispositivo"
+msgstr "Dispositivo ingresso"
 
 msgid "Out Device"
-msgstr "Dispositivo Fuori"
+msgstr "Dispositivo uscita"
 
 msgid "Alternate In/Out Device"
-msgstr "Dispositivo Alternativo In/Out"
+msgstr "Dispositivo alternativo ingresso/uscita"
 
 msgid "System Direction(In/Out) Device"
-msgstr "Dispositivo Di Direzione Di Sistema (In/Out)"
+msgstr "Dispositivo con direzione di sistema (In/Out)"
 
 msgid "Device Type"
-msgstr "Tipo Di Dispositivo"
+msgstr "Tipo di dispositivo"
 
 msgid "Machine IP"
-msgstr "Ip Macchina"
+msgstr "IP macchina"
 
 msgid "Port No"
-msgstr "Porta N."
+msgstr "Porta n."
 
 msgid "Request ID"
-msgstr "Richiedi Id"
+msgstr "ID richiesta"
 
 msgid "API Url"
-msgstr "API Url"
+msgstr "URL API"
 
 msgid "API Key"
 msgstr "Chiave API"
@@ -4798,19 +4798,19 @@ msgid "API Secret"
 msgstr "API Secret"
 
 msgid "Is Live"
-msgstr "È Live"
+msgstr "È attivo/Live"
 
 msgid "Is Scheduled"
-msgstr "È Pianificato"
+msgstr "È pianificato"
 
 msgid "Device Direction"
-msgstr "Direzione Del Dispositivo"
+msgstr "Direzione del dispositivo"
 
 msgid "The Machine IP is required for the selected biometric device."
 msgstr "L'IP della macchina è richiesto per il dispositivo biometrico selezionato."
 
 msgid "The Port Number is required for the selected biometric device."
-msgstr "Il numero della porta è richiesto per il dispositivo biometrico selezionato."
+msgstr "Il numero di porta è richiesto per il dispositivo biometrico selezionato."
 
 msgid "The password is required for ZKTeco Biometric Device."
 msgstr "La password è richiesta per il dispositivo biometrico ZKTeco."
@@ -4825,7 +4825,7 @@ msgid "The Password is required for the selected biometric device."
 msgstr "La password è richiesta per il dispositivo biometrico selezionato."
 
 msgid "The Request ID is required for the Anviz Biometric Device."
-msgstr "L'ID della richiesta è richiesto per il Dispositivo Biometrico Anviz."
+msgstr "L'ID richiesta è richiesto per il dispositivo biometrico Anviz."
 
 msgid "The API URL is required for Anviz Biometric Device."
 msgstr "L'URL API è richiesto per il dispositivo biometrico Anviz."
@@ -4837,88 +4837,88 @@ msgid "The API Secret is required for Anviz Biometric Device."
 msgstr "L'API Secret è richiesto per il dispositivo biometrico Anviz."
 
 msgid "Authentication failed. Please check your API Url                                    , API Key and API Secret."
-msgstr "Autenticazione non riuscita. Controlla il tuo URL API, API Key e API Secret."
+msgstr "Autenticazione non riuscita. Controlla l'URL API, la chiave API e l'API Secret."
 
 msgid "Authentication failed. Please check your API Url , API Key                                and API Secret."
-msgstr "Autenticazione non riuscita. Controlla il tuo URL API, API Key e API Secret."
+msgstr "Autenticazione non riuscita. Controlla l'URL API, la chiave API e l'API Secret."
 
 msgid "Biometric Device"
-msgstr "Dispositivo Biometrico"
+msgstr "Dispositivo biometrico"
 
 msgid "Biometric Devices"
-msgstr "Dispositivi Biometrici"
+msgstr "Dispositivi biometrici"
 
 msgid "Employee in Biometric Device"
-msgstr "Dipendente del dispositivo biometrico"
+msgstr "Dipendente nel dispositivo biometrico"
 
 msgid "Employees in Biometric Device"
 msgstr "Dipendenti nel dispositivo biometrico"
 
 msgid "COSEC Attendance Arguments"
-msgstr "COSEC Attendance Arguments"
+msgstr "Argomenti presenze COSEC"
 
 msgid "Add Employee"
-msgstr "Aggiungi Dipendente"
+msgstr "Aggiungi dipendente"
 
 msgid "Add"
 msgstr "Aggiungi"
 
 msgid "Activate live capture mode"
-msgstr "Attiva la modalità di acquisizione live"
+msgstr "Attiva modalità acquisizione in tempo reale"
 
 msgid "Deactivate"
 msgstr "Disattiva"
 
 msgid "Fetch Logs"
-msgstr "Recupera Log"
+msgstr "Recupera log"
 
 msgid "Test"
-msgstr "Prova"
+msgstr "Test"
 
 msgid "Unschedule"
-msgstr "Annullare"
+msgstr "Rimuovi pianificazione"
 
 msgid "Schedule"
-msgstr "Pianificazione"
+msgstr "Pianifica"
 
 msgid "No biometric devices found."
 msgstr "Nessun dispositivo biometrico trovato."
 
 msgid "Edit COSEC User"
-msgstr "Modifica Utente COSEC"
+msgstr "Modifica utente COSEC"
 
 msgid "User Active"
-msgstr "Utente Attivo"
+msgstr "Utente attivo"
 
 msgid "By-Pass-Biometric"
-msgstr "By-Pass-Biometrico"
+msgstr "Escludi controllo biometrico"
 
 msgid "VIP"
 msgstr "VIP"
 
 msgid "Validity Enable"
-msgstr "Validità Attiva"
+msgstr "Validità abilitata"
 
 msgid "Validity End Date"
-msgstr "Validità Data Di Fine"
+msgstr "Data fine validità"
 
 msgid "Device"
 msgstr "Dispositivo"
 
 msgid "Port No."
-msgstr "Porta N."
+msgstr "Porta n."
 
 msgid "Options"
 msgstr "Opzioni"
 
 msgid "Badge ID"
-msgstr "Id Badge"
+msgstr "ID badge"
 
 msgid "Fingerprint"
-msgstr "Impronta"
+msgstr "Impronta digitale"
 
 msgid "Work Email"
-msgstr "Email Lavoro"
+msgstr "Email di lavoro"
 
 msgid "Phone"
 msgstr "Telefono"
@@ -4927,46 +4927,46 @@ msgid "Do you want to delete this user from the biometric device?"
 msgstr "Vuoi eliminare questo utente dal dispositivo biometrico?"
 
 msgid "Reference ID"
-msgstr "Id Di Riferimento"
+msgstr "ID di riferimento"
 
 msgid "Finger Count"
-msgstr "Conteggio Dito"
+msgstr "Numero impronte registrate"
 
 msgid "Face Count"
-msgstr "Conteggio Volti"
+msgstr "Numero volti registrati"
 
 msgid "Biometric Template"
-msgstr "Template Biometrico"
+msgstr "Modello biometrico"
 
 msgid "Card Count"
-msgstr "Conteggio Carte"
+msgstr "Numero tessere"
 
 msgid "Valid Active"
-msgstr "Attivo Valido"
+msgstr "Validità attiva"
 
 msgid "Valid End Date"
-msgstr "Data Di Fine Valida"
+msgstr "Data fine validità"
 
 msgid "Not Enrolled"
-msgstr "Non Iscritti"
+msgstr "Non iscritto/registrato"
 
 msgid "Enable Face"
-msgstr "Abilita Faccia"
+msgstr "Abilita riconoscimento facciale"
 
 msgid "Schedule Biometric Device"
-msgstr "Pianifica Dispositivo Biometrico"
+msgstr "Pianifica dispositivo biometrico"
 
 msgid "Interval duration"
-msgstr "Durata dell'intervallo"
+msgstr "Durata intervallo"
 
 msgid "Not-Connected"
-msgstr "Non Connesso"
+msgstr "Non connesso"
 
 msgid "Scheduled"
 msgstr "Pianificato"
 
 msgid "Live Capture"
-msgstr "Acquisizione Live"
+msgstr "Acquisizione in tempo reale"
 
 msgid "Dahua User"
 msgstr "Utente Dahua"
@@ -4975,19 +4975,19 @@ msgid "Are you sure you want to delete this user?"
 msgstr "Sei sicuro di voler eliminare questo utente?"
 
 msgid "Map Dahua User"
-msgstr "Utente Mappa Dahua"
+msgstr "Associa utente Dahua"
 
 msgid "Map"
-msgstr "Mappa"
+msgstr "Associa"
 
 msgid "Map Employee"
-msgstr "Mappe Dipendente"
+msgstr "Associa dipendente"
 
 msgid "Emp Code"
-msgstr "Codice Emp"
+msgstr "Codice dipendente"
 
 msgid "Biometric device unscheduled successfully"
-msgstr "Dispositivo biometrico non programmato con successo"
+msgstr "Pianificazione del dispositivo biometrico rimossa con successo"
 
 msgid "Biometric device added successfully."
 msgstr "Dispositivo biometrico aggiunto con successo."
@@ -5000,52 +5000,52 @@ msgstr "Dispositivo biometrico aggiornato con successo."
 
 #, python-format
 msgid "Device is %(message)s"
-msgstr ""
+msgstr "Il dispositivo è %(message)s"
 
 msgid "Biometric device deleted successfully."
 msgstr "Dispositivo biometrico eliminato con successo."
 
 msgid "Connection Successful"
-msgstr "Connessione Riuscita"
+msgstr "Connessione riuscita"
 
 msgid "ZKTeco test connection successful."
-msgstr "Connessione al test ZKTeco riuscita."
+msgstr "Connessione di prova a ZKTeco riuscita."
 
 msgid "Authentication Error"
-msgstr "Errore Di Autenticazione"
+msgstr "Errore di autenticazione"
 
 msgid "Double-check the provided IP, Port, and Password."
-msgstr "Controllare due volte l'IP, la porta e la password forniti."
+msgstr "Verifica l'IP, la porta e la password forniti."
 
 msgid "Connection unsuccessful"
 msgstr "Connessione non riuscita"
 
 msgid "Please check the IP, Port, and Password."
-msgstr "Controllare l'IP, la porta e la password."
+msgstr "Verifica l'IP, la porta e la password."
 
 msgid "Anviz test connection successful."
-msgstr "Connessione di test Anviz riuscita."
+msgstr "Connessione di prova ad Anviz riuscita."
 
 msgid "API credentials might be incorrect."
 msgstr "Le credenziali API potrebbero essere errate."
 
 msgid "API request failed."
-msgstr "Richiesta API non riuscita."
+msgstr "Richiesta API fallita."
 
 msgid "Matrix test connection successful."
-msgstr "Connessione test matrice riuscita."
+msgstr "Connessione di prova a Matrix riuscita."
 
 msgid "Double-check the provided Machine IP, Username, and Password."
-msgstr "Controllare due volte l'IP della macchina, il nome utente e la password forniti."
+msgstr "Verifica l'IP della macchina, il nome utente e la password forniti."
 
 msgid "Dahua test connection successful."
-msgstr "Connessione di prova Dahua riuscita."
+msgstr "Connessione di prova a Dahua riuscita."
 
 msgid "e-Time Office test connection successful."
-msgstr "Connessione test e-Time Office riuscita."
+msgstr "Connessione di prova a e-Time Office riuscita."
 
 msgid "Double-check the provided API Url, Username, and Password: {}"
-msgstr "Controlli due volte l'URL API, il nome utente e la password: {}"
+msgstr "Verifica l'URL API, il nome utente e la password forniti: {}"
 
 msgid "Connection error"
 msgstr "Errore di connessione"
@@ -5054,19 +5054,19 @@ msgid "Biometric device not supported."
 msgstr "Dispositivo biometrico non supportato."
 
 msgid "Bulk log fetching is currently available only for ZKTeco / eSSL devices. Support for other biometric systems will be added soon."
-msgstr "Il recupero dei log Bulk è attualmente disponibile solo per i dispositivi ZKTeco / eSSL. Il supporto per altri sistemi biometrici sarà presto aggiunto."
+msgstr "Il recupero massivo dei log è attualmente disponibile solo per i dispositivi ZKTeco / eSSL. Il supporto per altri sistemi biometrici sarà aggiunto a breve."
 
 msgid "Logs Fetched Successfully"
-msgstr "Registri Recuperati Con Successo"
+msgstr "Log recuperati con successo"
 
 msgid "Connection Unsuccessful"
-msgstr "Connessione Non Riuscita"
+msgstr "Connessione non riuscita"
 
 msgid "Double-check the provided API Url, Username, and Password"
-msgstr "Controllare due volte l'URL API, il nome utente e la password forniti"
+msgstr "Verifica l'URL API, il nome utente e la password forniti"
 
 msgid "Failed to establish a connection. Please verify the accuracy of the IP                    Address , Port No. and Password of the device."
-msgstr "Impossibile stabilire una connessione. Verificare la precisione dell'indirizzo IP, della porta n. e della password del dispositivo."
+msgstr "Impossibile stabilire una connessione. Verifica l'esattezza dell'indirizzo IP, del numero di porta e della password del dispositivo."
 
 msgid "Biometric device not found"
 msgstr "Dispositivo biometrico non trovato"
@@ -5075,10 +5075,10 @@ msgid "{} successfully removed from the biometric device."
 msgstr "{} rimosso con successo dal dispositivo biometrico."
 
 msgid "Face recognition enabled successfully"
-msgstr "Riconoscimento volto abilitato con successo"
+msgstr "Riconoscimento facciale abilitato con successo"
 
 msgid "Something went wrong when enabling face"
-msgstr "Qualcosa è andato storto durante l'attivazione del viso"
+msgstr "Si è verificato un errore durante l'abilitazione del riconoscimento facciale"
 
 msgid "Device not found"
 msgstr "Dispositivo non trovato"
@@ -5087,7 +5087,7 @@ msgid "Biometric user data updated successfully"
 msgstr "Dati utente biometrici aggiornati con successo"
 
 msgid "This date cannot be used as the Validity End Date for                                the COSEC Biometric."
-msgstr "Questa data non può essere utilizzata come data finale di validità per la COSEC Biometrica."
+msgstr "Questa data non può essere utilizzata come data di fine validità per il dispositivo biometrico COSEC."
 
 msgid "Biometric user not found"
 msgstr "Utente biometrico non trovato"
@@ -5099,10 +5099,10 @@ msgid "{} added to biometric device successfully"
 msgstr "{} aggiunto con successo al dispositivo biometrico"
 
 msgid "{} already added to biometric device"
-msgstr "{} già aggiunto al dispositivo biometrico"
+msgstr "{} è già presente nel dispositivo biometrico"
 
 msgid "Selected employee successfully mapped to the biometric user"
-msgstr "Dipendente selezionato mappato con successo all'utente biometrico"
+msgstr "Il dipendente selezionato è stato associato correttamente all'utente biometrico"
 
 msgid "Employee not found."
 msgstr "Dipendente non trovato."
@@ -5114,16 +5114,16 @@ msgid "{} successfully deleted!"
 msgstr "{} eliminato con successo!"
 
 msgid "{} users successfully deleted!"
-msgstr "{} utenti cancellati con successo!"
+msgstr "{} utenti eliminati con successo!"
 
 msgid "No rows are selected for deleting users from device."
-msgstr "Non sono selezionate righe per eliminare gli utenti dal dispositivo."
+msgstr "Nessuna riga selezionata per l'eliminazione degli utenti dal dispositivo."
 
 msgid "An error occurred: {}"
 msgstr "Si è verificato un errore: {}"
 
 msgid "Add Field"
-msgstr "Aggiungi Campo"
+msgstr "Aggiungi campo"
 
 msgid "Name can only contain alphabetic characters,                              and multiple spaces are not allowed."
 msgstr "Il nome può contenere solo caratteri alfabetici e non sono ammessi spazi multipli."
@@ -5132,13 +5132,13 @@ msgid "Please enter different name"
 msgstr "Inserisci un nome diverso"
 
 msgid "Proceed"
-msgstr "Procedere"
+msgstr "Procedi"
 
 msgid "Success"
-msgstr "Successo"
+msgstr "Operazione completata"
 
 msgid "Column will be permently removed from the table on the next service reload"
-msgstr "La colonna verrà rimossa permentalmente dalla tabella sul prossimo ricarico del servizio"
+msgstr "La colonna verrà rimossa permanentemente dalla tabella al prossimo riavvio del servizio"
 
 msgid "New field added"
 msgstr "Nuovo campo aggiunto"
@@ -5147,31 +5147,31 @@ msgid "Search in : Employee"
 msgstr "Cerca in: Dipendente"
 
 msgid "Search in : Reporting manager"
-msgstr "Cerca in: Responsabile relazioni"
+msgstr "Cerca in: Responsabile diretto"
 
 msgid "An Employee with this Email already exists in company {}"
-msgstr "Un Dipendente con questa Email esiste già in azienda {}"
+msgstr "Un dipendente con questa email esiste già nell'azienda {}"
 
 msgid "An Employee with this Email already exists"
-msgstr "Esiste già un dipendente con questa email"
+msgstr "Un dipendente con questa email esiste già"
 
 msgid "Create New {} "
-msgstr "Crea Nuovo {} "
+msgstr "Crea nuovo {} "
 
 msgid "Select Fields to Update"
-msgstr "Seleziona campi da aggiornare"
+msgstr "Seleziona i campi da aggiornare"
 
 msgid "---Choose Action---"
-msgstr "---Scegli Azione---"
+msgstr "---Scegli azione---"
 
 msgid "Create new action type "
 msgstr "Crea un nuovo tipo di azione "
 
 msgid "The uploaded file is empty, Not contain records."
-msgstr "Il file caricato è vuoto, Non contiene record."
+msgstr "Il file caricato è vuoto o non contiene record."
 
 msgid "These required headers are missing in the uploaded file: "
-msgstr "Queste intestazioni richieste mancano nel file caricato: "
+msgstr "Nel file caricato mancano le seguenti intestazioni obbligatorie: "
 
 msgid "First Name"
 msgstr "Nome"
@@ -5180,31 +5180,31 @@ msgid "Last Name"
 msgstr "Cognome"
 
 msgid "Expected working"
-msgstr "Lavoro previsto"
+msgstr "Ore lavorative previste"
 
 msgid "On Leave"
-msgstr "In Uscita"
+msgstr "In congedo"
 
 msgid "Waiting Approval"
-msgstr "Approvazione In Attesa"
+msgstr "In attesa di approvazione"
 
 msgid "Canceled / Rejected"
 msgstr "Annullato / Rifiutato"
 
 msgid "On a break"
-msgstr "In una pausa"
+msgstr "In pausa"
 
 msgid "Recruitment manager"
-msgstr "Responsabile del reclutamento"
+msgstr "Responsabile reclutamento"
 
 msgid "Recruitment stage manager"
-msgstr "Gestore della fase di reclutamento"
+msgstr "Responsabile della fase di reclutamento"
 
 msgid "Onboarding stage manager"
-msgstr "Gestore del palcoscenico di Onboarding"
+msgstr "Responsabile della fase di onboarding"
 
 msgid "Onboarding task manager"
-msgstr "Gestore compiti di Onboarding"
+msgstr "Responsabile delle attività di onboarding"
 
 msgid "---Choose employee---"
 msgstr "---Scegli dipendente---"
@@ -5213,103 +5213,103 @@ msgid "Employee tag"
 msgstr "Tag dipendente"
 
 msgid "Work Phone"
-msgstr "Telefono Lavoro"
+msgstr "Telefono di lavoro"
 
 msgid "Joining Date"
-msgstr "Data Di Iscrizione"
+msgstr "Data di assunzione"
 
 msgid "Contract End Date"
-msgstr "Data Di Fine Contratto"
+msgstr "Data fine contratto"
 
 msgid "Basic Salary"
-msgstr "Stipendio Base"
+msgstr "Stipendio base"
 
 msgid "Salary Per Hour"
-msgstr "Stipendio Per Ora"
+msgstr "Paga oraria"
 
 msgid "Employee Bank Details"
-msgstr "Dettagli Banca Dipendente"
+msgstr "Coordinate bancarie del dipendente"
 
 msgid "Bank details for an employee with this account number already exist"
-msgstr "I dati bancari per un dipendente con questo numero di conto esistono già"
+msgstr "Esistono già i dati bancari di un dipendente con questo numero di conto"
 
 msgid "Policy"
-msgstr "Politica"
+msgstr "Policy"
 
 msgid "Policies"
-msgstr "Politiche"
+msgstr "Policy"
 
 msgid "equals"
-msgstr "uguale"
+msgstr "uguale a"
 
 msgid "grater than"
-msgstr "grattugia di"
+msgstr "maggiore di"
 
 msgid "less than"
-msgstr "meno di"
+msgstr "minore di"
 
 msgid "greater than or equal"
-msgstr "maggiore o uguale"
+msgstr "maggiore o uguale a"
 
 msgid "less than or equal"
-msgstr "inferiore o uguale"
+msgstr "minore o uguale a"
 
 msgid "Enable login block :"
-msgstr "Abilita blocco login:"
+msgstr "Abilita blocco dell'accesso:"
 
 msgid "Action Types"
-msgstr "Tipi Di Azione"
+msgstr "Tipi di azione"
 
 msgid "Policies Not Found"
-msgstr "Politiche Non Trovate"
+msgstr "Policy non trovate"
 
 msgid "Disciplinary action taken."
-msgstr "Azioni disciplinari intraprese."
+msgstr "Provvedimento disciplinare registrato."
 
 msgid "Disciplinary action updated."
-msgstr "Azione disciplinare aggiornata."
+msgstr "Provvedimento disciplinare aggiornato."
 
 msgid "Employees login credentials will be unblocked."
-msgstr "Le credenziali di accesso dei dipendenti saranno sbloccate."
+msgstr "Le credenziali di accesso del dipendente saranno sbloccate."
 
 msgid "Employee removed from disciplinary action successfully."
-msgstr "Dipendente rimosso dall'azione disciplinare con successo."
+msgstr "Dipendente rimosso dal provvedimento disciplinare con successo."
 
 msgid "Disciplinary action deleted."
-msgstr "Azione disciplinare eliminata."
+msgstr "Provvedimento disciplinare eliminato."
 
 msgid "Birthday"
 msgstr "Compleanno"
 
 msgid "Pending"
-msgstr "In Attesa"
+msgstr "In attesa"
 
 msgid "Disciplinary Actions"
-msgstr "Azioni Disciplinari"
+msgstr "Provvedimenti disciplinari"
 
 msgid "Disciplinary Action"
-msgstr "Azione Disciplinare"
+msgstr "Provvedimento disciplinare"
 
 msgid "Action Taken"
-msgstr "Azione Presa"
+msgstr "Azione intrapresa"
 
 msgid "Work Information"
-msgstr "Informazioni Sul Lavoro"
+msgstr "Informazioni lavorative"
 
 msgid "Take An Action"
-msgstr "Fai Un'Azione"
+msgstr "Prendi un provvedimento"
 
 msgid "There are currently no disciplinary actions to consider."
-msgstr "Attualmente non ci sono azioni disciplinari da prendere in considerazione."
+msgstr "Al momento non ci sono provvedimenti disciplinari da considerare."
 
 msgid "Login Block"
-msgstr "Blocco Di Accesso"
+msgstr "Blocco dell'accesso"
 
 msgid "Action Date"
-msgstr "Data Azione"
+msgstr "Data del provvedimento"
 
 msgid "Are you sure want to remove this employee from this action?"
-msgstr "Sei sicuro di voler rimuovere questo dipendente da questa azione?"
+msgstr "Sei sicuro di voler escludere questo dipendente da questo provvedimento?"
 
 msgid "Suspended for"
 msgstr "Sospeso per"
@@ -5321,37 +5321,37 @@ msgid "No file has been uploaded."
 msgstr "Nessun file è stato caricato."
 
 msgid "Are you sure you want to delete this disciplinary action?"
-msgstr "Sei sicuro di voler eliminare questa azione disciplinare?"
+msgstr "Sei sicuro di voler eliminare questo provvedimento disciplinare?"
 
 msgid "Take An Action."
-msgstr "Prendere Un'Azione."
+msgstr "Applica un provvedimento."
 
 msgid "Edit Action."
-msgstr "Modifica Azione."
+msgstr "Modifica azione."
 
 msgid "Document Requests"
-msgstr "Richieste Di Documento"
+msgstr "Richieste di documenti"
 
 msgid "Document Request"
-msgstr "Richiesta Documento"
+msgstr "Richiesta documento"
 
 msgid "Document request"
 msgstr "Richiesta documento"
 
 msgid "Bulk Approve Requests"
-msgstr "Domande Approva Bulk"
+msgstr "Approvazione massiva richieste"
 
 msgid "Do you really want to approve all the selected requests?"
 msgstr "Vuoi davvero approvare tutte le richieste selezionate?"
 
 msgid "Bulk Reject Requests"
-msgstr "Domande Rifiutate Bulk"
+msgstr "Rifiuto massivo richieste"
 
 msgid "Selected Documents"
-msgstr "Documenti Selezionati"
+msgstr "Documenti selezionati"
 
 msgid "View File"
-msgstr "Visualizza File"
+msgstr "Visualizza file"
 
 msgid "Uploaded / Requested"
 msgstr "Caricato / Richiesto"
@@ -5360,10 +5360,10 @@ msgid " Are you sure you want to delete this Document Request?"
 msgstr " Sei sicuro di voler eliminare questa richiesta di documento?"
 
 msgid "File Uploaded"
-msgstr "File Caricato"
+msgstr "File caricato"
 
 msgid "Do you want to approve this request"
-msgstr "Vuoi approvare questa richiesta"
+msgstr "Vuoi approvare questa richiesta?"
 
 msgid "Are you sure you want to delete this Document Request?"
 msgstr "Sei sicuro di voler eliminare questa richiesta di documento?"
@@ -5372,13 +5372,13 @@ msgid "No documents found."
 msgstr "Nessun documento trovato."
 
 msgid "Personal Info"
-msgstr "Informazioni Personali"
+msgstr "Informazioni personali"
 
 msgid "Upload Photo"
-msgstr "Carica Foto"
+msgstr "Carica foto"
 
 msgid "Badge Id"
-msgstr "Id Badge"
+msgstr "ID badge"
 
 msgid "Show"
 msgstr "Mostra"
@@ -5390,13 +5390,13 @@ msgid "Tomorrow"
 msgstr "Domani"
 
 msgid "In"
-msgstr "In"
+msgstr "Ingresso"
 
 msgid "Import Employee"
-msgstr "Importa Dipendente"
+msgstr "Importa dipendente"
 
 msgid "Attendance Records"
-msgstr "Registri Di Partecipazione"
+msgstr "Registri presenze"
 
 msgid "From"
 msgstr "Da"
@@ -5405,28 +5405,28 @@ msgid "To"
 msgstr "A"
 
 msgid "Export Data"
-msgstr "Esporta Dati"
+msgstr "Esporta dati"
 
 msgid "Leave Records"
-msgstr "Lascia I Record"
+msgstr "Registri congedi/ferie"
 
 msgid "Payroll Records"
-msgstr "Registrazioni Pagamenti"
+msgstr "Registri buste paga"
 
 msgid "Bank Name"
-msgstr "Nome Banca"
+msgstr "Nome banca"
 
 msgid "Account Number"
-msgstr "Numero Di Conto"
+msgstr "Numero di conto (IBAN)"
 
 msgid "Branch"
-msgstr "Ramo"
+msgstr "Filiale"
 
 msgid "Bank Code"
-msgstr "Codice Bancario"
+msgstr "Codice bancario"
 
 msgid "Bank Address"
-msgstr "Indirizzo Banca"
+msgstr "Indirizzo banca"
 
 msgid "Email"
 msgstr "Email"
@@ -5444,31 +5444,31 @@ msgid "Zip Code"
 msgstr "CAP"
 
 msgid "Emergency Contact"
-msgstr "Contatto Di Emergenza"
+msgstr "Contatto di emergenza"
 
 msgid "Contact Name"
-msgstr "Nome Del Contatto"
+msgstr "Nome del contatto"
 
 msgid "Emergency Contact Relation"
-msgstr "Relazione Di Contatto Di Emergenza"
+msgstr "Rapporto con il contatto di emergenza"
 
 msgid "Marital Status"
-msgstr "Stato Maritale"
+msgstr "Stato civile"
 
 msgid "Children"
 msgstr "Figli"
 
 msgid "Delete Image"
-msgstr "Elimina Immagine"
+msgstr "Elimina immagine"
 
 msgid "Update Image"
-msgstr "Aggiorna Immagine"
+msgstr "Aggiorna immagine"
 
 msgid "Edit Profile"
-msgstr "Modifica Profilo"
+msgstr "Modifica profilo"
 
 msgid "Bank Info"
-msgstr "Informazioni Bancarie"
+msgstr "Dati bancari"
 
 msgid "Online"
 msgstr "Online"
@@ -5480,25 +5480,25 @@ msgid "About"
 msgstr "Informazioni"
 
 msgid "Work type & Shift"
-msgstr "Tipo di lavoro & spostamento"
+msgstr "Tipo di lavoro e turno"
 
 msgid "Work Type & Shift"
-msgstr "Tipo Di Lavoro & Maiusc"
+msgstr "Tipo di lavoro e turno"
 
 msgid "Payroll"
-msgstr "Payroll"
+msgstr "Buste paga/Payroll"
 
 msgid "Allowance & Deduction"
-msgstr "Indennità E Detrazione"
+msgstr "Indennità e trattenute"
 
 msgid "Performance"
-msgstr "Prestazioni"
+msgstr "Performance"
 
 msgid "Documents"
 msgstr "Documenti"
 
 msgid "Bonus Points"
-msgstr "Punti Bonus"
+msgstr "Punti bonus"
 
 msgid "Interview"
 msgstr "Intervista"
