@@ -8516,7 +8516,7 @@ body {
 
 .oh-card {
   padding: 1.15rem;
-  border-radius: 0rem;
+  border-radius: var(--oh-border-radius, 18px);
   border: 1px solid hsl(213, 22%, 84%);
   background-color: hsl(0, 0%, 100%);
 }
@@ -16641,7 +16641,7 @@ a.oh-profile-dropdown-link:hover {
 .modal-content,
 .dropdown-menu,
 .popover {
-  border-radius: var(--oh-border-radius);
+  border-radius: var(--oh-border-radius) !important;
 }
 
 .oh-btn,
