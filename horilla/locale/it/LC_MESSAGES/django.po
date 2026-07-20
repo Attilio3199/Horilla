@@ -384,7 +384,7 @@ msgid "Do you want to reject this request?"
 msgstr "Vuoi rifiutare questa richiesta?"
 
 msgid "No records available at the moment."
-msgstr "Nessun record disponibile
+msgstr "Nessun record disponibile"
 
 msgid "Confirmation"
 msgstr "Conferma"
@@ -1607,7 +1607,7 @@ msgid "Something went wrong."
 msgstr "Qualcosa è andato storto."
 
 msgid "This {} is already in use for {}."
-msgstr) "Questo {} è già in uso per {}."
+msgstr "Questo {} è già in uso per {}."
 
 msgid "Attendance update request created."
 msgstr "Richiesta di aggiornamento presenza creata."
@@ -1994,7 +1994,7 @@ msgstr "Mercoledì"
 msgid "Thursday"
 msgstr "Giovedì"
 
-msgid Friday"
+msgid "Friday"
 msgstr "Venerdì"
 
 msgid "Saturday"
