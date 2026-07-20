@@ -75,8 +75,7 @@
         >
         <div id="dip-list" style="max-height:280px;overflow-y:auto;border:1px solid #dee2e6;border-radius:4px;padding:6px;">
           {% for d in dipendenti_mysql %}
-          <div class="dip-item d-flex align-items-center gap-2 py-1 px-1"
-               data-nome="{{ d.nome|lower }}" data-cod="{{ d.CODICEPERSONALE|lower }}">
+          <div class="dip-item d-flex align-items-center gap-2 py-1 px-1">
             <input
               type="checkbox"
               name="dipendenti"
@@ -100,8 +99,10 @@
     {# ── Voci da controllare (accordion chiuso) ── #}
     <div class="oh-card mb-3">
       <div class="oh-card__header d-flex align-items-center justify-content-between"
+           role="button" tabindex="0" aria-controls="dizionario-body" aria-expanded="false"
+           onclick="toggleDizionario()" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleDizionario(); }"
            style="cursor:pointer;">
-        <h6 class="mb-0 fw-bold" onclick="toggleDizionario()" style="flex:1;">
+        <h6 class="mb-0 fw-bold" style="flex:1;">
           {% trans "Voci da controllare" %}
           <small class="text-muted ms-2" id="diz-attive-count">
             ({% trans "attive" %}: {{ mappings_attivi_count }})
@@ -114,7 +115,7 @@
             <ion-icon name="add-outline" class="mr-1"></ion-icon>
             {% trans "Aggiungi" %}
           </button>
-          <ion-icon name="chevron-down-outline" id="ico-dizionario" onclick="toggleDizionario()"></ion-icon>
+          <ion-icon name="chevron-down-outline" id="ico-dizionario" style="pointer-events:none;"></ion-icon>
         </div>
       </div>
       <div id="dizionario-body" style="display:none;">
@@ -179,8 +180,10 @@
     {# ── Regole avanzate ANY/SUM (non 1:1) ── #}
     <div class="oh-card mb-3">
       <div class="oh-card__header d-flex align-items-center justify-content-between"
+           role="button" tabindex="0" aria-controls="regole-avanzate-body" aria-expanded="false"
+           onclick="toggleRegoleAvanzate()" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleRegoleAvanzate(); }"
            style="cursor:pointer;">
-        <h6 class="mb-0 fw-bold" onclick="toggleRegoleAvanzate()" style="flex:1;">
+        <h6 class="mb-0 fw-bold" style="flex:1;">
           {% trans "Regole avanzate ANY/SUM" %}
           <small class="text-muted ms-2">
             ({% trans "non 1:1" %}: {{ regole_controllo|length }})
@@ -193,7 +196,7 @@
             <ion-icon name="add-outline" class="mr-1"></ion-icon>
             {% trans "Aggiungi Regola" %}
           </button>
-          <ion-icon name="chevron-down-outline" id="ico-regole-avanzate" onclick="toggleRegoleAvanzate()"></ion-icon>
+          <ion-icon name="chevron-down-outline" id="ico-regole-avanzate" style="pointer-events:none;"></ion-icon>
         </div>
       </div>
       <div id="regole-avanzate-body" style="display:none;">
@@ -432,6 +435,8 @@ function toggleDizionario() {
   var open = body.style.display !== 'none';
   body.style.display = open ? 'none' : '';
   if (ico) ico.setAttribute('name', open ? 'chevron-down-outline' : 'chevron-up-outline');
+  var header = body.previousElementSibling;
+  if (header) header.setAttribute('aria-expanded', String(!open));
 }
 function toggleRowStyle(id, checked) {
   var tr = document.getElementById('diz-row-' + id);
@@ -446,6 +451,8 @@ function toggleRegoleAvanzate() {
   var open = body.style.display !== 'none';
   body.style.display = open ? 'none' : '';
   if (ico) ico.setAttribute('name', open ? 'chevron-down-outline' : 'chevron-up-outline');
+  var header = body.previousElementSibling;
+  if (header) header.setAttribute('aria-expanded', String(!open));
 }
 
 function toggleRegolaRowStyle(id, checked) {
@@ -458,16 +465,19 @@ function toggleRegolaRowStyle(id, checked) {
 var dipSearch = document.getElementById('dip-search');
 if (dipSearch) {
   dipSearch.addEventListener('input', function() {
-    var q = this.value.toLowerCase().trim();
+    var q = normalizeSearch(this.value);
     var visible = 0;
     document.querySelectorAll('.dip-item').forEach(function(div) {
-      var match = !q || div.dataset.nome.includes(q) || div.dataset.cod.includes(q);
+      var match = !q || normalizeSearch(div.textContent).includes(q);
       div.style.display = match ? '' : 'none';
       if (match) visible++;
     });
     var cnt = document.getElementById('dip-count');
     if (cnt) cnt.textContent = visible;
   });
+}
+function normalizeSearch(value) {
+  return (value || '').toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
 }
 function selezionaTutti() {
   document.querySelectorAll('.dip-item').forEach(function(div) {
