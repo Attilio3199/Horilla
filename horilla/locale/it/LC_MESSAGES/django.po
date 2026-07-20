@@ -8002,172 +8002,172 @@ msgid "Resignation Request setting has been {} successfully."
 msgstr "L'impostazione della richiesta di dimissioni è stata {} con successo."
 
 msgid "Full Name"
-msgstr "Nome Completo"
+msgstr "Nome completo"
 
 msgid "Mobile"
 msgstr "Cellulare"
 
 msgid "Task title"
-msgstr "Titolo attività"
+msgstr "Titolo dell'attività"
 
 msgid "Task Managers"
-msgstr "Task Manager"
+msgstr "Responsabili dell'attività"
 
 msgid "Emergency Contact Number"
-msgstr "Numero Di Contatto Di Emergenza"
+msgstr "Numero di contatto di emergenza"
 
 msgid "Experience should be a postive integier"
-msgstr "L'esperienza dovrebbe essere un intero postivo"
+msgstr "L'esperienza deve essere un numero intero positivo"
 
 msgid "No of children should be a postive integier"
-msgstr "Il numero di bambini deve essere un numero intero postivo"
+msgstr "Il numero di figli a carico deve essere un numero intero positivo"
 
 msgid "Stage Title"
-msgstr "Titolo Fase"
+msgstr "Titolo della fase"
 
 msgid "Recruitment"
-msgstr "Reclutamento"
+msgstr "Ricerca e selezione"
 
 msgid "Stage Managers"
-msgstr "Gestori Stage"
+msgstr "Responsabili della fase"
 
 msgid "Is Final Stage"
-msgstr "È Fase Finale"
+msgstr "È la fase finale"
 
 msgid "Onboarding Stage"
-msgstr "Fase Di Onboarding"
+msgstr "Fase di onboarding"
 
 msgid "Onboarding Stages"
-msgstr "Fasi Di Onboarding"
+msgstr "Fasi di onboarding"
 
 msgid "Task Title"
-msgstr "Titolo Attività"
+msgstr "Titolo dell'attività"
 
 msgid "Candidates"
 msgstr "Candidati"
 
 msgid "Onboarding Task"
-msgstr "Compito Onboarding"
+msgstr "Attività di onboarding"
 
 msgid "Onboarding Tasks"
-msgstr "Onboarding Tasks"
+msgstr "Attività di onboarding"
 
 msgid "Onboarding Candidate"
-msgstr "Onboarding Candidate"
+msgstr "Onboarding candidato"
 
 msgid "Candidate Onboarding Stage"
-msgstr "Fase Di Onboarding Candidato"
+msgstr "Fase di onboarding del candidato"
 
 msgid "Done"
-msgstr "Fatto"
+msgstr "Completato"
 
 msgid "View candidates"
 msgstr "Visualizza candidati"
 
 msgid "Candidate Details"
-msgstr "Dettagli Candidati"
+msgstr "Dettagli candidato"
 
 msgid "Profile Picture"
-msgstr "Immagine Del Profilo"
+msgstr "Immagine del profilo"
 
 msgid "Candidate Filter"
-msgstr "Filtro Candidato"
+msgstr "Filtro candidati"
 
 msgid "Joining From"
-msgstr "Entrando Da"
+msgstr "Data di inizio dal"
 
 msgid "Joining Till"
-msgstr "Unirsi Fino A"
+msgstr "Data di inizio al"
 
 msgid "Portal Sent"
-msgstr "Portale Inviato"
+msgstr "Portale inviato"
 
 msgid "Joining Set"
-msgstr "Set Di Partecipazione"
+msgstr "Data di inizio impostata"
 
 msgid "Offer Status"
-msgstr "Stato Offerta"
+msgstr "Stato dell'offerta"
 
 msgid "Select All Candidates"
-msgstr "Seleziona Tutti I Candidati"
+msgstr "Seleziona tutti i candidati"
 
 msgid "Unselect All Candidates"
-msgstr "Deseleziona Tutti I Candidati"
+msgstr "Deseleziona tutti i candidati"
 
 msgid "Export Candidates"
-msgstr "Esporta Candidati"
+msgstr "Esporta candidati"
 
 msgid "Candidate"
 msgstr "Candidato"
 
 msgid "Date of joining"
-msgstr "Data di adesione"
+msgstr "Data di assunzione"
 
 msgid "Probation ends"
-msgstr "Finisce la prova"
+msgstr "Fine del periodo di prova"
 
 msgid "Offer letter"
 msgstr "Lettera di offerta"
 
 msgid "Added In Rejected Candidates"
-msgstr "Aggiunto In Candidati Rifiutati"
+msgstr "Aggiunto ai candidati rifiutati"
 
 msgid "Add To Rejected Candidates"
-msgstr "Aggiungi Ai Candidati Rifiutati"
+msgstr "Aggiungi ai candidati rifiutati"
 
 msgid "Send Portal / Start Onboarding"
-msgstr "Invia Portale / Avvia Onboarding"
+msgstr "Invia credenziali portale / Avvia onboarding"
 
 msgid "Send Portal / Start onboarding"
-msgstr "Invia Portale / Avvia onboarding"
+msgstr "Invia credenziali portale / Avvia onboarding"
 
 msgid " Do you want to delete this record"
-msgstr " Vuoi eliminare questo record"
+msgstr " Vuoi eliminare questo record?"
 
 msgid "Offer letter status :"
-msgstr "Stato lettera offerta:"
+msgstr "Stato della lettera di offerta:"
 
 msgid "Send Portal"
-msgstr "Invia Portale"
+msgstr "Invia portale"
 
 msgid "Joining Not-Set"
-msgstr "Unire Non Set"
+msgstr "Data di inizio non impostata"
 
 msgid "Portal Not-Sent"
-msgstr "Portale Non Inviato"
+msgstr "Portale non inviato"
 
 msgid "At present, There are no Candidates onboarding."
-msgstr "Attualmente non sono presenti candidati."
+msgstr "Al momento non ci sono candidati in fase di onboarding."
 
 msgid "Optional"
 msgstr "Facoltativo"
 
 msgid "Template as Attachments"
-msgstr "Modello come allegati"
+msgstr "Modello come allegato"
 
 msgid "Send Portal Link"
-msgstr "Invia Link Portale"
+msgstr "Invia link del portale"
 
 msgid "Onboarding"
 msgstr "Onboarding"
 
 msgid "Total Candidates"
-msgstr "Totale Candidati"
+msgstr "Totale candidati"
 
 msgid "Candidates Start Onboarding"
-msgstr "Inizia L'Onboarding Dei Candidati"
+msgstr "Candidati che avviano l'onboarding"
 
 msgid "Onboarding Stage Chart"
-msgstr "Grafico Stage Onboarding"
+msgstr "Grafico delle fasi di onboarding"
 
 msgid "Candidates on Onboard"
-msgstr "Candidati a bordo"
+msgstr "Candidati in onboarding"
 
 msgid "No candidates started onboarding."
-msgstr "Nessun candidato ha iniziato l'imbarco."
+msgstr "Nessun candidato ha iniziato l'onboarding."
 
 msgid "My Onboarding Tasks"
-msgstr "Le Mie Attività Di Onboarding"
+msgstr "Le mie attività di onboarding"
 
 msgid "Task"
 msgstr "Attività"
@@ -8176,46 +8176,46 @@ msgid "Login"
 msgstr "Accedi"
 
 msgid "Profile Setup"
-msgstr "Impostazione Del Profilo"
+msgstr "Configurazione del profilo"
 
 msgid "Personal Details"
-msgstr "Dettagli Personali"
+msgstr "Dati personali"
 
 msgid "Bank Details"
-msgstr "Dettagli Banca"
+msgstr "Coordinate bancarie"
 
 msgid "Account number"
-msgstr "Numero di conto"
+msgstr "Numero di conto (IBAN)"
 
 msgid "Country *"
 msgstr "Paese *"
 
 msgid "State *"
-msgstr "Stato *"
+msgstr "Provincia/Stato *"
 
 msgid "Finish Onboarding"
-msgstr "Termina L'Onboarding"
+msgstr "Completa onboarding"
 
 msgid "DOB"
-msgstr "DOB"
+msgstr "Data di nascita"
 
 msgid "Next Step"
-msgstr "Prossimo Passo"
+msgstr "Passo successivo"
 
 msgid "Is Published"
-msgstr "È Pubblicato"
+msgstr "È pubblicato"
 
 msgid "Is closed"
 msgstr "È chiuso"
 
 msgid "Start Date From"
-msgstr "Data Di Inizio Da"
+msgstr "Data di inizio da"
 
 msgid "Till End Date"
-msgstr "Till End Date"
+msgstr "Fino alla data di fine"
 
 msgid "Send Portal  / Start onboarding"
-msgstr "Invia Portale / Avvia onboarding"
+msgstr "Invia credenziali portale / Avvia onboarding"
 
 msgid "Do you want to delete this stage?"
 msgstr "Vuoi eliminare questa fase?"
@@ -8224,34 +8224,34 @@ msgid "Add task"
 msgstr "Aggiungi attività"
 
 msgid "Create Task"
-msgstr "Crea Attività"
+msgstr "Crea attività"
 
 msgid "Bulk Stage Change"
-msgstr "Cambiamento Fase Massima"
+msgstr "Modifica massiva della fase"
 
 msgid "Portal Status"
-msgstr "Stato Del Portale"
+msgstr "Stato del portale"
 
 msgid "Bulk Change Task"
-msgstr "Attività Di Cambio Bulk"
+msgstr "Modifica massiva delle attività"
 
 msgid "Send mail"
 msgstr "Invia email"
 
 msgid "Candidates stage updated successfully."
-msgstr "Fase candidati aggiornata con successo."
+msgstr "Fase dei candidati aggiornata con successo."
 
 msgid "Candidate task stage updated successfully."
-msgstr "Fase attività candidata aggiornata con successo."
+msgstr "Fase dell'attività del candidato aggiornata con successo."
 
 msgid "At present, There are no closed recruitments."
-msgstr "Attualmente, non ci sono reclutamenti chiusi."
+msgstr "Al momento non ci sono processi di selezione chiusi."
 
 msgid "At present, There is no ongoing recruitment."
-msgstr "Al momento non è in corso alcuna assunzione."
+msgstr "Al momento non ci sono processi di selezione in corso."
 
 msgid "Update Task"
-msgstr "Aggiorna Attività"
+msgstr "Aggiorna attività"
 
 msgid " Close"
 msgstr " Chiudi"
@@ -8260,16 +8260,16 @@ msgid "Closed"
 msgstr "Chiuso"
 
 msgid "Open"
-msgstr "Apri"
+msgstr "Aperto"
 
 msgid "Candidate Name"
-msgstr "Nome Candidato"
+msgstr "Nome candidato"
 
 msgid "Send"
 msgstr "Invia"
 
 msgid "Onboarding portal stage"
-msgstr "Fase portale di Onboarding"
+msgstr "Fase del portale di onboarding"
 
 msgid "Portal"
 msgstr "Portale"
@@ -8278,126 +8278,126 @@ msgid "Stages"
 msgstr "Fasi"
 
 msgid "Task Manager"
-msgstr "Gestore Attività"
+msgstr "Responsabile dell'attività"
 
 msgid "Authentication"
 msgstr "Autenticazione"
 
 msgid "New stage created successfully.."
-msgstr "Nuova fase creata con successo.."
+msgstr "Nuova fase creata con successo."
 
 msgid "Stage is updated successfully.."
-msgstr "Stage aggiornato con successo.."
+msgstr "Fase aggiornata con successo."
 
 msgid "The stage deleted successfully..."
-msgstr "Fase eliminata con successo..."
+msgstr "La fase è stata eliminata con successo."
 
 msgid "Stage not found."
 msgstr "Fase non trovata."
 
 msgid "There are candidates in this stage..."
-msgstr "Ci sono candidati in questa fase..."
+msgstr "Ci sono candidati associati a questa fase."
 
 msgid "New task created successfully..."
-msgstr "Nuova attività creata con successo..."
+msgstr "Nuova attività creata con successo."
 
 msgid "Task updated successfully.."
-msgstr "Attività aggiornata con successo.."
+msgstr "Attività aggiornata con successo."
 
 msgid "The task deleted successfully..."
-msgstr "Attività eliminata con successo..."
+msgstr "L'attività è stata eliminata con successo."
 
 msgid "Task not found."
 msgstr "Attività non trovata."
 
 msgid "You cannot delete this task because some candidates are associated with it."
-msgstr "Non puoi eliminare questa attività perché alcuni candidati sono associati ad essa."
+msgstr "Impossibile eliminare questa attività poiché vi sono candidati associati."
 
 msgid "New candidate created successfully.."
-msgstr "Nuovo candidato creato con successo.."
+msgstr "Nuovo candidato creato con successo."
 
 msgid "Candidate detail is updated successfully.."
-msgstr "Dettaglio candidato aggiornato con successo.."
+msgstr "Dettagli del candidato aggiornati con successo."
 
 msgid "Candidate deleted successfully.."
-msgstr "Candidato eliminato con successo.."
+msgstr "Candidato eliminato con successo."
 
 msgid "Candidate not found."
 msgstr "Candidato non trovato."
 
 msgid "You cannot delete this candidate. The candidate is included in the {}"
-msgstr "Non puoi eliminare questo candidato. Il candidato è incluso nel {}"
+msgstr "Impossibile eliminare questo candidato. Il candidato fa parte di: {}"
 
 #, python-format
 msgid "%(recruitment)s has no stage.."
-msgstr "%(recruitment)s non ha nessuna fase.."
+msgstr "%(recruitment)s non ha alcuna fase definita."
 
 msgid "User with email-id already exists.."
-msgstr "L'utente con ID email esiste già.."
+msgstr "Un utente con questo indirizzo email esiste già."
 
 msgid "Account created successfully.."
-msgstr "Account creato con successo.."
+msgstr "Account creato con successo."
 
 msgid "Profile picture updated successfully.."
-msgstr "Foto del profilo aggiornata con successo.."
+msgstr "Foto del profilo aggiornata con successo."
 
 msgid "Employee with email id already exists."
-msgstr "Il dipendente con id email esiste già."
+msgstr "Un dipendente con questo indirizzo email esiste già."
 
 msgid "Employee already exists.."
-msgstr "Il dipendente esiste già.."
+msgstr "Il dipendente è già presente nel sistema."
 
 msgid "Employee personal details created successfully.."
-msgstr "Dati personali del dipendente creati con successo.."
+msgstr "Dati personali del dipendente inseriti con successo."
 
 msgid "Employee bank details created successfully.."
-msgstr "Dati bancari dipendenti creati con successo.."
+msgstr "Coordinate bancarie del dipendente inserite con successo."
 
 msgid "Candidate onboarding task updated"
-msgstr "Processo di onboarding candidato aggiornato"
+msgstr "Attività di onboarding del candidato aggiornata"
 
 msgid "Candidate onboarding stage updated"
-msgstr "Aggiornamento della fase di onboarding del candidato"
+msgstr "Fase di onboarding del candidato aggiornata"
 
 msgid "Missing candidate ID."
-msgstr "Id candidato mancante."
+msgstr "ID candidato mancante."
 
 msgid "Missing date of joining."
-msgstr "Data di adesione mancante."
+msgstr "Data di assunzione mancante."
 
 msgid "Candidate not found"
 msgstr "Candidato non trovato"
 
 #, python-brace-format
 msgid "{candidate}'s Date of joining updated successfully"
-msgstr ""
+msgstr "Data di assunzione di {candidate} aggiornata con successo"
 
 msgid "No candidates started onboarding...."
-msgstr "Nessun candidato ha iniziato onboard...."
+msgstr "Nessun candidato ha iniziato l'onboarding."
 
 msgid "Candidate sequence updated"
-msgstr "Sequenza candidata aggiornata"
+msgstr "Ordinamento dei candidati aggiornato"
 
 msgid "Stage sequence updated"
-msgstr "Sequenza di fase aggiornata"
+msgstr "Ordinamento delle fasi aggiornato"
 
 msgid "The stage title has been updated successfully"
 msgstr "Il titolo della fase è stato aggiornato con successo"
 
 msgid "Probation end date updated"
-msgstr "Data fine della prova aggiornata"
+msgstr "Data di fine del periodo di prova aggiornata"
 
 msgid "Token Expire"
-msgstr "Scadenza Token"
+msgstr "Scadenza token"
 
 msgid "Primary"
 msgstr "Principale"
 
 msgid "Create Mail Server"
-msgstr "Crea Server Di Posta"
+msgstr "Crea server di posta"
 
 msgid "Update Mail Server"
-msgstr "Aggiorna Mail Server"
+msgstr "Aggiorna server di posta"
 
 msgid "Mail server updated successfully."
 msgstr "Server di posta aggiornato con successo."
@@ -8406,28 +8406,28 @@ msgid "Mail server created successfully."
 msgstr "Server di posta creato con successo."
 
 msgid "Client ID"
-msgstr "ID Client"
+msgstr "ID client"
 
 msgid "Client Secret"
-msgstr "Client Secret"
+msgstr "Segreto client"
 
 msgid "Tenant ID"
-msgstr "Tenant ID"
+msgstr "ID tenant"
 
 msgid "Expired⚠️"
-msgstr "Scaduto:Attenzione:"
+msgstr "Scaduto ⚠️"
 
 msgid "Refresh Token"
-msgstr "Aggiorna Token"
+msgstr "Aggiorna token"
 
 msgid "Token not refreshed, Login required"
-msgstr "Token non aggiornato, Accesso richiesto"
+msgstr "Impossibile aggiornare il token, accesso richiesto"
 
 msgid "Token refreshed successfully"
 msgstr "Token aggiornato con successo"
 
 msgid "Mail sent"
-msgstr "Posta inviata"
+msgstr "Email inviata"
 
 msgid "Outlook authentication required/expired"
 msgstr "Autenticazione di Outlook richiesta/scaduta"
@@ -8544,199 +8544,199 @@ msgid "Employees Specific"
 msgstr "Dipendenti Specifici"
 
 msgid "Target allowance to the specific employees"
-msgstr "Indennità di destinazione per i dipendenti specifici"
+msgstr "Destina l'indennità a dipendenti specifici"
 
 msgid "To ignore the allowance to the employees when target them by all employees             or through condition-based"
-msgstr "Ignorare l'indennità ai dipendenti quando li bersaglio da parte di tutti i dipendenti o attraverso condizioni basate"
+msgstr "Escludi l'indennità per determinati dipendenti quando l'assegnazione è rivolta a tutti i dipendenti o basata su condizioni"
 
 msgid "This field is used to calculate the taxable allowances"
-msgstr "Questo campo è utilizzato per calcolare le quote imponibili"
+msgstr "Questo campo viene utilizzato per calcolare le indennità imponibili"
 
 msgid "This field is used to target allowance         to the specific employees when the condition satisfies with the employee's information"
-msgstr "Questo campo è utilizzato per indirizzare l'indennità ai dipendenti specifici quando la condizione soddisfa con le informazioni del dipendente"
+msgstr "Questo campo viene utilizzato per assegnare l'indennità a dipendenti specifici quando le informazioni del dipendente soddisfano la condizione"
 
 msgid "The related field of the employees"
-msgstr "Il settore correlato dei dipendenti"
+msgstr "Il campo correlato dei dipendenti"
 
 msgid "To specify, the allowance is fixed or not"
-msgstr "Per precisare, l'indennità è fissata o no"
+msgstr "Specifica se l'indennità è in cifra fissa o meno"
 
 msgid "Fixed amount for this allowance"
 msgstr "Importo fisso per questa indennità"
 
 msgid "If the allowance is not fixed then specifies how the allowance provided"
-msgstr "Se la quota non è fissa, specificare come è prevista la quota"
+msgstr "Se l'indennità non è fissa, specifica la modalità di calcolo dell'importo erogato"
 
 msgid "The percentage of based on"
-msgstr "La percentuale di base"
+msgstr "La percentuale basata su"
 
 msgid "The attendance fixed amount for one validated attendance"
-msgstr "La partecipazione fissa per una partecipazione convalidata"
+msgstr "L'importo fisso per singola presenza convalidata"
 
 msgid "The fixed amount per children"
-msgstr "L'importo fisso per bambini"
+msgstr "L'importo fisso per ciascun figlio a carico"
 
 msgid "The fixed amount for one validated attendance with that shift"
-msgstr "Importo fisso per una partecipazione convalidata a tale turno"
+msgstr "L'importo fisso per singola presenza convalidata in quel turno"
 
 msgid "The fixed amount for one hour overtime that are validated             and approved the overtime attendance"
-msgstr "L'importo fisso per un'ora di lavoro straordinario convalidato e approvato la frequenza degli straordinari"
+msgstr "L'importo fisso per un'ora di straordinario convalidata e approvata"
 
 msgid "The fixed amount for one validated attendance with that work type"
-msgstr "Importo fisso per una partecipazione convalidata con quel tipo di lavoro"
+msgstr "L'importo fisso per singola presenza convalidata con quel tipo di lavoro"
 
 msgid "Has max limit for allowance"
-msgstr "Ha limite massimo per l'indennità"
+msgstr "Prevede un limite massimo per l'indennità"
 
 msgid "Limit the allowance amount"
-msgstr "Limitare l'importo delle indennità"
+msgstr "Limita l'importo dell'indennità"
 
 msgid "The maximum amount for the allowance"
-msgstr "Importo massimo dell'indennità"
+msgstr "L'importo massimo dell'indennità"
 
 msgid "For working days on month"
-msgstr "Per giorni lavorativi su mese"
+msgstr "Per i giorni lavorativi del mese"
 
 msgid "The pay head for the if condition"
-msgstr "La testa paga per la condizione se"
+msgstr "La voce retributiva per la condizione 'se'"
 
 msgid "Apply for those, if the pay-head conditions satisfy"
-msgstr "Applicare per quelli, se le condizioni pay-head soddisfano"
+msgstr "Applica a questi soggetti se le condizioni della voce retributiva sono soddisfatte"
 
 msgid "The amount of the pay-head"
-msgstr "L'importo del pay-head"
+msgstr "L'importo della voce retributiva"
 
 msgid "The start amount of the pay-head range"
-msgstr "L'importo iniziale dell'intervallo pay-head"
+msgstr "L'importo iniziale dell'intervallo della voce retributiva"
 
 msgid "The end amount of the pay-head range"
-msgstr "L'importo finale dell'intervallo pay-head"
+msgstr "L'importo finale dell'intervallo della voce retributiva"
 
 msgid "If the 'Is fixed' field is disabled, the 'Based on' field is required."
-msgstr "Se il campo 'È fisso' è disabilitato, è richiesto il campo 'Basato'."
+msgstr "Se il campo 'È fisso' è disabilitato, il campo 'Basato su' è obbligatorio."
 
 msgid "Rate must be specified for allowances based on basic pay."
-msgstr "Il tasso deve essere specificato per le quote in base al salario di base."
+msgstr "Il tasso deve essere specificato per le indennità basate sulla retribuzione di base."
 
 msgid "If condition based, all fields (field, value, condition) must be filled."
-msgstr "Se basato sulle condizioni, tutti i campi (campo, valore, condizione) devono essere riempiti."
+msgstr "Se basato su condizioni, tutti i campi (campo, valore, condizione) devono essere compilati."
 
 msgid "If based on is attendance,                         then per attendance fixed amount must be filled."
-msgstr "Se la frequenza è basata su di essa, per frequenza deve essere compilato un importo fisso."
+msgstr "Se il calcolo è basato sulla presenza, è necessario indicare l'importo fisso per singola presenza."
 
 msgid "If based on is shift, then shift must be filled."
-msgstr "Se basato su è spostamento, allora lo spostamento deve essere riempito."
+msgstr "Se il calcolo è basato sul turno, il campo del turno deve essere compilato."
 
 msgid "If based on is work type, then work type must be filled."
-msgstr "Se in base al tipo di lavoro è il tipo di lavoro deve essere compilato."
+msgstr "Se il calcolo è basato sul tipo di lavoro, il campo del tipo di lavoro deve essere compilato."
 
 msgid "The amount per children must be filled."
-msgstr "La quantità per bambini deve essere riempita."
+msgstr "L'importo per ciascun figlio a carico deve essere compilato."
 
 msgid "Amount should be greater than zero."
 msgstr "L'importo deve essere maggiore di zero."
 
 msgid "Exclude the deduction"
-msgstr "Escludi la deduzione"
+msgstr "Escludi la trattenuta"
 
 msgid "Title of the deduction"
-msgstr "Titolo della detrazione"
+msgstr "Titolo della trattenuta"
 
 msgid "The one-time deduction in which the deduction will apply to the payslips             if the date between the payslip period"
-msgstr "La deduzione una tantum in cui la deduzione si applicherà alle paghe se la data tra il periodo del cedolino"
+msgstr "La trattenuta una tantum che verrà applicata ai cedolini se la data rientra nel periodo del cedolino stesso"
 
 msgid "Target deduction to all active employees in the company"
-msgstr "Detrazione mirata a tutti i dipendenti attivi della società"
+msgstr "Destina la trattenuta a tutti i dipendenti attivi dell'azienda"
 
 msgid "Target deduction to the specific employees"
-msgstr "Detrazione mirata per i dipendenti specifici"
+msgstr "Destina la trattenuta a dipendenti specifici"
 
 msgid "To ignore the deduction to the employees when target them by all employees             or through condition-based"
-msgstr "Ignorare la deduzione ai dipendenti quando li bersaglio da parte di tutti i dipendenti o attraverso condizioni basate"
+msgstr "Escludi la trattenuta per determinati dipendenti quando l'assegnazione è rivolta a tutti i dipendenti o basata su condizioni"
 
 msgid "To specify the deduction is tax or normal deduction"
-msgstr "Per specificare la deduzione è una deduzione fiscale o normale"
+msgstr "Specifica se la trattenuta è di tipo fiscale o una trattenuta ordinaria"
 
 msgid "To find taxable gross,             taxable_gross = (basic_pay + taxable_deduction)-pre_tax_deductions "
-msgstr "Per trovare il lordo imponibile, tassabile_lordo = (basic_pay + tassabile_deduzione)-pre_tasse_deduzioni "
+msgstr "Per calcolare il lordo imponibile: lordo_imponibile = (retribuzione_base + trattenuta_imponibile) - trattenute_pre_tasse "
 
 msgid "This field is used to target deduction         to the specific employees when the condition satisfies with the employee's information"
-msgstr "Questo campo viene utilizzato per destinare la deduzione ai dipendenti specifici quando la condizione soddisfa con le informazioni del dipendente"
+msgstr "Questo campo viene utilizzato per assegnare la trattenuta a dipendenti specifici quando le informazioni del dipendente soddisfano la condizione"
 
 msgid "Basic pay"
-msgstr "Pagamento di base"
+msgstr "Retribuzione di base"
 
 msgid "Update compensation is used to update                    pay-head before any other deduction calculation starts"
-msgstr "La compensazione di aggiornamento viene utilizzata per aggiornare il pay-head prima che inizi qualsiasi altro calcolo di deduzione"
+msgstr "L'aggiornamento del compenso viene utilizzato per aggiornare la voce retributiva prima dell'inizio di qualsiasi altro calcolo delle trattenute"
 
 msgid "To specify, the deduction is fixed or not"
-msgstr "Per specificare, la detrazione è fissata o no"
+msgstr "Specifica se la trattenuta è in cifra fissa o meno"
 
 msgid "Fixed amount for this deduction"
-msgstr "Importo fisso per questa detrazione"
+msgstr "Importo fisso per questa trattenuta"
 
 msgid "If the deduction is not fixed then specifies how the deduction provided"
-msgstr "Se la deduzione non è fissa, specifica come viene fornita la deduzione"
+msgstr "Se la trattenuta non è fissa, specifica la modalità di calcolo dell'importo trattenuto"
 
 msgid "Employee rate"
-msgstr "Tasso di dipendenti"
+msgstr "Aliquota / Tasso del dipendente"
 
 msgid "Has max limit for deduction"
-msgstr "Ha limite massimo per la detrazione"
+msgstr "Prevede un limite massimo per la trattenuta"
 
 msgid "Limit the deduction"
-msgstr "Limita la detrazione"
+msgstr "Limita la trattenuta"
 
 msgid "The maximum amount for the deduction"
-msgstr "Importo massimo della detrazione"
+msgstr "L'importo massimo della trattenuta"
 
 msgid "The maximum amount for ?"
 msgstr "L'importo massimo per ?"
 
 msgid "Employee rate must be specified for deductions that are not fixed amount"
-msgstr "Il tasso dei dipendenti deve essere specificato per le deduzioni che non sono importi fissi"
+msgstr "Il tasso o l'aliquota del dipendente deve essere specificato per le trattenute non a importo fisso"
 
 msgid " Don't choose taxable gross pay when pretax is enabled."
-msgstr " Non scegliere la retribuzione lorda imponibile quando è abilitata la preimposta."
+msgstr " Non selezionare la retribuzione lorda imponibile quando l'opzione prima delle tasse (pre-tax) è abilitata."
 
 msgid " Don't choose net pay when pretax is enabled."
-msgstr " Non scegliere la paga netta quando è abilitata la preimposta."
+msgstr " Non selezionare la retribuzione netta quando l'opzione prima delle tasse (pre-tax) è abilitata."
 
 msgid " Don't choose net pay when the tax is enabled."
-msgstr " Non scegliere il pagamento netto quando l'imposta è abilitata."
+msgstr " Non selezionare la retribuzione netta quando il calcolo delle tasse è abilitato."
 
 msgid "This fields required"
-msgstr "Questo campo richiesto"
+msgstr "Questo campo è obbligatorio"
 
 msgid "If condition based, all fields                             (field, value, condition) must be filled."
-msgstr "Se basato sulle condizioni, tutti i campi (campo, valore, condizione) devono essere riempiti."
+msgstr "Se basato su condizioni, tutti i campi (campo, valore, condizione) devono essere compilati."
 
 msgid "Batch name"
-msgstr "Nome lotto"
+msgstr "Nome del lotto"
 
 msgid "The end date must be greater than or equal to the start date"
-msgstr "La data di fine deve essere maggiore o uguale alla data di inizio"
+msgstr "La data di fine deve essere successiva o uguale alla data di inizio"
 
 msgid "The end date cannot be in the future."
-msgstr "La data di fine non può essere in futuro."
+msgstr "La data di fine non può essere nel futuro."
 
 msgid "The start date cannot be in the future."
-msgstr "La data di inizio non può essere in futuro."
+msgstr "La data di inizio non può essere nel futuro."
 
 msgid "Employee ,start and end date must be unique"
-msgstr "Il dipendente, la data di inizio e di fine deve essere unica"
+msgstr "La combinazione di dipendente, data di inizio e data di fine deve essere unica"
 
 msgid "The data must be in dictionary or querydict type"
-msgstr "I dati devono essere nel tipo di dizionario o querydict"
+msgstr "I dati devono essere di tipo dictionary o querydict"
 
 msgid "Loan"
 msgstr "Prestito"
 
 msgid "Advanced Salary"
-msgstr "Stipendio Avanzato"
+msgstr "Anticipo sullo stipendio"
 
 msgid "Penalty / Fine"
-msgstr "Sanzione / Ammenda"
+msgstr "Sanzione / Multa"
 
 msgid "installment Amount"
 msgstr "Importo rata"
@@ -8748,319 +8748,319 @@ msgid "Reimbursement"
 msgstr "Rimborso"
 
 msgid "Bonus Point Encashment"
-msgstr "Incasso Punti Bonus"
+msgstr "Monetizzazione punti bonus"
 
 msgid "Leave Encashment"
-msgstr "Abbandona La Cassa"
+msgstr "Monetizzazione congedi arretrati"
 
 msgid "Available Days to encash"
-msgstr "Giorni disponibili per incassare"
+msgstr "Giorni disponibili da monetizzare"
 
 msgid "Available days"
 msgstr "Giorni disponibili"
 
 msgid "Carry Forward Days to encash"
-msgstr "Carry Forward Days to encash"
+msgstr "Giorni riportati da monetizzare"
 
 msgid "Carry forward days"
-msgstr "Trasportare giorni in avanti"
+msgstr "Giorni riportati"
 
 msgid "Bonus points to encash"
-msgstr "Punti bonus per incassare"
+msgstr "Punti bonus da monetizzare"
 
 msgid "Bonus points"
 msgstr "Punti bonus"
 
 msgid "The employee don't have that much leaves                                         to encash in CFD / Available days"
-msgstr "Il dipendente non ha che molto lascia per incassare in CFD / giorni disponibili"
+msgstr "Il dipendente non ha a disposizione un numero sufficiente di giorni di congedo da monetizzare (riportati o disponibili)"
 
 msgid "Postfix"
-msgstr "Postfix"
+msgstr "Suffisso"
 
 msgid "Payroll Settings"
-msgstr "Impostazioni Pagamenti"
+msgstr "Impostazioni busta paga"
 
 msgid "Min. Income"
-msgstr "Reddito Minimo"
+msgstr "Reddito minimo"
 
 msgid "Max. Income"
-msgstr "Produzione Max."
+msgstr "Reddito massimo"
 
 msgid "Tax Rate"
-msgstr "Aliquota Fiscale"
+msgstr "Aliquota fiscale"
 
 msgid "This tax bracket already exists"
-msgstr "Questa parentesi fiscale esiste già"
+msgstr "Questo scaglione d'imposta esiste già"
 
 msgid "Maximum income must be greater than minimum income."
 msgstr "Il reddito massimo deve essere superiore al reddito minimo."
 
 msgid "Amount Per Attendance"
-msgstr "Importo Per Partecipazione"
+msgstr "Importo per singola presenza"
 
 msgid "Amount Per"
-msgstr "Importo Per"
+msgstr "Importo per"
 
 msgid "Amount Per One Hour"
-msgstr "Importo Per Un'Ora"
+msgstr "Importo orario"
 
 msgid "One Time Allowance"
-msgstr "Allowance Una Volta"
+msgstr "Indennità una tantum"
 
 msgid "Taxable"
-msgstr "Tassabile"
+msgstr "Imponibile"
 
 msgid "Condition Based"
-msgstr "Condizione Basata"
+msgstr "Basato su condizioni"
 
 msgid "Fixed"
 msgstr "Fisso"
 
 msgid "Based"
-msgstr "Basato"
+msgstr "Basato su"
 
 msgid "Specific Employees"
-msgstr "Dipendenti Specifici"
+msgstr "Dipendenti specifici"
 
 msgid "Excluded Employees"
-msgstr "Dipendenti Esclusi"
+msgstr "Dipendenti esclusi"
 
 msgid "Non Taxable"
-msgstr "Non Tassabile"
+msgstr "Non imponibile"
 
 msgid "Not Fixed"
-msgstr "Non Corretto"
+msgstr "Variabile / Non fisso"
 
 msgid "There are currently no allowances to consider."
-msgstr "Al momento non vi sono quote da considerare."
+msgstr "Al momento non ci sono indennità da considerare."
 
 msgid "Has Maximum Limit"
-msgstr "Ha Limite Massimo"
+msgstr "Prevede un limite massimo"
 
 msgid "For working days on a month"
-msgstr "Per giorni lavorativi su un mese"
+msgstr "Per i giorni lavorativi del mese"
 
 msgid "Allowance Eligibility"
-msgstr "Ammissibilità Di Ammissibilità"
+msgstr "Idoneità all'indennità"
 
 msgid "Contracts"
 msgstr "Contratti"
 
 msgid "There have been no contracts signed."
-msgstr "Non ci sono stati contratti firmati."
+msgstr "Non è stato firmato alcun contratto."
 
 msgid "Export Contracts"
-msgstr "Esporta Contratti"
+msgstr "Esporta contratti"
 
 msgid "Contract Start Date From"
-msgstr "Data Di Inizio Contratto Da"
+msgstr "Data inizio contratto da"
 
 msgid "Contract Start Date Till"
-msgstr "Data Di Inizio Contratto Ancora"
+msgstr "Data inizio contratto al"
 
 msgid "Contract End Date From"
-msgstr "Data Di Fine Contratto Da"
+msgstr "Data fine contratto da"
 
 msgid "Contract End Date Till"
-msgstr "Data Di Fine Contratto Fino A"
+msgstr "Data fine contratto al"
 
 msgid "Basic Salary Less Than or Equal"
-msgstr "Stipendio base inferiore o uguale a"
+msgstr "Retribuzione di base inferiore o uguale a"
 
 msgid "Basic Salary Greater or Equal"
-msgstr "Stipendio base maggiore o uguale"
+msgstr "Retribuzione di base maggiore o uguale a"
 
 msgid "Wage"
-msgstr "Salario"
+msgstr "Retribuzione / Paga"
 
 msgid "Calculate Leave Amount"
-msgstr "Calcola Quantità Lasciata"
+msgstr "Calcola importo congedo"
 
 msgid "Deduction Amount For One Leave"
-msgstr "Quantità Di Detrazione Per Una Fuga"
+msgstr "Importo della trattenuta per singolo giorno di congedo"
 
 msgid "Bulk Status Update"
-msgstr "Aggiornamento Stato Bulk"
+msgstr "Aggiornamento massivo dello stato"
 
 msgid "Select All Contracts"
-msgstr "Seleziona Tutti I Contratti"
+msgstr "Seleziona tutti i contratti"
 
 msgid "Unselect All Contracts"
-msgstr "Deseleziona Tutti I Contratti"
+msgstr "Deseleziona tutti i contratti"
 
 msgid "Assign Contribution Deduction"
-msgstr "Assegna Detrazione Contributo"
+msgstr "Assegna trattenuta contributiva"
 
 msgid "Contribution Deduction"
-msgstr "Detrazione Contributo"
+msgstr "Trattenuta contributiva"
 
 msgid "Deduct From"
-msgstr "Deduca Da"
+msgstr "Trattieni da"
 
 msgid "Employee Contribution"
-msgstr "Contributo Dipendenti"
+msgstr "Contributo a carico del dipendente"
 
 msgid "Employer Contribution"
-msgstr "Contributo Datori Di Lavoro"
+msgstr "Contributo a carico del datore di lavoro"
 
 msgid "Select Month and Year:"
-msgstr "Seleziona Mese e Anno:"
+msgstr "Seleziona mese e anno:"
 
 msgid "Contributions"
 msgstr "Contributi"
 
 msgid "Employee Payslips"
-msgstr "Cedolini Dipendenti"
+msgstr "Cedolini dei dipendenti"
 
 msgid "Total Payslips Genarated :"
-msgstr "Totale Cedolini Generati:"
+msgstr "Totale cedolini generati:"
 
 msgid "Total Amount :"
-msgstr "Importo Totale :"
+msgstr "Importo totale:"
 
 msgid "Department Total Amount"
-msgstr "Importo Totale Dipartimento"
+msgstr "Importo totale dipartimento"
 
 msgid "Employer Contributions"
-msgstr "Contributi Datori Di Lavoro"
+msgstr "Contributi a carico del datore di lavoro"
 
 msgid "Contracts ending "
-msgstr "Contratti terminati "
+msgstr "Contratti in scadenza "
 
 msgid "Number of contracts expiring in "
-msgstr "Numero di contratti che scadono "
+msgstr "Numero di contratti che scadono in "
 
 msgid "No records available."
 msgstr "Nessun record disponibile."
 
 msgid "Employer Rate :"
-msgstr "Tasso Datori Di Lavoro :"
+msgstr "Aliquota datore di lavoro:"
 
 msgid "Employee Rate :"
-msgstr "Tasso Dipendenti :"
+msgstr "Aliquota dipendente:"
 
 msgid "One Time Deduction"
-msgstr "Detrazione Una Volta"
+msgstr "Trattenuta una tantum"
 
 msgid "Pretax"
-msgstr "Pretax"
+msgstr "Prima delle tasse (Pre-tax)"
 
 msgid "Do you want to delete this deduction?"
-msgstr "Vuoi eliminare questa deduzione?"
+msgstr "Vuoi eliminare questa trattenuta?"
 
 msgid "There are currently no deductions to consider."
-msgstr "Al momento non vi sono detrazioni da considerare."
+msgstr "Al momento non ci sono trattenute da considerare."
 
 msgid "Tax"
-msgstr "Tasse"
+msgstr "Imposte / Tasse"
 
 msgid "One Time deduction"
-msgstr "Detrazione una tantum"
+msgstr "Trattenuta una tantum"
 
 msgid "Deduction Eligibility"
-msgstr "Ammissibilità Detrazione"
+msgstr "Idoneità alla trattenuta"
 
 msgid "Loan Filter"
-msgstr "Filtro Prestiti"
+msgstr "Filtro prestiti"
 
 msgid "Provided date"
-msgstr "Data prevista"
+msgstr "Data di erogazione"
 
 msgid "Is settled"
-msgstr "È regolato"
+msgstr "Saldato"
 
 msgid "Total Amount"
-msgstr "Importo Totale"
+msgstr "Importo totale"
 
 msgid "Paid Amount"
-msgstr "Importo Pagato"
+msgstr "Importo pagato"
 
 msgid "Balance Amount"
-msgstr "Importo Saldo"
+msgstr "Importo residuo / Saldo"
 
 msgid "S/N"
-msgstr "S/N"
+msgstr "N."
 
 msgid "One Time Date"
-msgstr "Data Una Volta"
+msgstr "Data dell'una tantum"
 
 msgid "Loan / Advanced Salary"
-msgstr "Prestito / Salario Avanzato"
+msgstr "Prestito / Anticipo stipendio"
 
 msgid "Fine"
-msgstr "Fine"
+msgstr "Multa / Sanzione"
 
 msgid "Installments"
-msgstr "Scadenze"
+msgstr "Rate"
 
 msgid "Provided Date"
-msgstr "Data Fornita"
+msgstr "Data di erogazione"
 
 msgid "Installment Start Date"
-msgstr "Data Di Inizio Resa"
+msgstr "Data inizio trattenuta rate"
 
 msgid "Total Installments"
-msgstr "Totale Resi"
+msgstr "Totale rate"
 
 msgid "There are currently no loans to consider."
 msgstr "Al momento non vi sono prestiti da considerare."
 
 msgid "Bulk Payslip"
-msgstr "Bulk Payslip"
+msgstr "Generazione massiva cedolini"
 
 msgid "Create Payslip"
-msgstr "Crea Cedolino"
+msgstr "Crea cedolino"
 
 msgid "Payslip"
 msgstr "Cedolino"
 
 msgid "Mail Sent"
-msgstr "Posta Inviata"
+msgstr "Email inviata"
 
 msgid "Start Date Till"
-msgstr "Start Date Till"
+msgstr "Data inizio al"
 
 msgid "End Date From"
-msgstr "Data Di Fine Da"
+msgstr "Data fine dal"
 
 msgid "End Date Till"
-msgstr "End Date Till"
+msgstr "Data fine al"
 
 msgid "Gross Pay Less Than or Equal"
-msgstr "Pagamenti lordi inferiori o uguali"
+msgstr "Retribuzione lorda inferiore o uguale a"
 
 msgid "Gross Pay Greater or Equal"
-msgstr "Salario lordo maggiore o uguale"
+msgstr "Retribuzione lorda maggiore o uguale a"
 
 msgid "Deduction Less Than or Equal"
-msgstr "Detrazione minore o uguale"
+msgstr "Trattenuta inferiore o uguale a"
 
 msgid "Deduction Greater or Equal"
-msgstr "Detrazione maggiore o uguale"
+msgstr "Trattenuta maggiore o uguale a"
 
 msgid "Net Pay Less Than or Equal"
-msgstr "Pagamenti netti inferiori o uguali"
+msgstr "Retribuzione netta inferiore o uguale a"
 
 msgid "Net Pay Greater or Equal"
-msgstr "Salario netto maggiore o uguale"
+msgstr "Retribuzione netta maggiore o uguale a"
 
 msgid "Payslips"
 msgstr "Cedolini"
 
 msgid "Select All Payslips"
-msgstr "Seleziona Tutti I Cedolini"
+msgstr "Seleziona tutti i cedolini"
 
 msgid "Unselect All Payslips"
-msgstr "Deseleziona Tutti i Cedolini"
+msgstr "Deseleziona tutti i cedolini"
 
 msgid "Export Payslips"
-msgstr "Esporta Cedolini"
+msgstr "Esporta cedolini"
 
 msgid "Do you want to send the payslip by mail?"
-msgstr "Vuoi inviare il cedolino per posta?"
+msgstr "Vuoi inviare il cedolino tramite email?"
 
 msgid "Send via mail"
-msgstr "Invia via mail"
+msgstr "Invia via email"
 
 msgid "Are you sure you want to delete this payslip?"
 msgstr "Sei sicuro di voler eliminare questo cedolino?"
@@ -9072,316 +9072,316 @@ msgid "Select all users"
 msgstr "Seleziona tutti gli utenti"
 
 msgid "Send via mail "
-msgstr "Invia via mail "
+msgstr "Invia via email "
 
 msgid "Employee Details"
-msgstr "Dettagli Dipendente"
+msgstr "Dettagli dipendente"
 
 msgid "Employee ID"
-msgstr "Id Dipendente"
+msgstr "ID Dipendente"
 
 msgid "Bank Acc./Cheque No."
-msgstr "Acc./Assegni Bancario N."
+msgstr "C/C Bancario o N. Assegno"
 
 msgid "Employee Net Pay"
-msgstr "Dipendente Salario Netto"
+msgstr "Retribuzione netta dipendente"
 
 msgid "Actual Basic Pay"
-msgstr "Pagamenti Di Base Effettivi"
+msgstr "Retribuzione di base effettiva"
 
 msgid "Paid Days"
-msgstr "Giorni Pagati"
+msgstr "Giorni retribuiti"
 
 msgid "LOP Days"
-msgstr "Giorni Di LOP"
+msgstr "Giorni di assenza non retribuita (LOP)"
 
 msgid "Updated Basic Pay"
-msgstr "Pagamenti Di Base Aggiornati"
+msgstr "Retribuzione di base aggiornata"
 
 msgid "The payslip is calculated based on the updated basic pay"
 msgstr "Il cedolino è calcolato sulla base della retribuzione di base aggiornata"
 
 msgid "taxable amount"
-msgstr "imponibile"
+msgstr "importo imponibile"
 
 msgid "Add Allowance"
-msgstr "Aggiungi Allowance"
+msgstr "Aggiungi indennità"
 
 msgid "Some deductions will update basic pay before payslip calculation starts, eg: LOP is Deduducted from basic pay if `Deduct leave from basic pay` field is enabled on the contract, and also with the update compensation deduction through"
-msgstr "Alcune detrazioni aggiorneranno la paga di base prima che inizi il calcolo della paga, es.: LOP è dedotto dal pagamento di base se `Deduct leave from basic pay` field è abilitato sul contratto, e anche con la deduzione di compensazione di aggiornamento attraverso"
+msgstr "Alcune trattenute aggiornano la retribuzione di base prima del calcolo del cedolino. Ad esempio, le assenze non retribuite (LOP) vengono dedotte dalla retribuzione di base se il campo `Deduct leave from basic pay` è attivo nel contratto, così come avviene per le trattenute di aggiornamento del compenso tramite"
 
 msgid "Total Gross Pay"
-msgstr "Totale Salario Lordo"
+msgstr "Retribuzione lorda totale"
 
 msgid "Some Deduction will update the total gross pay using the deductions that are enabled update compensation"
-msgstr "Alcune Detrazioni aggiorneranno la retribuzione lorda totale utilizzando le detrazioni che sono abilitate l'aggiornamento compensazione"
+msgstr "Alcune trattenute aggiornano la retribuzione lorda totale applicando le voci abilitate come aggiornamento del compenso"
 
 msgid "Add Deduction"
-msgstr "Aggiungi Detrazione"
+msgstr "Aggiungi trattenuta"
 
 msgid "Loss of Pay"
-msgstr "Perdita di retribuzione"
+msgstr "Assenza non retribuita (Loss of Pay)"
 
 msgid "Basic Pay Deductions"
-msgstr "Detrazioni Paga Di Base"
+msgstr "Trattenute sulla retribuzione di base"
 
 msgid "Gross Pay Deductions"
-msgstr "Detrazioni Pagate Lorde"
+msgstr "Trattenute sulla retribuzione lorda"
 
 msgid "Federal Tax"
-msgstr "Imposta Federale"
+msgstr "Imposta federale / statale"
 
 msgid "Net Pay Deductions"
-msgstr "Detrazioni Paga Nette"
+msgstr "Trattenute sulla retribuzione netta"
 
 msgid "Total Deductions"
-msgstr "Detrazioni Totali"
+msgstr "Totale trattenute"
 
 msgid "Some deductions are not included in the total deductions because they are given as updated compensations. These deductions may be applied before the main calculation begins, such as from the basic pay or gross pay, while others are deducted after calculating the net pay."
-msgstr "Alcune detrazioni non sono incluse nel totale delle detrazioni in quanto sono indicate come compensazioni aggiornate. Tali detrazioni possono essere applicate prima dell'inizio del calcolo principale; come la retribuzione di base o la retribuzione lorda, mentre altri sono dedotti dopo il calcolo della retribuzione netta."
+msgstr "Alcune trattenute non sono incluse nel totale poiché configurate come aggiornamenti del compenso. Tali voci possono essere applicate prima dell'inizio del calcolo principale (dalla retribuzione di base o lorda), mentre altre vengono dedotte dopo il calcolo del netto."
 
 msgid "Total Net Payable"
-msgstr "Totale Pagabile Netto"
+msgstr "Totale netto a pagare"
 
 msgid "Gross Earnings - Total Deductions"
-msgstr "Utile Lordo - Detrazioni Totali"
+msgstr "Competenze lorde - Totale trattenute"
 
 msgid "'s Payslip"
-msgstr "'s Cedolino"
+msgstr " - Cedolino"
 
 msgid "Payslip Period :"
-msgstr "Periodo Cedolino :"
+msgstr "Periodo del cedolino:"
 
 msgid "Employee Net Pay :"
-msgstr "Dipendente Salario Netto :"
+msgstr "Retribuzione netta dipendente:"
 
 msgid "Employee ID :"
 msgstr "ID Dipendente:"
 
 msgid "Employee Name :"
-msgstr "Nome Dipendente :"
+msgstr "Nome dipendente:"
 
 msgid "Department :"
-msgstr "Dipartimento :"
+msgstr "Dipartimento:"
 
 msgid "Bank Acc./Cheque No. :"
-msgstr "Banca Acc./Assegni N. :"
+msgstr "C/C Bancario o N. Assegno:"
 
 msgid "Some deductions will update basic pay before payslip calculation starts, eg: LOP is Deduducted from basic pay if \"Deduct leave from basic pay\" field is enabled on the contract, and also with the update compensation deduction through"
-msgstr "Alcune detrazioni aggiorneranno la paga di base prima che inizi il calcolo della paga, es.: LOP è dedotto dal pagamento di base se \"Dedotto lasciare dal pagamento di base\" campo è abilitato sul contratto, e anche con la deduzione di compensazione di aggiornamento attraverso"
+msgstr "Alcune trattenute aggiornano la retribuzione di base prima del calcolo del cedolino. Ad esempio, le assenze non retribuite (LOP) vengono dedotte dalla retribuzione di base se il campo \"Deduct leave from basic pay\" è attivo nel contratto, così come avviene per le trattenute di aggiornamento del compenso tramite"
 
 msgid "Total Net Payable "
-msgstr "Totale Pagabile Netto "
+msgstr "Totale netto a pagare "
 
 msgid "Payslip Report"
-msgstr "Report Payslip"
+msgstr "Report cedolini"
 
 msgid "Download report"
 msgstr "Scarica report"
 
 msgid "Employee Netpay :"
-msgstr "Employee Netpay :"
+msgstr "Retribuzione netta dipendente:"
 
 msgid "Bank Acc./Cheque No :"
-msgstr "Banca Acc./Assegni N. :"
+msgstr "C/C Bancario o N. Assegno:"
 
 msgid "Gross earning - Total Deduction"
-msgstr "Guadagno lordo - Detrazione totale"
+msgstr "Competenze lorde - Totale trattenute"
 
 msgid "Mail Not Sent"
-msgstr "Posta Non Inviata"
+msgstr "Email non inviata"
 
 msgid "Deducation"
-msgstr "Distruzione"
+msgstr "Trattenuta"
 
 msgid "Generate"
 msgstr "Genera"
 
 msgid "Payslip report"
-msgstr "Payslip report"
+msgstr "Report cedolini"
 
 msgid "No payslips have been generated."
-msgstr "Non sono state generate labbra pagate."
+msgstr "Non è stato generato alcun cedolino."
 
 msgid "No Files found."
 msgstr "Nessun file trovato."
 
 msgid "No files available at the moment."
-msgstr "Nessun file disponibile al momento."
+msgstr "Al momento non ci sono file disponibili."
 
 msgid "Reimbursements"
 msgstr "Rimborsi"
 
 msgid "'s reimbursement request"
-msgstr "'s richiesta di rimborso"
+msgstr " - Richiesta di rimborso"
 
 msgid "No comments available at the moment."
-msgstr "Nessun commento disponibile al momento."
+msgstr "Al momento non ci sono commenti disponibili."
 
 msgid "Leave Encashments"
-msgstr "Lascia Encashments"
+msgstr "Monetizzazione congedi"
 
 msgid "Bonus Encashments"
-msgstr "Bonus Encashments"
+msgstr "Monetizzazione bonus"
 
 msgid "Available days to encash"
-msgstr "Giorni disponibili per incassare"
+msgstr "Giorni disponibili da monetizzare"
 
 msgid "carryforward to encash"
-msgstr "riporto in contanti"
+msgstr "giorni riportati da monetizzare"
 
 msgid "Carryforward to encash"
-msgstr "Trasferimento in contanti"
+msgstr "Giorni riportati da monetizzare"
 
 msgid "Bonus to encash"
-msgstr "Bonus per incassare"
+msgstr "Bonus da monetizzare"
 
 msgid "Allowance on"
-msgstr "Indennità il"
+msgstr "Indennità del"
 
 msgid "View Attachments"
-msgstr "Visualizza Allegati"
+msgstr "Visualizza allegati"
 
 msgid "Requsted for"
 msgstr "Richiesto per"
 
 msgid "Bonus points to encash."
-msgstr "Punti bonus per incassare."
+msgstr "Punti bonus da monetizzare."
 
 msgid "Requsted for total"
-msgstr "Richiesto per il totale"
+msgstr "Richiesto per un totale di"
 
 msgid "days to encash."
-msgstr "giorni per incassare."
+msgstr "giorni da monetizzare."
 
 msgid "There are currently no reimbursement to consider."
 msgstr "Al momento non vi sono rimborsi da considerare."
 
 msgid "Update Auto Payslip Generate"
-msgstr "Aggiorna Auto Payslip Genera"
+msgstr "Aggiorna generazione automatica cedolini"
 
 msgid "Create Auto Payslip Generate"
-msgstr "Crea Auto Payslip Genera"
+msgstr "Crea generazione automatica cedolini"
 
 msgid "Payslip Automation"
-msgstr "Payslip Automation"
+msgstr "Automazione cedolini"
 
 msgid "There is no auto payslip generation at this moment."
-msgstr "In questo momento non esiste una generazione di auto payslip."
+msgstr "Al momento non è attiva alcuna generazione automatica dei cedolini."
 
 msgid "Currency Symbol"
-msgstr "Simbolo Valuta"
+msgstr "Simbolo valuta"
 
 msgid "Position"
 msgstr "Posizione"
 
 msgid "Payslip creation date"
-msgstr "Data creazione Payslip"
+msgstr "Data di creazione del cedolino"
 
 msgid "Are you sure you want to delete this payslip auto generate?"
-msgstr "Sei sicuro di voler eliminare questo payslip auto generare?"
+msgstr "Sei sicuro di voler eliminare questa automazione per la generazione dei cedolini?"
 
 msgid "Default Notice Period"
-msgstr "Periodo Predefinito Di Avviso"
+msgstr "Periodo di preavviso predefinito"
 
 msgid " Set initial notice period (in days)"
-msgstr " Imposta periodo di preavviso iniziale (in giorni)"
+msgstr " Imposta il periodo di preavviso iniziale (in giorni)"
 
 msgid "Are you sure to delete this status ?"
 msgstr "Sei sicuro di voler eliminare questo stato?"
 
 msgid "No tax filing status has been recorded."
-msgstr "Non è stato registrato alcun file fiscale."
+msgstr "Non è stato registrato alcuno stato civile ai fini fiscali."
 
 msgid "Tax Bracket"
-msgstr "Parentesi Fiscale"
+msgstr "Scaglione d'imposta"
 
 msgid "Are you sure to delete this Tax bracket ?"
-msgstr "Sei sicuro di voler eliminare questa parentesi fiscale?"
+msgstr "Sei sicuro di voler eliminare questo scaglione d'imposta?"
 
 msgid "Allowance created."
-msgstr "Consegna creata."
+msgstr "Indennità creata."
 
 msgid "Allowance updated."
-msgstr "Autorizzazione aggiornata."
+msgstr "Indennità aggiornata."
 
 msgid "Allowance deleted successfully"
-msgstr "Autorizzazione eliminata con successo"
+msgstr "Indennità eliminata con successo"
 
 msgid "Allowance not found"
 msgstr "Indennità non trovata"
 
 msgid "An error occurred while deleting the allowance"
-msgstr "Si è verificato un errore durante l'eliminazione della quota"
+msgstr "Si è verificato un errore durante l'eliminazione della quota/indennità"
 
 msgid "Deduction created."
-msgstr "Detrazione creata."
+msgstr "Trattenuta creata."
 
 msgid "Deduction updated."
-msgstr "Detrazione aggiornata."
+msgstr "Trattenuta aggiornata."
 
 msgid "Deduction deleted successfully"
-msgstr "Detrazione eliminata con successo"
+msgstr "Trattenuta eliminata con successo"
 
 msgid "Deduction not found"
-msgstr "Detrazione non trovata"
+msgstr "Trattenuta non trovata"
 
 msgid "When this payslip is run, the payslip start date will be updated to match the employee contract start date."
-msgstr "Quando questo payslip è in esecuzione, la data di inizio del payslip verrà aggiornata per corrispondere alla data di inizio del contratto con il dipendente."
+msgstr "Quando viene elaborato questo cedolino, la data di inizio del cedolino sarà aggiornata per corrispondere alla data di inizio del contratto del dipendente."
 
 msgid "Employee Contract Start Date"
-msgstr "Data Di Inizio Contratto Dipendente"
+msgstr "Data inizio contratto dipendente"
 
 msgid "Payslip Saved"
-msgstr "Payslip Salvato"
+msgstr "Cedolino salvato"
 
 msgid "Bonus Added"
-msgstr "Bonus Aggiunto"
+msgstr "Bonus aggiunto"
 
 msgid "No active contract found for  {} during this payslip period"
-msgstr "Nessun contratto attivo trovato per {} durante questo periodo di paga"
+msgstr "Nessun contratto attivo trovato per {} durante il periodo di questo cedolino"
 
 msgid "Asset fine added"
-msgstr "Ammenda attività aggiunta"
+msgstr "Trattenuta per danno ai beni aziendali aggiunta"
 
 msgid "Please check the data you provided."
-msgstr "Si prega di controllare i dati forniti."
+msgstr "Verifica i dati inseriti."
 
 msgid "Filing status created successfully "
-msgstr "Stato di archiviazione creato con successo "
+msgstr "Stato civile ai fini fiscali creato con successo "
 
 msgid "Filing status not found"
-msgstr "Stato di archiviazione non trovato"
+msgstr "Stato civile ai fini fiscali non trovato"
 
 msgid "Filing status updated successfully."
-msgstr "Stato di archiviazione aggiornato con successo."
+msgstr "Stato civile ai fini fiscali aggiornato con successo."
 
 msgid "Filing status successfully deleted."
-msgstr "Stato di archiviazione cancellato correttamente."
+msgstr "Stato civile ai fini fiscali eliminato con successo."
 
 msgid "Filing status is in use by tax brackets. Remove them first."
-msgstr "Lo stato del file è in uso dalle parentesi fiscali. Rimuovili prima."
+msgstr "Questo stato civile ai fini fiscali è associato ad alcuni scaglioni d'imposta. Rimuovili prima di procedere."
 
 msgid "This filing status was not found."
-msgstr "Questo stato di archiviazione non è stato trovato."
+msgstr "Questo stato civile ai fini fiscali non è stato trovato."
 
 msgid "An error occurred while trying to delete the filing status."
-msgstr "Si è verificato un errore durante il tentativo di eliminare lo stato di archiviazione."
+msgstr "Si è verificato un errore durante il tentativo di eliminare lo stato civile ai fini fiscali."
 
 msgid "The maximum income will be infinite"
-msgstr "Il reddito massimo sarà infinito"
+msgstr "Il reddito massimo sarà illimitato"
 
 msgid "The tax bracket was created successfully."
-msgstr "La parentesi fiscale è stata creata con successo."
+msgstr "Lo scaglione d'imposta è stato creato con successo."
 
 msgid "The tax bracket has been updated successfully."
-msgstr "La parentesi fiscale è stata aggiornata con successo."
+msgstr "Lo scaglione d'imposta è stato aggiornato con successo."
 
 msgid "Tax bracket not found"
-msgstr "Parentesi fiscale non trovata"
+msgstr "Scaglione d'imposta non trovato"
 
 msgid "Tax bracket successfully deleted."
-msgstr "Parentesi fiscale eliminata con successo."
+msgstr "Scaglione d'imposta eliminato con successo."
 
 msgid "Python code saved successfully!"
 msgstr "Codice Python salvato con successo!"
@@ -9390,31 +9390,31 @@ msgid "Name of Employees"
 msgstr "Nome dei dipendenti"
 
 msgid "Contract Created"
-msgstr "Contratto Creato"
+msgstr "Contratto creato"
 
 msgid "The contract could not be found."
-msgstr "Il contratto non è stato trovato."
+msgstr "Contratto non trovato."
 
 msgid "Contract updated"
 msgstr "Contratto aggiornato"
 
 msgid "An {} contract already exists for {}"
-msgstr "Un contratto {} esiste già per {}"
+msgstr "Un contratto di tipo {} esiste già per {}"
 
 msgid "The contract status has been updated successfully."
-msgstr "Lo stato del contratto è stato aggiornato correttamente."
+msgstr "Lo stato del contratto è stato aggiornato con successo."
 
 msgid "You selected the wrong option for contract status."
-msgstr "Hai selezionato l'opzione sbagliata per lo stato del contratto."
+msgstr "È stata selezionata un'opzione errata per lo stato del contratto."
 
 msgid "Contract status updated"
 msgstr "Stato del contratto aggiornato"
 
 msgid "The employee filing status has been updated successfully."
-msgstr "Lo stato del file dipendente è stato aggiornato con successo."
+msgstr "Lo stato civile ai fini fiscali del dipendente è stato aggiornato con successo."
 
 msgid "You selected the wrong option for filing status."
-msgstr "Hai selezionato l'opzione sbagliata per lo stato di archiviazione."
+msgstr "È stata selezionata un'opzione errata per lo stato civile ai fini fiscali."
 
 msgid "Contract deleted"
 msgstr "Contratto eliminato"
@@ -9423,36 +9423,36 @@ msgid "Contract not found."
 msgstr "Contratto non trovato."
 
 msgid "You cannot delete this contract."
-msgstr "Non puoi eliminare questo contratto."
+msgstr "Impossibile eliminare questo contratto."
 
 msgid "Payroll settings updated."
-msgstr "Impostazioni Payroll aggiornate."
+msgstr "Impostazioni elaborazione buste paga aggiornate."
 
 msgid "Payslip status updated"
-msgstr "Stato Payslip aggiornato"
+msgstr "Stato del cedolino aggiornato"
 
 msgid "Payslip not found"
-msgstr "Payslip non trovato"
+msgstr "Cedolino non trovato"
 
 msgid "Payslip deleted"
-msgstr "Payslip eliminato"
+msgstr "Cedolino eliminato"
 
 msgid "Payslip not found."
-msgstr "Payslip non trovato."
+msgstr "Cedolino non trovato."
 
 msgid "No payslips generated for this month."
-msgstr "Nessun payslips generato per questo mese."
+msgstr "Nessun cedolino generato per questo mese."
 
 msgid "No contracts ending this month"
-msgstr "Nessun contratto che termina questo mese"
+msgstr "Nessun contratto in scadenza questo mese"
 
 #, python-brace-format
 msgid "{employee} {period} payslip deleted."
-msgstr "{employee} {period} payslip eliminato."
+msgstr "Cedolino di {employee} relativo al periodo {period} eliminato."
 
 #, python-brace-format
 msgid "You cannot delete {payslip}"
-msgstr "Non puoi eliminare {payslip}"
+msgstr "Impossibile eliminare il cedolino: {payslip}"
 
 #, python-brace-format
 msgid "{name} deleted."
@@ -9460,49 +9460,49 @@ msgstr "{name} eliminato."
 
 #, python-brace-format
 msgid "You cannot delete {contract}"
-msgstr "Non puoi eliminare {contract}"
+msgstr "Impossibile eliminare il contratto: {contract}"
 
 msgid "The initial notice period has been successfully updated."
 msgstr "Il periodo di preavviso iniziale è stato aggiornato con successo."
 
 msgid "Auto paslip generate activated successfully."
-msgstr "Auto paslip generato attivato con successo."
+msgstr "Generazione automatica dei cedolini attivata con successo."
 
 msgid "Auto paslip generate deactivated successfully."
-msgstr "Auto paslip generano disattivato con successo."
+msgstr "Generazione automatica dei cedolini disattivata con successo."
 
 msgid "Active 'Payslip auto generate' cannot delete."
-msgstr "La generazione automatica 'Payslip attiva' non può essere eliminata."
+msgstr "Impossibile eliminare un'automazione di generazione cedolini attualmente attiva."
 
 msgid "Payslip auto generate not found."
-msgstr "Generazione automatica Payslip non trovata."
+msgstr "Automazione per la generazione automatica dei cedolini non trovata."
 
 msgid "Bonus Point Setting"
-msgstr "Impostazioni Punti Bonus"
+msgstr "Impostazioni punti bonus"
 
 msgid "Create Bonus Point Setting"
-msgstr "Crea Impostazioni Punti Bonus"
+msgstr "Crea impostazioni punti bonus"
 
 msgid "Employee Bonus Point "
-msgstr "Punto Bonus Dipendente "
+msgstr "Punti bonus dipendente "
 
 msgid "Employement Type"
-msgstr "Tipo Di Occupazione"
+msgstr "Tipo di contratto / Occupazione"
 
 msgid "Create Employee Bonus Point "
-msgstr "Crea Punto Bonus Dipendente "
+msgstr "Assegna punti bonus dipendente "
 
 msgid "Share Feedback request "
 msgstr "Condividi richiesta di feedback "
 
 msgid "Bulk Feedback request "
-msgstr "Richiesta Bulk Feedback "
+msgstr "Richiesta massiva di feedback "
 
 msgid "Key result"
-msgstr "Risultato chiave"
+msgstr "Risultato chiave (Key Result)"
 
 msgid "Objective"
-msgstr "Obiettivo"
+msgstr "Obiettivo (Objective)"
 
 msgid "Enter a title"
 msgstr "Inserisci un titolo"
@@ -9511,34 +9511,34 @@ msgid "Enter a description"
 msgstr "Inserisci una descrizione"
 
 msgid "For Developer"
-msgstr "Per Sviluppatore"
+msgstr "Per lo sviluppatore"
 
 msgid "Enter question"
-msgstr "Inserisci domanda"
+msgstr "Inserisci la domanda"
 
 msgid "Add a comment..."
 msgstr "Aggiungi un commento..."
 
 msgid "Question template is required when answer employees are choosed"
-msgstr "Modello di domanda è richiesto quando i dipendenti di risposta sono scelti"
+msgstr "Il modello di domanda è obbligatorio quando vengono selezionati i dipendenti rispondenti"
 
 msgid "This 'Bonus for' is not in the Model's status"
-msgstr "Questo 'Bonus per' non è nello stato del Model"
+msgstr "Questo valore di 'Bonus per' non è presente negli stati del modello"
 
 msgid "Bonus point must be greater than zero"
-msgstr "Il punto bonus deve essere maggiore di zero"
+msgstr "I punti bonus devono essere maggiori di zero"
 
 msgid "Point should be greater than zero."
-msgstr "Il punto dovrebbe essere maggiore di zero."
+msgstr "Il punteggio deve essere maggiore di zero."
 
 msgid "Other employees"
 msgstr "Altri dipendenti"
 
 msgid "Employees need to sent feedback request."
-msgstr "I dipendenti devono inviare la richiesta di feedback."
+msgstr "Dipendenti a cui inviare la richiesta di feedback."
 
 msgid "Include all subordinates"
-msgstr "Includi tutti i subordinati"
+msgstr "Includi tutti i collaboratori subordinati"
 
 msgid "Include all colleagues"
 msgstr "Includi tutti i colleghi"
@@ -9562,22 +9562,22 @@ msgid "Years"
 msgstr "Anni"
 
 msgid "On Track"
-msgstr "In Pista"
+msgstr "In linea"
 
 msgid "Behind"
-msgstr "Dietro"
+msgstr "In ritardo"
 
 msgid "At Risk"
-msgstr "A Rischio"
+msgstr "A rischio"
 
 msgid "Not Started"
-msgstr "Non Iniziato"
+msgstr "Non iniziato"
 
 msgid "The target value can't be zero."
 msgstr "Il valore obiettivo non può essere zero."
 
 msgid "The key result progress type is in percentage, so the target value cannot exceed 100."
-msgstr "Il tipo di progresso del risultato chiave è in percentuale, quindi il valore obiettivo non può superare i 100."
+msgstr "Il tipo di progresso del risultato chiave è in percentuale, quindi il valore obiettivo non può superare 100."
 
 msgid "The current value can't be greater than target value."
 msgstr "Il valore corrente non può essere maggiore del valore obiettivo."
@@ -9589,40 +9589,40 @@ msgid "Rating"
 msgstr "Valutazione"
 
 msgid "Boolean"
-msgstr "Boolean"
+msgstr "Booleano"
 
 msgid "Multi-choices"
-msgstr "Multi-scelte"
+msgstr "Scelta multipla"
 
 msgid "Likert"
-msgstr "Likert"
+msgstr "Scala Likert"
 
 msgid "Colleague"
-msgstr "Colleague"
+msgstr "Collega"
 
 msgid "Employees working on the same department."
 msgstr "Dipendenti che lavorano nello stesso dipartimento."
 
 msgid "Subordinates"
-msgstr "Subordinates"
+msgstr "Collaboratori subordinati"
 
 msgid "Employees for whom the feedback requester is the reporting manager"
-msgstr "Dipendenti per i quali è richiesto il feedback manager"
+msgstr "Dipendenti di cui il richiedente del feedback è il manager diretto"
 
 msgid "Other Employees"
-msgstr "Altri Dipendenti"
+msgstr "Altri dipendenti"
 
 msgid "Question Template"
-msgstr "Modello Domanda"
+msgstr "Modello di domanda"
 
 msgid "Key Result"
-msgstr "Risultato Della Chiave"
+msgstr "Risultato chiave (Key Result)"
 
 msgid "Is Cyclic Feedback"
-msgstr "È Feedback Ciclico"
+msgstr "È un feedback periodico"
 
 msgid "Cycle Period"
-msgstr "Ciclo Periodo"
+msgstr "Periodo del ciclo"
 
 msgid "Feedbacks"
 msgstr "Feedback"
@@ -9631,10 +9631,10 @@ msgid "General"
 msgstr "Generale"
 
 msgid "Answerable Employees"
-msgstr "Dipendenti Rispondibili"
+msgstr "Dipendenti rispondenti"
 
 msgid "Select the employees who can respond to question template in this meeting's, if any are added."
-msgstr "Seleziona i dipendenti che possono rispondere al modello di domanda in questa riunione, se ne aggiungono."
+msgstr "Seleziona i dipendenti che possono rispondere al modello di domanda in questa riunione, se presenti."
 
 msgid "Meetings"
 msgstr "Riunioni"
@@ -9643,37 +9643,37 @@ msgid "Project"
 msgstr "Progetto"
 
 msgid "Completing"
-msgstr "Completamento"
+msgstr "In corso di completamento"
 
 msgid "Closing"
-msgstr "Chiusura"
+msgstr "In fase di chiusura"
 
 msgid "Completion Date"
-msgstr "Data Di Completamento"
+msgstr "Data di completamento"
 
 msgid "Members"
 msgstr "Membri"
 
 msgid "Feedback Subject"
-msgstr "Oggetto Feedback"
+msgstr "Oggetto del feedback"
 
 msgid "Feedback Description"
-msgstr "Descrizione Feedback"
+msgstr "Descrizione del feedback"
 
 msgid "Anonymous Feedback"
-msgstr "Feedback Anonimo"
+msgstr "Feedback anonimo"
 
 msgid "Do you want to delete the bonus point ?"
-msgstr "Vuoi eliminare il punto bonus?"
+msgstr "Vuoi eliminare questo punto bonus?"
 
 msgid "Do you want to delete the bonus point setting?"
-msgstr "Vuoi eliminare l'impostazione del punto bonus?"
+msgstr "Vuoi eliminare questa impostazione dei punti bonus?"
 
 msgid "There is no Bonus setting at this moment."
-msgstr "Non c'è nessuna impostazione Bonus in questo momento."
+msgstr "Al momento non è presente alcuna impostazione per i bonus."
 
 msgid "Due Date"
-msgstr "Data Di Scadenza"
+msgstr "Data di scadenza"
 
 msgid "Total employee objectives"
 msgstr "Obiettivi totali dei dipendenti"
@@ -9682,34 +9682,34 @@ msgid "Total key results"
 msgstr "Risultati chiave totali"
 
 msgid "Total feedbacks"
-msgstr "Totale feedback"
+msgstr "Feedback totali"
 
 msgid "Objective status"
-msgstr "Stato obiettivo"
+msgstr "Stato dell'obiettivo"
 
 msgid "No objectives are available."
-msgstr "Non sono disponibili obiettivi."
+msgstr "Nessun obiettivo disponibile."
 
 msgid "Key result status"
-msgstr "Stato risultato chiave"
+msgstr "Stato del risultato chiave"
 
 msgid "No key results are available."
-msgstr "Non sono disponibili risultati chiave."
+msgstr "Nessun risultato chiave disponibile."
 
 msgid "Feedback status"
-msgstr "Stato feedback"
+msgstr "Stato del feedback"
 
 msgid "No feedbacks are available."
-msgstr "Non sono disponibili feedback."
+msgstr "Nessun feedback disponibile."
 
 msgid "Objectives At-Risk"
-msgstr "Obiettivi A Rischio"
+msgstr "Obiettivi a rischio"
 
 msgid "No OKRs are currently At-Risk."
-msgstr "Nessun OKR è attualmente a rischio."
+msgstr "Al momento nessun OKR è a rischio."
 
 msgid "Feedback Answer"
-msgstr "Risposta Feedback"
+msgstr "Risposta al feedback"
 
 msgid "Stars"
 msgstr "Stelle"
@@ -9718,34 +9718,34 @@ msgid "Star"
 msgstr "Stella"
 
 msgid "Strongly Disagree"
-msgstr "Forte In Disaccordo"
+msgstr "Fortemente in disaccordo"
 
 msgid "Disagree"
-msgstr "Disaccordo"
+msgstr "In disaccordo"
 
 msgid "Neutral"
 msgstr "Neutro"
 
 msgid "Agree"
-msgstr "Accetto"
+msgstr "D'accordo"
 
 msgid "Strongly Agree"
-msgstr "Accetto Strongly"
+msgstr "Fortemente d'accordo"
 
 msgid "Perfect"
-msgstr "Perfetto"
+msgstr "Eccellente"
 
 msgid "Good"
 msgstr "Buono"
 
 msgid "Average"
-msgstr "Media"
+msgstr "Sufficiente"
 
 msgid "Bad"
-msgstr "Cattivo"
+msgstr "Scarso"
 
 msgid "Key Results"
-msgstr "Risultati Principali"
+msgstr "Risultati chiave"
 
 msgid "Owner: "
 msgstr "Proprietario: "
@@ -9754,151 +9754,151 @@ msgid "Request feedback"
 msgstr "Richiedi feedback"
 
 msgid "Do you want archive this Feedback ?"
-msgstr "Vuoi archiviare questo Feedback ?"
+msgstr "Vuoi archiviare questo feedback?"
 
 msgid "Do you want Delete this Feedback ?"
-msgstr "Vuoi Eliminare questo Feedback ?"
+msgstr "Vuoi eliminare questo feedback?"
 
 msgid "Start date: "
 msgstr "Data di inizio: "
 
 msgid "Due on: "
-msgstr "Scadenza: "
+msgstr "Scadenza il: "
 
 msgid "Answered employees: "
-msgstr "Dipendenti risposti: "
+msgstr "Dipendenti che hanno risposto: "
 
 msgid "Employees not answerd yet: "
-msgstr "Dipendenti non ancora risposti: "
+msgstr "Dipendenti che non hanno ancora risposto: "
 
 msgid "Cyclic feedback period: "
-msgstr "Periodo di feedback ciclico: "
+msgstr "Periodo del feedback periodico: "
 
 msgid "Next feedback on: "
-msgstr "Prossimo feedback su: "
+msgstr "Prossimo feedback il: "
 
 msgid "Feedback Answers"
-msgstr "Risposte Di Feedback"
+msgstr "Risposte al feedback"
 
 msgid "Feedback Overview"
-msgstr "Panoramica Dei Feedback"
+msgstr "Panoramica dei feedback"
 
 msgid "Answer View"
-msgstr "Vista Risposta"
+msgstr "Visualizzazione risposte"
 
 msgid "Answers"
 msgstr "Risposte"
 
 msgid "Update Feedback"
-msgstr "Aggiorna Feedback"
+msgstr "Aggiorna feedback"
 
 msgid "Key results"
 msgstr "Risultati chiave"
 
 msgid "Bulk Feedback"
-msgstr "Feedback Bulk"
+msgstr "Feedback massivo"
 
 msgid "No Feedbacks are available."
-msgstr "Nessun Feedback disponibile."
+msgstr "Nessun feedback disponibile."
 
 msgid "Self Feedback"
-msgstr "Feedback Di Self"
+msgstr "Autovalutazione / Auto-feedback"
 
 msgid "Requested Feedback"
-msgstr "Feedback Richiesto"
+msgstr "Feedback richiesto"
 
 msgid "Feedbacks to review"
-msgstr "Feedback da rivedere"
+msgstr "Feedback da esaminare"
 
 msgid "Due On"
-msgstr "Scadenza On"
+msgstr "Scadenza il"
 
 msgid "Can't delete the feedback it's already answered."
-msgstr "Impossibile eliminare il feedback che ha già risposto."
+msgstr "Impossibile eliminare il feedback perché ha già ricevuto risposte."
 
 msgid "There are no Feedbacks available."
-msgstr "Non ci sono Feedback disponibili."
+msgstr "Non ci sono feedback disponibili."
 
 msgid "There are no Feedback requests available."
 msgstr "Non ci sono richieste di feedback disponibili."
 
 msgid "Create At"
-msgstr "Crea Il"
+msgstr "Creato il"
 
 msgid "There are no anonymous feedbacks available."
 msgstr "Non ci sono feedback anonimi disponibili."
 
 msgid "Feedback Title"
-msgstr "Titolo Feedback"
+msgstr "Titolo del feedback"
 
 msgid "Subordinate"
-msgstr "Subordinate"
+msgstr "Collaboratore subordinato"
 
 msgid "Yesterday"
 msgstr "Ieri"
 
 msgid "This Week"
-msgstr "Questa Settimana"
+msgstr "Questa settimana"
 
 msgid "This Month"
-msgstr "Questo Mese"
+msgstr "Questo mese"
 
 msgid "No answers yet."
 msgstr "Ancora nessuna risposta."
 
 msgid "Review Cycle"
-msgstr "Ciclo Di Revisione"
+msgstr "Ciclo di valutazione"
 
 msgid "Hide Questions"
-msgstr "Nascondi Domande"
+msgstr "Nascondi domande"
 
 msgid "Show Questions"
-msgstr "Mostra Domande"
+msgstr "Mostra domande"
 
 msgid "Question Type"
-msgstr "Tipo Di Domanda"
+msgstr "Tipo di domanda"
 
 msgid "Question"
 msgstr "Domanda"
 
 msgid "Show Options"
-msgstr "Mostra Opzioni"
+msgstr "Mostra opzioni"
 
 msgid "Hide Options"
-msgstr "Nascondi Opzioni"
+msgstr "Nascondi opzioni"
 
 msgid "Option"
 msgstr "Opzione"
 
 msgid "Do you want to delete the question?"
-msgstr "Vuoi eliminare la domanda?"
+msgstr "Vuoi eliminare questa domanda?"
 
 msgid "Add A Question"
-msgstr "Aggiungi Una Domanda"
+msgstr "Aggiungi una domanda"
 
 msgid "Add Question"
-msgstr "Aggiungi Domanda"
+msgstr "Aggiungi domanda"
 
 msgid "Total Question"
-msgstr "Domanda Totale"
+msgstr "Domande totali"
 
 msgid "Do you want to delete this question template?"
 msgstr "Vuoi eliminare questo modello di domanda?"
 
 msgid "No Question templates are available."
-msgstr "Non sono disponibili modelli di domande."
+msgstr "Nessun modello di domanda disponibile."
 
 msgid "Questions not answered yet."
 msgstr "Domande non ancora risposte."
 
 msgid "Meeting Questions & Answer"
-msgstr "Riunione Domande E Risposta"
+msgstr "Domande e risposte della riunione"
 
 msgid "Answerable employees"
 msgstr "Dipendenti rispondenti"
 
 msgid "Minutes of Meeting"
-msgstr "Verbali della riunione"
+msgstr "Verbale della riunione"
 
 msgid "Are you sure to delete this meeting?"
 msgstr "Sei sicuro di voler eliminare questa riunione?"
@@ -9907,16 +9907,16 @@ msgid "Meeting"
 msgstr "Riunione"
 
 msgid "Date greater than or equal"
-msgstr "Data maggiore o uguale"
+msgstr "Data successiva o uguale a"
 
 msgid "Date less than or equal"
-msgstr "Data minore o uguale"
+msgstr "Data precedente o uguale a"
 
 msgid "MoM"
-msgstr "MoM"
+msgstr "Verbale"
 
 msgid " Reveal"
-msgstr " Rivela"
+msgstr " Espandi"
 
 msgid " Collapse"
 msgstr " Comprimi"
@@ -9925,25 +9925,25 @@ msgid "Are you sure to remove this employee?"
 msgstr "Sei sicuro di voler rimuovere questo dipendente?"
 
 msgid "Are you sure to remove this manager?"
-msgstr "Sei sicuro di voler rimuovere questo manager?"
+msgstr "Sei sicuro di voler rimuovere questo responsabile?"
 
 msgid "Add MoM"
-msgstr "Aggiungi MoM"
+msgstr "Aggiungi verbale"
 
 msgid "Do you want to unarchive this meeting?"
-msgstr "Vuoi disarchiviare questa riunione?"
+msgstr "Vuoi ripristinare dall'archivio questa riunione?"
 
 msgid "Unarchive"
-msgstr "Disarchivia"
+msgstr "Ripristina da archivio"
 
 msgid "Do you want to archive this meeting?"
 msgstr "Vuoi archiviare questa riunione?"
 
 msgid "There is no meetings has been created."
-msgstr "Non ci sono riunioni create."
+msgstr "Non è stata creata alcuna riunione."
 
 msgid "Minutes of Meeting (MoM)"
-msgstr "Verbali della riunione (MoM)"
+msgstr "Verbale della riunione"
 
 msgid "Response"
 msgstr "Risposta"
@@ -9952,82 +9952,82 @@ msgid "Add assignees"
 msgstr "Aggiungi assegnatari"
 
 msgid "Create Period"
-msgstr "Crea Periodo"
+msgstr "Crea periodo"
 
 msgid "Create Employee Objective"
-msgstr "Crea Obiettivo Dipendente"
+msgstr "Crea obiettivo dipendente"
 
 msgid "Employee Objectives"
-msgstr "Obiettivi Dipendenti"
+msgstr "Obiettivi dei dipendenti"
 
 msgid "Viewxxxxxxxxxxxx"
 msgstr "Visualizzaxxxxxxxxxxxx"
 
 msgid "Activites"
-msgstr "Activites"
+msgstr "Attività"
 
 msgid "Do you want to un-archive this employee objective?"
-msgstr "Vuoi annullare l'archivio di questo obiettivo dipendente?"
+msgstr "Vuoi ripristinare dall'archivio questo obiettivo del dipendente?"
 
 msgid "Do you want to archive this employee objective?"
-msgstr "Vuoi archiviare questo obiettivo dipendente?"
+msgstr "Vuoi archiviare questo obiettivo del dipendente?"
 
 msgid "Do you want to delete this employee objective?"
-msgstr "Vuoi eliminare questo obiettivo dipendente?"
+msgstr "Vuoi eliminare questo obiettivo del dipendente?"
 
 msgid "Update Employee Objective"
-msgstr "Aggiorna Obiettivo Dipendenti"
+msgstr "Aggiorna obiettivo dipendente"
 
 msgid "Create Key Result"
-msgstr "Crea Risultato Chiave"
+msgstr "Crea risultato chiave (Key Result)"
 
 msgid "Select All Objectives"
-msgstr "Seleziona Tutti Gli Obiettivi"
+msgstr "Seleziona tutti gli obiettivi"
 
 msgid "Unselect All Objectives"
-msgstr "Deseleziona Tutti Gli Obiettivi"
+msgstr "Deseleziona tutti gli obiettivi"
 
 msgid "Self Objective"
-msgstr "Auto-Obiettivo"
+msgstr "Obiettivo personale"
 
 msgid "All Objective"
-msgstr "Tutti Gli Obiettivi"
+msgstr "Tutti gli obiettivi"
 
 msgid "Do you want un-archive this OKR ?"
-msgstr "Vuoi annullare l'archivio di questa OKR ?"
+msgstr "Vuoi ripristinare dall'archivio questo OKR?"
 
 msgid "Do you want archive this OKR ?"
-msgstr "Vuoi archiviare questo OKR ?"
+msgstr "Vuoi archiviare questo OKR?"
 
 msgid "Do you want Delete this OKR ?"
-msgstr "Vuoi eliminare questo OKR ?"
+msgstr "Vuoi eliminare questo OKR?"
 
 msgid "There are no Objectives available."
-msgstr "Non ci sono obiettivi disponibili."
+msgstr "Nessun obiettivo disponibile."
 
 msgid "Do you want delete this OKR ?"
-msgstr "Vuoi eliminare questo OKR ?"
+msgstr "Vuoi eliminare questo OKR?"
 
 msgid "type"
 msgstr "tipo"
 
 msgid "Target Value"
-msgstr "Valore Target"
+msgstr "Valore obiettivo"
 
 msgid "Add Key Results"
-msgstr "Aggiungi Risultati Chiavi"
+msgstr "Aggiungi risultati chiave"
 
 msgid "Key Results Type"
-msgstr "Tipo Di Risultati Chiave"
+msgstr "Tipo di risultato chiave"
 
 msgid "Update Key Results"
-msgstr "Aggiorna Risultati Chiavi"
+msgstr "Aggiorna risultati chiave"
 
 msgid "Due"
 msgstr "Scadenza"
 
 msgid "Start Value"
-msgstr "Valore Iniziale"
+msgstr "Valore iniziale"
 
 msgid "Duration"
 msgstr "Durata"
@@ -10039,16 +10039,16 @@ msgid "Do you want to delete this Key result?"
 msgstr "Vuoi eliminare questo risultato chiave?"
 
 msgid "Employee Key Results"
-msgstr "Risultati Della Chiave Dipendente"
+msgstr "Risultati chiave del dipendente"
 
 msgid "Progress Percentage"
-msgstr "Percentuale Avanzamento"
+msgstr "Percentuale di avanzamento"
 
 msgid "Are you sure you want to delete\tthis Key result?"
 msgstr "Sei sicuro di voler eliminare questo risultato chiave?"
 
 msgid "Progress Type"
-msgstr "Tipo Di Avanzamento"
+msgstr "Tipo di avanzamento"
 
 msgid "Update Key result"
 msgstr "Aggiorna risultato chiave"
@@ -10057,7 +10057,7 @@ msgid "Create Key result"
 msgstr "Crea risultato chiave"
 
 msgid "Descrption"
-msgstr "Descrption"
+msgstr "Descrizione"
 
 msgid "There are currently no key results to consider."
 msgstr "Al momento non ci sono risultati chiave da considerare."
@@ -10066,10 +10066,10 @@ msgid "No valid key result assigned!"
 msgstr "Nessun risultato chiave valido assegnato!"
 
 msgid "Update Objective"
-msgstr "Aggiorna Obiettivo"
+msgstr "Aggiorna obiettivo"
 
 msgid "Create Objective"
-msgstr "Crea Obiettivo"
+msgstr "Crea obiettivo"
 
 msgid "Objectives"
 msgstr "Obiettivi"
@@ -10078,10 +10078,10 @@ msgid "Do you want archive this Objective ?"
 msgstr "Vuoi archiviare questo obiettivo?"
 
 msgid "Do you want Delete this Objective ?"
-msgstr "Vuoi Eliminare questo obiettivo?"
+msgstr "Vuoi eliminare questo obiettivo?"
 
 msgid "Add New"
-msgstr "Aggiungi Nuovo"
+msgstr "Aggiungi nuovo"
 
 msgid "updated"
 msgstr "aggiornato"
@@ -10099,25 +10099,25 @@ msgid "added a comment"
 msgstr "ha aggiunto un commento"
 
 msgid "Created Objective"
-msgstr "Obiettivo Creato"
+msgstr "Obiettivo creato"
 
 msgid "No Objectives are available."
-msgstr "Non sono disponibili obiettivi."
+msgstr "Nessun obiettivo disponibile."
 
 msgid "Objective Key Results (OKR)"
-msgstr "Risultati Obiettivi Principali (Okr)"
+msgstr "Obiettivi e risultati chiave (OKR)"
 
 msgid "Updated At"
-msgstr "Aggiornato Il"
+msgstr "Aggiornato il"
 
 msgid "Selected Objectives"
-msgstr "Obiettivi Selezionati"
+msgstr "Obiettivi selezionati"
 
 msgid "Update Objectives"
-msgstr "Aggiorna Obiettivi"
+msgstr "Aggiorna obiettivi"
 
 msgid "Managers:"
-msgstr "Dirigenti:"
+msgstr "Responsabili:"
 
 msgid "Duration:"
 msgstr "Durata:"
@@ -10129,10 +10129,10 @@ msgid "There are no assignees for this objective at the moment."
 msgstr "Al momento non ci sono assegnatari per questo obiettivo."
 
 msgid "Create Objectives"
-msgstr "Crea Obiettivi"
+msgstr "Crea obiettivi"
 
 msgid "Are you sure want to remove this manager?"
-msgstr "Sei sicuro di voler rimuovere questo manager?"
+msgstr "Sei sicuro di voler rimuovere questo responsabile?"
 
 msgid "Are you sure want to remove this key result?"
 msgstr "Sei sicuro di voler rimuovere questo risultato chiave?"
@@ -10141,7 +10141,7 @@ msgid "Are you sure want to remove this assignee?"
 msgstr "Sei sicuro di voler rimuovere questo assegnatario?"
 
 msgid "Do you want to unarchive this objective?"
-msgstr "Vuoi disarchiviare questo obiettivo?"
+msgstr "Vuoi ripristinare dall'archivio questo obiettivo?"
 
 msgid "Do you want to archive this objective?"
 msgstr "Vuoi archiviare questo obiettivo?"
@@ -10150,26 +10150,26 @@ msgid "Are you sure to delete this objective?"
 msgstr "Sei sicuro di voler eliminare questo obiettivo?"
 
 msgid "Is Archived"
-msgstr "È Archiviato"
+msgstr "È archiviato"
 
 msgid "None."
 msgstr "Nessuno."
 
 msgid "Do you want to delete this period ?"
-msgstr "Vuoi eliminare questo periodo ?"
+msgstr "Vuoi eliminare questo periodo?"
 
 msgid "No time periods have been created."
-msgstr "Non sono stati creati periodi di tempo."
+msgstr "Non è stato creato alcun periodo di tempo."
 
 msgid "Update Period"
-msgstr "Aggiorna Periodo"
+msgstr "Aggiorna periodo"
 
 msgid "Objective created"
 msgstr "Obiettivo creato"
 
 #, python-format
 msgid "Objective %(objective)s Updated"
-msgstr "Obiettivo %(objective)s Aggiornato"
+msgstr "Obiettivo %(objective)s aggiornato"
 
 #, python-format
 msgid "Key result %(key_result)s created successfully"
@@ -10185,48 +10185,48 @@ msgstr "Obiettivo %(objective)s eliminato"
 
 #, python-format
 msgid "You can't delete objective %(objective)s,related entries exists"
-msgstr "Non puoi eliminare l'obiettivo %(objective)s,le voci correlate esistono"
+msgstr "Impossibile eliminare l'obiettivo %(objective)s perché esistono voci correlate"
 
 msgid "Objective not found."
 msgstr "Obiettivo non trovato."
 
 #, python-format
 msgid "Objective %(objective)s status updated"
-msgstr ""
+msgstr "Stato dell'obiettivo %(objective)s aggiornato"
 
 msgid "Status has been updated"
 msgstr "Lo stato è stato aggiornato"
 
 #, python-format
 msgid "Current value of %(employee_key_result)s updated"
-msgstr "Valore attuale di %(employee_key_result)s aggiornato"
+msgstr "Valore corrente di %(employee_key_result)s aggiornato"
 
 msgid "Current value is greater than target value"
-msgstr "Il valore attuale è maggiore del valore obiettivo"
+msgstr "Il valore corrente è maggiore del valore obiettivo"
 
 msgid "Error occurred during current value updation"
 msgstr "Si è verificato un errore durante l'aggiornamento del valore corrente"
 
 msgid "Objective un-archived successfully!."
-msgstr "Obiettivo non archiviato con successo!."
+msgstr "Obiettivo ripristinato dall'archivio con successo!"
 
 msgid "Objective archived successfully!."
-msgstr "Obiettivo archiviato con successo!."
+msgstr "Obiettivo archiviato con successo!"
 
 msgid "Employee objective created successfully"
 msgstr "Obiettivo del dipendente creato con successo"
 
 msgid "Employee objective Updated successfully"
-msgstr "Obiettivo dipendenti Aggiornato con successo"
+msgstr "Obiettivo del dipendente aggiornato con successo"
 
 msgid "You can't delete this objective,related entries exists"
-msgstr "Non è possibile eliminare questo obiettivo,le voci correlate esistono"
+msgstr "Impossibile eliminare questo obiettivo perché esistono voci correlate"
 
 msgid "Objective deleted successfully!."
-msgstr "Obiettivo eliminato con successo!."
+msgstr "Obiettivo eliminato con successo!"
 
 msgid "The status of the objective is the same as selected."
-msgstr "Lo stato dell'obiettivo è lo stesso di quello selezionato."
+msgstr "Lo stato dell'obiettivo coincide con quello selezionato."
 
 msgid "Key result created"
 msgstr "Risultato chiave creato"
@@ -10241,10 +10241,10 @@ msgid "Feedback created successfully."
 msgstr "Feedback creato con successo."
 
 msgid "Ongoing feedback is not editable!."
-msgstr "Il feedback in corso non è modificabile!."
+msgstr "Il feedback in corso non è modificabile!"
 
 msgid "Feedback updated successfully!."
-msgstr "Feedback aggiornato con successo!."
+msgstr "Feedback aggiornato con successo!"
 
 msgid "Feedback not started yet"
 msgstr "Feedback non ancora avviato"
@@ -10256,14 +10256,14 @@ msgid "You are not allowed to answer"
 msgstr "Non sei autorizzato a rispondere"
 
 msgid "Feedback already answered"
-msgstr "Feedback già risposto"
+msgstr "Risposta al feedback già inviata"
 
 #, python-format
 msgid "Feedback %(review_cycle)s has been answered successfully!."
-msgstr "Feedback %(review_cycle)s è stato risposto con successo!."
+msgstr "Risposta al feedback %(review_cycle)s inviata con successo!"
 
 msgid "Feedback is not answered yet"
-msgstr "Feedback non ha ancora risposto"
+msgstr "Il feedback non ha ancora ricevuto risposta"
 
 #, python-format
 msgid "Feedback %(review_cycle)s deleted successfully!"
@@ -10271,33 +10271,33 @@ msgstr "Feedback %(review_cycle)s eliminato con successo!"
 
 #, python-format
 msgid "You can't delete feedback %(review_cycle)s with status %(status)s"
-msgstr "Non puoi eliminare il feedback %(review_cycle)s con stato %(status)s"
+msgstr "Impossibile eliminare il feedback %(review_cycle)s con stato %(status)s"
 
 msgid "Feedback not found."
 msgstr "Feedback non trovato."
 
 msgid "Feedback is already started"
-msgstr "Feedback già avviato"
+msgstr "Il feedback è già stato avviato"
 
 #, python-format
 msgid "Feedback status updated to  %(status)s"
-msgstr "Stato del feedback aggiornato a  %(status)s"
+msgstr "Stato del feedback aggiornato a %(status)s"
 
 #, python-format
 msgid "Error occurred during status update to %(status)s"
-msgstr "Si è verificato un errore durante l'aggiornamento di stato a %(status)s"
+msgstr "Si è verificato un errore durante l'aggiornamento dello stato a %(status)s"
 
 msgid "Feedback un-archived successfully!."
-msgstr "Feedback non archiviato con successo!."
+msgstr "Feedback ripristinato dall'archivio con successo!"
 
 msgid "Feedback archived successfully!."
-msgstr "Feedback archiviato con successo!."
+msgstr "Feedback archiviato con successo!"
 
 msgid "Not-completed"
-msgstr "Non Completato"
+msgstr "Non completato"
 
 msgid "Question template is used in feedback."
-msgstr "Il modello delle domande è usato nel feedback."
+msgstr "Il modello di domanda è in uso in un feedback."
 
 msgid "Question created successfully."
 msgstr "Domanda creata con successo."
@@ -10327,13 +10327,13 @@ msgid "Question template updated"
 msgstr "Modello di domanda aggiornato"
 
 msgid "This template is using in a feedback"
-msgstr "Questo modello sta usando in un feedback"
+msgstr "Questo modello è in uso in un feedback"
 
 msgid "The question template is deleted successfully !."
-msgstr "Il modello di domanda viene eliminato con successo!."
+msgstr "Il modello di domanda è stato eliminato con successo!"
 
 msgid "question template not found."
-msgstr "modello di domanda non trovato."
+msgstr "Modello di domanda non trovato."
 
 msgid "Period creation was Successful "
 msgstr "Creazione del periodo avvenuta con successo "
@@ -10353,18 +10353,18 @@ msgstr "{objective} è {message}"
 
 #, python-format
 msgid "%(employee)s's %(objective)s deleted"
-msgstr "%(employee)s's %(objective)s cancellato"
+msgstr "Obiettivo %(objective)s di %(employee)s eliminato"
 
 #, python-format
 msgid "You can't delete objective %(objective)s with status %(status)s"
-msgstr "Non puoi eliminare l'obiettivo %(objective)s con stato %(status)s"
+msgstr "Impossibile eliminare l'obiettivo %(objective)s con stato %(status)s"
 
 #, python-brace-format
 msgid "{feedback} is {message}"
 msgstr "{feedback} è {message}"
 
 msgid "You are don't have permissions."
-msgstr "Non hai i permessi."
+msgstr "Non disponi dei permessi necessari."
 
 msgid "Feedback deleted successfully!"
 msgstr "Feedback eliminato con successo!"
@@ -10373,56 +10373,56 @@ msgid "Failed to delete feedback: Feedback template is in use."
 msgstr "Impossibile eliminare il feedback: il modello di feedback è in uso."
 
 msgid "Key result assigned sucessfully."
-msgstr "Risultato chiave assegnato in modo sicuro."
+msgstr "Risultato chiave assegnato con successo."
 
 msgid "Key result Updated sucessfully."
-msgstr "Risultato chiave Aggiornato in modo sicuro."
+msgstr "Risultato chiave aggiornato con successo."
 
 msgid "Key result sattus changed to {}."
-msgstr "Risultato chiave sattus cambiato in {}."
+msgstr "Stato del risultato chiave modificato in {}."
 
 msgid "Meeting added successfully"
 msgstr "Riunione aggiunta con successo"
 
 msgid "Meeting unarchived successfully"
-msgstr "Riunione non archiviata con successo"
+msgstr "Riunione ripristinata dall'archivio con successo"
 
 msgid "Meeting archived successfully"
 msgstr "Riunione archiviata con successo"
 
 msgid "Manager has been successfully removed from the meeting."
-msgstr "Il gestore è stato rimosso dalla riunione."
+msgstr "Il responsabile è stato rimosso dalla riunione con successo."
 
 msgid "Employee has been successfully removed from the meeting."
-msgstr "Il dipendente è stato rimosso con successo dalla riunione."
+msgstr "Il dipendente è stato rimosso dalla riunione con successo."
 
 msgid "Minutes of Meeting (MoM) have been created successfully"
-msgstr "I verbali della riunione (MoM) sono stati creati con successo"
+msgstr "Il verbale della riunione è stato creato con successo"
 
 #, python-format
 msgid "Questions for meeting %(meeting)s has been answered successfully!."
-msgstr "Le domande per la riunione %(meeting)s hanno ricevuto risposta con successo!."
+msgstr "Le domande per la riunione %(meeting)s hanno ricevuto risposta con successo!"
 
 msgid "Bonus point setting activated successfully."
-msgstr "Impostazioni punto bonus attivate con successo."
+msgstr "Impostazione dei punti bonus attivata con successo."
 
 msgid "Bonus point setting deactivated successfully."
-msgstr "Impostazione punto bonus disattivata con successo."
+msgstr "Impostazione dei punti bonus disattivata con successo."
 
 msgid "View Project"
-msgstr "Visualizza Progetto"
+msgstr "Visualizza progetto"
 
 msgid "No of Tasks"
-msgstr "Numero di attività"
+msgstr "N. di attività"
 
 msgid "Create Project Stage"
-msgstr "Crea Fase Progetto"
+msgstr "Crea fase progetto"
 
 msgid "Something went wrong!"
 msgstr "Qualcosa è andato storto!"
 
 msgid "Update Project Stage"
-msgstr "Aggiorna Fase Progetto"
+msgstr "Aggiorna fase progetto"
 
 msgid "New project stage created"
 msgstr "Nuova fase del progetto creata"
@@ -10431,43 +10431,43 @@ msgid "New project created"
 msgstr "Nuovo progetto creato"
 
 msgid "To Do"
-msgstr "Da Fare"
+msgstr "Da fare"
 
 msgid "Select Stage"
-msgstr "Seleziona Fase"
+msgstr "Seleziona fase"
 
 msgid "Dynamic Create"
-msgstr "Creazione Dinamica"
+msgstr "Creazione dinamica"
 
 msgid "New Task created"
 msgstr "Nuova attività creata"
 
 msgid "Task Details"
-msgstr "Dettagli Attività"
+msgstr "Dettagli attività"
 
 msgid "archive_status"
-msgstr "archive_status"
+msgstr "Stato archiviazione"
 
 msgid "Update Time Sheet"
-msgstr "Aggiorna Foglio Orario"
+msgstr "Aggiorna foglio presenze (Timesheet)"
 
 msgid "New time sheet created"
-msgstr "Nuovo foglio orario creato"
+msgstr "Nuovo foglio presenze (Timesheet) creato"
 
 msgid "Start From"
-msgstr "Inizia Da"
+msgstr "Inizio dal"
 
 msgid "End Till"
-msgstr "End Till"
+msgstr "Fine al"
 
 msgid "Project Managers"
-msgstr "Project Managers"
+msgstr "Responsabili di progetto (Project Manager)"
 
 msgid "Project Members"
-msgstr "Membri Del Progetto"
+msgstr "Membri del progetto"
 
 msgid "Project File"
-msgstr "File Progetto"
+msgstr "File del progetto"
 
 msgid "Are you sure you want to delete this project?"
 msgstr "Sei sicuro di voler eliminare questo progetto?"
@@ -10479,16 +10479,16 @@ msgid "Is end stage"
 msgstr "È la fase finale"
 
 msgid "Project Stage"
-msgstr "Fase Progetto"
+msgstr "Fase del progetto"
 
 msgid "Project Stages"
-msgstr "Stadi Del Progetto"
+msgstr "Fasi del progetto"
 
 msgid "Task Members"
-msgstr "Task Membri"
+msgstr "Membri dell'attività"
 
 msgid "Task File"
-msgstr "File Attività"
+msgstr "File dell'attività"
 
 msgid "The task end date must be between the project's start and end dates."
 msgstr "La data di fine dell'attività deve essere compresa tra le date di inizio e fine del progetto."
@@ -10497,22 +10497,22 @@ msgid "Are you sure you want to delete this task?"
 msgstr "Sei sicuro di voler eliminare questa attività?"
 
 msgid "Hours Spent"
-msgstr "Ore Trascorse"
+msgstr "Ore impiegate"
 
 msgid "Employee not included in this task"
-msgstr "Dipendente non incluso in questa attività"
+msgstr "Il dipendente non è incluso in questa attività"
 
 msgid "Employee not included in this project"
-msgstr "Dipendente non incluso in questo progetto"
+msgstr "Il dipendente non è incluso in questo progetto"
 
 msgid "Are you sure you want to delete this time sheet?"
-msgstr "Sei sicuro di voler eliminare questo foglio orario?"
+msgstr "Sei sicuro di voler eliminare questo foglio presenze (timesheet)?"
 
 msgid "Time Sheet"
-msgstr "Foglio Orario"
+msgstr "Foglio presenze (Timesheet)"
 
 msgid "Time Sheets"
-msgstr "Fogli Orari"
+msgstr "Fogli presenze (Timesheet)"
 
 msgid "Do you want to delete this project?"
 msgstr "Vuoi eliminare questo progetto?"
@@ -10533,7 +10533,7 @@ msgid "Do you really want to archive all the selected projects?"
 msgstr "Vuoi davvero archiviare tutti i progetti selezionati?"
 
 msgid "Do you really want to unarchive all the selected projects?"
-msgstr "Vuoi davvero disarchiviare tutti i progetti selezionati?"
+msgstr "Vuoi davvero ripristinare dall'archivio tutti i progetti selezionati?"
 
 msgid "Do you really want to delete all the selected projects?"
 msgstr "Vuoi davvero eliminare tutti i progetti selezionati?"
@@ -10542,55 +10542,55 @@ msgid "No projects assigned to this employee."
 msgstr "Nessun progetto assegnato a questo dipendente."
 
 msgid "Import Project"
-msgstr "Importa Progetto"
+msgstr "Importa progetto"
 
 msgid "Do you want to archive this task?"
 msgstr "Vuoi archiviare questa attività?"
 
 msgid "Do you want to un archive this task?"
-msgstr "Vuoi un archivio di questa attività?"
+msgstr "Vuoi ripristinare dall'archivio questa attività?"
 
 msgid "Do you want Delete this Task ?"
 msgstr "Vuoi eliminare questa attività?"
 
 msgid "Time sheet"
-msgstr "Foglio orario"
+msgstr "Foglio presenze (timesheet)"
 
 msgid "Do you want to delete this task?"
 msgstr "Vuoi eliminare questa attività?"
 
 msgid "Do you want to delete this time sheet?"
-msgstr "Vuoi eliminare questo foglio orario?"
+msgstr "Vuoi eliminare questo foglio presenze (timesheet)?"
 
 msgid "View Timesheet Chart"
-msgstr "Visualizza Grafico Del Foglio Temporale"
+msgstr "Visualizza grafico dei fogli presenze"
 
 msgid " Add"
 msgstr " Aggiungi"
 
 msgid "Total Projects"
-msgstr "Totale Progetti"
+msgstr "Totale progetti"
 
 msgid "New Projects"
-msgstr "Nuovi Progetti"
+msgstr "Nuovi progetti"
 
 msgid "Projects in progress"
 msgstr "Progetti in corso"
 
 msgid "Project Status"
-msgstr "Stato Del Progetto"
+msgstr "Stato del progetto"
 
 msgid "Projects due in this month"
-msgstr "Progetti in scadenza in questo mese"
+msgstr "Progetti in scadenza questo mese"
 
 msgid "Project manager"
-msgstr "Gestore progetto"
+msgstr "Responsabile di progetto (Project Manager)"
 
 msgid "Do you want to archive this project?"
 msgstr "Vuoi archiviare questo progetto?"
 
 msgid "Do you want to un archive this project?"
-msgstr "Vuoi annullare l'archivio di questo progetto?"
+msgstr "Vuoi ripristinare dall'archivio questo progetto?"
 
 msgid "Do you want to delete this employee?"
 msgstr "Vuoi eliminare questo dipendente?"
@@ -10599,10 +10599,10 @@ msgid "There are currently no available projects; please create a new one."
 msgstr "Al momento non ci sono progetti disponibili; creane uno nuovo."
 
 msgid "Project Manager"
-msgstr "Gestore Progetto"
+msgstr "Responsabile di progetto (Project Manager)"
 
 msgid "Timesheet"
-msgstr "Timesheet"
+msgstr "Foglio presenze (Timesheet)"
 
 msgid "Are you sure you want to delete this stage?"
 msgstr "Sei sicuro di voler eliminare questa fase?"
@@ -10611,22 +10611,22 @@ msgid "There are currently no available tasks; please create a new one."
 msgstr "Al momento non ci sono attività disponibili; creane una nuova."
 
 msgid "Task manager"
-msgstr "Gestore compiti"
+msgstr "Responsabile dell'attività"
 
 msgid "Task members"
-msgstr "Task members"
+msgstr "Membri dell'attività"
 
 msgid " Time sheet"
-msgstr " Foglio orario"
+msgstr " Foglio presenze (timesheet)"
 
 msgid "Do you really want to delete this task?"
 msgstr "Vuoi davvero eliminare questa attività?"
 
 msgid "Managers: "
-msgstr "Dirigenti: "
+msgstr "Responsabili: "
 
 msgid "Add Stage"
-msgstr "Aggiungi Fase"
+msgstr "Aggiungi fase"
 
 msgid " Are you sure you want to delete this stage?"
 msgstr " Sei sicuro di voler eliminare questa fase?"
@@ -10638,22 +10638,22 @@ msgid "Create task"
 msgstr "Crea attività"
 
 msgid "Time Spent"
-msgstr "Tempo Trascorso"
+msgstr "Tempo impiegato"
 
 msgid "There are currently no available timesheets; please create a new one."
-msgstr "Al momento non ci sono fogli orari disponibili; creane uno nuovo."
+msgstr "Al momento non ci sono fogli presenze disponibili; creane uno nuovo."
 
 msgid "Project Name"
-msgstr "Nome Del Progetto"
+msgstr "Nome del progetto"
 
 msgid "Stage Name"
-msgstr "Nome Stage"
+msgstr "Nome della fase"
 
 msgid "Do you want to delete this candidate?"
 msgstr "Vuoi eliminare questo candidato?"
 
 msgid "Mangers"
-msgstr "Mangers"
+msgstr "Responsabili"
 
 msgid " Task"
 msgstr " Attività"
@@ -10662,7 +10662,7 @@ msgid "Project updated"
 msgstr "Progetto aggiornato"
 
 msgid "Invalid status or missing data."
-msgstr "Stato o dati mancanti non validi."
+msgstr "Stato non valido o dati mancanti."
 
 msgid "The specified project does not exist."
 msgstr "Il progetto specificato non esiste."
@@ -10674,11 +10674,11 @@ msgid "Invalid value for 'is_active'. Use 'true' or 'false'."
 msgstr "Valore non valido per 'is_active'. Usa 'true' o 'false'."
 
 msgid "No project IDs were provided."
-msgstr "Nessun ID progetto è stato fornito."
+msgstr "Non è stato fornito alcun ID progetto."
 
 #, python-brace-format
 msgid "{count} project(s) deleted successfully."
-msgstr "{count} progetto/i cancellato/i con successo."
+msgstr "{count} progetto/i eliminato/i con successo."
 
 #, python-format
 msgid "Permission denied or skipped for: %(projects)s."
@@ -10697,10 +10697,10 @@ msgid "The task has been deleted successfully."
 msgstr "L'attività è stata eliminata con successo."
 
 msgid "Task stage updated"
-msgstr "Fase attività aggiornata"
+msgstr "Fase dell'attività aggiornata"
 
 msgid "Timesheet created"
-msgstr "Timesheet creato"
+msgstr "Foglio presenze (Timesheet) creato"
 
 msgid "Timesheet updated"
 msgstr "Foglio orario aggiornato"
@@ -10722,10 +10722,10 @@ msgstr "Attività aggiornata con successo"
 
 #, python-format
 msgid "You cannot delete %(task)s."
-msgstr "Non puoi eliminare %(task)s."
+msgstr "Impossibile eliminare %(task)s."
 
 msgid "{} tasks."
-msgstr "{} compiti."
+msgstr "{} attività."
 
 msgid "Project stage updated successfully"
 msgstr "Fase del progetto aggiornata con successo"
@@ -10737,16 +10737,16 @@ msgid "Can't Delete. This stage contain some tasks"
 msgstr "Impossibile eliminare. Questa fase contiene alcune attività"
 
 msgid "The project stage sequence has been successfully updated."
-msgstr "La sequenza di fase del progetto è stata aggiornata con successo."
+msgstr "La sequenza delle fasi del progetto è stata aggiornata con successo."
 
 msgid "Time sheet created"
-msgstr "Foglio orario creato"
+msgstr "Foglio presenze creato"
 
 msgid "Time sheet updated"
-msgstr "Foglio orario aggiornato"
+msgstr "Foglio presenze aggiornato"
 
 msgid "The time sheet has been deleted successfully"
-msgstr "Il foglio orario è stato eliminato con successo"
+msgstr "Il foglio presenze è stato eliminato con successo"
 
 #, python-format
 msgid "%(timesheet)s deleted."
@@ -10754,85 +10754,85 @@ msgstr "%(timesheet)s eliminato."
 
 #, python-format
 msgid "You cannot delete %(timesheet)s."
-msgstr "Non puoi eliminare %(timesheet)s."
+msgstr "Impossibile eliminare %(timesheet)s."
 
 msgid "LinkedIn Accounts"
 msgstr "Account LinkedIn"
 
 msgid "Stage Type"
-msgstr "Tipo Di Fase"
+msgstr "Tipo di fase"
 
 msgid "---Choose Skills---"
-msgstr "---Scegli Abilità---"
+msgstr "---Scegli competenze---"
 
 msgid "Create new skill "
-msgstr "Crea nuova abilità "
+msgstr "Crea nuova competenza "
 
 msgid "Job position is required if the recruitment is publishing."
-msgstr "Il posto di lavoro è richiesto se il reclutamento è pubblicato."
+msgstr "La posizione lavorativa è obbligatoria per pubblicare la ricerca di personale."
 
 msgid "LinkedIn account is required for publishing."
 msgstr "L'account LinkedIn è richiesto per la pubblicazione."
 
 msgid "Choose valid choice"
-msgstr "Scegli una scelta valida"
+msgstr "Scegli un'opzione valida"
 
 msgid "Vacancy"
-msgstr "Posti Vacanti"
+msgstr "Posizioni aperte"
 
 msgid "Sequence"
 msgstr "Sequenza"
 
 msgid "Is Mandatory"
-msgstr "È Obbligatorio"
+msgstr "È obbligatorio"
 
 msgid "Choose any recruitment to apply this question"
-msgstr "Scegli qualsiasi reclutamento per applicare questa domanda"
+msgstr "Scegli una ricerca di personale a cui applicare questa domanda"
 
 msgid "Skill Zone Candidate"
-msgstr "Candidato Zona Abilità"
+msgstr "Area competenze candidato"
 
 msgid "Add To Skill Zone"
-msgstr "Aggiungi Alla Zona Abilità"
+msgstr "Aggiungi all'area competenze"
 
 msgid "Skill Zones"
-msgstr "Zone Abilità"
+msgstr "Aree competenze (Skill Zones)"
 
 msgid "Interview date cannot be in the past."
-msgstr "La data dell'intervista non può essere nel passato."
+msgstr "La data del colloquio non può essere nel passato."
 
 msgid "Interview time cannot be in the past."
-msgstr "Il tempo dell'intervista non può essere nel passato."
+msgstr "L'orario del colloquio non può essere nel passato."
 
 msgid "File must be a PDF."
 msgstr "Il file deve essere un PDF."
 
 msgid "Survey Template"
-msgstr "Template Sondaggio"
+msgstr "Modello di questionario (Survey Template)"
 
 msgid "Survey Templates"
 msgstr "Modelli Di Sondaggio"
 
 msgid "Skill"
-msgstr "Abilità"
+msgstr "Competenza"
 
 msgid "Skills"
-msgstr "Abilità"
+msgstr "Competenze"
 
 msgid "To start recruitment for multiple job positions"
-msgstr "Per iniziare il reclutamento per più posti di lavoro"
+msgstr "Per avviare la ricerca di personale per più posizioni lavorative"
 
 msgid "To close the recruitment, If closed then not visible on pipeline view."
-msgstr "Per chiudere il reclutamento, se chiuso allora non visibile sulla vista pipeline."
+msgstr "Per chiudere la ricerca di personale; se chiusa, non sarà visibile nella vista pipeline."
 
 msgid "To publish a recruitment in website, if false then it             will not appear on open recruitment page."
-msgstr "Per pubblicare un reclutamento nel sito web, se falso, allora non apparirà sulla pagina di reclutamento aperta."
+msgstr "Per pubblicare una ricerca di personale sul sito web; se disattivato, non apparirà nella pagina delle posizioni aperte."
 
 msgid "LinkedIn Account"
 msgstr "Account LinkedIn"
 
 msgid "To publish a recruitment in Linkedin, if active is false then it             will not post on LinkedIn."
-msgstr "Per pubblicare un reclutamento a Linkedin, se attivo è falso, non pubblicherà su LinkedIn."
+msgstr "Per pubblicare un annuncio su LinkedIn; se disattivato, non verrà pubblicato su LinkedIn."
 
 msgid "Post on LinkedIn"
 msgstr "Pubblica su LinkedIn"
@@ -10841,34 +10841,34 @@ msgid "Profile image not mandatory for candidate creation"
 msgstr "L'immagine del profilo non è obbligatoria per la creazione del candidato"
 
 msgid "Optional Profile Image"
-msgstr "Immagine Opzionale Del Profilo"
+msgstr "Immagine del profilo opzionale"
 
 msgid "Resume not mandatory for candidate creation"
-msgstr "Riprendere non obbligatorio per la creazione del candidato"
+msgstr "Il curriculum non è obbligatorio per la creazione del candidato"
 
 msgid "Optional Resume"
-msgstr "Riprendi Opzionale"
+msgstr "Curriculum opzionale"
 
 msgid "Recruitments"
-msgstr "Reclutamenti"
+msgstr "Ricerche di personale"
 
 msgid "Vacancy must be greater than zero if the recruitment is publishing."
-msgstr "Il posto vacante deve essere maggiore di zero se il reclutamento è pubblicato."
+msgstr "Il numero di posti vacanti deve essere maggiore di zero se la ricerca di personale viene pubblicata."
 
 msgid "End date cannot be less than start date."
-msgstr "La data di fine non può essere inferiore alla data di inizio."
+msgstr "La data di fine non può essere antecedente alla data di inizio."
 
 msgid "Initial"
 msgstr "Iniziale"
 
 msgid "Applied"
-msgstr "Applicato"
+msgstr "Candidatura presentata"
 
 msgid "Hired"
-msgstr "Assunzione"
+msgstr "Assunto"
 
 msgid "Not Sent"
-msgstr "Non Inviato"
+msgstr "Non inviato"
 
 msgid "Sent"
 msgstr "Inviato"
@@ -10877,97 +10877,97 @@ msgid "Accepted"
 msgstr "Accettato"
 
 msgid "Joined"
-msgstr "Iscritto"
+msgstr "Entrato in servizio"
 
 msgid "Application Form"
-msgstr "Modulo Di Domanda"
+msgstr "Modulo di candidatura"
 
 msgid "Inside software"
 msgstr "Software interno"
 
 msgid "Referral"
-msgstr "Segnalazione"
+msgstr "Segnalazione (Referral)"
 
 msgid "Source"
 msgstr "Fonte"
 
 msgid "Start Onboard"
-msgstr "Avvia A Bordo"
+msgstr "Avvia onboarding"
 
 msgid "Converted"
 msgstr "Convertito"
 
 msgid "Offer Letter Status"
-msgstr "Offri Stato Lettera"
+msgstr "Stato della lettera di offerta"
 
 msgid "Employee is uniques for candidate"
-msgstr "Il dipendente è unico per il candidato"
+msgstr "Il dipendente deve essere univoco per il candidato"
 
 msgid "Reject Reasons"
-msgstr "Rifiuta Motivi"
+msgstr "Motivi di rifiuto"
 
 msgid "Rejected Candidate"
-msgstr "Candidato Rifiutato"
+msgstr "Candidato rifiutato"
 
 msgid "Rejected Candidates"
-msgstr "Candidati Rifiutati"
+msgstr "Candidati rifiutati"
 
 msgid "Yes/No"
 msgstr "Sì/No"
 
 msgid "Choices"
-msgstr "Scelte"
+msgstr "Opzioni"
 
 msgid "Multiple Choice"
-msgstr "Scelta Multipla"
+msgstr "Scelta multipla"
 
 msgid "Textarea"
-msgstr "Textarea"
+msgstr "Area di testo (Textarea)"
 
 msgid "File Upload"
-msgstr "Caricamento File"
+msgstr "Caricamento file"
 
 msgid "Separate choices by ',  '"
-msgstr "Scelte separate da ', '"
+msgstr "Separa le opzioni usando la virgola ', '"
 
 msgid "Skill Zone"
-msgstr "Zona Abilità"
+msgstr "Area competenze (Skill Zone)"
 
 msgid "Interview Date"
-msgstr "Data Dell'Intervista"
+msgstr "Data del colloquio"
 
 msgid "Interview Time"
-msgstr "Tempo Di Intervista"
+msgstr "Orario del colloquio"
 
 msgid "Is Interview Completed"
-msgstr "Intervista Completata"
+msgstr "Colloquio completato"
 
 msgid "Schedule Interview"
-msgstr "Pianifica Intervista"
+msgstr "Pianifica colloquio"
 
 msgid "Schedule Interviews"
-msgstr "Pianifica Interviste"
+msgstr "Pianifica colloqui"
 
 msgid "App Name"
-msgstr "Nome App"
+msgstr "Nome dell'app"
 
 msgid "API Token"
-msgstr "API Token"
+msgstr "Token API"
 
 msgid "Email mismatched."
-msgstr "Email non corrispondente."
+msgstr "Le email non corrispondono."
 
 msgid "Check the credentials"
-msgstr "Controlla le credenziali"
+msgstr "Verifica le credenziali"
 
 msgid "Recruitment Pipeline"
-msgstr "Gasdotto Reclutamento"
+msgstr "Pipeline di reclutamento"
 
 msgid "Recruitment Survey"
-msgstr "Sondaggio Reclutamento"
+msgstr "Questionario di reclutamento"
 
 msgid "Open Jobs"
-msgstr "Apri Processi"
+msgstr "Posizioni aperte"
 
 msgid "Delete image"
 msgstr "Elimina immagine"
@@ -10976,46 +10976,46 @@ msgid "Profile"
 msgstr "Profilo"
 
 msgid "Open Recruitment"
-msgstr "Reclutamento Aperto"
+msgstr "Posizione aperta"
 
 msgid "Choose Open Position"
-msgstr "Scegli La Posizione Aperta"
+msgstr "Scegli posizione aperta"
 
 msgid "Choose Job Position"
-msgstr "Scegli Posizione Lavoro"
+msgstr "Scegli posizione lavorativa"
 
 msgid "Portfolio"
-msgstr "Portafoglio"
+msgstr "Portfolio"
 
 msgid "Resume"
-msgstr "Riprendi"
+msgstr "Curriculum vitae"
 
 msgid "Are you sure you want to convert this candidate into an employee?"
 msgstr "Sei sicuro di voler convertire questo candidato in un dipendente?"
 
 msgid "Convert to Employee"
-msgstr "Converti in Dipendente"
+msgstr "Converti in dipendente"
 
 msgid "Add to Skill Zone"
-msgstr "Aggiungi alla Zona Abilità"
+msgstr "Aggiungi all'area competenze"
 
 msgid "Add to Rejected"
-msgstr "Aggiungi a Rifiutato"
+msgstr "Sposta tra i rifiutati"
 
 msgid "Edit Rejected Candidate"
-msgstr "Modifica Candidato Rifiutato"
+msgstr "Modifica candidato rifiutato"
 
 msgid "View candidate self tracking"
-msgstr "Visualizza auto-tracking candidato"
+msgstr "Visualizza tracciamento autonomo del candidato"
 
 msgid "Request Document"
-msgstr "Richiedi Documento"
+msgstr "Richiedi documento"
 
 msgid "Do you want to archive this candidate?"
 msgstr "Vuoi archiviare questo candidato?"
 
 msgid "Do you want to un-archive this candidate?"
-msgstr "Rimuovere l'archivio di questo candidato?"
+msgstr "Vuoi ripristinare dall'archivio questo candidato?"
 
 msgid "There are currently no candidates to consider."
 msgstr "Al momento non ci sono candidati da considerare."
@@ -11024,43 +11024,43 @@ msgid "Converted to employee."
 msgstr "Convertito in dipendente."
 
 msgid "To employee "
-msgstr "Al dipendente "
+msgstr "A dipendente "
 
 msgid "Converted "
 msgstr "Convertito "
 
 msgid "Candidate in Onboarding "
-msgstr "Candidato in Onboarding "
+msgstr "Candidato in fase di onboarding "
 
 msgid "Candidate is Converted "
-msgstr "Candidato convertito "
+msgstr "Il candidato è stato convertito "
 
 msgid "To Skill zone"
-msgstr "Alla zona Abilità"
+msgstr "Spostato nell'area competenze"
 
 msgid "Bulk mail"
-msgstr "Posta in massa"
+msgstr "Email di massa"
 
 msgid "Create document request"
 msgstr "Crea richiesta documento"
 
 msgid "Resume Shortlisting"
-msgstr "Riprendi La Scorciatoia"
+msgstr "Preselezione dei curricula"
 
 msgid "Upload Resumes"
-msgstr "Carica I Ripristini"
+msgstr "Carica curricula"
 
 msgid "Application Tracking"
-msgstr "Tracciamento Applicazioni"
+msgstr "Tracciamento delle candidature"
 
 msgid "Congratulation on your selection"
-msgstr "Congratulazioni sulla tua selezione"
+msgstr "Congratulazioni per la tua selezione"
 
 msgid "You not selected"
-msgstr "Non hai selezionato"
+msgstr "Non selezionato"
 
 msgid "Application under review"
-msgstr "Domanda in esame"
+msgstr "Candidatura in fase di valutazione"
 
 msgid "Uploaded"
 msgstr "Caricato"
@@ -11069,49 +11069,49 @@ msgid "No document requests found."
 msgstr "Nessuna richiesta di documento trovata."
 
 msgid "Add Note"
-msgstr "Aggiungi Nota"
+msgstr "Aggiungi nota"
 
 msgid "No notes have been added for this candidate."
-msgstr "Non sono state aggiunte note per questo candidato."
+msgstr "Nessuna nota aggiunta per questo candidato."
 
 msgid "Candidate Info"
-msgstr "Informazioni Candidate"
+msgstr "Informazioni candidato"
 
 msgid "Not-Hired"
-msgstr "Not-Assunzione"
+msgstr "Non assunto"
 
 msgid "Do you want to reject this request"
-msgstr "Vuoi rifiutare questa richiesta"
+msgstr "Vuoi rifiutare questa richiesta?"
 
 msgid "Upload File"
-msgstr "Carica File"
+msgstr "Carica file"
 
 msgid "Next Candidate"
-msgstr "Prossimo Candidato"
+msgstr "Candidato successivo"
 
 msgid "Previous Candidate"
-msgstr "Candidato Precedente"
+msgstr "Candidato precedente"
 
 msgid "Convert To Employee"
-msgstr "Converti In Dipendente"
+msgstr "Converti in dipendente"
 
 msgid "Survey"
-msgstr "Sondaggio"
+msgstr "Questionario / Sondaggio"
 
 msgid "Recruitment Information"
-msgstr "Informazioni Reclutamento"
+msgstr "Informazioni sulla ricerca di personale"
 
 msgid "Current Stage"
-msgstr "Fase Corrente"
+msgstr "Fase corrente"
 
 msgid "This candidate does not have a resume on file."
-msgstr "Questo candidato non ha un curriculum sul file."
+msgstr "Questo candidato non ha un curriculum in archivio."
 
 msgid "No survey templates have been established yet."
-msgstr "Nessun modello di sondaggio è stato ancora stabilito."
+msgstr "Nessun modello di questionario è stato ancora definito."
 
 msgid "No notes have been added for this candidate"
-msgstr "Nessuna nota è stata aggiunta per questo candidato"
+msgstr "Nessuna nota aggiunta per questo candidato"
 
 msgid "Are you sure you want to remove this interviewer?"
 msgstr "Sei sicuro di voler rimuovere questo intervistatore?"
@@ -11126,79 +11126,79 @@ msgid " Edit"
 msgstr " Modifica"
 
 msgid " Are you sure you want to delete this interview?"
-msgstr " Sei sicuro di voler eliminare questa intervista?"
+msgstr " Sei sicuro di voler eliminare questo colloquio?"
 
 msgid "No Interviews Found."
-msgstr "Nessuna Intervista Trovata."
+msgstr "Nessun colloquio trovato."
 
 msgid " There are no ratings to display at the moment."
 msgstr " Al momento non ci sono valutazioni da visualizzare."
 
 msgid "Total Vacancies"
-msgstr "Totale Posti Vacanti"
+msgstr "Totale posizioni aperte"
 
 msgid "Ongoing Recruitments"
-msgstr "Reclutamenti In Corso"
+msgstr "Ricerche di personale in corso"
 
 msgid "Conversion Rate"
-msgstr "Tasso Di Conversione"
+msgstr "Tasso di conversione"
 
 msgid "Offer Acceptance Rate (OAR)"
-msgstr "Tasso Di Accettazione Offerta (Oar)"
+msgstr "Tasso di accettazione delle offerte (OAR)"
 
 msgid "Skill Zone Status"
-msgstr "Stato Zona Abilità"
+msgstr "Stato dell'area competenze"
 
 msgid "No skill zone available."
-msgstr "Nessuna zona di abilità disponibile."
+msgstr "Nessuna area competenze disponibile."
 
 msgid "Candidate Offer Letter Status"
-msgstr "Stato Lettera Offerta Candidata"
+msgstr "Stato della lettera di offerta del candidato"
 
 msgid "No Candidates available."
 msgstr "Nessun candidato disponibile."
 
 msgid "Candidate on Onboard"
-msgstr "Candidato a bordo"
+msgstr "Candidato in fase di onboarding"
 
 msgid "Joinings Per Month"
-msgstr "Iscrizioni Al Mese"
+msgstr "Ingressi mensili"
 
 msgid "No records were available."
 msgstr "Nessun record disponibile."
 
 msgid "Current Hiring Pipeline"
-msgstr "Gasdotto Di Assunzione Corrente"
+msgstr "Pipeline di assunzione corrente"
 
 msgid "No onboarding tasks are currently available."
-msgstr "Nessuna attività di onboarding è attualmente disponibile."
+msgstr "Nessuna attività di onboarding al momento disponibile."
 
 msgid "Candidates Per Stage"
-msgstr "Candidati Per Fase"
+msgstr "Candidati per fase"
 
 msgid "No recruitment stages currently available."
-msgstr "Nessuna fase di reclutamento attualmente disponibile."
+msgstr "Nessuna fase di reclutamento al momento disponibile."
 
 msgid "Ongoing Recruitments & Hiring Managers"
-msgstr "Reclutamenti E Gestori Di Assunzione In Corso"
+msgstr "Ricerche in corso e responsabili delle assunzioni"
 
 msgid "Check Connection"
-msgstr "Verifica Connessione"
+msgstr "Verifica connessione"
 
 msgid "Do you want to delete the linkedin account?"
-msgstr "Vuoi eliminare l'account linkedin?"
+msgstr "Vuoi eliminare l'account LinkedIn?"
 
 msgid "Resumes"
-msgstr "Riprendi"
+msgstr "Curricula"
 
 msgid "matching Resumes"
-msgstr "Riprese Corrispondenti"
+msgstr "Curricula corrispondenti"
 
 msgid "Stage bulk update"
-msgstr "Aggiornamento in serie stadio"
+msgstr "Aggiornamento massivo della fase"
 
 msgid "INTERVIEW : Today at"
-msgstr "INTERVISIONE: oggi alle"
+msgstr "COLLOQUIO: Oggi alle"
 
 msgid "with"
 msgstr "con"
@@ -11207,40 +11207,40 @@ msgid "Move"
 msgstr "Sposta"
 
 msgid "Interviews Scheduled"
-msgstr "Interviste Pianificate"
+msgstr "Colloqui pianificati"
 
 msgid " Added In Rejected Candidates"
-msgstr " Aggiunto In Candidati Rifiutati"
+msgstr " Aggiunto ai candidati rifiutati"
 
 msgid " Add To Rejected Candidates"
-msgstr " Aggiungi Ai Candidati Rifiutati"
+msgstr " Aggiungi ai candidati rifiutati"
 
 msgid " View Note"
-msgstr " Visualizza Nota"
+msgstr " Visualizza nota"
 
 msgid " Request Document"
-msgstr " Richiedi Documento"
+msgstr " Richiedi documento"
 
 msgid " Resume"
-msgstr " Riprendi"
+msgstr " Curriculum vitae"
 
 msgid " Actions"
 msgstr " Azioni"
 
 msgid "Is Closed"
-msgstr "È Chiuso"
+msgstr "È chiuso"
 
 msgid "Is Hired"
-msgstr "È Assunta"
+msgstr "È assunto"
 
 msgid "Is Canceled"
-msgstr "È Annullato"
+msgstr "È annullato"
 
 msgid "Add Recruitment"
-msgstr "Aggiungi Reclutamento"
+msgstr "Aggiungi ricerca di personale"
 
 msgid "Add Candidate"
-msgstr "Aggiungi Candidato"
+msgstr "Aggiungi candidato"
 
 msgid "This field is requied"
 msgstr "Questo campo è obbligatorio"
@@ -11252,13 +11252,13 @@ msgid "Score"
 msgstr "Punteggio"
 
 msgid "Need verification"
-msgstr "Verifica della necessità"
+msgstr "Richiede verifica"
 
 msgid "Candidated Added"
-msgstr "CandidatoAggiunto"
+msgstr "Candidato aggiunto"
 
 msgid "Create Candidate"
-msgstr "Crea Candidato"
+msgstr "Crea candidato"
 
 msgid "Sequence updated"
 msgstr "Sequenza aggiornata"
@@ -11267,7 +11267,7 @@ msgid "candidates"
 msgstr "candidati"
 
 msgid "Add to Sill Zone"
-msgstr "Aggiungi alla Zona Sill"
+msgstr "Aggiungi all'area competenze (Skill Zone)"
 
 msgid "Send Mail to"
 msgstr "Invia email a"
@@ -11276,181 +11276,181 @@ msgid "Send Mail to Multiple Candidates"
 msgstr "Invia email a più candidati"
 
 msgid "Switch to Ongoing Recruitments"
-msgstr "Passa a Reclutamenti in corso"
+msgstr "Passa alle ricerche di personale in corso"
 
 msgid "Switch to Closed Recruitments"
-msgstr "Passa a Reclutamenti Chiusi"
+msgstr "Passa alle ricerche di personale chiuse"
 
 msgid "At present, there is no closed recruitment."
-msgstr "Al momento non vi è alcuna assunzione chiusa."
+msgstr "Al momento non ci sono ricerche di personale chiuse."
 
 msgid "At present, there is no ongoing recruitment."
-msgstr "Al momento non vi è alcuna assunzione continua."
+msgstr "Al momento non ci sono ricerche di personale in corso."
 
 msgid "Are you sure you want to close this recruitment?"
-msgstr "Sei sicuro di voler chiudere questo reclutamento?"
+msgstr "Sei sicuro di voler chiudere questa ricerca di personale?"
 
 msgid "Are you sure you want to reopen this recruitment?"
-msgstr "Sei sicuro di voler riaprire questo reclutamento?"
+msgstr "Sei sicuro di voler riaprire questa ricerca di personale?"
 
 msgid "Reopen"
 msgstr "Riapri"
 
 msgid "Are you sure you want to delete this recruitment?"
-msgstr "Sei sicuro di voler eliminare questo reclutamento?"
+msgstr "Sei sicuro di voler eliminare questa ricerca di personale?"
 
 msgid " - Open Recruitments"
-msgstr " - Reclutamenti Aperti"
+msgstr " - Ricerche di personale aperte"
 
 msgid "Open Job Listings"
-msgstr "Apri Elenco Job"
+msgstr "Elenco posizioni aperte"
 
 msgid "We're hiring! Join our team and be part of a vibrant workplace where your talents make a difference. Here are the open Recruitments...."
-msgstr "Stiamo assumendo! Unisciti al nostro team e fai parte di un vivace posto di lavoro dove i tuoi talenti fanno la differenza. Ecco le Reclutamenti aperti...."
+msgstr "Stiamo assumendo! Unisciti al nostro team e lavora in un ambiente dinamico dove il tuo talento può fare la differenza. Ecco le posizioni aperte..."
 
 msgid "Apply Now"
-msgstr "Applica Ora"
+msgstr "Candidati ora"
 
 msgid "Capacity"
 msgstr "Capacità"
 
 msgid "Total vacancies"
-msgstr "Totale posti vacanti"
+msgstr "Totale posizioni aperte"
 
 msgid "Total Hires"
-msgstr "Asse Totali"
+msgstr "Totale assunzioni"
 
 msgid "Jobs"
-msgstr "Lavori"
+msgstr "Posizioni lavorative"
 
 msgid "Share Link"
-msgstr "Condividi Link"
+msgstr "Condividi link"
 
 msgid "Are you sure to delete this recruitment?"
-msgstr "Sei sicuro di voler eliminare questo reclutamento?"
+msgstr "Sei sicuro di voler eliminare questa ricerca di personale?"
 
 msgid "Duplicate Recruitment"
-msgstr "Reclutamento Duplicato"
+msgstr "Duplica ricerca di personale"
 
 msgid "View Recruitments"
-msgstr "Visualizza Reclutamenti"
+msgstr "Visualizza ricerche di personale"
 
 msgid "Job positions :"
-msgstr "Posti di lavoro :"
+msgstr "Posizioni lavorative:"
 
 msgid "Is Event Based?"
-msgstr "L'Evento È Basato?"
+msgstr "È basato su eventi?"
 
 msgid "Is Closed?"
-msgstr "È Chiuso?"
+msgstr "È chiuso?"
 
 msgid "Is Active?"
-msgstr "È Attivo?"
+msgstr "È attivo?"
 
 msgid "Candidate Self Tracking"
-msgstr "Tracciamento Automatico Candidato"
+msgstr "Tracciamento autonomo del candidato"
 
 msgid "By enabling the feature candidates can track their recruitment progress"
-msgstr "Abilitando la funzione i candidati possono seguire i loro progressi di reclutamento"
+msgstr "Abilitando questa funzione, i candidati potranno seguire lo stato di avanzamento della loro candidatura"
 
 msgid "Rating Visiblity"
-msgstr "Voto Visiblity"
+msgstr "Visibilità della valutazione"
 
 msgid "By enabling the feature candidates can view their recruitment overall rating"
-msgstr "Abilitando la caratteristica i candidati possono visualizzare il loro rating generale di reclutamento"
+msgstr "Abilitando questa funzione, i candidati potranno visualizzare la loro valutazione complessiva della selezione"
 
 msgid "Are you sure want to delete this reason?"
 msgstr "Sei sicuro di voler eliminare questo motivo?"
 
 msgid "There is no reject reasons at this moment."
-msgstr "Non vi sono motivi di rifiuto in questo momento."
+msgstr "Al momento non ci sono motivi di rifiuto registrati."
 
 msgid "Are you sure want to delete this skill?"
-msgstr "Sei sicuro di voler eliminare questa abilità?"
+msgstr "Sei sicuro di voler eliminare questa competenza?"
 
 msgid "There are no skills added at this moment."
-msgstr "Non ci sono abilità aggiunte in questo momento."
+msgstr "Al momento non è stata aggiunta alcuna competenza."
 
 msgid "There are currently no skill zone to consider."
-msgstr "Al momento non ci sono zone di abilità da considerare."
+msgstr "Al momento non ci sono candidati nell'area competenze da considerare."
 
 msgid "Do you want to Archive this Skill zone?"
-msgstr "Vuoi archiviare questa zona abilità?"
+msgstr "Vuoi archiviare questa area competenze?"
 
 msgid "Do you want to Un-Archive this Skill zone?"
-msgstr "Vuoi annullare l'archiviazione di questa zona di abilità?"
+msgstr "Vuoi ripristinare dall'archivio questa area competenze?"
 
 msgid "Do you want to delete this Skill zone?"
-msgstr "Vuoi eliminare questa zona abilità?"
+msgstr "Vuoi eliminare questa area competenze?"
 
 msgid "Do you want to archive this skill zone ?"
-msgstr "Vuoi archiviare questa zona di abilità?"
+msgstr "Vuoi archiviare questa area competenze?"
 
 msgid "Do you want to un archive this skill zone?"
-msgstr "Vuoi un archivio di questa zona di abilità?"
+msgstr "Vuoi ripristinare dall'archivio questa area competenze?"
 
 msgid "Are you sure want to delete this skill zone?"
-msgstr "Sei sicuro di voler eliminare questa zona di abilità?"
+msgstr "Sei sicuro di voler eliminare questa area competenze?"
 
 msgid "Added on"
 msgstr "Aggiunto il"
 
 msgid "Do you want to remove this candidate"
-msgstr "Vuoi rimuovere questo candidato"
+msgstr "Vuoi rimuovere questo candidato?"
 
 msgid "Reasom"
 msgstr "Motivo"
 
 msgid "You have no Candidate."
-msgstr "Non hai candidati."
+msgstr "Non ci sono candidati."
 
 msgid "Are sure want to remove this manager?"
-msgstr "Sei sicuro di voler rimuovere questo manager?"
+msgstr "Sei sicuro di voler rimuovere questo responsabile?"
 
 msgid "View Stages"
-msgstr "Visualizza Fasi"
+msgstr "Visualizza fasi"
 
 msgid "No recruitment stages are currently available."
-msgstr "Attualmente non sono disponibili fasi di reclutamento."
+msgstr "Nessuna fase di reclutamento al momento disponibile."
 
 msgid "interview"
-msgstr "intervista"
+msgstr "colloquio"
 
 msgid "Add more option.."
-msgstr "Aggiungi più opzione.."
+msgstr "Aggiungi altra opzione..."
 
 msgid "Survey Filter"
-msgstr "Filtro Sondaggio"
+msgstr "Filtro questionario"
 
 msgid "Add more options.."
-msgstr "Aggiungi altre opzioni.."
+msgstr "Aggiungi altre opzioni..."
 
 msgid "Are you sure want to delete?"
 msgstr "Sei sicuro di voler eliminare?"
 
 msgid "No questions have been established yet."
-msgstr "Nessuna domanda è stata ancora stabilita."
+msgstr "Non è stata ancora definita alcuna domanda."
 
 msgid "Create Survey Template"
-msgstr "Crea Template Sondaggio"
+msgstr "Crea modello di questionario"
 
 msgid "Questions"
 msgstr "Domande"
 
 msgid "Add Questions"
-msgstr "Aggiungi Domande"
+msgstr "Aggiungi domande"
 
 msgid "Do you want to delete this template"
-msgstr "Vuoi eliminare questo modello"
+msgstr "Vuoi eliminare questo modello?"
 
 msgid "No template groups have been established yet."
-msgstr "Nessun gruppo di template è stato ancora stabilito."
+msgstr "Non è stato ancora definito alcun gruppo di modelli."
 
 msgid "No template have been established yet."
-msgstr "Nessun modello è stato ancora stabilito."
+msgstr "Non è stato ancora definito alcun modello."
 
 msgid "Duplicate Survey Template"
-msgstr "Duplica Modello Sondaggio"
+msgstr "Duplica modello di questionario"
 
 msgid "Templates"
 msgstr "Modelli"
@@ -11459,28 +11459,28 @@ msgid " Create template group"
 msgstr " Crea gruppo di modelli"
 
 msgid "Create survey questions"
-msgstr "Crea domande di sondaggio"
+msgstr "Crea domande del questionario"
 
 msgid " Are you sure want to delete?"
 msgstr " Sei sicuro di voler eliminare?"
 
 msgid "Mandatory Question"
-msgstr "Domanda Obbligatoria"
+msgstr "Domanda obbligatoria"
 
 msgid "Recruitment added."
-msgstr "Reclutamento aggiunto."
+msgstr "Ricerca di personale aggiunta."
 
 msgid "Recruitment manager removed successfully."
-msgstr "Gestore reclutamento rimosso con successo."
+msgstr "Responsabile della ricerca di personale rimosso con successo."
 
 msgid "Recruitment Updated."
-msgstr "Reclutamento Aggiornato."
+msgstr "Ricerca di personale aggiornata."
 
 msgid "Recruitment deleted successfully."
-msgstr "Reclutamento eliminato con successo."
+msgstr "Ricerca di personale eliminata con successo."
 
 msgid "You cannot delete this recruitment"
-msgstr "Non puoi eliminare questo reclutamento"
+msgstr "Impossibile eliminare questa ricerca di personale"
 
 msgid "Candidate added."
 msgstr "Candidato aggiunto."
@@ -11489,52 +11489,52 @@ msgid "Stage added."
 msgstr "Fase aggiunta."
 
 msgid "You dont have access"
-msgstr "Non hai accesso"
+msgstr "Non hai l'accesso"
 
 msgid "Stage updated."
 msgstr "Fase aggiornata."
 
 msgid "Recruitment updated."
-msgstr "Reclutamento aggiornato."
+msgstr "Ricerca di personale aggiornata."
 
 msgid "Recruitment deleted."
-msgstr "Reclutamento eliminato."
+msgstr "Ricerca di personale eliminata."
 
 msgid "Recruitment already in use."
-msgstr "Reclutamento già in uso."
+msgstr "Ricerca di personale già in uso."
 
 msgid "Sequence updated."
 msgstr "Sequenza aggiornata."
 
 msgid "Candidate stage updated"
-msgstr "Fase candidata aggiornata"
+msgstr "Fase del candidato aggiornata"
 
 msgid "Something went wrong, Try agian."
-msgstr "Qualcosa è andato storto, Prova agiano."
+msgstr "Qualcosa è andato storto. Riprova."
 
 msgid "Note deleted"
 msgstr "Nota eliminata"
 
 msgid "You cannot delete this note."
-msgstr "Non puoi eliminare questa nota."
+msgstr "Impossibile eliminare questa nota."
 
 msgid "Stage manager removed successfully."
-msgstr "Stage manager rimosso con successo."
+msgstr "Responsabile della fase rimosso con successo."
 
 msgid "Stage deleted successfully."
 msgstr "Fase eliminata con successo."
 
 msgid "You cannot delete this stage"
-msgstr "Non puoi eliminare questa fase"
+msgstr "Impossibile eliminare questa fase"
 
 msgid "Candidate Updated Successfully."
-msgstr "Candidato Aggiornato Con Successo."
+msgstr "Candidato aggiornato con successo."
 
 msgid "Candidate deleted successfully."
 msgstr "Candidato eliminato con successo."
 
 msgid "You cannot delete this candidate"
-msgstr "Non puoi eliminare questo candidato"
+msgstr "Impossibile eliminare questo candidato"
 
 #, python-format
 msgid "%(candidate_obj)s deleted."
@@ -11542,37 +11542,37 @@ msgstr "%(candidate_obj)s eliminato."
 
 #, python-format
 msgid "You cannot delete %(candidate_obj)s"
-msgstr "Non puoi eliminare %(candidate_obj)s"
+msgstr "Impossibile eliminare %(candidate_obj)s"
 
 msgid "Application saved."
-msgstr "Applicazione salvata."
+msgstr "Candidatura salvata."
 
 msgid "Recruitment not found."
-msgstr "Reclutamento non trovato."
+msgstr "Ricerca di personale non trovata."
 
 msgid "Couldn’t delete the recruitment post from LinkedIn."
-msgstr "Impossibile eliminare il post di reclutamento da LinkedIn."
+msgstr "Impossibile eliminare l'annuncio di lavoro da LinkedIn."
 
 msgid "You cannot delete this recruitment as it is using in {}"
-msgstr "Non puoi eliminare questo reclutamento come sta usando in {}"
+msgstr "Impossibile eliminare questa ricerca di personale poiché è in uso in {}"
 
 msgid "Recruitment Does not exists.."
-msgstr "Reclutamento Non esiste.."
+msgstr "La ricerca di personale non esiste..."
 
 msgid "Recruitment already in use for {}."
-msgstr "Reclutamento già in uso per {}."
+msgstr "Ricerca di personale già in uso per {}."
 
 msgid "Note deleted."
 msgstr "Nota eliminata."
 
 msgid "You cannot delete this stage while it's in use for {}"
-msgstr "Non puoi eliminare questa fase mentre è in uso per {}"
+msgstr "Impossibile eliminare questa fase mentre è in uso per {}"
 
 msgid "Stage Does not exists.."
-msgstr "Stage Non esiste.."
+msgstr "La fase non esiste..."
 
 msgid "You cannot delete this candidate because the candidate is in {}."
-msgstr "Non puoi eliminare questo candidato perché il candidato è in {}."
+msgstr "Impossibile eliminare questo candidato perché si trova in {}."
 
 msgid "Candidate Does not exists."
 msgstr "Il candidato non esiste."
@@ -11583,11 +11583,11 @@ msgstr "%(candidate)s eliminato."
 
 #, python-format
 msgid "You cannot delete %(candidate)s"
-msgstr "Non puoi eliminare %(candidate)s"
+msgstr "Impossibile eliminare %(candidate)s"
 
 #, python-format
 msgid "Candidate is %(message)s"
-msgstr ""
+msgstr "Il candidato è %(message)s"
 
 #, python-brace-format
 msgid "{candidate} is {message}"
@@ -11595,10 +11595,10 @@ msgstr "{candidate} è {message}"
 
 #, python-format
 msgid "Employees joined in %(year)s"
-msgstr "I dipendenti si sono uniti in %(year)s"
+msgstr "Dipendenti entrati in servizio nel %(year)s"
 
 msgid "Openings"
-msgstr "Aperture"
+msgstr "Posizioni aperte"
 
 msgid "LinkedIn Account activated successfully."
 msgstr "Account LinkedIn attivato con successo."
@@ -11607,43 +11607,43 @@ msgid "LinkedIn Account deactivated successfully."
 msgstr "Account LinkedIn disattivato con successo."
 
 msgid "LinkedIn connection success."
-msgstr "Collegamento LinkedIn successo."
+msgstr "Connessione a LinkedIn riuscita."
 
 msgid "LinkedIn connection failed."
-msgstr "Connessione LinkedIn non riuscita."
+msgstr "Connessione a LinkedIn non riuscita."
 
 msgid "File size exceeds the limit. Maximum size is 5 MB"
-msgstr "La dimensione del file supera il limite. La dimensione massima è di 5 MB"
+msgstr "La dimensione del file supera il limite. La dimensione massima è 5 MB"
 
 msgid "Your answers are submitted."
-msgstr "Le tue risposte sono inviate."
+msgstr "Le tue risposte sono state inviate."
 
 msgid "New survey question updated."
-msgstr "Nuova domanda di sondaggio aggiornata."
+msgstr "Nuova domanda del questionario aggiornata."
 
 msgid "New survey question created."
-msgstr "Nuova domanda di indagine creata."
+msgstr "Nuova domanda del questionario creata."
 
 msgid "Question was deleted successfully"
 msgstr "Domanda eliminata con successo"
 
 msgid "You cannot delete this question"
-msgstr "Non puoi eliminare questa domanda"
+msgstr "Impossibile eliminare questa domanda"
 
 msgid "Recruitment ID is missing"
-msgstr "ID reclutamento mancante"
+msgstr "ID ricerca di personale mancante"
 
 msgid "Recruitment not found"
-msgstr "Reclutamento non trovato"
+msgstr "Ricerca di personale non trovata"
 
 msgid "Invalid Recruitment ID"
-msgstr "Id Reclutamento Non Valido"
+msgstr "ID ricerca di personale non valido"
 
 msgid "The recruitment entry you are trying to edit does not exist."
-msgstr "La voce di reclutamento che stai cercando di modificare non esiste."
+msgstr "La ricerca di personale che stai tentando di modificare non esiste."
 
 msgid "Vaccancy is filled"
-msgstr "Vaccancy is filled"
+msgstr "La posizione aperta è stata coperta"
 
 msgid "No change detected."
 msgstr "Nessuna modifica rilevata."
@@ -11652,37 +11652,37 @@ msgid "Files uploaded successfully"
 msgstr "File caricati con successo"
 
 msgid "Candidate view status updated"
-msgstr "Stato vista candidato aggiornato"
+msgstr "Stato di visualizzazione del candidato aggiornato"
 
 msgid "Candidate Does not exists.."
-msgstr "Candidato non esiste.."
+msgstr "Il candidato non esiste..."
 
 msgid "Candidate has been successfully converted into an employee."
-msgstr "Il candidato è stato convertito con successo in un dipendente."
+msgstr "Il candidato è stato convertito in dipendente con successo."
 
 msgid "Interview deleted successfully."
-msgstr "Intervista eliminata con successo."
+msgstr "Colloquio eliminato con successo."
 
 msgid "Scheduled Interview not found"
-msgstr "Intervista pianificata non trovata"
+msgstr "Colloquio pianificato non trovato"
 
 msgid "Skill Zone created successfully."
-msgstr "Zona di Abilità creata con successo."
+msgstr "Area competenze creata con successo."
 
 msgid "Skill Zone updated successfully."
-msgstr "Zona di Abilità aggiornata con successo."
+msgstr "Area competenze aggiornata con successo."
 
 msgid "Skill zone deleted successfully.."
-msgstr "Zona di abilità eliminata.."
+msgstr "Area competenze eliminata con successo..."
 
 msgid "Skill zone not found."
-msgstr "Zona di abilità non trovata."
+msgstr "Area competenze non trovata."
 
 msgid "Skill zone archived successfully.."
-msgstr "Zona di abilità archiviata con successo.."
+msgstr "Area competenze archiviata con successo..."
 
 msgid "Skill zone unarchived successfully.."
-msgstr "Zona di abilità non archiviata.."
+msgstr "Area competenze ripristinata dall'archivio con successo..."
 
 msgid "Candidate added successfully."
 msgstr "Candidato aggiunto con successo."
@@ -11691,208 +11691,208 @@ msgid "Candidate edited successfully."
 msgstr "Candidato modificato con successo."
 
 msgid "Candidate archived successfully.."
-msgstr "Candidato archiviato con successo.."
+msgstr "Candidato archiviato con successo..."
 
 msgid "Candidate unarchived successfully.."
-msgstr "Candidato non archiviato con successo.."
+msgstr "Candidato ripristinato dall'archivio con successo..."
 
 msgid "Asset Reports"
-msgstr "Report Risorse"
+msgstr "Report dei beni aziendali (Asset)"
 
 msgid "Export Table"
-msgstr "Esporta Tabella"
+msgstr "Esporta tabella"
 
 msgid "Attendance Reports"
-msgstr "Rapporti Di Partecipazione"
+msgstr "Report delle presenze"
 
 msgid "Employee Reports"
-msgstr "Rapporti Dipendenti"
+msgstr "Report dei dipendenti"
 
 msgid "Leave Reports"
-msgstr "Lascia I Rapporti"
+msgstr "Report dei congedi/ferie"
 
 msgid "Available Leave"
-msgstr "Uscita Disponibile"
+msgstr "Ferie/congedi disponibili"
 
 msgid "Payroll Reports"
-msgstr "Report Pagamenti"
+msgstr "Report delle buste paga (Payroll)"
 
 msgid "Allowance Greater than"
-msgstr "Quota maggiore di"
+msgstr "Indennità maggiore di"
 
 msgid "Allowance Less than"
-msgstr "Indennità inferiore a"
+msgstr "Indennità minore di"
 
 msgid "Deduction Greater than"
-msgstr "Detrazione maggiore di"
+msgstr "Trattenuta maggiore di"
 
 msgid "Deduction Less than"
-msgstr "Detrazione inferiore a"
+msgstr "Trattenuta minore di"
 
 msgid "Performance Reports"
-msgstr "Rapporti Sulle Prestazioni"
+msgstr "Report delle prestazioni"
 
 msgid "Employee Objective"
-msgstr "Obiettivo Dei Dipendenti"
+msgstr "Obiettivo del dipendente"
 
 msgid "Candidate Reports"
-msgstr "Report Candidati"
+msgstr "Report dei candidati"
 
 msgid "Unknown"
 msgstr "Sconosciuto"
 
 msgid "Stage Manager"
-msgstr "Gestore Stage"
+msgstr "Responsabile della fase"
 
 msgid "Choose Report"
-msgstr "Scegli Report"
+msgstr "Scegli il report"
 
 msgid "Trying to connect..."
-msgstr "Tentativo di connessione..."
+msgstr "Tentativo di connessione in corso..."
 
 msgid "Add Comment."
-msgstr "Aggiungi Commento."
+msgstr "Aggiungi commento."
 
 msgid "Comments."
-msgstr "Osservazioni."
+msgstr "Commenti."
 
 msgid "Compensatory Leave"
-msgstr "Congedo Compensativo"
+msgstr "Riposo compensativo"
 
 msgid "By enabling this compensatory leave feature will avilable on Leave."
-msgstr "Abilitando questa funzione di congedo compensativo sarà disponibile su Leave."
+msgstr "Abilitando questa funzione, il riposo compensativo sarà disponibile tra i congedi."
 
 msgid "New Joining Today"
-msgstr "Nuovo Aderire Oggi"
+msgstr "Nuovi ingressi di oggi"
 
 msgid "New Joining This Week"
-msgstr "Nuova Partecipazione A Questa Settimana"
+msgstr "Nuovi ingressi di questa settimana"
 
 msgid "Total Strength"
-msgstr "Forza Totale"
+msgstr "Organico totale"
 
 msgid "Create Announcement"
-msgstr "Crea Annuncio"
+msgstr "Crea annuncio"
 
 msgid "Employee Work Information"
-msgstr "Informazioni Sul Lavoro Dipendente"
+msgstr "Informazioni lavorative del dipendente"
 
 msgid "Dashboard Chart Select"
-msgstr "Seleziona Grafico Dashboard"
+msgstr "Seleziona grafico della dashboard"
 
 msgid "Select All Rows"
-msgstr "Seleziona Tutte Le Righe"
+msgstr "Seleziona tutte le righe"
 
 msgid "Unselect All Rows"
-msgstr "Deseleziona Tutte Le Righe"
+msgstr "Deseleziona tutte le righe"
 
 msgid "Charts"
 msgstr "Grafici"
 
 msgid "Overall Leave"
-msgstr "Abbandono Complessivo"
+msgstr "Congedi complessivi"
 
 msgid "This Year"
-msgstr "Questo Anno"
+msgstr "Questo anno"
 
 msgid "Candidates Started Onboarding"
-msgstr "Candidati Inizio Onboarding"
+msgstr "Candidati che hanno iniziato l'onboarding"
 
 msgid "Attendance Analytics"
-msgstr "Analisi Della Partecipazione"
+msgstr "Analisi delle presenze"
 
 msgid "Shift Requests To Approve"
-msgstr "Domande Di Maiusc Per Approvare"
+msgstr "Richieste di turno da approvare"
 
 msgid "Work Type Requests To Approve"
-msgstr "Tipo Di Lavoro Richieste Per Approvare"
+msgstr "Richieste di modalità di lavoro da approvare"
 
 msgid "Leave Requests To Approve"
-msgstr "Lascia Le Richieste Per Approvare"
+msgstr "Richieste di congedo/ferie da approvare"
 
 msgid "Leave Allocation Request To Approve"
-msgstr "Lascia La Richiesta Di Allocazione Per Approvare"
+msgstr "Richieste di allocazione congedi da approvare"
 
 msgid "Feedback To Answers"
-msgstr "Feedback Alle Risposte"
+msgstr "Feedback a cui rispondere"
 
 msgid "You Dont Have Permission"
-msgstr "Non Hai Il Permesso"
+msgstr "Non disponi dei permessi necessari"
 
 msgid "You dont have permission to the feature"
-msgstr "Non hai i permessi per la funzione"
+msgstr "Non disponi dei permessi per utilizzare questa funzione"
 
 msgid "Database Authentication"
-msgstr "Autenticazione Database"
+msgstr "Autenticazione del database"
 
 msgid "Authenticate with your password to load demo database"
-msgstr "Autenticazione con la password per caricare il database demo"
+msgstr "Autenticati con la password per caricare il database demo"
 
 msgid "Forgot Password"
-msgstr "Password Dimenticata"
+msgstr "Password dimenticata"
 
 msgid "Type in your email to reset the password"
 msgstr "Inserisci la tua email per reimpostare la password"
 
 msgid "Send Link"
-msgstr "Invia Link"
+msgstr "Invia link"
 
 msgid " Import Warning"
-msgstr " Avviso Di Importazione"
+msgstr " Avviso di importazione"
 
 msgid " Import Successful"
-msgstr " Importazione Riuscita"
+msgstr " Importazione riuscita"
 
 msgid "Download Error File"
-msgstr "File Errore Di Download"
+msgstr "Scarica il file degli errori"
 
 msgid "All Notifications"
-msgstr "Tutte Le Notifiche"
+msgstr "Tutte le notifiche"
 
 msgid "Clear all"
 msgstr "Cancella tutto"
 
 msgid "Hq"
-msgstr "Hq"
+msgstr "Sede centrale (HQ)"
 
 msgid "Go To Home"
-msgstr "Vai A Home"
+msgstr "Vai alla Home"
 
 msgid "Authenticate with your password to initialize the Horilla HRMS database."
-msgstr "Autenticare con la password per inizializzare il database HRMS di Horilla."
+msgstr "Autenticati con la tua password per inizializzare il database di Horilla HRMS."
 
 msgid "Sign Up"
 msgstr "Registrati"
 
 msgid "Please sign up to access the Horilla HRMS."
-msgstr "Per accedere all'HRMS Horilla ti invitiamo a registrarti."
+msgstr "Registrati per accedere a Horilla HRMS."
 
 msgid "Secure Sign-up"
-msgstr "Registrazione Sicura"
+msgstr "Registrazione sicura"
 
 msgid "Sign In"
 msgstr "Accedi"
 
 msgid "Please login to access the dashboard."
-msgstr "Effettua il login per accedere alla dashboard."
+msgstr "Effettua l'accesso per consultare la dashboard."
 
 msgid "Secure Sign-in"
-msgstr "Accesso Sicuro"
+msgstr "Accesso sicuro"
 
 msgid "Initialize Database"
-msgstr "Inizializza Database"
+msgstr "Inizializza database"
 
 msgid "Load Demo Data"
-msgstr "Carica Dati Demo"
+msgstr "Carica dati demo"
 
 msgid "ago by"
 msgstr "fa da"
 
 msgid "All caught up!"
-msgstr "Tutti catturati!"
+msgstr "Tutto aggiornato!"
 
 msgid "You have no new notifications at the moment."
-msgstr "Al momento non hai nuove notifiche."
+msgstr "Al momento non ci sono nuove notifiche."
 
 msgid "Notifications"
 msgstr "Notifiche"
@@ -11901,7 +11901,7 @@ msgid "Mark as read"
 msgstr "Segna come letto"
 
 msgid "Clear"
-msgstr "Pulisci"
+msgstr "Cancella"
 
 msgid "Anonymous"
 msgstr "Anonimo"
@@ -11910,16 +11910,16 @@ msgid "View all notifications"
 msgstr "Mostra tutte le notifiche"
 
 msgid "Notification Sound"
-msgstr "Suono Di Notifica"
+msgstr "Suono di notifica"
 
 msgid "Reset Password"
-msgstr "Reimposta Password"
+msgstr "Reimposta password"
 
 msgid "Enter your new password to reset"
-msgstr "Inserisci la tua nuova password per reimpostare"
+msgstr "Inserisci la nuova password per procedere al ripristino"
 
 msgid "Confirm New Password"
-msgstr "Conferma Nuova Password"
+msgstr "Conferma nuova password"
 
 msgid "Reset my password"
 msgstr "Reimposta la mia password"
@@ -11928,73 +11928,73 @@ msgid "Settings"
 msgstr "Impostazioni"
 
 msgid "All\tSettings"
-msgstr "Tutte Le Impostazioni"
+msgstr "Tutte le impostazioni"
 
 msgid "General Settings"
-msgstr "Impostazioni Generali"
+msgstr "Impostazioni generali"
 
 msgid "Employee Permission"
-msgstr "Permesso Dipendente"
+msgstr "Permessi dei dipendenti"
 
 msgid "Accessibility Restriction"
-msgstr "Limitazione Di Accessibilità"
+msgstr "Limitazioni di accessibilità"
 
 msgid "User Group"
-msgstr "Gruppo Utenti"
+msgstr "Gruppo utenti"
 
 msgid "Date & Time Format"
-msgstr "Formato Data E Ora"
+msgstr "Formato data e ora"
 
 msgid "Outlook Mail"
-msgstr "Outlook Mail"
+msgstr "Posta Outlook"
 
 msgid "Gdrive Backup"
-msgstr "Gdrive Backup"
+msgstr "Backup Google Drive"
 
 msgid "Base"
 msgstr "Base"
 
 msgid "Candidate Reject Reason"
-msgstr "Motivo Del Rifiuto Candidato"
+msgstr "Motivo di rifiuto del candidato"
 
 msgid "Linkedin Integration"
-msgstr "Integrazione Linkedin"
+msgstr "Integrazione LinkedIn"
 
 msgid "Disciplinary Action Type"
-msgstr "Tipo Di Azione Disciplinare"
+msgstr "Tipo di azione disciplinare"
 
 msgid "Track Late Come & Early Out"
-msgstr "Traccia Tardi Come & Early Out"
+msgstr "Traccia ingressi in ritardo e uscite anticipate"
 
 msgid "Attendance Break Point"
-msgstr "Punto Di Interruzione Partecipazione"
+msgstr "Punto di interruzione presenza"
 
 msgid "Check In/Check Out"
-msgstr "Check In/Check Out"
+msgstr "Ingresso/Uscita (Check In/Check Out)"
 
 msgid "Geo & Face Config"
-msgstr "Configurazione Geo E Faccia"
+msgstr "Configurazione Geolocalizzazione e Riconoscimento Facciale"
 
 msgid "Restrictions"
 msgstr "Restrizioni"
 
 msgid "Payslip Auto Generation"
-msgstr "Payslip Auto Generation"
+msgstr "Generazione automatica cedolino"
 
 msgid "Help Desk"
-msgstr "Help Desk"
+msgstr "Supporto (Help Desk)"
 
 msgid "My Company"
-msgstr "La Mia Azienda"
+msgstr "La mia azienda"
 
 msgid "Configuration"
 msgstr "Configurazione"
 
 msgid "Mail Automations"
-msgstr "Automazioni Di Posta"
+msgstr "Automazioni email"
 
 msgid "Invalid File"
-msgstr "File Non Valido"
+msgstr "File non valido"
 
 msgid "Please upload a valid XLSX file."
 msgstr "Carica un file XLSX valido."
