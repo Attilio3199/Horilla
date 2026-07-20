@@ -22,7 +22,7 @@ from employee.models import (
     EmployeeWorkInformation,
     Policy,
 )
-from employee.views import work_info_export, work_info_import
+from employee.views import can_access_document, work_info_export, work_info_import
 from horilla.decorators import owner_can_enter
 from horilla_api.api_decorators.base.decorators import permission_required
 from horilla_api.api_methods.employee.methods import get_next_badge_id
@@ -786,12 +786,32 @@ class DocumentAPIView(APIView):
             raise Http404
 
     def get(self, request, pk=None):
+        employee = request.user.employee_get
+        has_view_perm = request.user.has_perm("horilla_documents.view_document")
+
         if pk:
             document = self.get_object(pk)
+            if not can_access_document(
+                request, document, "horilla_documents.view_document"
+            ):
+                return Response(
+                    {"detail": "You do not have permission to view this document."},
+                    status=403,
+                )
             serializer = DocumentSerializer(document)
             return Response(serializer.data)
         else:
-            documents = Document.objects.all()
+            if has_view_perm:
+                documents = Document.objects.all()
+            else:
+                # Employees can see their own documents; managers can also see
+                # documents of their direct reports.
+                subordinate_ids = EmployeeWorkInformation.objects.filter(
+                    reporting_manager_id=employee
+                ).values_list("employee_id", flat=True)
+                documents = Document.objects.filter(
+                    Q(employee_id=employee) | Q(employee_id__in=subordinate_ids)
+                )
             document_requests_filtered = self.filterset_class(
                 request.GET, queryset=documents
             ).qs

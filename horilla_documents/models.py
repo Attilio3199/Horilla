@@ -322,7 +322,8 @@ class Document(HorillaModel):
                     raise ValidationError(
                         {"document": _("File size exceeds the limit")}
                     )
-            ext = file.name.split(".")[-1].lower()
+            _, raw_ext = os.path.splitext(file.name)
+            ext = raw_ext.lstrip(".").lower() if raw_ext else ""
             if fmt != "any" and ext != fmt:
                 raise ValidationError(
                     {"document": _("Please upload {} file only.").format(fmt)}

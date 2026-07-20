@@ -15,6 +15,7 @@ import logging
 import uuid
 
 from horilla.horilla_settings import DYNAMIC_URL_PATTERNS, HORILLA_DATE_FORMATS
+from horilla.http import HorillaRedirect
 from horilla.methods import remove_dynamic_url
 
 logger = logging.getLogger(__name__)
@@ -34,12 +35,7 @@ from django.core.validators import validate_ipv46_address
 from django.db import transaction
 from django.db.models import ProtectedError
 from django.forms import ValidationError
-from django.http import (
-    HttpResponse,
-    HttpResponseBadRequest,
-    HttpResponseRedirect,
-    JsonResponse,
-)
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -512,7 +508,7 @@ def attendance_delete(request, obj_id):
                 )
     except (Attendance.DoesNotExist, OverflowError):
         messages.error(request, _("Attendance Does not exists.."))
-    return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
+    return HorillaRedirect(request)
 
 
 @login_required
@@ -1317,6 +1313,13 @@ def validate_bulk_attendance(request):
                 continue
 
             attendance.attendance_validated = True
+            # Recalculate worked hours from attendance activities before validation
+            # to ensure Hours Account reflects actual worked time.
+            # Fixes: https://github.com/horilla/horilla-hr/issues/1055
+            if not attendance.attendance_worked_hour or attendance.attendance_worked_hour == "00:00":
+                at_work_seconds = attendance.get_at_work_from_activities()
+                if at_work_seconds > 0:
+                    attendance.attendance_worked_hour = format_time(at_work_seconds)
             attendance.save()
             validate_req_count += 1
 
@@ -1363,6 +1366,13 @@ def validate_this_attendance(request, obj_id):
     try:
         attendance = Attendance.objects.get(id=obj_id)
         attendance.attendance_validated = True
+        # Recalculate worked hours from attendance activities before validation
+        # to ensure Hours Account reflects actual worked time.
+        # Fixes: https://github.com/horilla/horilla-hr/issues/1055
+        if not attendance.attendance_worked_hour or attendance.attendance_worked_hour == "00:00":
+            at_work_seconds = attendance.get_at_work_from_activities()
+            if at_work_seconds > 0:
+                attendance.attendance_worked_hour = format_time(at_work_seconds)
         attendance.save()
         urlencode = request.GET.urlencode()
         modified_url = f"/attendance/attendance-view/?{urlencode}"
@@ -1388,7 +1398,7 @@ def validate_this_attendance(request, obj_id):
     except (Attendance.DoesNotExist, ValueError):
         messages.error(request, _("Attendance not found"))
 
-    return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
+    return HorillaRedirect(request)
 
 
 @login_required
@@ -1424,7 +1434,7 @@ def revalidate_this_attendance(request, obj_id):
                 redirect=reverse("view-my-attendance") + f"?id={attendance.id}",
                 icon="refresh",
             )
-        return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
+        return HorillaRedirect(request)
     return HttpResponse("You Cannot Request for others attendance")
 
 
@@ -1465,7 +1475,7 @@ def approve_overtime(request, obj_id):
             )
     except (Attendance.DoesNotExist, OverflowError):
         messages.error(request, _("Attendance not found"))
-    return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
+    return HorillaRedirect(request)
 
 
 @login_required

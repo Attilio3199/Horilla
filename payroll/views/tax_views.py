@@ -22,6 +22,7 @@ from django.utils.translation import gettext_lazy as _
 from base.methods import get_key_instances
 from horilla.decorators import hx_request_required, login_required, permission_required
 from payroll.forms.tax_forms import FilingStatusForm, TaxBracketForm
+from payroll.methods.safe_tax_code import TaxCodeValidationError, validate_tax_code
 from payroll.models.models import FilingStatus
 from payroll.models.tax_models import TaxBracket
 
@@ -293,6 +294,10 @@ def update_py_code(request, pk):
     Ajax method to update python code of filing status
     """
     code = request.POST["code"]
+    try:
+        validate_tax_code(code)
+    except TaxCodeValidationError as exc:
+        return JsonResponse({"message": str(exc)}, status=400)
     filing = FilingStatus.objects.get(pk=pk)
     if not filing.python_code == code:
         filing.python_code = code

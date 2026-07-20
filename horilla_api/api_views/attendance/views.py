@@ -368,6 +368,7 @@ class OvertimeApproveView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @method_decorator(manager_permission_required("attendance.change_attendance"))
     def put(self, request, pk):
         try:
             attendance = Attendance.objects.filter(id=pk).update(

@@ -1074,7 +1074,8 @@ class CandidateDocument(HorillaModel):
                         {"document": _("File size exceeds the limit")}
                     )
 
-            ext = file.name.split(".")[1].lower()
+            _, raw_ext = os.path.splitext(file.name)
+            ext = raw_ext.lstrip(".").lower() if raw_ext else ""
             if format == "any":
                 pass
             elif ext != format:
