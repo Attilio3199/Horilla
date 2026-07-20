@@ -6948,208 +6948,208 @@ msgid "Employee already has a leave request for this date range."
 msgstr "Il dipendente ha già una richiesta di congedo attiva per questo intervallo di date."
 
 msgid "Requests cannot be made for past dates."
-msgstr "Le richieste non possono essere fatte per date passate."
+msgstr "Le richieste non possono essere effettuate per date passate."
 
 msgid "Does not have sufficient leave balance for the requested dates."
-msgstr "Non dispone di un saldo di congedo sufficiente per le date richieste."
+msgstr "Il saldo dei congedi non è sufficiente per le date richieste."
 
 msgid "The {} leave request cannot be deleted !"
-msgstr "La richiesta di congedo {} non può essere cancellata!"
+msgstr "La richiesta di congedo {} non può essere eliminata!"
 
 msgid "Leave Allocation Request"
-msgstr "Lascia Richiesta Di Allocazione"
+msgstr "Richiesta di assegnazione congedo"
 
 msgid "Leave Allocation Requests"
-msgstr "Lascia Richieste Di Allocazione"
+msgstr "Richieste di assegnazione congedo"
 
 msgid "If no job positions are specifically selected, the system will consider all job positions under the selected department."
-msgstr "Se non vengono selezionate posizioni di lavoro, il sistema prenderà in considerazione tutte le posizioni di lavoro nel reparto selezionato."
+msgstr "Se non vengono selezionate qualifiche specifiche, il sistema prenderà in considerazione tutte le posizioni lavorative del dipartimento selezionato."
 
 msgid "Enable to select all Leave types."
-msgstr "Abilita per selezionare tutti i tipi di Lascia."
+msgstr "Abilita per selezionare tutti i tipi di congedo."
 
 msgid "Include All"
-msgstr "Includi Tutto"
+msgstr "Includi tutti"
 
 msgid "Specific Leave Types"
-msgstr "Tipi Di Congedo Specifici"
+msgstr "Tipi di congedo specifici"
 
 msgid "Choose specific leave types to restrict."
-msgstr "Scegli tipi di congedo specifici da limitare."
+msgstr "Scegli i tipi di congedo specifici da limitare."
 
 msgid "Exclude Leave Types"
-msgstr "Escludi Tipi Di Congedo"
+msgstr "Escludi tipi di congedo"
 
 msgid "Choose leave types to exclude from restriction."
 msgstr "Scegli i tipi di congedo da escludere dalla restrizione."
 
 msgid "Half day Attendance need to validate"
-msgstr "Mezza giornata La frequenza deve convalidare"
+msgstr "Presenza di mezza giornata da convalidare"
 
 msgid "View Accrual Plan"
-msgstr "Visualizza Piano Di Ratei"
+msgstr "Visualizza piano di maturazione"
 
 msgid "Accrual Plan"
-msgstr "Piano Di Ratei"
+msgstr "Piano di maturazione"
 
 msgid "Accrual Rate"
-msgstr "Tasso Di Ratei"
+msgstr "Tasso di maturazione"
 
 msgid "All Accrual Plan"
-msgstr "Tutto Il Piano Di Ratei"
+msgstr "Tutti i piani di maturazione"
 
 msgid "Accrual"
-msgstr "Ratei"
+msgstr "Maturazione congedi"
 
 msgid "Based on"
 msgstr "Basato su"
 
 msgid "Extra Leave"
-msgstr "Uscita Extra"
+msgstr "Congedo extra"
 
 msgid "Create Company Leaves"
-msgstr "Crea Foglie Aziendali"
+msgstr "Crea congedi aziendali"
 
 msgid "Update Company Leaves"
-msgstr "Aggiorna Foglie Azienda"
+msgstr "Aggiorna congedi aziendali"
 
 msgid "Based On week"
-msgstr "Basato su settimana"
+msgstr "In base alla settimana"
 
 msgid "Based On Weekday"
-msgstr "Basato Su Giorno Settimanale"
+msgstr "In base al giorno della settimana"
 
 msgid "Update Compensatory Leave Request"
-msgstr "Aggiorna Richiesta Di Congedi Compensativi"
+msgstr "Aggiorna richiesta di congedo compensativo"
 
 msgid "Create Compensatory Leave Request"
-msgstr "Crea Richiesta Di Congedo Compensativo"
+msgstr "Crea richiesta di congedo compensativo"
 
 msgid "'s leave request"
-msgstr "'s richiesta di congedo"
+msgstr " - Richiesta di congedo"
 
 msgid "Reject Compensatory Leave Request"
-msgstr "Rifiuta Richiesta Di Congedi Compensativi"
+msgstr "Rifiuta richiesta di congedo compensativo"
 
 msgid "My Compensatory Leave Requests"
-msgstr "Le Mie Richieste Di Congedo Compensativo"
+msgstr "Le mie richieste di congedo compensativo"
 
 msgid "Compensatory Leave Requests"
-msgstr "Richieste Di Congedi Compensativi"
+msgstr "Richieste di congedo compensativo"
 
 msgid "Attendance Dates"
-msgstr "Date Di Partecipazione"
+msgstr "Date di presenza"
 
 msgid "You have No leave requests for this filter."
-msgstr "Non ci sono richieste di abbandono per questo filtro."
+msgstr "Nessuna richiesta di congedo corrisponde a questo filtro."
 
 msgid "Are you sure you want to approve ?"
-msgstr "Sei sicuro di voler approvare ?"
+msgstr "Sei sicuro di voler approvare?"
 
 msgid "Compensatory Leave Type"
-msgstr "Tipo Di Congedo Compensativo"
+msgstr "Tipo di congedo compensativo"
 
 msgid "This leave type will be used for assigning compensatory leaves."
-msgstr "Questo tipo di congedo sarà utilizzato per assegnare foglie compensative."
+msgstr "Questo tipo di congedo verrà utilizzato per l'assegnazione dei recuperi compensativi."
 
 msgid "Total Days"
-msgstr "Giorni Totali"
+msgstr "Giorni totali"
 
 msgid "Compensatory Leave Request"
-msgstr "Richiesta Di Congedi Compensativi"
+msgstr "Richiesta di congedo compensativo"
 
 msgid "Requested days Up To"
-msgstr "Giorni richiesti Fino a"
+msgstr "Giorni richiesti fino a"
 
 msgid "Requested days More Than "
-msgstr "Giorni richiesti Più di "
+msgstr "Giorni richiesti superiori a "
 
 msgid "There are no compensatory leave requests at the moment."
 msgstr "Al momento non ci sono richieste di congedo compensativo."
 
 msgid "Attendance Days"
-msgstr "Giorni Di Partecipazione"
+msgstr "Giorni di presenza"
 
 msgid "Reason for Rejection"
 msgstr "Motivo del rifiuto"
 
 msgid "Requests to Approve"
-msgstr "Richieste di Approvazione"
+msgstr "Richieste da approvare"
 
 msgid "Approved Leaves In This Month"
-msgstr "Foglie Approvate In Questo Mese"
+msgstr "Congedi approvati questo mese"
 
 msgid "Rejected Leaves In This Month"
-msgstr "Foglie Rifiutate In Questo Mese"
+msgstr "Congedi rifiutati questo mese"
 
 msgid "Employee Leaves"
-msgstr "Foglie Dei Dipendenti"
+msgstr "Congedi dei dipendenti"
 
 msgid "next"
 msgstr "successivo"
 
 msgid "View Personal Dashboard"
-msgstr "Visualizza Cruscotto Personale"
+msgstr "Visualizza dashboard personale"
 
 msgid "Next Holiday"
-msgstr "Prossima Vacanza"
+msgstr "Prossima festività"
 
 msgid "Upcoming holidays"
-msgstr "Prossime vacanze"
+msgstr "Festività in arrivo"
 
 msgid "Department Leaves"
-msgstr "Foglie Del Dipartimento"
+msgstr "Congedi del dipartimento"
 
 msgid "Today is a holiday."
-msgstr "Oggi è una vacanza."
+msgstr "Oggi è un giorno festivo."
 
 msgid "Leave Type - Count of leaves"
-msgstr "Lascia il tipo - Conteggio delle foglie"
+msgstr "Tipo di congedo - Conteggio giorni"
 
 msgid "Weekly Leave Analytics"
-msgstr "Analisi Foglie Settimanali"
+msgstr "Analisi settimanale dei congedi"
 
 msgid "Do you want to Approve this leave allocation request?"
-msgstr "Vuoi approvare questa richiesta di assegnazione di congedo?"
+msgstr "Vuoi approvare questa richiesta di assegnazione congedo?"
 
 msgid "Do you want to Approve this leave request?"
 msgstr "Vuoi approvare questa richiesta di congedo?"
 
 msgid "No employees have taken leave today."
-msgstr "Nessun dipendente ha preso il congedo oggi."
+msgstr "Nessun dipendente è in congedo oggi."
 
 msgid "New Requests"
-msgstr "Nuove Richieste"
+msgstr "Nuove richieste"
 
 msgid "Approved Requests"
-msgstr "Richieste Approvate"
+msgstr "Richieste approvate"
 
 msgid "Rejected Requests"
-msgstr "Richieste Rifiutate"
+msgstr "Richieste rifiutate"
 
 msgid "Available Leaves"
-msgstr "Foglie Disponibili"
+msgstr "Congedi disponibili"
 
 msgid "Total Leave Requests"
-msgstr "Totale Richieste Di Abbandono"
+msgstr "Totale richieste di congedo"
 
 msgid "View Admin Dashboard"
-msgstr "Visualizza Dashboard Amministratore"
+msgstr "Visualizza dashboard amministratore"
 
 msgid "Are you sure you want to delete?"
 msgstr "Sei sicuro di voler eliminare?"
 
 msgid "Create Holiday"
-msgstr "Crea Vacanza"
+msgstr "Crea festività"
 
 msgid "Update Holiday"
-msgstr "Aggiorna Vacanze"
+msgstr "Aggiorna festività"
 
 msgid "'s leave allocation request"
-msgstr "'s domanda di assegnazione del congedo"
+msgstr " - Richiesta di assegnazione congedo"
 
 msgid "Reject Leave Allocation Request"
-msgstr "Rifiuta Richiesta Di Allocazione Lascia"
+msgstr "Rifiuta richiesta di assegnazione congedo"
 
 msgid "Allocated days"
 msgstr "Giorni assegnati"
@@ -7158,73 +7158,73 @@ msgid "View attachment"
 msgstr "Visualizza allegato"
 
 msgid "There are no leave allocation requests at the moment."
-msgstr "Al momento non ci sono richieste di assegnazione di lascia."
+msgstr "Al momento non ci sono richieste di assegnazione congedo."
 
 msgid "My leave allocation request"
-msgstr "La mia richiesta di assegnazione di congedo"
+msgstr "La mia richiesta di assegnazione congedo"
 
 msgid "Leave allocation requests"
-msgstr "Lascia richieste di allocazione"
+msgstr "Richieste di assegnazione congedo"
 
 msgid "View Leave Available Leave"
-msgstr "Vedi Abbandono Disponibile"
+msgstr "Visualizza congedi disponibili"
 
 msgid "Import Assigned Leaves"
-msgstr "Importa Foglie Assegnate"
+msgstr "Importa congedi assegnati"
 
 msgid "All Assigned Leaves"
-msgstr "Tutte Le Foglie Assegnate"
+msgstr "Tutti i congedi assegnati"
 
 msgid "Selected Leaves"
-msgstr "Foglie Selezionate"
+msgstr "Congedi selezionati"
 
 msgid "Select All Leaves"
-msgstr "Seleziona Tutte Le Foglie"
+msgstr "Seleziona tutti i congedi"
 
 msgid "Unselect All Leaves"
-msgstr "Deseleziona Tutte Le Foglie"
+msgstr "Deseleziona tutti i congedi"
 
 msgid "Export Leaves"
-msgstr "Esporta Foglie"
+msgstr "Esporta congedi"
 
 msgid "There are no leave assigned at the moment."
-msgstr "Al momento non ci sono permessi assegnati."
+msgstr "Al momento non ci sono congedi assegnati."
 
 msgid "Used Leave Days"
-msgstr "Giorni Di Abbandono Usati"
+msgstr "Giorni di congedo usufruiti"
 
 msgid "Export Assigned Leaves"
-msgstr "Esporta Foglie Assegnate"
+msgstr "Esporta congedi assegnati"
 
 msgid "Assigned Leave"
-msgstr "Abbandono Assegnato"
+msgstr "Congedo assegnato"
 
 msgid "Available Days Greater or Equal"
-msgstr "Giorni disponibili Maggiore o uguale"
+msgstr "Giorni disponibili maggiori o uguali a"
 
 msgid "Available Days Less Than or Equal"
-msgstr "Giorni disponibili Meno di uguale o uguale"
+msgstr "Giorni disponibili minori o uguali a"
 
 msgid "Carryforward Days Greater or Equal"
-msgstr "Giorni di trasporto maggiore o uguale"
+msgstr "Giorni di riporto maggiori o uguali a"
 
 msgid "Carryforward Days Less Than or Equal"
-msgstr "Giorni di trasporto inferiori o uguali"
+msgstr "Giorni di riporto minori o uguali a"
 
 msgid "Total Leave Days Greater or Equal"
-msgstr "Totale Giorni di congedo Maggiore o uguale"
+msgstr "Totale giorni di congedo maggiori o uguali a"
 
 msgid "Total Leave Days Less Than or Equal"
-msgstr "Totale Lascia Giorni Meno di o uguale"
+msgstr "Totale giorni di congedo minori o uguali a"
 
 msgid "Update Available Leave"
-msgstr "Aggiornamento Abbandono Disponibile"
+msgstr "Aggiorna congedi disponibili"
 
 msgid "Assign Leaves"
-msgstr "Assegna Foglie"
+msgstr "Assegna congedi"
 
 msgid "Assign Leave"
-msgstr "Assegna Abbandono"
+msgstr "Assegna congedo"
 
 msgid "Are you sure you want to delete this assigned leave?"
 msgstr "Sei sicuro di voler eliminare questo congedo assegnato?"
@@ -7233,7 +7233,7 @@ msgid "Assigned Leave type not found."
 msgstr "Tipo di congedo assegnato non trovato."
 
 msgid "Leave types"
-msgstr "Lascia i tipi"
+msgstr "Tipi di congedo"
 
 msgid "Leave days"
 msgstr "Giorni di congedo"
@@ -7245,208 +7245,208 @@ msgid "Total days"
 msgstr "Giorni totali"
 
 msgid "My Leave Request"
-msgstr "La Mia Richiesta Di Lasciamento"
+msgstr "La mia richiesta di congedo"
 
 msgid "New Leave Request"
-msgstr "Nuova Richiesta Di Lascia"
+msgstr "Nuova richiesta di congedo"
 
 msgid "Extra Days"
-msgstr "Giorni Extra"
+msgstr "Giorni extra"
 
 msgid "You have No leave requests for this month."
 msgstr "Non hai richieste di congedo per questo mese."
 
 msgid "Leave type is not assigned for the selected employee."
-msgstr "Il tipo di congedo non è assegnato per il dipendente selezionato."
+msgstr "Il tipo di congedo non è stato assegnato al dipendente selezionato."
 
 msgid "Forecasted available days added to this Available Days (Carryforward Max. + Forcasted Days)"
-msgstr "Giorni disponibili previsti aggiunti a questo Giorni disponibili (Carryforward Max. + Forcasted Days)"
+msgstr "Giorni disponibili previsti aggiunti a questa voce (Massimo riportabile + Giorni stimati)"
 
 msgid "Pending Leaves Requests"
-msgstr "Richieste Foglie In Sospeso"
+msgstr "Richieste di congedo in sospeso"
 
 msgid "Select All Requests"
-msgstr "Seleziona Tutte Le Richieste"
+msgstr "Seleziona tutte le richieste"
 
 msgid "Unselect All Requests"
-msgstr "Deseleziona Tutte Le Richieste"
+msgstr "Deseleziona tutte le richieste"
 
 msgid "Export Requests"
-msgstr "Esporta Richieste"
+msgstr "Esporta richieste"
 
 msgid "has an interview in this requested date range."
-msgstr "ha un colloquio in questo intervallo di date richiesto."
+msgstr "ha un colloquio programmato in questo intervallo di date richiesto."
 
 msgid "Clashed Due To"
-msgstr "Scontro A Dovuto"
+msgstr "In conflitto a causa di"
 
 msgid "Same Department & Job Position"
-msgstr "Stesso Dipartimento E Posizione Del Lavoro"
+msgstr "Stesso dipartimento e qualifica"
 
 msgid "Same Department"
-msgstr "Stesso Dipartimento"
+msgstr "Stesso dipartimento"
 
 msgid "Same Job Position"
-msgstr "Stessa Posizione Lavoro"
+msgstr "Stessa qualifica professionale"
 
 msgid "No clashed requestes available for cancelled or rejected leaves."
-msgstr "Nessuna richiesta scontrata disponibile per le foglie cancellate o rifiutate."
+msgstr "Nessuna richiesta in conflitto disponibile per congedi annullati o rifiutati."
 
 msgid "No clashed requestes found"
-msgstr "Nessuna richiesta scontrata trovata"
+msgstr "Nessuna richiesta in conflitto trovata"
 
 msgid "Leave Clash"
-msgstr "Lascia Clash"
+msgstr "Conflitto tra congedi"
 
 msgid " Are you sure you want to delete ?"
 msgstr " Sei sicuro di voler eliminare?"
 
 msgid "Export Leave Requests"
-msgstr "Esporta Richieste Di Lasciamento"
+msgstr "Esporta richieste di congedo"
 
 msgid "From  Date"
-msgstr "Dalla Data"
+msgstr "Dalla data"
 
 msgid "Multiple Approvals"
-msgstr "Approvazioni Multiple"
+msgstr "Approvazioni multiple"
 
 msgid "Leave Description"
-msgstr "Lascia Descrizione"
+msgstr "Descrizione del congedo"
 
 msgid "Reason for Cancellation"
-msgstr "Motivo della cancellazione"
+msgstr "Motivo dell'annullamento"
 
 msgid "By enabling 'Deduct from carry forward' leave will cut/deduct from carry forward days"
-msgstr "Abilitando 'Deduct from carry forward' il congedo taglierà/dedurre dai giorni di riporto"
+msgstr "Abilitando 'Deduci dal riporto', i giorni di congedo verranno scalati dai giorni accumulati e riportati dall'anno precedente"
 
 msgid "Leave Requests"
-msgstr "Lascia Le Richieste"
+msgstr "Richieste di congedo"
 
 msgid "Create Leave Report"
-msgstr "Crea Resoconto Uscita"
+msgstr "Crea report congedi"
 
 msgid "Selected Requests"
-msgstr "Richieste Selezionate"
+msgstr "Richieste selezionate"
 
 msgid "There are no leave requests at the moment."
-msgstr "Non ci sono richieste di congedo al momento."
+msgstr "Al momento non ci sono richieste di congedo."
 
 msgid "Rejection"
 msgstr "Rifiuto"
 
 msgid "Bulk Rejection Reason"
-msgstr "Motivo Di Rifiuto Bulk"
+msgstr "Motivo del rifiuto massivo"
 
 msgid "Clashed Leave Requests"
-msgstr "Richieste Di Uscita In Battaglia"
+msgstr "Richieste di congedo in conflitto"
 
 msgid "Cancel Request"
-msgstr "Annulla Richiesta"
+msgstr "Annulla richiesta"
 
 msgid "Cancellation Reason"
-msgstr "Motivo Di Cancellazione"
+msgstr "Motivo dell'annullamento"
 
 msgid "All Leave Requests"
-msgstr "Tutte Le Richieste Di Abbandono"
+msgstr "Tutte le richieste di congedo"
 
 msgid "Back to Leave Request"
 msgstr "Torna alla richiesta di congedo"
 
 msgid "Create Leave Type"
-msgstr "Crea Tipo Di Uscita"
+msgstr "Crea tipo di congedo"
 
 msgid "Do you want to limit leave days for this leave type?"
 msgstr "Vuoi limitare i giorni di congedo per questo tipo di congedo?"
 
 msgid "Do you need to reset leaves based on conditions?"
-msgstr "Hai bisogno di ripristinare le foglie in base alle condizioni?"
+msgstr "È necessario azzerare i congedi in base a determinate condizioni?"
 
 msgid "The time period for the leave to reset."
-msgstr "Il periodo di tempo per il congedo da reimpostare."
+msgstr "Il periodo di tempo dopo il quale il congedo viene azzerato."
 
 msgid "The conditions for carrying forward the balance of leave."
-msgstr "Le condizioni per portare avanti la bilancia del congedo."
+msgstr "Le condizioni per il riporto del saldo dei congedi."
 
 msgid "The maximum number of leave that can be carried forward."
-msgstr "Il numero massimo di ferie che può essere trasportato."
+msgstr "Il numero massimo di giorni di congedo che si possono riportare all'anno successivo."
 
 msgid "The count of carryforward expire period"
-msgstr "Il conteggio del periodo di riporto scade"
+msgstr "Il valore numerico del periodo di scadenza del riporto"
 
 msgid "The time period for the expiration of carryforward leave."
-msgstr "Il periodo di tempo per la scadenza del congedo di riporto."
+msgstr "Il periodo di validità prima della scadenza dei congedi riportati."
 
 msgid "The date on which carryforward leave resets to 0. After this reset, the date will be updated to the next expiration period."
-msgstr "La data in cui il riporto lascia si azzera a 0. Dopo questo ripristino, la data verrà aggiornata al prossimo periodo di scadenza."
+msgstr "La data in cui i congedi riportati si azzerano. Dopo questo ripristino, la data verrà aggiornata al periodo di scadenza successivo."
 
 msgid "Do you need approval for leave from the authority?"
-msgstr "Avete bisogno di approvazione per il congedo da parte dell'autorità?"
+msgstr "È necessaria l'approvazione del congedo da parte di un responsabile?"
 
 msgid "Do you need to attach a document for leave?"
-msgstr "Hai bisogno di allegare un documento per partenza?"
+msgstr "È obbligatorio allegare un documento per il congedo?"
 
 msgid "Do you need to exclude company holidays from the requested leave days?"
-msgstr "È necessario escludere le vacanze aziendali dai giorni di congedo richiesti?"
+msgstr "È necessario escludere le festività aziendali dai giorni di congedo richiesti?"
 
 msgid "Do you need to exclude public holidays from the requested leave days?"
-msgstr "È necessario escludere i giorni festivi dai giorni festivi richiesti?"
+msgstr "È necessario escludere i giorni festivi nazionali dai giorni di congedo richiesti?"
 
 msgid "Do you need to encash pending leave days?"
-msgstr "Hai bisogno di incassare in attesa di giorni di congedo?"
+msgstr "È prevista la liquidazione in denaro dei giorni di congedo residui?"
 
 msgid "Assign to Employees"
-msgstr "Assegna ai Dipendenti"
+msgstr "Assegna ai dipendenti"
 
 msgid "Choose employees to assign this leave type"
-msgstr "Scegli i dipendenti per assegnare questo tipo di congedo"
+msgstr "Scegli i dipendenti a cui assegnare questo tipo di congedo"
 
 msgid "Leave Types"
-msgstr "Lascia Tipi"
+msgstr "Tipi di congedo"
 
 msgid "No leave types have been created yet."
 msgstr "Nessun tipo di congedo è stato ancora creato."
 
 msgid "Payment Method"
-msgstr "Metodo Di Pagamento"
+msgstr "Metodo di pagamento"
 
 msgid "Carry Forward Type"
-msgstr "Carry Forward Type"
+msgstr "Tipo di riporto congedi"
 
 msgid "Carry Forward greater Than or Equal"
-msgstr "Portare avanti maggiore o uguale"
+msgstr "Giorni riportati maggiori o uguali a"
 
 msgid "Carry Forward less Than or Equal"
-msgstr "Carry Forward less than or Equal"
+msgstr "Giorni riportati minori o uguali a"
 
 msgid "Total Days greater Than or Equal"
-msgstr "Giorni totali maggiori di uguale o uguale"
+msgstr "Giorni totali maggiori o uguali a"
 
 msgid "Total Days less Than or Equal"
-msgstr "Totale giorni meno di uguale o uguale"
+msgstr "Giorni totali minori o uguali a"
 
 msgid "Period In"
-msgstr "Periodo Di Ingresso"
+msgstr "Periodo espresso in"
 
 msgid "resetting the leaves based on conditions or not"
-msgstr "reimpostazione delle foglie in base alle condizioni o meno"
+msgstr "indica se azzerare o meno i congedi in base alle condizioni"
 
 msgid "Reset Based"
-msgstr "Reimposta Basato"
+msgstr "Azzeramento basato su"
 
 msgid "Reset weekend"
 msgstr "Reimposta fine settimana"
 
 msgid "Maximum Carryforward"
-msgstr "Portata Massima"
+msgstr "Riporto massimo consentito"
 
 msgid "Carryforward Expire in"
-msgstr "Scadenza in"
+msgstr "Scadenza del riporto tra"
 
 msgid "Carryforward Expire period"
-msgstr "Riporto Periodo di scadenza"
+msgstr "Periodo di scadenza del riporto"
 
 msgid "Exclude company Leaves"
-msgstr "Escludi Foglie di società"
+msgstr "Escludi chiusure aziendali"
 
 msgid "Do you really want to delete this leave type?"
 msgstr "Vuoi davvero eliminare questo tipo di congedo?"
@@ -7455,148 +7455,148 @@ msgid "There are no leave types to view"
 msgstr "Non ci sono tipi di congedo da visualizzare"
 
 msgid "Update Leave Type"
-msgstr "Aggiorna Tipo Di Abbandono"
+msgstr "Aggiorna tipo di congedo"
 
 msgid "View Leave Types"
-msgstr "Visualizza Tipi Di Abbandono"
+msgstr "Visualizza tipi di congedo"
 
 msgid "Carryforward Expire"
-msgstr "Scadenza Riporto"
+msgstr "Scadenza del riporto"
 
 msgid "Exclude Company Leaves"
-msgstr "Escludi Foglie Aziendali"
+msgstr "Escludi chiusure aziendali"
 
 msgid "Select All Days"
-msgstr "Seleziona Tutti I Giorni"
+msgstr "Seleziona tutti i giorni"
 
 msgid "Unselect All Days"
-msgstr "Deseleziona Tutti I Giorni"
+msgstr "Deseleziona tutti i giorni"
 
 msgid "All Leave types are Restricted"
-msgstr "Tutti i tipi di congedo sono limitati"
+msgstr "Tutti i tipi di congedo sono soggetti a restrizioni"
 
 msgid "Restricted for these Leave Types"
-msgstr "Limitato per questi tipi di congedo"
+msgstr "Restrizioni applicate a questi tipi di congedo"
 
 msgid "Excluded Leave Types"
-msgstr "Tipi Di Congedo Esclusi"
+msgstr "Tipi di congedo esclusi dalle restrizioni"
 
 msgid "No restricted date available."
-msgstr "Nessuna data limitata disponibile."
+msgstr "Nessuna data soggetta a restrizioni disponibile."
 
 msgid "Restrict Leaves"
-msgstr "Limita Foglie"
+msgstr "Blocco / Restrizione congedi"
 
 msgid "Create Restricted Day"
-msgstr "Crea Giorno Limitato"
+msgstr "Crea giorno con restrizioni"
 
 msgid "Update Restricted Day"
-msgstr "Aggiorna Giorno Limitato"
+msgstr "Aggiorna giorno con restrizioni"
 
 msgid "Restricted Days"
-msgstr "Giorni Limitati"
+msgstr "Giorni con restrizioni"
 
 msgid "Restrict Past Leave"
-msgstr "Limita La Lasciata Passata"
+msgstr "Limita congedi retroattivi"
 
 msgid "Restricts Past Date Leave Request Creation"
-msgstr "Limita Data Passata Lasciare La Richiesta Creazione"
+msgstr "Impedisce la creazione di richieste di congedo per date passate"
 
 msgid "By enabling this only admins and managers can create leave requests for the past dates"
-msgstr "Abilitando questo solo amministratori e manager possono creare richieste di congedo per le date passate"
+msgstr "Abilitando questa opzione, solo gli amministratori e i manager potranno inserire richieste di congedo con date retroattive"
 
 msgid "Are you sure you want to delete this leave request?"
 msgstr "Sei sicuro di voler eliminare questa richiesta di congedo?"
 
 msgid "Create Leave Request"
-msgstr "Crea Richiesta Di Abbandono"
+msgstr "Crea richiesta di congedo"
 
 msgid "has interview in the requested date."
-msgstr "ha intervista nella data richiesta."
+msgstr "ha un colloquio nella data richiesta."
 
 msgid "Are you sure want to proceed with the request ?"
 msgstr "Sei sicuro di voler procedere con la richiesta?"
 
 msgid "Leave Request Update"
-msgstr "Lascia L'Aggiornamento Richiesta"
+msgstr "Aggiornamento richiesta di congedo"
 
 msgid "My Leave Requests"
-msgstr "Le Mie Richieste Di Abbandono"
+msgstr "Le mie richieste di congedo"
 
 msgid "You have an interview in this requested date range."
-msgstr "Hai un colloquio in questo intervallo di date richiesto."
+msgstr "Hai un colloquio programmato in questo intervallo di date."
 
 msgid "View Leave Request"
-msgstr "Vedi Richiesta Di Abbandono"
+msgstr "Visualizza richiesta di congedo"
 
 msgid "My Leave"
-msgstr "Il Mio Abbandono"
+msgstr "I miei congedi"
 
 msgid "User Leave"
-msgstr "Uscita Utente"
+msgstr "Congedi utente"
 
 msgid "New leave type Created.."
-msgstr "Nuovo tipo di congedo Creato.."
+msgstr "Nuovo tipo di congedo creato."
 
 msgid "Leave type not found"
 msgstr "Tipo di congedo non trovato"
 
 msgid "Leave type is updated successfully.."
-msgstr "Il tipo di congedo è stato aggiornato con successo.."
+msgstr "Tipo di congedo aggiornato con successo."
 
 msgid "Leave type deleted successfully.."
-msgstr "Lascia il tipo cancellato con successo.."
+msgstr "Tipo di congedo eliminato con successo."
 
 msgid "Leave type not found."
-msgstr "Tipo di uscita non trovato."
+msgstr "Tipo di congedo non trovato."
 
 msgid "This leave types are already in use for {}"
 msgstr "Questo tipo di congedo è già in uso per {}"
 
 msgid "Leave request created successfully.."
-msgstr "Lascia la richiesta creata con successo.."
+msgstr "Richiesta di congedo creata con successo."
 
 msgid "Leave request is updated successfully.."
-msgstr "La richiesta di congedo è stata aggiornata con successo.."
+msgstr "Richiesta di congedo aggiornata con successo."
 
 msgid "Leave request deleted successfully.."
-msgstr "Lascia la richiesta cancellata con successo.."
+msgstr "Richiesta di congedo eliminata con successo."
 
 msgid "Leave request not found."
-msgstr "Richiesta di uscita non trovata."
+msgstr "Richiesta di congedo non trovata."
 
 msgid "Leave request approved successfully.."
-msgstr "Lascia la richiesta approvata con successo.."
+msgstr "Richiesta di congedo approvata con successo."
 
 msgid "Leave request already approved"
-msgstr "Lascia la richiesta già approvata"
+msgstr "Richiesta di congedo già approvata"
 
 msgid "{} {} request already approved"
-msgstr "{} {} richiesta già approvata"
+msgstr "Richiesta di {} {} già approvata"
 
 msgid "{} {} request date exceeded"
-msgstr "{} {} data richiesta superata"
+msgstr "Data della richiesta di {} {} superata"
 
 msgid "{} {} can't approve."
-msgstr "{} {} non può approvare."
+msgstr "Impossibile approvare {} {}."
 
 msgid "Leave request not found"
-msgstr "Richiesta di uscita non trovata"
+msgstr "Richiesta di congedo non trovata"
 
 msgid "Leave request rejected successfully.."
-msgstr "Lascia la richiesta rifiutata con successo.."
+msgstr "Richiesta di congedo rifiutata con successo."
 
 msgid "Leave request already rejected."
-msgstr "Lascia la richiesta già rifiutata."
+msgstr "Richiesta di congedo già rifiutata."
 
 msgid "Leave request cancelled successfully.."
-msgstr "Richiesta di abbandono annullata con successo.."
+msgstr "Richiesta di congedo annullata con successo."
 
 msgid "You can't cancel this leave request."
 msgstr "Non puoi annullare questa richiesta di congedo."
 
 msgid "You don't have the permission."
-msgstr "Non hai il permesso."
+msgstr "Non hai i permessi necessari."
 
 msgid "Compensatory leave type cannot be assigned manually."
 msgstr "Il tipo di congedo compensativo non può essere assegnato manualmente."
@@ -7605,31 +7605,31 @@ msgid "Successfully assigned leave type to {} employees."
 msgstr "Tipo di congedo assegnato con successo a {} dipendenti."
 
 msgid "Leave type is already assigned to some selected {} employees."
-msgstr "Il tipo di congedo è già assegnato ad alcuni dipendenti selezionati {}."
+msgstr "Il tipo di congedo è già assegnato ad alcuni dei dipendenti selezionati ({})."
 
 msgid "Leave types assigned successfully."
 msgstr "Tipi di congedo assegnati con successo."
 
 msgid "Some leave types were already assigned to {} employees."
-msgstr "Alcuni tipi di congedo sono già stati assegnati a {} dipendenti."
+msgstr "Alcuni tipi di congedo erano già assegnati a {} dipendenti."
 
 msgid "Available leaves updated successfully..."
-msgstr "Foglie disponibili aggiornate con successo..."
+msgstr "Congedi disponibili aggiornati con successo."
 
 msgid "Assigned leave successfully deleted."
-msgstr "Congedo assegnato cancellato correttamente."
+msgstr "Congedo assegnato eliminato con successo."
 
 msgid "Assigned leave not found."
 msgstr "Congedo assegnato non trovato."
 
 msgid "Related entries exist."
-msgstr "Voci correlate esistono."
+msgstr "Esistono voci correlate."
 
 msgid "{} assigned leaves deleted successfully "
-msgstr "{} foglie assegnate cancellate con successo "
+msgstr "{} congedi assegnati eliminati con successo "
 
 msgid "This badge id does not exist."
-msgstr "Questo badge id non esiste."
+msgstr "Questo ID badge non esiste."
 
 msgid "This leave type does not exist."
 msgstr "Questo tipo di congedo non esiste."
@@ -7638,52 +7638,52 @@ msgid "Leave type has already been assigned to the employee."
 msgstr "Il tipo di congedo è già stato assegnato al dipendente."
 
 msgid "Invalid date format. Please use YYYY-MM-DD or a supported format."
-msgstr "Formato data non valido. Si prega di utilizzare YYY-MM-DD o un formato supportato."
+msgstr "Formato data non valido. Usa il formato AAAA-MM-GG o un altro formato supportato."
 
 msgid "Assigned Leaves"
-msgstr "Foglie Assegnate"
+msgstr "Congedi assegnati"
 
 msgid "Restricted day created successfully.."
-msgstr "Limitato giorno creato con successo.."
+msgstr "Giorno con restrizioni creato con successo."
 
 msgid "Restricted day updated successfully.."
-msgstr "Giorno limitato aggiornato con successo.."
+msgstr "Giorno con restrizioni aggiornato con successo."
 
 msgid "Restricted day deleted successfully.."
-msgstr "Giorno limitato eliminato con successo.."
+msgstr "Giorno con restrizioni eliminato con successo."
 
 msgid "Restricted day not found."
-msgstr "Giorno limitato non trovato."
+msgstr "Giorno con restrizioni non trovato."
 
 msgid "{} Leave restricted days deleted successfully"
-msgstr "{} Lascia giorni limitati eliminati con successo"
+msgstr "{} giorni con restrizioni sui congedi eliminati con successo"
 
 msgid "Restricted Days not found"
-msgstr "Giorni ristretti non trovati"
+msgstr "Giorni con restrizioni non trovati"
 
 msgid "Something went wrong"
 msgstr "Qualcosa è andato storto"
 
 msgid "Leave request updated successfully.."
-msgstr "Richiesta di abbandono aggiornata con successo.."
+msgstr "Richiesta di congedo aggiornata con successo."
 
 msgid "You dont have enough leave days to make the request.."
-msgstr "Non hai abbastanza giorni di congedo per fare la richiesta.."
+msgstr "Non hai abbastanza giorni di congedo per effettuare la richiesta."
 
 msgid "You can't update this leave request..."
-msgstr "Non puoi aggiornare questa richiesta di congedo..."
+msgstr "Non puoi aggiornare questa richiesta di congedo."
 
 msgid "User has no leave request.."
 msgstr "L'utente non ha alcuna richiesta di congedo."
 
 msgid "User is not an employee.."
-msgstr "Utente non è un dipendente.."
+msgstr "L'utente non è censito come dipendente."
 
 msgid "Total leaves available"
-msgstr "Totale foglie disponibili"
+msgstr "Totale congedi disponibili"
 
 msgid "Oops!! No leaves available for you this month..."
-msgstr "Oops!! Non ci sono foglie disponibili per voi questo mese..."
+msgstr "Oops! Non hai congedi disponibili per questo mese."
 
 msgid "No leave request this month"
 msgstr "Nessuna richiesta di congedo questo mese"
@@ -7692,59 +7692,59 @@ msgid "No leave requests for this month."
 msgstr "Nessuna richiesta di congedo per questo mese."
 
 msgid "No leave requests for any leave type this month."
-msgstr "Nessuna richiesta di congedo per qualsiasi tipo di congedo questo mese."
+msgstr "Nessuna richiesta di congedo per alcun tipo di congedo questo mese."
 
 msgid "Leave Trends"
-msgstr "Abbandona Le Tendenze"
+msgstr "Andamento dei congedi"
 
 msgid "New Leave allocation request is created"
-msgstr "È stata creata una nuova richiesta di assegnazione del permesso"
+msgstr "Una nuova richiesta di assegnazione congedo è stata creata"
 
 msgid "Leave allocation request is updated successfully."
-msgstr "La richiesta di assegnazione è stata aggiornata con successo."
+msgstr "La richiesta di assegnazione congedo è stata aggiornata con successo."
 
 msgid "You can't update this request..."
-msgstr "Non puoi aggiornare questa richiesta..."
+msgstr "Non puoi aggiornare questa richiesta."
 
 msgid "Leave allocation request approved successfully"
-msgstr "Lascia la richiesta di allocazione approvata con successo"
+msgstr "Richiesta di assegnazione congedo approvata con successo"
 
 msgid "The leave allocation request can't be approved"
-msgstr "La richiesta di assegnazione del permesso non può essere approvata"
+msgstr "Impossibile approvare la richiesta di assegnazione congedo"
 
 msgid "Leave allocation request rejected successfully"
-msgstr "Lascia la richiesta di allocazione rifiutata con successo"
+msgstr "Richiesta di assegnazione congedo rifiutata con successo"
 
 msgid "The leave allocation request can't be rejected"
-msgstr "La richiesta di assegnazione del permesso non può essere rifiutata"
+msgstr "Impossibile rifiutare la richiesta di assegnazione congedo"
 
 msgid "Leave allocation request deleted successfully.."
-msgstr "Lascia la richiesta di allocazione eliminata con successo.."
+msgstr "Richiesta di assegnazione congedo eliminata con successo."
 
 msgid "Approved request can't be deleted."
-msgstr "La richiesta approvata non può essere eliminata."
+msgstr "Le richieste approvate non possono essere eliminate."
 
 msgid "Leave allocation request not found."
-msgstr "Lasciare la richiesta di allocazione non trovata."
+msgstr "Richiesta di assegnazione congedo non trovata."
 
 msgid "Related entries exist"
-msgstr "Voci correlate esistono"
+msgstr "Esistono voci correlate"
 
 msgid "{}'s leave request cannot be deleted."
-msgstr "{}'s leave request cannot be deleted."
+msgstr "La richiesta di congedo di {} non può essere eliminata."
 
 msgid "An error occurred: {}."
 msgstr "Si è verificato un errore: {}."
 
 #, python-brace-format
 msgid "{count}  leave request(s) successfully deleted."
-msgstr "{count}  lascia le richieste cancellate con successo."
+msgstr "{count} richiesta/e di congedo eliminata/e con successo."
 
 msgid "Leave request deleted."
-msgstr "Lascia la richiesta eliminata."
+msgstr "Richiesta di congedo eliminata."
 
 msgid "You cannot delete leave request with status {}."
-msgstr "Non puoi eliminare la richiesta di congedo con lo stato {}."
+msgstr "Impossibile eliminare una richiesta di congedo con stato {}."
 
 msgid "Compensatory leave is enabled successfully!"
 msgstr "Congedo compensativo abilitato con successo!"
@@ -7759,22 +7759,22 @@ msgid "Compensatory Leave created."
 msgstr "Congedo compensativo creato."
 
 msgid "Compensatory leave request deleted."
-msgstr "Richiesta di congedo compensativo cancellata."
+msgstr "Richiesta di congedo compensativo eliminata."
 
 msgid "Sorry, something went wrong!"
-msgstr "Siamo spiacenti, qualcosa è andato storto!"
+msgstr "Spiacenti, si è verificato un errore!"
 
 msgid "Compensatory leave request approved."
 msgstr "Richiesta di congedo compensativo approvata."
 
 msgid "The compensatory leave request is not in the 'requested' status."
-msgstr "La richiesta di congedo compensativo non rientra nello status di 'richiesto'."
+msgstr "La richiesta di congedo compensativo non si trova nello stato 'richiesto'."
 
 msgid "Compensatory Leave request rejected."
-msgstr "Richiesta di congedo compensativo respinta."
+msgstr "Richiesta di congedo compensativo rifiutata."
 
 msgid "Ongoing"
-msgstr "In Corso"
+msgstr "In corso"
 
 msgid "Completed"
 msgstr "Completato"
@@ -7783,13 +7783,13 @@ msgid "Notice period"
 msgstr "Periodo di preavviso"
 
 msgid "FnF Settlement"
-msgstr "Regolamento FnF"
+msgstr "Liquidazione finale (FnF)"
 
 msgid "Work handover"
-msgstr "Trasferimento di lavoro"
+msgstr "Passaggio di consegne"
 
 msgid "Todo"
-msgstr "Todo"
+msgstr "Da fare"
 
 msgid "In progress"
 msgstr "In corso"
@@ -7801,97 +7801,97 @@ msgid "Offboarding"
 msgstr "Offboarding"
 
 msgid "Exit Process"
-msgstr "Esci Dal Processo"
+msgstr "Processo di uscita"
 
 msgid "Resignation Letters"
-msgstr "Lettere Dimissioni"
+msgstr "Lettere di dimissioni"
 
 msgid "Not Returned Assets"
-msgstr "Attività Non Restituite"
+msgstr "Beni non restituiti"
 
 msgid "Reminder"
 msgstr "Promemoria"
 
 msgid "No Assets Due for Return from Offboarding Employees."
-msgstr "Nessun bene dovuto per il ritorno da dipendenti Offboarding"
+msgstr "Nessun bene da restituire da parte dei dipendenti in offboarding."
 
 msgid "Exit Ratio"
-msgstr "Rapporto Di Uscita"
+msgstr "Tasso di turnover (uscite)"
 
 msgid "Archived Employees / Total Employees"
-msgstr "Archiviato Dipendenti / Totale Dipendenti"
+msgstr "Dipendenti archiviati / Totale dipendenti"
 
 msgid "Exiting to Joining Ratio"
-msgstr "Uscita al rapporto di adesione"
+msgstr "Rapporto tra uscite ed entrate"
 
 msgid "Exiting Employees : Joining Employees"
-msgstr "Dipendenti In Uscita: Aderire Ai Dipendenti"
+msgstr "Dipendenti in uscita : Nuovi assunti"
 
 msgid "Archived Employees"
-msgstr "Dipendenti Archiviati"
+msgstr "Dipendenti archiviati"
 
 msgid "Department - JobPosition Offboarding"
-msgstr "Dipartimento - Offboarding JobPosition"
+msgstr "Offboarding per Dipartimento - Qualifica"
 
 msgid "Joining and Offboarding Chart"
-msgstr "Iscrizione e Offboarding Grafico"
+msgstr "Grafico ingressi e cessazioni"
 
 msgid "Offboarding Employees Feedbacks"
-msgstr "Offboarding Feedback Dipendenti"
+msgstr "Feedback dei dipendenti in offboarding"
 
 msgid "Feedback"
 msgstr "Feedback"
 
 msgid "No feedbacks for Offboarding Employees."
-msgstr "Nessun feedback per il Offboarding Dipendenti."
+msgstr "Nessun feedback disponibile per i dipendenti in offboarding."
 
 msgid "Task Status"
-msgstr "Stato Attività"
+msgstr "Stato dell'attività"
 
 msgid "Stage"
 msgstr "Fase"
 
 msgid "No Pending Tasks for Offboarding Employees."
-msgstr "Nessun compito in sospeso per i dipendenti di Offboarding"
+msgstr "Nessuna attività in sospeso per i dipendenti in offboarding."
 
 msgid "stage"
 msgstr "fase"
 
 msgid "Notice Period Starts"
-msgstr "Avviso Periodo Inizia"
+msgstr "Inizio periodo di preavviso"
 
 msgid "Notice Period Ends"
-msgstr "Periodo Di Avviso Termina"
+msgstr "Fine periodo di preavviso"
 
 msgid "Managers"
-msgstr "Gestori"
+msgstr "Responsabili"
 
 msgid "Contact"
 msgstr "Contatto"
 
 msgid "Notice Period start Date"
-msgstr "Avviso Data inizio periodo"
+msgstr "Data inizio periodo di preavviso"
 
 msgid "Notice Period end Date"
-msgstr "Data fine del periodo di preavviso"
+msgstr "Data fine periodo di preavviso"
 
 msgid "Tasks"
-msgstr "Compiti"
+msgstr "Attività"
 
 msgid "There is no offboardings at this moment."
-msgstr "In questo momento non ci sono imbarchi esterni."
+msgstr "Al momento non ci sono processi di offboarding attivi."
 
 msgid "Planned to resign"
-msgstr "Previsto per le dimissioni"
+msgstr "Dimissioni pianificate"
 
 msgid "Job position"
-msgstr "Posizione del lavoro"
+msgstr "Qualifica professionale"
 
 msgid "Planned To Leave"
-msgstr "Pianificato Da Lasciare"
+msgstr "Uscita pianificata"
 
 msgid "Do You really want to approve the request"
-msgstr "Vuoi davvero approvare la richiesta"
+msgstr "Vuoi davvero approvare la richiesta?"
 
 msgid "Do You really want to reject the request?"
 msgstr "Vuoi davvero respingere la richiesta?"
@@ -7900,34 +7900,34 @@ msgid "Resignations"
 msgstr "Dimissioni"
 
 msgid " Send Mail"
-msgstr " Invia Email"
+msgstr " Invia email"
 
 msgid "Do you want to delete this record"
-msgstr "Vuoi eliminare questo record"
+msgstr "Vuoi eliminare questo record?"
 
 msgid "No search results found!"
-msgstr "Nessun risultato di ricerca trovato!"
+msgstr "Nessun risultato di ricerca trovato."
 
 msgid "Do you want to delete this letter"
-msgstr "Vuoi eliminare questa lettera"
+msgstr "Vuoi eliminare questa lettera?"
 
 msgid "No resignation has been created yet."
-msgstr "Nessuna dimissione è stata ancora creata."
+msgstr "Nessuna dimissione è stata ancora inserita."
 
 msgid "Resignation Request"
-msgstr "Richiesta Di Dimissioni"
+msgstr "Richiesta di dimissioni"
 
 msgid "By enabling this normal users can request for their resignation progress"
-msgstr "Abilitando questo normale utente può richiedere il loro progresso di dimissioni"
+msgstr "Abilitando questa opzione, gli utenti standard possono richiedere lo stato di avanzamento delle proprie dimissioni"
 
 msgid "Are you sure want to delete this stage?"
 msgstr "Sei sicuro di voler eliminare questa fase?"
 
 msgid "Notice Period"
-msgstr "Periodo Di Avviso"
+msgstr "Periodo di preavviso"
 
 msgid "Add Task"
-msgstr "Aggiungi Attività"
+msgstr "Aggiungi attività"
 
 msgid "today"
 msgstr "oggi"
@@ -7936,7 +7936,7 @@ msgid "Notice period ended"
 msgstr "Periodo di preavviso terminato"
 
 msgid "Show managing records"
-msgstr "Mostra la gestione dei record"
+msgstr "Mostra i record gestiti"
 
 msgid "Offboarding saved"
 msgstr "Offboarding salvato"
@@ -7948,13 +7948,13 @@ msgid "Offboarding not found"
 msgstr "Offboarding non trovato"
 
 msgid "Stage saved"
-msgstr "Stage salvato"
+msgstr "Fase salvata"
 
 msgid "Employee saved"
 msgstr "Dipendente salvato"
 
 msgid "Offboarding employee deleted"
-msgstr "Offboarding dipendente cancellato"
+msgstr "Dipendente in offboarding eliminato"
 
 msgid "Employees not found"
 msgstr "Dipendenti non trovati"
@@ -7966,7 +7966,7 @@ msgid "Stage not found"
 msgstr "Fase non trovata"
 
 msgid "stage changed successfully."
-msgstr "fase cambiata con successo."
+msgstr "Fase modificata con successo."
 
 msgid "Note added successfully"
 msgstr "Nota aggiunta con successo"
@@ -7978,13 +7978,13 @@ msgid "Note not found."
 msgstr "Nota non trovata."
 
 msgid "Task Added"
-msgstr "Attività Aggiunta"
+msgstr "Attività aggiunta"
 
 msgid "Task status changed successfully."
-msgstr "Stato dell'attività cambiato con successo."
+msgstr "Stato dell'attività modificato con successo."
 
 msgid "Task Assigned"
-msgstr "Attività Assegnata"
+msgstr "Attività assegnata"
 
 msgid "Task deleted"
 msgstr "Attività eliminata"
@@ -7993,10 +7993,10 @@ msgid "Task not found"
 msgstr "Attività non trovata"
 
 msgid "Resignation letter deleted"
-msgstr "Lettera di dimissione eliminata"
+msgstr "Lettera di dimissioni eliminata"
 
 msgid "Resignation letter saved"
-msgstr "Lettera di dimissione salvata"
+msgstr "Lettera di dimissioni salvata"
 
 msgid "Resignation Request setting has been {} successfully."
 msgstr "L'impostazione della richiesta di dimissioni è stata {} con successo."
