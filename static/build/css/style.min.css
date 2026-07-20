@@ -16625,4 +16625,36 @@ a.oh-profile-dropdown-link:hover {
   height: 100vh !important;
 }
 
+:root {
+  --oh-border-radius: 18px;
+}
+
+.oh-card,
+.oh-list-cards__item,
+.oh-kanban-card,
+.oh-dropdown__menu,
+.oh-dropdown__import,
+.oh-sticky-table,
+.oh-table,
+.table-responsive,
+.oh-modal__dialog,
+.modal-content,
+.dropdown-menu,
+.popover {
+  border-radius: var(--oh-border-radius);
+}
+
+.oh-btn,
+.oh-btn:focus,
+.oh-btn:focus-visible,
+.oh-input,
+.oh-select,
+.form-control,
+.form-select,
+.input-group-text,
+.btn,
+.pagination .page-link {
+  border-radius: var(--oh-border-radius);
+}
+
 /*# sourceMappingURL=style.min.css.map */

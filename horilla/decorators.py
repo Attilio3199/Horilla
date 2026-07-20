@@ -23,6 +23,16 @@ decorator_with_arguments = (
 )
 
 
+def handle_no_permission(request):
+    """Return the standard response for an authenticated, unauthorized user."""
+    messages.info(request, _("You don't have permission."))
+    if request.META.get("HTTP_HX_REQUEST"):
+        return render(request, "decorator_404.html")
+
+    previous_url = request.META.get("HTTP_REFERER", "/")
+    return HttpResponse(f'<script>window.location.href = "{previous_url}"</script>')
+
+
 def check_manager(employee, instance):
     from employee.models import Employee
 

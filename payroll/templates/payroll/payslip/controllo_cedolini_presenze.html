@@ -73,7 +73,7 @@
           placeholder="{% trans 'Cerca per nome o codice...' %}"
           autocomplete="off"
         >
-        <div id="dip-list" style="max-height:280px;overflow-y:auto;border:1px solid #dee2e6;border-radius:4px;padding:6px;">
+        <div id="dip-list" style="max-height:280px;overflow-y:auto;border:1px solid #dee2e6;border-radius:18px;padding:6px;">
           {% for d in dipendenti_mysql %}
           <div class="dip-item d-flex align-items-center gap-2 py-1 px-1">
             <input
@@ -513,7 +513,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div id="modal-aggiungi-diz"
      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45);
             z-index:1055; align-items:center; justify-content:center;">
-  <div style="background:#fff; border-radius:8px; width:100%; max-width:480px;
+  <div style="background:#fff; border-radius:18px; width:100%; max-width:480px;
               padding:1.5rem; box-shadow:0 8px 32px rgba(0,0,0,.25);">
     <div class="d-flex align-items-center justify-content-between mb-3">
       <h5 class="mb-0 fw-bold">{% trans "Aggiungi voce al dizionario" %}</h5>
@@ -572,7 +572,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div id="modal-aggiungi-regola"
      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45);
             z-index:1055; align-items:center; justify-content:center;">
-  <div style="background:#fff; border-radius:8px; width:100%; max-width:560px;
+  <div style="background:#fff; border-radius:18px; width:100%; max-width:560px;
               padding:1.5rem; box-shadow:0 8px 32px rgba(0,0,0,.25);">
     <div class="d-flex align-items-center justify-content-between mb-3">
       <h5 class="mb-0 fw-bold">{% trans "Aggiungi regola avanzata" %}</h5>
