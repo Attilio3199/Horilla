@@ -49,6 +49,11 @@ _STRIP_COL_ATTRS = re.compile(
     re.I,
 )
 
+# These fields are deliberately not replicated in the reporting table.  Keep
+# the list centralised because an ignored field must be removed from both the
+# DDL and the values in every INSERT statement.
+_IGNORED_COLUMNS = {"preferenza"}
+
 
 def _convert_type(col_def: str) -> str:
     """Apply all type and attribute mappings to a single column definition."""
@@ -132,6 +137,27 @@ def _split_columns(inner: str) -> list[str]:
     return items
 
 
+def _column_name(definition: str) -> str | None:
+    """Return the column name from a CREATE TABLE item, if it is a column."""
+    match = re.match(r'\s*[`"\']?([^`"\'\s(]+)[`"\']?', definition)
+    return match.group(1) if match else None
+
+
+def _source_columns(mysql_ddl: str) -> list[str]:
+    """Read the source column order from a MariaDB CREATE TABLE statement."""
+    open_paren = mysql_ddl.index("(")
+    close_paren = _find_matching_paren(mysql_ddl, open_paren)
+    columns = []
+    for item in _split_columns(mysql_ddl[open_paren + 1 : close_paren]):
+        upper = item.upper().lstrip()
+        if re.match(r"(PRIMARY\s+KEY|UNIQUE\s+(KEY|INDEX)|KEY\s+|INDEX\s+|CONSTRAINT\b)", upper):
+            continue
+        name = _column_name(item)
+        if name:
+            columns.append(name)
+    return columns
+
+
 def _extract_create_table(sql_text: str, table_name: str) -> str | None:
     """
     Find and return the full CREATE TABLE block for *table_name*.
@@ -188,6 +214,10 @@ def _parse_create_table(mysql_ddl: str) -> str:
             pg_items.append(item)
             continue
 
+        column_name = _column_name(item)
+        if column_name and column_name.lower() in _IGNORED_COLUMNS:
+            continue
+
         # Dequote column names: `ColName` → "ColName"
         item = re.sub(r"`([^`]+)`", r'"\1"', item)
 
@@ -211,7 +241,125 @@ def _parse_create_table(mysql_ddl: str) -> str:
     return f'CREATE TABLE IF NOT EXISTS "_turni_creati" (\n    {body}\n);'
 
 
-def _extract_inserts(sql_text: str, source_table: str) -> list[str]:
+def _find_sql_paren(text: str, open_pos: int) -> int:
+    """Find a closing parenthesis while respecting SQL quoted literals."""
+    depth = 0
+    quote = None
+    i = open_pos
+    while i < len(text):
+        char = text[i]
+        if quote:
+            if char == "\\\\":
+                i += 2
+                continue
+            if char == quote:
+                # SQL escapes a quote by doubling it.
+                if i + 1 < len(text) and text[i + 1] == quote:
+                    i += 2
+                    continue
+                quote = None
+        elif char in "'\"`":
+            quote = char
+        elif char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+            if depth == 0:
+                return i
+        i += 1
+    raise ValueError("Unmatched parenthesis in SQL values.")
+
+
+def _split_sql_values(values: str) -> list[str]:
+    """Split a VALUES tuple without splitting commas in strings/functions."""
+    items: list[str] = []
+    depth = 0
+    quote = None
+    start = 0
+    i = 0
+    while i < len(values):
+        char = values[i]
+        if quote:
+            if char == "\\\\":
+                i += 2
+                continue
+            if char == quote:
+                if i + 1 < len(values) and values[i + 1] == quote:
+                    i += 2
+                    continue
+                quote = None
+        elif char in "'\"`":
+            quote = char
+        elif char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+        elif char == "," and depth == 0:
+            items.append(values[start:i].strip())
+            start = i + 1
+        i += 1
+    items.append(values[start:].strip())
+    return items
+
+
+def _rewrite_ignored_columns(stmt: str, source_columns: list[str]) -> str:
+    """Remove ignored columns and their corresponding values from an INSERT."""
+    header = re.match(
+        r'^INSERT\s+INTO\s+"_turni_creati"\s*(?P<columns>\([^)]*\))?\s*VALUES\s*',
+        stmt,
+        re.I | re.S,
+    )
+    if not header:
+        return stmt
+
+    columns_text = header.group("columns")
+    columns = (
+        [_column_name(column) or "" for column in _split_columns(columns_text[1:-1])]
+        if columns_text
+        else source_columns
+    )
+    ignored_indexes = [
+        index for index, column in enumerate(columns) if column.lower() in _IGNORED_COLUMNS
+    ]
+    if not ignored_indexes:
+        return stmt
+
+    kept_columns = [
+        column for index, column in enumerate(columns) if index not in ignored_indexes
+    ]
+    values_text = stmt[header.end() :].rstrip()
+    if values_text.endswith(";"):
+        values_text = values_text[:-1].rstrip()
+
+    tuples = []
+    position = 0
+    while position < len(values_text):
+        while position < len(values_text) and values_text[position].isspace():
+            position += 1
+        if position >= len(values_text) or values_text[position] != "(":
+            raise ValueError("Formato VALUES non supportato per l'importazione.")
+        end = _find_sql_paren(values_text, position)
+        values = _split_sql_values(values_text[position + 1 : end])
+        if len(values) != len(columns):
+            raise ValueError("Numero di valori non coerente con le colonne del dump.")
+        tuples.append(
+            "(" + ",".join(value for index, value in enumerate(values) if index not in ignored_indexes) + ")"
+        )
+        position = end + 1
+        while position < len(values_text) and values_text[position].isspace():
+            position += 1
+        if position < len(values_text):
+            if values_text[position] != ",":
+                raise ValueError("Formato VALUES non supportato per l'importazione.")
+            position += 1
+
+    pg_columns = ", ".join(f'"{column}"' for column in kept_columns)
+    return f'INSERT INTO "_turni_creati" ({pg_columns}) VALUES ' + ",".join(tuples) + ";"
+
+
+def _extract_inserts(
+    sql_text: str, source_table: str, source_columns: list[str]
+) -> list[str]:
     """
     Extract all INSERT INTO `source_table` statements from the dump and
     rewrite them to target `_turni_creati`.
@@ -239,7 +387,7 @@ def _extract_inserts(sql_text: str, source_table: str) -> list[str]:
         )
         # MariaDB uses \' for escaping inside strings; PostgreSQL uses ''
         stmt = stmt.replace("\\'", "''")
-        results.append(stmt)
+        results.append(_rewrite_ignored_columns(stmt, source_columns))
     return results
 
 
@@ -337,7 +485,15 @@ def turni_import(request):
         )
 
     # ── Extract INSERT statements ─────────────────────────────────────────────
-    inserts = _extract_inserts(sql_text, source_table)
+    try:
+        source_columns = _source_columns(create_raw)
+        inserts = _extract_inserts(sql_text, source_table, source_columns)
+    except ValueError as exc:
+        return render(
+            request,
+            "base/turni_import.html",
+            {"error": f"Errore nella conversione degli INSERT: {exc}"},
+        )
 
     # ── Execute in PostgreSQL ─────────────────────────────────────────────────
     try:
