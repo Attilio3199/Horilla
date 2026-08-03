@@ -52,7 +52,7 @@ _STRIP_COL_ATTRS = re.compile(
 # These fields are deliberately not replicated in the reporting table.  Keep
 # the list centralised because an ignored field must be removed from both the
 # DDL and the values in every INSERT statement.
-_IGNORED_COLUMNS = {"preferenza"}
+_IGNORED_COLUMNS = {"preferenza", "bloccoautomatico", "gdv_id_app"}
 
 
 def _convert_type(col_def: str) -> str:
