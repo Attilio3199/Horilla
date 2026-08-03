@@ -197,7 +197,7 @@
         return "";
     }
 
-    function toggleWorkAreaFields() {
+    window.toggleWorkAreaFieldsGlobal = function () {
         var selected = getAreaValue();
         var sedeFields = document.querySelectorAll('.work-area-sede-field');
         var storeFields = document.querySelectorAll('.work-area-store-field');
@@ -212,17 +212,17 @@
 
     document.addEventListener('change', function (event) {
         if (event.target && event.target.id === 'id_work_area_type') {
-            toggleWorkAreaFields();
+            window.toggleWorkAreaFieldsGlobal();
         }
     });
 
     if (window.jQuery) {
-        $(document).on('select2:select', '#id_work_area_type', toggleWorkAreaFields);
+        $(document).on('select2:select', '#id_work_area_type', window.toggleWorkAreaFieldsGlobal);
     }
 
-    document.addEventListener('DOMContentLoaded', toggleWorkAreaFields);
-    setTimeout(toggleWorkAreaFields, 0);
-    setTimeout(toggleWorkAreaFields, 150);
-    setTimeout(toggleWorkAreaFields, 400);
+    document.addEventListener('DOMContentLoaded', window.toggleWorkAreaFieldsGlobal);
+    setTimeout(window.toggleWorkAreaFieldsGlobal, 0);
+    setTimeout(window.toggleWorkAreaFieldsGlobal, 150);
+    setTimeout(window.toggleWorkAreaFieldsGlobal, 400);
 })();
 </script>
