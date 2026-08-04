@@ -800,6 +800,20 @@ excel_columns = [
     ("employee_bank_details__state", trans("Bank State")),
     ("employee_bank_details__city", trans("Bank City")),
 ]
+
+# These values belong to EmployeeDutyHistory rather than to Employee or
+# EmployeeWorkInformation.  They are kept separate because they can be
+# exported/imported, but cannot be used by the generic employee bulk-update
+# form (which only handles direct employee fields).
+duty_history_excel_columns = [
+    ("duty_history__duty_role", trans("Mansione")),
+    ("duty_history__start_date", trans("DataInizioMansione")),
+    ("duty_history__end_date", trans("DataFineMansione")),
+]
+
+# The import template and the employee export must expose exactly the same
+# columns, in the same order.  Keep their shared definition in one place.
+employee_import_export_columns = excel_columns + duty_history_excel_columns
 fields_to_remove = [
     "badge_id",
     "employee_first_name",
@@ -813,7 +827,7 @@ fields_to_remove = [
 
 class EmployeeExportExcelForm(forms.Form):
     selected_fields = forms.MultipleChoiceField(
-        choices=excel_columns,
+        choices=employee_import_export_columns,
         widget=forms.CheckboxSelectMultiple,
         initial=[
             "badge_id",

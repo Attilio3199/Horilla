@@ -339,20 +339,6 @@ def valid_import_file_headers(data_frame):
         "Last Name",
         "Phone",
         "Email",
-        "Gender",
-        "Department",
-        "Job Position",
-        "Job Role",
-        "Work Type",
-        "Shift",
-        "Employee Type",
-        "Reporting Manager",
-        "Company",
-        "Location",
-        "Date Joining",
-        "Contract End Date",
-        "Basic Salary",
-        "Salary Hour",
     ]
 
     missing_keys = [key for key in required_keys if key not in data_frame.columns]
@@ -370,7 +356,13 @@ def process_employee_records(data_frame):
     phone_regex = re.compile(r"^\+?\d{10,15}$")
     allowed_genders = frozenset(choice[0] for choice in Employee.choice_gender)
     existing_badge_ids = frozenset(Employee.objects.values_list("badge_id", flat=True))
-    existing_usernames = frozenset(User.objects.values_list("username", flat=True))
+    # A user may already exist because a previous import was interrupted after
+    # creating auth_user records.  Such a user can safely be linked to the
+    # employee being imported.  Only users already linked to an Employee are
+    # actual duplicates for this import.
+    existing_usernames = frozenset(
+        User.objects.filter(employee_get__isnull=False).values_list("username", flat=True)
+    )
     existing_name_emails = frozenset(
         (fname, lname, email)
         for fname, lname, email in Employee.objects.values_list(

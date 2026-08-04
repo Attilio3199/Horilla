@@ -51,6 +51,7 @@
       <p class="mb-3">
         {% trans "Seleziona il mese e l'anno di riferimento, poi carica il file CSV del corpo busta paga." %}
         {% trans "Mese e anno verranno scritti su tutte le righe importate." %}
+        {% trans "File di riferimento da caricare:" %} <code>files_stipendi_50.csv</code>
       </p>
 
       <form method="post" enctype="multipart/form-data" action="{% url 'import-payslip-corpo' %}">

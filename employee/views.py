@@ -28,7 +28,7 @@ from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, transaction
-from django.db.models import F, ProtectedError
+from django.db.models import F, Prefetch, ProtectedError
 from django.db.models.query import QuerySet
 from django.forms import DateInput, Select
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -80,6 +80,7 @@ from employee.forms import (
     EmployeeTagForm,
     EmployeeWorkInformationForm,
     EmployeeWorkInformationUpdateForm,
+    employee_import_export_columns,
     excel_columns,
 )
 from employee.methods.methods import (
@@ -3406,12 +3407,7 @@ def work_info_import_file(request):
     """
     This method is used to return the excel file of import Employee instances
     """
-    export_labels = [str(label) for _, label in excel_columns]
-    extra_labels = ["Mansione", "DataInizioMansione", "DataFineMansione"]
-    columns = []
-    for label in export_labels + extra_labels:
-        if label not in columns:
-            columns.append(label)
+    columns = [str(label) for _, label in employee_import_export_columns]
 
     data_frame = pd.DataFrame(columns=columns)
 
@@ -3446,18 +3442,23 @@ def work_info_import(request):
                 "Last Name": ["last name", "cognome"],
                 "Phone": ["phone", "telefono"],
                 "Email": ["email"],
-                "Gender": ["gender", "sesso"],
+                "Gender": ["gender", "sesso", "genere"],
                 "Department": ["department", "dipartimento"],
-                "Job Position": ["job position", "posizione lavoro"],
+                "Job Position": [
+                    "job position",
+                    "posizione lavoro",
+                    "posizione di lavoro",
+                ],
                 "Job Role": ["job role", "ruolo di lavoro"],
-                "Shift": ["shift", "maiusc"],
+                "Shift": ["shift", "maiusc", "turno"],
                 "Work Type": ["work type", "tipo di lavoro"],
                 "Reporting Manager": [
                     "reporting manager",
                     "gestore segnalazioni",
+                    "manager di riferimento",
                 ],
                 "Employee Type": ["employee type", "tipo di dipendente"],
-                "Location": ["location", "posizione", "work location"],
+                "Location": ["location", "posizione", "work location", "sede"],
                 "Date Joining": ["date joining", "data di iscrizione"],
                 "Basic Salary": ["basic salary", "stipendio base"],
                 "Salary Hour": ["salary hour", "stipendio per ora"],
@@ -3577,31 +3578,38 @@ def work_info_import(request):
                     {"error_message": error_message},
                 )
 
-            bulk_update_personal_fields_import(import_rows)
-
             success_list, error_list, created_count = process_employee_records(
                 data_frame
             )
             if success_list:
                 try:
-                    users = bulk_create_user_import(success_list)
-                    employees = bulk_create_employee_import(success_list)
-                    bulk_create_department_import(success_list)
-                    bulk_create_job_position_import(success_list)
-                    bulk_create_job_role_import(success_list)
-                    bulk_create_work_types(success_list)
-                    bulk_create_shifts(success_list)
-                    bulk_create_employee_types(success_list)
-                    bulk_create_bank_details_import(success_list)
-                    bulk_create_work_info_import(success_list)
-                    thread = threading.Thread(
-                        target=set_initial_password, args=(employees,)
+                    # User creation and employee creation must succeed or fail
+                    # together.  Otherwise a failed import leaves auth_user
+                    # accounts which cannot be imported again.
+                    with transaction.atomic():
+                        bulk_update_personal_fields_import(import_rows)
+                        bulk_create_user_import(success_list)
+                        employees = bulk_create_employee_import(success_list)
+                        bulk_create_department_import(success_list)
+                        bulk_create_job_position_import(success_list)
+                        bulk_create_job_role_import(success_list)
+                        bulk_create_work_types(success_list)
+                        bulk_create_shifts(success_list)
+                        bulk_create_employee_types(success_list)
+                        bulk_create_bank_details_import(success_list)
+                        bulk_create_work_info_import(success_list)
+
+                    transaction.on_commit(
+                        lambda: threading.Thread(
+                            target=set_initial_password, args=(employees,)
+                        ).start()
                     )
-                    thread.start()
 
                 except Exception as e:
-                    messages.error(request, _("Error Occured {}").format(e))
-                    logger.error(e)
+                    logger.exception("Employee import failed")
+                    raise RuntimeError(
+                        _("Employee import failed. No records were saved: {}").format(e)
+                    ) from e
 
             path_info = (
                 generate_error_report(
@@ -3675,11 +3683,26 @@ def work_info_export(request):
         id_list = json.loads(ids)
         employees = Employee.objects.filter(id__in=id_list)
 
-    prefetch_fields = list(set(f.split("__")[0] for f in selected_fields if "__" in f))
+    prefetch_fields = list(
+        set(
+            f.split("__")[0]
+            for f in selected_fields
+            if "__" in f and not f.startswith("duty_history__")
+        )
+    )
     if prefetch_fields:
         employees = employees.select_related(*prefetch_fields)
 
-    for value, key in excel_columns:
+    if any(field.startswith("duty_history__") for field in selected_fields):
+        employees = employees.prefetch_related(
+            Prefetch(
+                "duty_histories",
+                queryset=EmployeeDutyHistory.objects.select_related("duty_role_id"),
+                to_attr="export_duty_histories",
+            )
+        )
+
+    for value, key in employee_import_export_columns:
         if value in selected_fields:
             selected_columns.append((value, key))
 
@@ -3695,16 +3718,34 @@ def work_info_export(request):
 
     employees_data = {column_name: [] for _, column_name in selected_columns}
     for employee in employees:
-        for column_value, column_name in selected_columns:
-            if column_value in field_overrides:
-                column_value = field_overrides[column_value]
+        # An xlsx row represents one employee, whereas an employee can have
+        # several duty-history rows.  Export the current duty when available;
+        # otherwise fall back to the most recent one.
+        duty_history = None
+        if hasattr(employee, "export_duty_histories"):
+            histories = employee.export_duty_histories
+            duty_history = next(
+                (history for history in histories if history.end_date is None),
+                histories[0] if histories else None,
+            )
 
-            nested_attrs = column_value.split("__")
-            value = employee
-            for attr in nested_attrs:
-                value = getattr(value, attr, None)
-                if value is None:
-                    break
+        for column_value, column_name in selected_columns:
+            if column_value == "duty_history__duty_role":
+                value = duty_history.duty_role_id.title if duty_history else None
+            elif column_value == "duty_history__start_date":
+                value = duty_history.start_date if duty_history else None
+            elif column_value == "duty_history__end_date":
+                value = duty_history.end_date if duty_history else None
+            else:
+                if column_value in field_overrides:
+                    column_value = field_overrides[column_value]
+
+                nested_attrs = column_value.split("__")
+                value = employee
+                for attr in nested_attrs:
+                    value = getattr(value, attr, None)
+                    if value is None:
+                        break
 
             # Call the value if it's employee_work_info__reporting_manager_id__get_full_name
             if callable(value):
