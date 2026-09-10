@@ -1,0 +1,57 @@
+{% extends 'index.html' %}
+{% load i18n %}
+
+{% block content %}
+<section class="oh-wrapper oh-main__topbar">
+  <div class="oh-main__titlebar oh-main__titlebar--left">
+    <h1 class="oh-main__titlebar-title fw-bold">{% trans "Fondi Integrativi" %}</h1>
+  </div>
+  <div class="oh-main__titlebar-button-container">
+    <a href="{% url 'view-payslip' %}" class="oh-btn oh-btn--light oh-btn--sm">
+      <ion-icon name="arrow-back-outline" class="mr-1"></ion-icon>
+      {% trans "Torna ai Cedolini" %}
+    </a>
+  </div>
+</section>
+
+<div class="oh-wrapper mt-4">
+  <div class="oh-card" style="max-width: 680px; margin: auto;">
+    <div class="oh-card__body">
+      <p class="mb-4">{% trans "Carica il prospetto PDF dei fondi integrativi. Il file Excel verrà generato e scaricato subito." %}</p>
+      {% if messages %}{% for message in messages %}
+        <div class="oh-alert oh-alert--{{ message.tags }} mb-3">{{ message }}</div>
+      {% endfor %}{% endif %}
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="oh-input-group mb-4">
+          <label class="oh-label" for="id_file">{% trans "Prospetto PDF" %} *</label>
+          <input type="file" class="oh-input w-100" id="id_file" name="file" accept="application/pdf,.pdf" required>
+          <small class="text-muted">{% trans "Formato supportato: PDF del prospetto fondi integrativi." %}</small>
+        </div>
+        <button type="button" class="oh-btn oh-btn--primary" onclick="document.getElementById('export-format-dialog').showModal()">
+          <ion-icon name="download-outline" class="mr-1"></ion-icon>{% trans "Genera XLSX" %}
+        </button>
+        <dialog id="export-format-dialog" style="border:0; border-radius:8px; max-width:460px; padding:0; box-shadow:0 8px 30px rgba(0,0,0,.25);">
+          <div class="oh-card mb-0">
+            <div class="oh-card__body">
+              <h5 class="fw-bold mb-3">{% trans "Scegli il formato" %}</h5>
+              <p class="text-muted small mb-4">{% trans "Scegli il file Excel da generare." %}</p>
+              <div class="d-flex flex-column gap-2">
+                <button type="submit" name="format" value="complete" class="oh-btn oh-btn--primary text-start">
+                  <strong>{% trans "Completo" %}</strong><br>
+                  <small>{% trans "Tutte le 16 colonne del prospetto." %}</small>
+                </button>
+                <button type="submit" name="format" value="reduced" class="oh-btn oh-btn--secondary text-start">
+                  <strong>{% trans "Ridotto" %}</strong><br>
+                  <small>{% trans "Cognome nome e i quattro importi richiesti." %}</small>
+                </button>
+                <button type="button" class="oh-btn oh-btn--light" onclick="document.getElementById('export-format-dialog').close()">{% trans "Annulla" %}</button>
+              </div>
+            </div>
+          </div>
+        </dialog>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

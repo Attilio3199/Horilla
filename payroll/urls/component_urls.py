@@ -88,6 +88,11 @@ urlpatterns = [
     ),
     path("view-payslip/", component_views.view_payslip, name="view-payslip"),
     path(
+        "fondi-integrativi/",
+        component_views.integrative_funds,
+        name="integrative-funds",
+    ),
+    path(
         "import-payslip-presenze/",
         component_views.import_payslip_presenze,
         name="import-payslip-presenze",

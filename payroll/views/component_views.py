@@ -92,6 +92,10 @@ from payroll.models.models import (
     ReimbursementMultipleAttachment,
 )
 from payroll.threadings.mail import MailSendThread
+from payroll.services.integrative_funds import (
+    IntegrativeFundsPdfError,
+    convert_integrative_funds_pdf,
+)
 
 
 def return_none(a, b):
@@ -2348,6 +2352,45 @@ def _parse_date_it(value):
         except ValueError:
             continue
     return None
+
+
+@login_required
+@permission_required("payroll.view_payslip")
+def integrative_funds(request):
+    """Mostra il form e converte il prospetto Fondi Integrativi in XLSX."""
+    if request.method == "GET":
+        return render(request, "payroll/payslip/integrative_funds.html")
+
+    pdf_file = request.FILES.get("file")
+    export_format = request.POST.get("format")
+    if not pdf_file:
+        messages.error(request, _("Selezionare un file PDF."))
+        return render(request, "payroll/payslip/integrative_funds.html")
+
+    if export_format not in {"complete", "reduced"}:
+        messages.error(request, _("Selezionare il formato di esportazione."))
+        return render(request, "payroll/payslip/integrative_funds.html")
+
+    # Il controllo dell'intestazione evita di passare file arbitrari al parser.
+    if not pdf_file.name.lower().endswith(".pdf") or not pdf_file.read(5).startswith(b"%PDF-"):
+        messages.error(request, _("Il file caricato deve essere un PDF valido."))
+        return render(request, "payroll/payslip/integrative_funds.html")
+
+    try:
+        # Dopo il controllo dell'intestazione il cursore e' alla posizione 5.
+        output = convert_integrative_funds_pdf(b"%PDF-" + pdf_file.read(), export_format)
+    except IntegrativeFundsPdfError as exc:
+        messages.error(request, str(exc))
+        return render(request, "payroll/payslip/integrative_funds.html")
+
+    response = HttpResponse(
+        output.getvalue(),
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = (
+        f'attachment; filename="fondi_integrativi_{export_format}.xlsx"'
+    )
+    return response
 
 
 @login_required

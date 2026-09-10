@@ -35,6 +35,11 @@ SUBMENUS = [
         "redirect": reverse("view-payslip"),
     },
     {
+        "menu": trans("Fondi Integrativi"),
+        "redirect": reverse("integrative-funds"),
+        "accessibility": "payroll.sidebar.payslip_accessibility",
+    },
+    {
         "menu": trans("Loan / Advanced Salary"),
         "redirect": reverse("view-loan"),
         "accessibility": "payroll.sidebar.loan_accessibility",
@@ -65,6 +70,10 @@ def allowance_accessibility(request, submenu, user_perms, *args, **kwargs):
 
 def deduction_accessibility(request, submenu, user_perms, *args, **kwargs):
     return request.user.has_perm("payroll.view_deduction")
+
+
+def payslip_accessibility(request, submenu, user_perms, *args, **kwargs):
+    return request.user.has_perm("payroll.view_payslip")
 
 
 def loan_accessibility(request, submenu, user_perms, *args, **kwargs):
