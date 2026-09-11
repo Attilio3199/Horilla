@@ -5,7 +5,9 @@ This module is used to write methods to the component_urls patterns respectively
 """
 
 import json
+import os
 import operator
+import tempfile
 from collections import defaultdict
 from datetime import date, datetime, timedelta
 from itertools import groupby
@@ -85,6 +87,7 @@ from payroll.models.models import (
     PayslipControlloRegola,
     PayslipControlloRegolaDestinazione,
     Payslip,
+    PayslipCorpo,
     PayslipDizionario,
     PayslipImporti,
     PayslipPresenze,
@@ -95,6 +98,12 @@ from payroll.threadings.mail import MailSendThread
 from payroll.services.integrative_funds import (
     IntegrativeFundsPdfError,
     convert_integrative_funds_pdf,
+)
+from payroll.services.payment_file import (
+    PaymentFileError,
+    fill_payment_file as fill_payment_workbook,
+    payment_file_has_existing_values,
+    workbook_sheet_names,
 )
 
 
@@ -2390,6 +2399,169 @@ def integrative_funds(request):
     response["Content-Disposition"] = (
         f'attachment; filename="fondi_integrativi_{export_format}.xlsx"'
     )
+    return response
+
+
+def _remove_pending_payment_file(request):
+    pending = request.session.pop("payment_file_pending", None)
+    if pending and pending.get("path"):
+        try:
+            os.unlink(pending["path"])
+        except FileNotFoundError:
+            pass
+
+
+def _payment_employee_codes():
+    """Badge ID validi: sono i codici effettivamente presenti in colonna H."""
+    return {
+        (badge_id or "").strip()
+        for badge_id in Employee.objects.exclude(badge_id__isnull=True)
+        .exclude(badge_id="").values_list("badge_id", flat=True)
+        if (badge_id or "").strip()
+    }
+
+
+@login_required
+@permission_required("payroll.view_payslip")
+def fill_payment_file(request):
+    """Compila acconto e netto in un foglio scelto del file pagamenti."""
+    months = [
+        (1, "Gennaio"), (2, "Febbraio"), (3, "Marzo"), (4, "Aprile"),
+        (5, "Maggio"), (6, "Giugno"), (7, "Luglio"), (8, "Agosto"),
+        (9, "Settembre"), (10, "Ottobre"), (11, "Novembre"), (12, "Dicembre"),
+    ]
+    base_context = {"months": months, "current_year": date.today().year}
+
+    if request.method == "GET":
+        _remove_pending_payment_file(request)
+        return render(request, "payroll/payslip/fill_payment_file.html", base_context)
+
+    action = request.POST.get("action")
+    if action == "select_sheet":
+        uploaded_file = request.FILES.get("file")
+        month_value = request.POST.get("mese", "").strip()
+        year_value = request.POST.get("anno", "").strip()
+        try:
+            mese, anno = int(month_value), int(year_value)
+            if not 1 <= mese <= 12:
+                raise ValueError
+            if not uploaded_file:
+                raise PaymentFileError("Selezionare un file Excel.")
+            content = uploaded_file.read()
+            sheets = workbook_sheet_names(content, uploaded_file.name)
+            if not sheets:
+                raise PaymentFileError("Il file Excel non contiene fogli.")
+        except (ValueError, PaymentFileError) as exc:
+            messages.error(request, str(exc) if isinstance(exc, PaymentFileError) else _("Mese o anno non validi."))
+            return render(request, "payroll/payslip/fill_payment_file.html", {
+                **base_context, "mese": month_value, "anno": year_value,
+            })
+
+        _remove_pending_payment_file(request)
+        suffix = os.path.splitext(uploaded_file.name)[1].lower()
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix, prefix="horilla_payment_") as temp_file:
+            temp_file.write(content)
+            temp_path = temp_file.name
+        request.session["payment_file_pending"] = {
+            "path": temp_path,
+            "filename": os.path.basename(uploaded_file.name),
+            "mese": mese,
+            "anno": anno,
+            "sheets": sheets,
+        }
+        return render(request, "payroll/payslip/fill_payment_file.html", {
+            **base_context, "step_select_sheet": True, "mese": mese,
+            "anno": anno, "sheets": sheets, "filename": uploaded_file.name,
+        })
+
+    if action not in {"prepare_fill", "fill"}:
+        messages.error(request, _("Operazione non valida."))
+        return render(request, "payroll/payslip/fill_payment_file.html", base_context)
+
+    pending = request.session.get("payment_file_pending")
+    sheet_name = request.POST.get("sheet_name", "")
+    if not pending or sheet_name not in pending.get("sheets", []):
+        messages.error(request, _("Sessione scaduta. Caricare nuovamente il file."))
+        return render(request, "payroll/payslip/fill_payment_file.html", base_context)
+
+    if action == "prepare_fill":
+        try:
+            with open(pending["path"], "rb") as source_file:
+                has_existing_values = payment_file_has_existing_values(
+                    source_file.read(), pending["filename"], sheet_name,
+                    _payment_employee_codes(),
+                )
+        except (OSError, PaymentFileError) as exc:
+            messages.error(request, str(exc) if isinstance(exc, PaymentFileError) else _("Impossibile leggere il file temporaneo."))
+            return render(request, "payroll/payslip/fill_payment_file.html", {
+                **base_context, "step_select_sheet": True, "mese": pending["mese"],
+                "anno": pending["anno"], "sheets": pending["sheets"],
+                "filename": pending["filename"],
+            })
+        if has_existing_values:
+            return render(request, "payroll/payslip/fill_payment_file.html", {
+                **base_context, "step_confirm_write": True, "sheet_name": sheet_name,
+                "mese": pending["mese"], "anno": pending["anno"],
+                "filename": pending["filename"],
+            })
+        write_mode = "overwrite"
+    else:
+        write_mode = request.POST.get("write_mode")
+        if write_mode not in {"overwrite", "blanks_only"}:
+            messages.error(request, _("Selezionare come compilare le celle esistenti."))
+            return render(request, "payroll/payslip/fill_payment_file.html", base_context)
+
+    try:
+        from django.db.models import Sum as DSum
+
+        mese, anno = pending["mese"], pending["anno"]
+        advances = {
+            (row["matricola"] or "").strip(): row["amount"] or 0
+            for row in PayslipCorpo.objects.filter(mese=mese, anno=anno, cod_voce=800)
+            .values("matricola").annotate(amount=DSum("importo_ctr_lav"))
+            if (row["matricola"] or "").strip()
+        }
+        net_pays = {
+            (row["employee_id__badge_id"] or "").strip(): row["amount"] or 0
+            for row in Payslip.objects.filter(start_date__year=anno, start_date__month=mese)
+            .values("employee_id__badge_id").annotate(amount=DSum("net_pay"))
+            if (row["employee_id__badge_id"] or "").strip()
+        }
+        employee_codes = _payment_employee_codes()
+        badge_to_payroll_code = {
+            (employee["badge_id"] or "").strip(): (employee["codice_paghe"] or "").strip()
+            for employee in Employee.objects.filter(badge_id__in=employee_codes).values(
+                "badge_id", "codice_paghe"
+            )
+        }
+        values = {
+            badge_id: (advances.get(badge_to_payroll_code.get(badge_id, ""), 0), net_pays.get(badge_id, 0))
+            for badge_id in employee_codes
+        }
+        with open(pending["path"], "rb") as source_file:
+            output, filled, missing = fill_payment_workbook(
+                source_file.read(), pending["filename"], sheet_name, values, write_mode
+            )
+    except (OSError, PaymentFileError) as exc:
+        messages.error(request, str(exc) if isinstance(exc, PaymentFileError) else _("Impossibile leggere il file temporaneo."))
+        return render(request, "payroll/payslip/fill_payment_file.html", {
+            **base_context, "step_select_sheet": True, "mese": pending["mese"],
+            "anno": pending["anno"], "sheets": pending["sheets"],
+            "filename": pending["filename"],
+        })
+
+    filename = pending["filename"]
+    _remove_pending_payment_file(request)
+    response = HttpResponse(
+        output,
+        content_type=(
+            "application/vnd.ms-excel" if filename.lower().endswith(".xls")
+            else "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        ),
+    )
+    response["Content-Disposition"] = f'attachment; filename="compilato_{filename}"'
+    response["X-Horilla-Filled-Rows"] = str(filled)
+    response["X-Horilla-Missing-Codes"] = str(missing)
     return response
 
 

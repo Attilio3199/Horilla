@@ -40,6 +40,11 @@ SUBMENUS = [
         "accessibility": "payroll.sidebar.payslip_accessibility",
     },
     {
+        "menu": trans("Compila Pagamenti"),
+        "redirect": reverse("fill-payment-file"),
+        "accessibility": "payroll.sidebar.payslip_accessibility",
+    },
+    {
         "menu": trans("Loan / Advanced Salary"),
         "redirect": reverse("view-loan"),
         "accessibility": "payroll.sidebar.loan_accessibility",

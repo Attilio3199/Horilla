@@ -93,6 +93,11 @@ urlpatterns = [
         name="integrative-funds",
     ),
     path(
+        "compila-pagamenti/",
+        component_views.fill_payment_file,
+        name="fill-payment-file",
+    ),
+    path(
         "import-payslip-presenze/",
         component_views.import_payslip_presenze,
         name="import-payslip-presenze",

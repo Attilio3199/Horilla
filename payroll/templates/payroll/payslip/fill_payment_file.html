@@ -1,0 +1,91 @@
+{% extends 'index.html' %}
+{% load i18n %}
+
+{% block content %}
+<section class="oh-wrapper oh-main__topbar">
+  <div class="oh-main__titlebar oh-main__titlebar--left">
+    <h1 class="oh-main__titlebar-title fw-bold">{% trans "Compila Pagamenti Dipendenti" %}</h1>
+  </div>
+  <div class="oh-main__titlebar-button-container">
+    <a href="{% url 'view-payslip' %}" class="oh-btn oh-btn--light oh-btn--sm">
+      <ion-icon name="arrow-back-outline" class="mr-1"></ion-icon>{% trans "Torna ai Cedolini" %}
+    </a>
+  </div>
+</section>
+
+<div class="oh-wrapper mt-4">
+  <div class="oh-card" style="max-width:680px; margin:auto;">
+    <div class="oh-card__body">
+      {% if messages %}{% for message in messages %}
+        <div class="oh-alert oh-alert--{{ message.tags }} mb-3">{{ message }}</div>
+      {% endfor %}{% endif %}
+
+      {% if step_confirm_write %}
+        <h5 class="fw-bold mb-3">{% trans "Celle già compilate" %}</h5>
+        <p class="mb-4">{% trans "Nel foglio selezionato sono presenti valori in M o N su righe con un codice dipendente in H. Come vuoi procedere?" %}</p>
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="fill">
+          <input type="hidden" name="sheet_name" value="{{ sheet_name }}">
+          <div class="d-flex flex-column gap-2">
+            <button type="submit" name="write_mode" value="overwrite" class="oh-btn oh-btn--danger text-start">
+              <strong>{% trans "Sovrascrivi tutto" %}</strong><br>
+              <small>{% trans "Aggiorna M e N per tutti i codici presenti in H." %}</small>
+            </button>
+            <button type="submit" name="write_mode" value="blanks_only" class="oh-btn oh-btn--primary text-start">
+              <strong>{% trans "Compila solo celle vuote" %}</strong><br>
+              <small>{% trans "Conserva ogni valore o formula già presente in M e N." %}</small>
+            </button>
+            <a href="{% url 'fill-payment-file' %}" class="oh-btn oh-btn--light">{% trans "Annulla" %}</a>
+          </div>
+        </form>
+      {% elif step_select_sheet %}
+        <h5 class="fw-bold mb-2">{% trans "Scegli il foglio da compilare" %}</h5>
+        <p class="text-muted mb-4">{{ filename }} · {% trans "Periodo" %}: {{ mese|stringformat:"02d" }}/{{ anno }}</p>
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="prepare_fill">
+          <div class="oh-input-group mb-4">
+            <label class="oh-label" for="id_sheet_name">{% trans "Foglio Excel" %} *</label>
+            <select class="oh-select w-100" id="id_sheet_name" name="sheet_name" required>
+              <option value="">-- {% trans "Seleziona" %} --</option>
+              {% for sheet in sheets %}<option value="{{ sheet }}">{{ sheet }}</option>{% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="oh-btn oh-btn--primary">
+            <ion-icon name="download-outline" class="mr-1"></ion-icon>{% trans "Compila e scarica" %}
+          </button>
+          <a href="{% url 'fill-payment-file' %}" class="oh-btn oh-btn--light">{% trans "Annulla" %}</a>
+        </form>
+      {% else %}
+        <p class="mb-4">{% trans "Carica un file XLS o XLSX, scegli il periodo e poi il foglio da compilare. La colonna H identifica il dipendente; le colonne M e N riceveranno acconto e retribuzione netta." %}</p>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="select_sheet">
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label class="oh-label" for="id_mese">{% trans "Mese" %} *</label>
+              <select class="oh-select w-100" id="id_mese" name="mese" required>
+                <option value="">-- {% trans "Seleziona" %} --</option>
+                {% for number, name in months %}<option value="{{ number }}" {% if mese == number %}selected{% endif %}>{{ number|stringformat:"02d" }} – {{ name }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="col-sm-6">
+              <label class="oh-label" for="id_anno">{% trans "Anno" %} *</label>
+              <input class="oh-input w-100" id="id_anno" name="anno" type="number" min="2000" max="2099" value="{{ anno|default:current_year }}" required>
+            </div>
+          </div>
+          <div class="oh-input-group mb-4">
+            <label class="oh-label" for="id_file">{% trans "File Excel" %} *</label>
+            <input class="oh-input w-100" id="id_file" name="file" type="file" accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+            <small class="text-muted">{% trans "Il file scaricato manterrà lo stesso formato del file caricato." %}</small>
+          </div>
+          <button type="submit" class="oh-btn oh-btn--primary">
+            <ion-icon name="arrow-forward-outline" class="mr-1"></ion-icon>{% trans "Scegli il foglio" %}
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
