@@ -103,7 +103,7 @@ from payroll.services.payment_file import (
     PaymentFileError,
     fill_payment_file as fill_payment_workbook,
     payment_file_has_existing_values,
-    workbook_sheet_names,
+    prepare_payment_workbook,
 )
 
 
@@ -2447,8 +2447,9 @@ def fill_payment_file(request):
                 raise ValueError
             if not uploaded_file:
                 raise PaymentFileError("Selezionare un file Excel.")
-            content = uploaded_file.read()
-            sheets = workbook_sheet_names(content, uploaded_file.name)
+            content, sheets = prepare_payment_workbook(
+                uploaded_file.read(), uploaded_file.name
+            )
             if not sheets:
                 raise PaymentFileError("Il file Excel non contiene fogli.")
         except (ValueError, PaymentFileError) as exc:

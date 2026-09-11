@@ -25,6 +25,18 @@ def _extension(filename):
 
 
 def workbook_sheet_names(content, filename):
+    """Restituisce i fogli, riparando gli XLSX tolleranti solo di Excel."""
+    _, names = prepare_payment_workbook(content, filename)
+    return names
+
+
+def prepare_payment_workbook(content, filename):
+    """Valida il file e restituisce contenuto utilizzabile e nomi dei fogli.
+
+    Alcuni file prodotti da gestionali vengono aperti da Excel ma contengono XML
+    non strettamente conforme.  openpyxl li rifiuta; LibreOffice li risalva in
+    un XLSX valido prima che il file venga memorizzato nella sessione.
+    """
     extension = _extension(filename)
     try:
         if extension == ".xlsx":
@@ -32,9 +44,21 @@ def workbook_sheet_names(content, filename):
             workbook = load_workbook(BytesIO(content), read_only=True, data_only=False)
             names = workbook.sheetnames
             workbook.close()
-            return names
+            return content, names
         import xlrd
-        return xlrd.open_workbook(file_contents=content, on_demand=True).sheet_names()
+        return content, xlrd.open_workbook(file_contents=content, on_demand=True).sheet_names()
+    except Exception as exc:
+        if extension != ".xlsx":
+            raise PaymentFileError("Impossibile leggere i fogli del file Excel.") from exc
+
+    try:
+        repaired_content = _repair_xlsx(content)
+        from openpyxl import load_workbook
+
+        workbook = load_workbook(BytesIO(repaired_content), read_only=True, data_only=False)
+        names = workbook.sheetnames
+        workbook.close()
+        return repaired_content, names
     except Exception as exc:
         raise PaymentFileError("Impossibile leggere i fogli del file Excel.") from exc
 
@@ -62,12 +86,23 @@ def payment_file_has_existing_values(content, filename, sheet_name, known_codes)
             if sheet_name not in workbook.sheetnames:
                 raise PaymentFileError("Il foglio selezionato non e' presente nel file.")
             sheet = workbook[sheet_name]
-            found = any(
-                _employee_code(sheet.cell(row=row, column=EXCEL_CODE_COLUMN).value) in known_codes
-                and (_has_value(sheet.cell(row=row, column=ADVANCE_COLUMN).value)
-                     or _has_value(sheet.cell(row=row, column=NET_PAY_COLUMN).value))
-                for row in range(1, sheet.max_row + 1)
-            )
+            # In read-only mode, Worksheet.cell(row=...) reparses the XML stream
+            # on every call.  Calling it three times per row makes large payroll
+            # files effectively quadratic.  iter_rows consumes the sheet once.
+            found = False
+            for cells in sheet.iter_rows(
+                min_col=EXCEL_CODE_COLUMN,
+                max_col=NET_PAY_COLUMN,
+                values_only=True,
+            ):
+                code = _employee_code(cells[0])
+                advance = cells[ADVANCE_COLUMN - EXCEL_CODE_COLUMN]
+                net_pay = cells[NET_PAY_COLUMN - EXCEL_CODE_COLUMN]
+                if code in known_codes and (
+                    _has_value(advance) or _has_value(net_pay)
+                ):
+                    found = True
+                    break
             workbook.close()
             return found
         import xlrd
@@ -89,24 +124,34 @@ def payment_file_has_existing_values(content, filename, sheet_name, known_codes)
 
 def _fill_xlsx(content, sheet_name, values, write_mode):
     from openpyxl import load_workbook
-    from openpyxl.styles import PatternFill
 
-    workbook = load_workbook(BytesIO(content), data_only=False)
+    try:
+        workbook = load_workbook(BytesIO(content), data_only=False)
+    except Exception as exc:
+        raise PaymentFileError("Impossibile aggiornare il file XLSX.") from exc
     if sheet_name not in workbook.sheetnames:
         raise PaymentFileError("Il foglio selezionato non e' presente nel file.")
     sheet = workbook[sheet_name]
     filled = missing = 0
-    red_fill = PatternFill("solid", fgColor="FFC7CE")
-    for row in range(1, sheet.max_row + 1):
-        code = _employee_code(sheet.cell(row=row, column=EXCEL_CODE_COLUMN).value)
+
+    # Le righe di riepilogo/calcolo non hanno un codice dipendente in H ma
+    # spesso contengono formule in M/N.  Non fanno parte dell'import e devono
+    # restare inalterate anche dopo il salvataggio del workbook.
+    protected_formulas = {}
+    for cells in sheet.iter_rows(
+        min_col=EXCEL_CODE_COLUMN,
+        max_col=NET_PAY_COLUMN,
+    ):
+        code = _employee_code(cells[0].value)
+        advance_cell = cells[ADVANCE_COLUMN - EXCEL_CODE_COLUMN]
+        net_pay_cell = cells[NET_PAY_COLUMN - EXCEL_CODE_COLUMN]
         if not code:
+            for cell in (advance_cell, net_pay_cell):
+                if isinstance(cell.value, str) and cell.value.startswith("="):
+                    protected_formulas[cell.coordinate] = cell.value
             continue
-        advance_cell = sheet.cell(row=row, column=ADVANCE_COLUMN)
-        net_pay_cell = sheet.cell(row=row, column=NET_PAY_COLUMN)
         if code not in values:
-            # Formula, commento e valore sono mantenuti; cambia solo il colore.
-            advance_cell.fill = red_fill
-            net_pay_cell.fill = red_fill
+            # Nessuna modifica alla riga se il codice in H non ha dati associati.
             missing += 1
             continue
         advance, net_pay = values[code]
@@ -120,6 +165,12 @@ def _fill_xlsx(content, sheet_name, values, write_mode):
             row_filled = True
         if row_filled:
             filled += 1
+
+    # openpyxl normalmente preserva queste formule; il ripristino esplicito
+    # rende invarianti le righe che non hanno alcun valore in colonna H.
+    for coordinate, formula in protected_formulas.items():
+        sheet[coordinate].value = formula
+
     output = BytesIO()
     workbook.save(output)
     return output.getvalue(), filled, missing
@@ -131,12 +182,32 @@ def _soffice_convert(source_path, output_format, output_directory, profile_direc
         result = subprocess.run(
             ["soffice", "--headless", f"-env:UserInstallation={profile_directory.as_uri()}",
              "--convert-to", output_format, "--outdir", str(output_directory), str(source_path)],
-            check=False, capture_output=True, text=True, timeout=120,
+            check=False, capture_output=True, text=True, timeout=30,
         )
-    except (OSError, subprocess.TimeoutExpired) as exc:
+    except subprocess.TimeoutExpired as exc:
+        raise PaymentFileError(
+            "La conversione del file Excel ha superato 30 secondi. "
+            "Salvare il file come vero XLSX e riprovare."
+        ) from exc
+    except OSError as exc:
         raise PaymentFileError("Impossibile avviare la conversione del file XLS.") from exc
     if result.returncode != 0:
         raise PaymentFileError("Impossibile convertire il file XLS senza perdere le formule.")
+
+
+def _repair_xlsx(content):
+    """Riscrive un XLSX non conforme senza toccare le celle applicative."""
+    with tempfile.TemporaryDirectory(prefix="horilla_xlsx_repair_") as temp_dir_name:
+        temp_dir = Path(temp_dir_name)
+        source_path = temp_dir / "source.xlsx"
+        output_dir = temp_dir / "output"
+        output_dir.mkdir()
+        source_path.write_bytes(content)
+        _soffice_convert(source_path, "xlsx", output_dir, temp_dir / "profile")
+        repaired_path = output_dir / "source.xlsx"
+        if not repaired_path.exists():
+            raise PaymentFileError("La riparazione del file XLSX non e' riuscita.")
+        return repaired_path.read_bytes()
 
 
 def _fill_xls(content, sheet_name, values, write_mode):
