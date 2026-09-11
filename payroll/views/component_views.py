@@ -2522,11 +2522,14 @@ def fill_payment_file(request):
             .values("matricola").annotate(amount=DSum("importo_ctr_lav"))
             if (row["matricola"] or "").strip()
         }
+        # Nel file pagamenti il saldo e' la sola voce 852. Il campo net_pay
+        # del cedolino include invece 852 + 800 e resta invariato per le
+        # schermate/registrazioni dei cedolini.
         net_pays = {
-            (row["employee_id__badge_id"] or "").strip(): row["amount"] or 0
-            for row in Payslip.objects.filter(start_date__year=anno, start_date__month=mese)
-            .values("employee_id__badge_id").annotate(amount=DSum("net_pay"))
-            if (row["employee_id__badge_id"] or "").strip()
+            (row["matricola"] or "").strip(): row["amount"] or 0
+            for row in PayslipCorpo.objects.filter(mese=mese, anno=anno, cod_voce=852)
+            .values("matricola").annotate(amount=DSum("importo_ctr_lav"))
+            if (row["matricola"] or "").strip()
         }
         employee_codes = _payment_employee_codes()
         badge_to_payroll_code = {
@@ -2536,7 +2539,10 @@ def fill_payment_file(request):
             )
         }
         values = {
-            badge_id: (advances.get(badge_to_payroll_code.get(badge_id, ""), 0), net_pays.get(badge_id, 0))
+            badge_id: (
+                advances.get(badge_to_payroll_code.get(badge_id, ""), 0),
+                net_pays.get(badge_to_payroll_code.get(badge_id, ""), 0),
+            )
             for badge_id in employee_codes
         }
         with open(pending["path"], "rb") as source_file:
