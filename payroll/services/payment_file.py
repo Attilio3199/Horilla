@@ -6,8 +6,8 @@ from io import BytesIO
 from pathlib import Path
 
 EXCEL_CODE_COLUMN = 8  # H
-ADVANCE_COLUMN = 13  # M
-NET_PAY_COLUMN = 14  # N
+ADVANCE_COLUMN = 12  # L
+NET_PAY_COLUMN = 13  # M
 EURO_NUMBER_FORMAT = '€ #,##0.00'
 
 
@@ -77,7 +77,7 @@ def _has_value(value):
 
 
 def payment_file_has_existing_values(content, filename, sheet_name, known_codes):
-    """Controlla M/N solo per Badge ID H realmente presenti in Horilla."""
+    """Controlla L/M solo per Badge ID H realmente presenti in Horilla."""
     extension = _extension(filename)
     try:
         if extension == ".xlsx":
@@ -135,7 +135,7 @@ def _fill_xlsx(content, sheet_name, values, write_mode):
     filled = missing = 0
 
     # Le righe di riepilogo/calcolo non hanno un codice dipendente in H ma
-    # spesso contengono formule in M/N.  Non fanno parte dell'import e devono
+    # spesso contengono formule in L/M.  Non fanno parte dell'import e devono
     # restare inalterate anche dopo il salvataggio del workbook.
     protected_formulas = {}
     for cells in sheet.iter_rows(
@@ -236,7 +236,7 @@ def _fill_xls(content, sheet_name, values, write_mode):
 
 
 def fill_payment_file(content, filename, sheet_name, values, write_mode="overwrite"):
-    """Compila M (acconto) e N (netto), restituendo il formato di input."""
+    """Compila L (acconto) e M (netto), restituendo il formato di input."""
     extension = _extension(filename)
     if write_mode not in {"overwrite", "blanks_only"}:
         raise PaymentFileError("Modalita' di scrittura non valida.")

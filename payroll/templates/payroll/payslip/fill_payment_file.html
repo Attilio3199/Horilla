@@ -58,7 +58,7 @@
           <a href="{% url 'fill-payment-file' %}" class="oh-btn oh-btn--light">{% trans "Annulla" %}</a>
         </form>
       {% else %}
-        <p class="mb-4">{% trans "Carica un file XLS o XLSX, scegli il periodo e poi il foglio da compilare. La colonna H identifica il dipendente; le colonne M e N riceveranno acconto e retribuzione netta." %}</p>
+        <p class="mb-4">{% trans "Carica un file XLS o XLSX, scegli il periodo e poi il foglio da compilare. La colonna H identifica il dipendente; le colonne L e M riceveranno acconto e retribuzione netta." %}</p>
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
           <input type="hidden" name="action" value="select_sheet">
