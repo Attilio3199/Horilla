@@ -17,6 +17,7 @@ import pandas as pd
 from django.apps import apps
 from django.contrib import messages
 from django.db import connection as _pg_conn
+from django.db import transaction
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, QueryDict
 from django.shortcuts import get_object_or_404, redirect, render
@@ -2363,6 +2364,118 @@ def _parse_date_it(value):
     return None
 
 
+def _sync_employee_payroll_identity(matricola, badge_id):
+    """Completa matricola e badge sull'anagrafica senza sovrascrivere legami esistenti."""
+    matricola = (matricola or "").strip()
+    badge_id = (badge_id or "").strip()
+    if not matricola or not badge_id:
+        return "not_found"
+
+    with transaction.atomic():
+        badge_employee = (
+            Employee.objects.select_for_update().filter(badge_id=badge_id).first()
+        )
+        payroll_employees = list(
+            Employee.objects.select_for_update().filter(codice_paghe=matricola)[:2]
+        )
+        payroll_employee = payroll_employees[0] if payroll_employees else None
+
+        # codice_paghe non e' univoco a livello DB: non scegliamo arbitrariamente.
+        if len(payroll_employees) > 1 and badge_employee not in payroll_employees:
+            return "conflict"
+        if (
+            badge_employee
+            and payroll_employee
+            and badge_employee.pk != payroll_employee.pk
+        ):
+            return "conflict"
+
+        employee = badge_employee or payroll_employee
+        if employee is None:
+            return "not_found"
+
+        current_badge = (employee.badge_id or "").strip()
+        current_matricola = (employee.codice_paghe or "").strip()
+        if (
+            (current_badge and current_badge != badge_id)
+            or (current_matricola and current_matricola != matricola)
+        ):
+            return "conflict"
+
+        updates = {}
+        if not current_badge:
+            updates["badge_id"] = badge_id
+        if not current_matricola:
+            updates["codice_paghe"] = matricola
+        if not updates:
+            return "unchanged"
+
+        Employee.objects.filter(pk=employee.pk).update(**updates)
+        return "updated"
+
+
+def _sync_employee_identities(identity_pairs):
+    results = defaultdict(int)
+    for matricola, badge_id in set(identity_pairs):
+        results[_sync_employee_payroll_identity(matricola, badge_id)] += 1
+    return results
+
+
+def _append_identity_sync_message(message, results):
+    updated = results.get("updated", 0)
+    conflicts = results.get("conflict", 0)
+    not_found = results.get("not_found", 0)
+    if updated:
+        message += " " + _("Anagrafica dipendenti sanata per {} associazioni.").format(updated)
+    if conflicts:
+        message += " " + _(
+            "{} associazioni non salvate in anagrafica perché in conflitto con dati esistenti."
+        ).format(conflicts)
+    if not_found:
+        message += " " + _(
+            "{} associazioni non salvate in anagrafica perché il dipendente non è stato trovato."
+        ).format(not_found)
+    return message
+
+
+def _serialize_corpo_rows(rows):
+    serialized = []
+    for row in rows:
+        data = row.__dict__.copy()
+        data.pop("_state", None)
+        data.pop("id", None)
+        data.pop("payslip_id", None)
+        for field in ("assunzione", "anzianita", "data_pos"):
+            if data.get(field) is not None:
+                data[field] = data[field].isoformat()
+        for field in (
+            "aliq_perc_lav", "unita", "dato_base_imponibile",
+            "importo_ctr_lav", "db_tfr", "imp_tfr_ctr_dl",
+        ):
+            if data.get(field) is not None:
+                data[field] = str(data[field])
+        serialized.append(data)
+    return serialized
+
+
+def _deserialize_corpo_rows(rows):
+    from datetime import date as date_class
+
+    objects = []
+    for data in rows:
+        values = {
+            key: value
+            for key, value in data.items()
+            if key not in ("assunzione", "anzianita", "data_pos")
+        }
+        obj = PayslipCorpo(**values)
+        for field in ("assunzione", "anzianita", "data_pos"):
+            value = data.get(field)
+            setattr(obj, field, date_class.fromisoformat(value) if value else None)
+        objects.append(obj)
+    return objects
+
+
 @login_required
 @permission_required("payroll.view_payslip")
 def integrative_funds(request):
@@ -2613,6 +2726,13 @@ def import_payslip_presenze(request):
                 od for od in pending['objects_data']
                 if od.get('matricola') not in conflict_matricole
             ]
+            remaining_matricole = {
+                od.get('matricola') for od in pending['objects_data']
+            }
+            pending['unmatched'] = [
+                item for item in pending.get('unmatched', [])
+                if item.get('matricola') in remaining_matricole
+            ]
         request.session['import_presenze_pending'] = pending
         # Se ci sono ancora matricole non trovate, vai a step 2
         if pending.get('unmatched'):
@@ -2652,6 +2772,7 @@ def import_payslip_presenze(request):
         }
         from datetime import date as _date_cls
         objects_to_create = []
+        identity_pairs = []
         for od in pending['objects_data']:
             kwargs = dict(od)
             if kwargs.get('data_ass'):
@@ -2659,13 +2780,17 @@ def import_payslip_presenze(request):
             mat = kwargs.get('matricola')
             if kwargs.get('cod_dip') is None and mat and mat in override_map:
                 kwargs['cod_dip'] = override_map[mat]
+                identity_pairs.append((mat, override_map[mat]))
             objects_to_create.append(PayslipPresenze(**kwargs))
-        PayslipPresenze.objects.bulk_create(objects_to_create)
+        with transaction.atomic():
+            sync_results = _sync_employee_identities(identity_pairs)
+            PayslipPresenze.objects.bulk_create(objects_to_create)
         request.session.pop('import_presenze_pending', None)
         n_senza = sum(1 for o in objects_to_create if o.cod_dip is None and o.matricola)
         msg = _("Importate {} righe per {:02d}/{}.").format(len(objects_to_create), mese, anno)
         if n_senza:
             msg += " " + _("{} righe senza cod_dip (matricola non risolta).").format(n_senza)
+        msg = _append_identity_sync_message(msg, sync_results)
         messages.success(request, msg)
         return redirect("view-payslip")
 
@@ -2780,7 +2905,7 @@ def import_payslip_presenze(request):
         cod_dip = None
         if mat:
             emp = Employee.objects.filter(codice_paghe=mat).first()
-            if emp:
+            if emp and emp.badge_id:
                 cod_dip = emp.badge_id
             elif mat not in seen_unmatched:
                 seen_unmatched.add(mat)
@@ -2988,6 +3113,33 @@ def import_payslip_corpo(request):
         request.session.pop('import_corpo_pending', None)
         return _render_corpo()
 
+    # ── Step 2: associa le matricole sconosciute ai Badge ID ──
+    if request.POST.get("step") == "2":
+        pending = request.session.get('import_corpo_pending')
+        if not pending:
+            messages.error(request, _("Sessione scaduta. Ricaricare il file."))
+            return _render_corpo()
+        mese, anno = pending['mese'], pending['anno']
+        override_map = {
+            key[4:]: value.strip()
+            for key, value in request.POST.items()
+            if key.startswith('bid_') and value.strip()
+        }
+        objects_to_create = _deserialize_corpo_rows(pending['objects_data'])
+        identity_pairs = [
+            (matricola, badge_id)
+            for matricola, badge_id in override_map.items()
+        ]
+        with transaction.atomic():
+            sync_results = _sync_employee_identities(identity_pairs)
+            _corpo_bulk_and_sync(
+                request, mese, anno, objects_to_create,
+                skipped=pending.get('skipped', 0),
+                identity_sync=sync_results,
+            )
+        request.session.pop('import_corpo_pending', None)
+        return redirect("view-payslip")
+
     # ── Step conflicts: l'utente ha scelto cosa fare con i conflitti ──
     if request.POST.get("step") == "conflicts":
         pending = request.session.get('import_corpo_pending')
@@ -2996,19 +3148,28 @@ def import_payslip_corpo(request):
             return _render_corpo()
         mese, anno = pending['mese'], pending['anno']
         action = request.POST.get('conflict_action', 'keep')  # 'replace' o 'keep'
-        objects_to_create = []
-        for od in pending['objects_data']:
-            obj = PayslipCorpo(**{k: v for k, v in od.items() if k not in ('assunzione', 'anzianita', 'data_pos')})
-            from datetime import date as _dc
-            obj.assunzione = _dc.fromisoformat(od['assunzione']) if od.get('assunzione') else None
-            obj.anzianita  = _dc.fromisoformat(od['anzianita'])  if od.get('anzianita')  else None
-            obj.data_pos   = _dc.fromisoformat(od['data_pos'])   if od.get('data_pos')   else None
-            objects_to_create.append(obj)
+        objects_to_create = _deserialize_corpo_rows(pending['objects_data'])
         conflict_matricole = set(pending['conflict_matricole'])
         if action == 'replace':
             PayslipCorpo.objects.filter(mese=mese, anno=anno, matricola__in=conflict_matricole).delete()
         else:
             objects_to_create = [o for o in objects_to_create if o.matricola not in conflict_matricole]
+        remaining_matricole = {o.matricola for o in objects_to_create}
+        unmatched = [
+            item for item in pending.get('unmatched', [])
+            if item['matricola'] in remaining_matricole
+        ]
+        if unmatched:
+            pending['objects_data'] = _serialize_corpo_rows(objects_to_create)
+            pending['unmatched'] = unmatched
+            pending.pop('conflict_matricole', None)
+            request.session['import_corpo_pending'] = pending
+            return _render_corpo({
+                'mese': mese, 'anno': anno, 'step2': True,
+                'unmatched': unmatched,
+                'n_total': len(remaining_matricole),
+                'n_unmatched': len(unmatched),
+            })
         request.session.pop('import_corpo_pending', None)
         # prosegui con la bulk_create e sincronizzazione
         # (il codice sotto viene riutilizzato)
@@ -3114,31 +3275,33 @@ def import_payslip_corpo(request):
         messages.error(request, _("Nessuna riga valida trovata nel file CSV."))
         return _render_corpo({"mese": mese, "anno": anno})
 
-    # --- Controllo conflitti: matricole già presenti per mese/anno ---
     matricole_nel_file = {o.matricola for o in objects_to_create if o.matricola}
+    matricole_anagrafica = set(
+        Employee.objects.filter(codice_paghe__in=matricole_nel_file)
+        .values_list('codice_paghe', flat=True)
+    )
+    nominativi = {}
+    for obj in objects_to_create:
+        nominativi.setdefault(
+            obj.matricola,
+            " ".join(part for part in (obj.cognome, obj.nome) if part).strip(),
+        )
+    unmatched = [
+        {'matricola': matricola, 'lavoratore': nominativi.get(matricola) or matricola}
+        for matricola in sorted(matricole_nel_file - matricole_anagrafica)
+    ]
+
+    # --- Controllo conflitti: matricole già presenti per mese/anno ---
     gia_presenti = set(
         PayslipCorpo.objects.filter(mese=mese, anno=anno, matricola__in=matricole_nel_file)
         .values_list('matricola', flat=True).distinct()
     )
     if gia_presenti:
-        # Serializza date come stringhe ISO per la sessione
-        def _ser(obj):
-            d = obj.__dict__.copy()
-            d.pop('_state', None)
-            d.pop('id', None)
-            d.pop('payslip_id', None)
-            for fld in ('assunzione', 'anzianita', 'data_pos'):
-                if d.get(fld) is not None:
-                    d[fld] = d[fld].isoformat()
-            for fld in ('aliq_perc_lav', 'unita', 'dato_base_imponibile',
-                         'importo_ctr_lav', 'db_tfr', 'imp_tfr_ctr_dl'):
-                if d.get(fld) is not None:
-                    d[fld] = str(d[fld])
-            return d
         request.session['import_corpo_pending'] = {
             'mese': mese, 'anno': anno,
-            'objects_data': [_ser(o) for o in objects_to_create],
+            'objects_data': _serialize_corpo_rows(objects_to_create),
             'conflict_matricole': sorted(gia_presenti),
+            'unmatched': unmatched,
             'skipped': skipped,
         }
         return _render_corpo({
@@ -3149,11 +3312,27 @@ def import_payslip_corpo(request):
             'n_total_matricole': len(matricole_nel_file),
         })
 
+    if unmatched:
+        request.session['import_corpo_pending'] = {
+            'mese': mese, 'anno': anno,
+            'objects_data': _serialize_corpo_rows(objects_to_create),
+            'unmatched': unmatched,
+            'skipped': skipped,
+        }
+        return _render_corpo({
+            'mese': mese, 'anno': anno, 'step2': True,
+            'unmatched': unmatched,
+            'n_total': len(matricole_nel_file),
+            'n_unmatched': len(unmatched),
+        })
+
     _corpo_bulk_and_sync(request, mese, anno, objects_to_create, skipped)
     return redirect("view-payslip")
 
 
-def _corpo_bulk_and_sync(request, mese, anno, objects_to_create, skipped=0):
+def _corpo_bulk_and_sync(
+    request, mese, anno, objects_to_create, skipped=0, identity_sync=None
+):
     """Bulk-crea le righe corpo e sincronizza Payslip e salary_hour."""
     from payroll.models.models import PayslipCorpo, Payslip
     from decimal import Decimal
@@ -3258,6 +3437,7 @@ def _corpo_bulk_and_sync(request, mese, anno, objects_to_create, skipped=0):
         msg += " " + _("Matricole non trovate in anagrafica: {}.").format(not_found_str)
     if payslip_no_852:
         msg += " " + _("Nessun cod_voce 852/800 (netto) per: {}.").format(", ".join(sorted(set(payslip_no_852))))
+    msg = _append_identity_sync_message(msg, identity_sync or {})
     messages.success(request, msg)
 
 
@@ -3318,6 +3498,13 @@ def import_payslip_importi(request):
                 od for od in pending['objects_data']
                 if od.get('badge_id') not in conflict_badge_ids
             ]
+            remaining_badge_ids = {
+                od.get('badge_id') for od in pending['objects_data']
+            }
+            pending['unmatched'] = [
+                badge_id for badge_id in pending.get('unmatched', [])
+                if badge_id in remaining_badge_ids
+            ]
         request.session['import_importi_pending'] = pending
         # Se ci sono ancora badge_id non trovati in anagrafica, vai a step 2
         if pending.get('unmatched'):
@@ -3359,23 +3546,29 @@ def import_payslip_importi(request):
             if key.startswith('mat_') and val.strip()
         }
         to_create = []
+        identity_pairs = []
         for od in pending['objects_data']:
             badge_id = od.get('badge_id')
             matricola = od.get('matricola') or override_map.get(badge_id or '')
+            if badge_id and matricola and badge_id in override_map:
+                identity_pairs.append((matricola, badge_id))
             importo = Decimal(od['importo']) if od.get('importo') else None
             to_create.append(PayslipImporti(
                 mese=mese, anno=anno,
                 neg=od.get('neg'), badge_id=badge_id,
                 matricola=matricola or None, importo=importo,
             ))
-        if pending.get('needs_delete'):
-            PayslipImporti.objects.filter(mese=mese, anno=anno).delete()
-        PayslipImporti.objects.bulk_create(to_create)
+        with transaction.atomic():
+            sync_results = _sync_employee_identities(identity_pairs)
+            if pending.get('needs_delete'):
+                PayslipImporti.objects.filter(mese=mese, anno=anno).delete()
+            PayslipImporti.objects.bulk_create(to_create)
         request.session.pop('import_importi_pending', None)
         n_senza = sum(1 for o in to_create if o.matricola is None)
         msg = _("Importate {} righe per {:02d}/{}.").format(len(to_create), mese, anno)
         if n_senza:
             msg += " " + _("{} senza matricola (badge_id non risolto).").format(n_senza)
+        msg = _append_identity_sync_message(msg, sync_results)
         messages.success(request, msg)
         return redirect("view-payslip")
 

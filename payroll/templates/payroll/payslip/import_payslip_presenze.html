@@ -56,7 +56,7 @@
         {% endblocktrans %}
       </div>
       <p class="text-muted small mb-3">
-        {% trans "Inserisci il Badge ID per le matricole che vuoi risolvere (puoi lasciare vuoti quelli che non conosci: verranno importati senza cod_dip)." %}
+        {% trans "Inserisci il Badge ID per le matricole che vuoi risolvere: l'associazione verrà salvata anche nell'anagrafica dipendenti. Puoi lasciare vuoti quelli che non conosci." %}
       </p>
       <form method="post" action="{% url 'import-payslip-presenze' %}">
         {% csrf_token %}
