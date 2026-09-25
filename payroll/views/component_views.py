@@ -2365,7 +2365,7 @@ def _parse_date_it(value):
 
 
 def _sync_employee_payroll_identity(matricola, badge_id):
-    """Completa matricola e badge sull'anagrafica senza sovrascrivere legami esistenti."""
+    """Allinea matricola e badge sull'anagrafica scelta durante l'importazione."""
     matricola = (matricola or "").strip()
     badge_id = (badge_id or "").strip()
     if not matricola or not badge_id:
@@ -2394,18 +2394,10 @@ def _sync_employee_payroll_identity(matricola, badge_id):
         if employee is None:
             return "not_found"
 
-        current_badge = (employee.badge_id or "").strip()
-        current_matricola = (employee.codice_paghe or "").strip()
-        if (
-            (current_badge and current_badge != badge_id)
-            or (current_matricola and current_matricola != matricola)
-        ):
-            return "conflict"
-
         updates = {}
-        if not current_badge:
+        if (employee.badge_id or "").strip() != badge_id:
             updates["badge_id"] = badge_id
-        if not current_matricola:
+        if (employee.codice_paghe or "").strip() != matricola:
             updates["codice_paghe"] = matricola
         if not updates:
             return "unchanged"
@@ -2537,7 +2529,7 @@ def _payment_employee_codes():
 @login_required
 @permission_required("payroll.view_payslip")
 def fill_payment_file(request):
-    """Compila acconto e netto in un foglio scelto del file pagamenti."""
+    """Compila il netto in un foglio scelto del file pagamenti."""
     months = [
         (1, "Gennaio"), (2, "Febbraio"), (3, "Marzo"), (4, "Aprile"),
         (5, "Maggio"), (6, "Giugno"), (7, "Luglio"), (8, "Agosto"),
@@ -2629,12 +2621,6 @@ def fill_payment_file(request):
         from django.db.models import Sum as DSum
 
         mese, anno = pending["mese"], pending["anno"]
-        advances = {
-            (row["matricola"] or "").strip(): row["amount"] or 0
-            for row in PayslipCorpo.objects.filter(mese=mese, anno=anno, cod_voce=800)
-            .values("matricola").annotate(amount=DSum("importo_ctr_lav"))
-            if (row["matricola"] or "").strip()
-        }
         # Nel file pagamenti il saldo e' la sola voce 852. Il campo net_pay
         # del cedolino include invece 852 + 800 e resta invariato per le
         # schermate/registrazioni dei cedolini.
@@ -2652,10 +2638,7 @@ def fill_payment_file(request):
             )
         }
         values = {
-            badge_id: (
-                advances.get(badge_to_payroll_code.get(badge_id, ""), 0),
-                net_pays.get(badge_to_payroll_code.get(badge_id, ""), 0),
-            )
+            badge_id: net_pays.get(badge_to_payroll_code.get(badge_id, ""), 0)
             for badge_id in employee_codes
         }
         with open(pending["path"], "rb") as source_file:

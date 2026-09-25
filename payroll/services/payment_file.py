@@ -6,7 +6,6 @@ from io import BytesIO
 from pathlib import Path
 
 EXCEL_CODE_COLUMN = 8  # H
-ADVANCE_COLUMN = 12  # L
 NET_PAY_COLUMN = 13  # M
 EURO_NUMBER_FORMAT = '€ #,##0.00'
 
@@ -77,7 +76,7 @@ def _has_value(value):
 
 
 def payment_file_has_existing_values(content, filename, sheet_name, known_codes):
-    """Controlla L/M solo per Badge ID H realmente presenti in Horilla."""
+    """Controlla M solo per Badge ID H realmente presenti in Horilla."""
     extension = _extension(filename)
     try:
         if extension == ".xlsx":
@@ -96,11 +95,8 @@ def payment_file_has_existing_values(content, filename, sheet_name, known_codes)
                 values_only=True,
             ):
                 code = _employee_code(cells[0])
-                advance = cells[ADVANCE_COLUMN - EXCEL_CODE_COLUMN]
                 net_pay = cells[NET_PAY_COLUMN - EXCEL_CODE_COLUMN]
-                if code in known_codes and (
-                    _has_value(advance) or _has_value(net_pay)
-                ):
+                if code in known_codes and _has_value(net_pay):
                     found = True
                     break
             workbook.close()
@@ -112,8 +108,7 @@ def payment_file_has_existing_values(content, filename, sheet_name, known_codes)
         sheet = workbook.sheet_by_name(sheet_name)
         return any(
             _employee_code(sheet.cell_value(row, EXCEL_CODE_COLUMN - 1)) in known_codes
-            and (_has_value(sheet.cell_value(row, ADVANCE_COLUMN - 1))
-                 or _has_value(sheet.cell_value(row, NET_PAY_COLUMN - 1)))
+            and _has_value(sheet.cell_value(row, NET_PAY_COLUMN - 1))
             for row in range(sheet.nrows)
         )
     except PaymentFileError:
@@ -135,7 +130,7 @@ def _fill_xlsx(content, sheet_name, values, write_mode):
     filled = missing = 0
 
     # Le righe di riepilogo/calcolo non hanno un codice dipendente in H ma
-    # spesso contengono formule in L/M.  Non fanno parte dell'import e devono
+    # spesso contengono formule in M. Non fanno parte dell'import e devono
     # restare inalterate anche dopo il salvataggio del workbook.
     protected_formulas = {}
     for cells in sheet.iter_rows(
@@ -143,28 +138,21 @@ def _fill_xlsx(content, sheet_name, values, write_mode):
         max_col=NET_PAY_COLUMN,
     ):
         code = _employee_code(cells[0].value)
-        advance_cell = cells[ADVANCE_COLUMN - EXCEL_CODE_COLUMN]
         net_pay_cell = cells[NET_PAY_COLUMN - EXCEL_CODE_COLUMN]
         if not code:
-            for cell in (advance_cell, net_pay_cell):
-                if isinstance(cell.value, str) and cell.value.startswith("="):
-                    protected_formulas[cell.coordinate] = cell.value
+            if isinstance(net_pay_cell.value, str) and net_pay_cell.value.startswith("="):
+                protected_formulas[net_pay_cell.coordinate] = net_pay_cell.value
             continue
         if code not in values:
             # Nessuna modifica alla riga se il codice in H non ha dati associati.
             missing += 1
             continue
-        advance, net_pay = values[code]
-        row_filled = False
-        for cell, value in ((advance_cell, advance), (net_pay_cell, net_pay)):
-            if write_mode == "blanks_only" and _has_value(cell.value):
-                continue
-            # L'assegnazione mantiene bordi, colori e commenti della cella.
-            cell.value = value
-            cell.number_format = EURO_NUMBER_FORMAT
-            row_filled = True
-        if row_filled:
-            filled += 1
+        if write_mode == "blanks_only" and _has_value(net_pay_cell.value):
+            continue
+        # L'assegnazione mantiene bordi, colori e commenti della cella.
+        net_pay_cell.value = values[code]
+        net_pay_cell.number_format = EURO_NUMBER_FORMAT
+        filled += 1
 
     # openpyxl normalmente preserva queste formule; il ripristino esplicito
     # rende invarianti le righe che non hanno alcun valore in colonna H.
@@ -236,7 +224,7 @@ def _fill_xls(content, sheet_name, values, write_mode):
 
 
 def fill_payment_file(content, filename, sheet_name, values, write_mode="overwrite"):
-    """Compila L (acconto) e M (netto), restituendo il formato di input."""
+    """Compila M (netto), lasciando L invariata e restituendo il formato di input."""
     extension = _extension(filename)
     if write_mode not in {"overwrite", "blanks_only"}:
         raise PaymentFileError("Modalita' di scrittura non valida.")

@@ -373,6 +373,7 @@
 
     function normalizeFieldValue(field) {
         if (!field || typeof field.value !== "string") return;
+        if (field.type === "hidden" || field.type === "password") return;
         var normalizedValue = NORMALIZE_SPACES(field.value);
         if (shouldUppercaseField(field)) {
             normalizedValue = normalizedValue.toUpperCase();
@@ -616,9 +617,9 @@
         }
     }
 
-    function normalizeFormFields() {
-        var fields = document.querySelectorAll(
-            "input:not([type='file']):not([type='checkbox']):not([type='radio']), textarea"
+    function normalizeFormFields(form) {
+        var fields = form.querySelectorAll(
+            "input:not([type='hidden']):not([type='password']):not([type='file']):not([type='checkbox']):not([type='radio']), textarea"
         );
         fields.forEach(function (field) {
             normalizeFieldValue(field);
@@ -661,7 +662,7 @@
 
     document.addEventListener("submit", function (event) {
         if (event.target && event.target.tagName === "FORM") {
-            normalizeFormFields();
+            normalizeFormFields(event.target);
         }
     });
 

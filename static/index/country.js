@@ -692,13 +692,22 @@ function resolveSelectElement(elementOrId) {
     return elementOrId;
 }
 
+function normalizeDropdownSelection(value) {
+    return (value || "").toString().normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "");
+}
+
 function populateStates(countryElementId, stateElementId) {
     var countryEl = resolveSelectElement(countryElementId);
     var stateEl = resolveSelectElement(stateElementId);
 
     if (!countryEl || !stateEl) return;  // Prevents null access
     var selectedCountryIndex = countryEl.selectedIndex;
-    var selectedState = stateEl.getAttribute('data-selected') || '';
+    var selectedState = stateEl.value || stateEl.getAttribute('data-selected') || '';
+    var selectedStateKey = normalizeDropdownSelection(selectedState);
+    var matchedState = false;
 
     stateEl.length = 0;
     stateEl.options[0] = new Option("Select State", "");
@@ -709,12 +718,17 @@ function populateStates(countryElementId, stateElementId) {
         for (var i = 0; i < state_arr.length; i++) {
             let stateValue = state_arr[i].replace(/'/g, '`');
             let option = new Option(state_arr[i], stateValue);
-            if (selectedState && selectedState === stateValue) {
+            if (selectedStateKey && selectedStateKey === normalizeDropdownSelection(stateValue)) {
                 option.selected = true;
+                matchedState = true;
             }
             stateEl.options[stateEl.length] = option;
         }
     }
+    if (selectedState && !matchedState) {
+        stateEl.options[stateEl.length] = new Option(selectedState, selectedState, true, true);
+    }
+    stateEl.setAttribute('data-selected', stateEl.value || '');
 }
 
 
@@ -724,36 +738,48 @@ function populateCountries(countryElementId, stateElementId) {
 
     if (!countryEl) return;
 
-    var selectedCountry = countryEl.getAttribute('data-selected') || '';
+    var selectedCountry = countryEl.value || countryEl.getAttribute('data-selected') || '';
+    var selectedCountryKey = normalizeDropdownSelection(selectedCountry);
+    if (selectedCountryKey === 'italia' || selectedCountryKey === 'it') {
+        selectedCountryKey = 'italy';
+    }
+    var matchedCountry = false;
     countryEl.length = 0;
     countryEl.options[0] = new Option("Select Country", "");
 
     for (var i = 0; i < country_arr.length; i++) {
         let country = country_arr[i].replace(/'/g, '`');
         let option = new Option(country_arr[i], country);
-        if (selectedCountry && selectedCountry === country) {
+        if (selectedCountryKey && selectedCountryKey === normalizeDropdownSelection(country)) {
             option.selected = true;
+            matchedCountry = true;
         }
         countryEl.options[countryEl.length] = option;
     }
-    // # 913
-    countryEl.onchange = function () {
-        let selectedValue = this.value;
-        this.setAttribute("data-selected", selectedValue);
-    };
+    if (selectedCountry && !matchedCountry) {
+        countryEl.options[countryEl.length] = new Option(selectedCountry, selectedCountry, true, true);
+    }
+    countryEl.setAttribute('data-selected', countryEl.value || '');
     if (stateEl) {
         populateStates(countryElementId, stateElementId);
-        countryEl.onchange = function () {
-            populateStates(countryElementId, stateElementId);
-        };
     }
+    countryEl.onchange = function () {
+        this.setAttribute('data-selected', this.value || '');
+        if (stateEl) {
+            stateEl.setAttribute('data-selected', '');
+            stateEl.value = '';
+            populateStates(countryElementId, stateElementId);
+        }
+    };
     
     // Apply Select2 AFTER populating if dropdown has country-dropdown class
     if (countryEl.classList.contains('country-dropdown')) {
         $(countryEl).select2();
+        $(countryEl).trigger('change.select2');
     }
     if (stateEl && stateEl.classList.contains('country-dropdown')) {
         $(stateEl).select2();
+        $(stateEl).trigger('change.select2');
     }
 }
 
@@ -811,6 +837,8 @@ function setProvinceSelectOptions(countryEl, stateEl, provinceEl) {
 
     function refresh() {
         var selectedBefore = provinceEl.value || provinceEl.getAttribute("data-selected") || "";
+        var selectedKey = normalizeDropdownSelection(selectedBefore);
+        var matchedProvince = false;
         var country = (countryEl.value || "").trim().toLowerCase();
         var provinces = [];
 
@@ -824,12 +852,14 @@ function setProvinceSelectOptions(countryEl, stateEl, provinceEl) {
         if (provinces.length) {
             provinces.forEach(function (province) {
                 var option = new Option(province, province);
-                if (selectedBefore && selectedBefore === province) {
+                if (selectedKey && selectedKey === normalizeDropdownSelection(province)) {
                     option.selected = true;
+                    matchedProvince = true;
                 }
                 provinceEl.options[provinceEl.length] = option;
             });
-        } else if (selectedBefore) {
+        }
+        if (selectedBefore && !matchedProvince) {
             var currentOption = new Option(selectedBefore, selectedBefore, true, true);
             provinceEl.options[provinceEl.length] = currentOption;
         }

@@ -2078,6 +2078,7 @@ def employee_view_update(request, obj_id, **kwargs):
                     messages.success(
                         request, _("Employee personal information updated.")
                     )
+                    return redirect("employee-view-individual", obj_id=obj_id)
             elif request.POST.get("form") == "work":
                 instance = EmployeeWorkInformation.objects.filter(
                     employee_id=employee
@@ -2102,6 +2103,7 @@ def employee_view_update(request, obj_id, **kwargs):
                         icon="briefcase",
                     )
                     messages.success(request, _("Employee work information updated."))
+                    return redirect("employee-view-individual", obj_id=obj_id)
                 work_form = EmployeeWorkInformationForm(
                     instance=EmployeeWorkInformation.objects.filter(
                         employee_id=employee
@@ -2119,6 +2121,7 @@ def employee_view_update(request, obj_id, **kwargs):
                     instance.employee_id = employee
                     instance.save()
                     messages.success(request, _("Employee bank details updated."))
+                    return redirect("employee-view-individual", obj_id=obj_id)
             elif request.POST.get("form") == "duty-history":
                 duty_form = EmployeeDutyHistoryForm(request.POST, user=request.user)
                 if duty_form.is_valid():
@@ -2126,7 +2129,7 @@ def employee_view_update(request, obj_id, **kwargs):
                     duty_history.employee_id = employee
                     duty_history.save()
                     messages.success(request, _("Employee mansione history updated."))
-                    duty_form = EmployeeDutyHistoryForm(user=request.user)
+                    return redirect("employee-view-individual", obj_id=obj_id)
                 duty_histories = EmployeeDutyHistory.objects.filter(
                     employee_id=employee
                 ).select_related("duty_role_id")

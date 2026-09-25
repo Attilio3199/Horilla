@@ -22,7 +22,7 @@
 
       {% if step_confirm_write %}
         <h5 class="fw-bold mb-3">{% trans "Celle già compilate" %}</h5>
-        <p class="mb-4">{% trans "Nel foglio selezionato sono presenti valori in M o N su righe con un codice dipendente in H. Come vuoi procedere?" %}</p>
+        <p class="mb-4">{% trans "Nel foglio selezionato sono presenti valori in M su righe con un codice dipendente in H. Come vuoi procedere?" %}</p>
         <form method="post">
           {% csrf_token %}
           <input type="hidden" name="action" value="fill">
@@ -30,11 +30,11 @@
           <div class="d-flex flex-column gap-2">
             <button type="submit" name="write_mode" value="overwrite" class="oh-btn oh-btn--danger text-start">
               <strong>{% trans "Sovrascrivi tutto" %}</strong><br>
-              <small>{% trans "Aggiorna M e N per tutti i codici presenti in H." %}</small>
+              <small>{% trans "Aggiorna M per tutti i codici presenti in H." %}</small>
             </button>
             <button type="submit" name="write_mode" value="blanks_only" class="oh-btn oh-btn--primary text-start">
               <strong>{% trans "Compila solo celle vuote" %}</strong><br>
-              <small>{% trans "Conserva ogni valore o formula già presente in M e N." %}</small>
+              <small>{% trans "Conserva ogni valore o formula già presente in M." %}</small>
             </button>
             <a href="{% url 'fill-payment-file' %}" class="oh-btn oh-btn--light">{% trans "Annulla" %}</a>
           </div>
@@ -58,7 +58,7 @@
           <a href="{% url 'fill-payment-file' %}" class="oh-btn oh-btn--light">{% trans "Annulla" %}</a>
         </form>
       {% else %}
-        <p class="mb-4">{% trans "Carica un file XLS o XLSX, scegli il periodo e poi il foglio da compilare. La colonna H identifica il dipendente; le colonne L e M riceveranno acconto e retribuzione netta." %}</p>
+        <p class="mb-4">{% trans "Carica un file XLS o XLSX, scegli il periodo e poi il foglio da compilare. La colonna H identifica il dipendente; la colonna M riceverà la retribuzione netta. La colonna L resterà invariata." %}</p>
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
           <input type="hidden" name="action" value="select_sheet">
