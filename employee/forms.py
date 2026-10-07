@@ -35,7 +35,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as trans
 
 from base.methods import eval_validate, reload_queryset
-from base.models import Company
+from base.models import Company, OperationalUnit
 from employee.models import (
     Actiontype,
     BonusPoint,
@@ -512,6 +512,11 @@ class EmployeeWorkInformationForm(ModelForm):
                         ]
 
         self.fields["work_area_type"].label = _("Dipartimento (SEDE/NEGOZI)")
+        self.fields["operational_unit_id"].label = _("Reparto / Negozio")
+        self.fields["operational_unit_id"].queryset = OperationalUnit.objects.filter(
+            is_active=True
+        ).select_related("company_id").order_by("type", "name")
+        self.fields["operational_unit_id"].required = True
         self.fields["department_code"].label = _("Codice Reparto")
         self.fields["department_id"].label = _("Reparto")
         self.fields["store_code"].label = _("Codice Negozio")
@@ -582,6 +587,11 @@ class EmployeeWorkInformationUpdateForm(ModelForm):
             visible.field.widget.attrs["placeholder"] = visible.field.label
 
         self.fields["work_area_type"].label = _("Dipartimento (SEDE/NEGOZI)")
+        self.fields["operational_unit_id"].label = _("Reparto / Negozio")
+        self.fields["operational_unit_id"].queryset = OperationalUnit.objects.filter(
+            is_active=True
+        ).select_related("company_id").order_by("type", "name")
+        self.fields["operational_unit_id"].required = True
         self.fields["department_code"].label = _("Codice Reparto")
         self.fields["department_id"].label = _("Reparto")
         self.fields["store_code"].label = _("Codice Negozio")

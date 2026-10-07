@@ -26,6 +26,7 @@ from base.models import (
     JobRole,
     MultipleApprovalCondition,
     MultipleApprovalManagers,
+    OperationalUnit,
     PenaltyAccounts,
     RotatingShift,
     RotatingShiftAssign,
@@ -43,6 +44,7 @@ from base.models import (
 
 admin.site.register(Company)
 admin.site.register(Department, SimpleHistoryAdmin)
+admin.site.register(OperationalUnit, SimpleHistoryAdmin)
 admin.site.register(JobPosition)
 admin.site.register(JobRole)
 admin.site.register(EmployeeShift)

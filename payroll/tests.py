@@ -1,6 +1,10 @@
 """Test cases for payroll."""
 
 from io import BytesIO
+from decimal import Decimal
+from types import SimpleNamespace
+from unittest.mock import MagicMock, patch
+from unittest import TestCase as UnitTestCase
 
 from django.test import SimpleTestCase, TestCase
 from openpyxl import Workbook, load_workbook
@@ -11,6 +15,63 @@ from payroll.services.payment_file import (
     payment_file_has_existing_values,
 )
 from payroll.views.component_views import _sync_employee_payroll_identity
+
+
+class AttendanceControlTests(UnitTestCase):
+    def _run_check(self, rows, shifts):
+        from payroll.views.component_views import _build_risultati_for_export
+
+        mappings = [
+            SimpleNamespace(id=1, cod_voce="0302", codice_tipo_orario="FERIE",
+                            tipo_ora="previsionale", tipi_app_ammessi=["FERIE", "ROL"]),
+            SimpleNamespace(id=2, cod_voce="0303", codice_tipo_orario="ROL",
+                            tipo_ora="consuntivo", tipi_app_ammessi=["FERIE", "ROL"]),
+            SimpleNamespace(id=3, cod_voce="0300", codice_tipo_orario="LAVORATO",
+                            tipo_ora="consuntivo", tipi_app_ammessi=[
+                                "LAVORATO", "SMART WORKING", "CORSO AI DIPENDENTI"]),
+        ]
+        employees = [{"cod_dip": "B1", "lavoratore": "Test", "matricola": "M1"}]
+        employee_qs = MagicMock()
+        employee_qs.exclude.return_value.exclude.return_value.values.return_value.distinct.return_value.order_by.return_value = employees * 2
+        presence_qs = MagicMock()
+        presence_qs.values.return_value = [
+            {"cod_dip": "B1", "cod_voce": voice, **{
+                f"day_{day}": Decimal(str(hours)) if day == 1 else None
+                for day in range(1, 29)
+            }} for voice, hours in rows
+        ]
+        cursor = MagicMock()
+        cursor.description = [(name,) for name in [
+            "CODICEPERSONALE", "CODICE_TIPO_ORARIO", "giorno", "ore_cons", "ore_prev"]]
+        cursor.fetchall.return_value = [("B1", kind, 1, cons, prev) for kind, cons, prev in shifts]
+        module = "payroll.views.component_views"
+        with patch(module + ".PayslipDizionario.objects.filter") as dictionary, \
+             patch(module + ".PayslipPresenze.objects.filter", side_effect=[employee_qs, presence_qs]), \
+             patch(module + "._pg_conn.cursor") as db_cursor:
+            dictionary.return_value.order_by.return_value = mappings
+            db_cursor.return_value.__enter__.return_value = cursor
+            return _build_risultati_for_export(2, 2026, ["B1"])
+
+    def test_duplicate_rows_are_summed_and_employee_checked_once(self):
+        results, _, count = self._run_check([(302, 3), (302, 5)], [("FERIE", 0, 8)])
+        self.assertEqual(results, [])
+        self.assertEqual(count, 1)
+
+    def test_ferie_and_rol_keep_their_own_hour_source(self):
+        results, _, _ = self._run_check([(302, 4), (303, 4)],
+            [("FERIE", 0, 4), ("ROL", 4, 0)])
+        self.assertEqual(results, [])
+
+    def test_smart_work_and_course_are_covered_by_worked_voice(self):
+        results, _, _ = self._run_check([(300, 4), (300, 4)],
+            [("SMART WORKING", 4, 0), ("CORSO AI DIPENDENTI", 4, 0)])
+        self.assertEqual(results, [])
+
+    def test_shared_payslip_hours_are_not_reused(self):
+        results, _, _ = self._run_check([(302, 8)],
+            [("FERIE", 0, 8), ("ROL", 8, 0)])
+        self.assertEqual(len(results[0]["discrepanze"]), 1)
+        self.assertEqual(results[0]["discrepanze"][0]["ore_app_non_coperte"], 8)
 
 
 class EmployeePayrollIdentitySyncTests(TestCase):

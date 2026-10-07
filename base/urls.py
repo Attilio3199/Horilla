@@ -24,6 +24,7 @@ from base.models import (
     HorillaMailTemplate,
     JobPosition,
     JobRole,
+    OperationalUnit,
     RotatingShift,
     RotatingShiftAssign,
     RotatingWorkType,
@@ -235,6 +236,28 @@ urlpatterns = [
             "model": Department,
             "HttpResponse": True,
         },
+    ),
+    path(
+        "settings/operational-unit-view/",
+        views.operational_unit_view,
+        name="operational-unit-view",
+    ),
+    path(
+        "settings/operational-unit-create/",
+        views.operational_unit_create,
+        name="operational-unit-create",
+    ),
+    path(
+        "settings/operational-unit-update/<int:id>/",
+        views.operational_unit_update,
+        name="operational-unit-update",
+        kwargs={"model": OperationalUnit},
+    ),
+    path(
+        "operational-unit-delete/<int:obj_id>/",
+        views.object_delete,
+        name="operational-unit-delete",
+        kwargs={"model": OperationalUnit, "HttpResponse": True},
     ),
     path(
         "settings/job-position-creation/",

@@ -54,6 +54,7 @@ from base.models import (
     JobPosition,
     JobRole,
     MultipleApprovalCondition,
+    OperationalUnit,
     PenaltyAccounts,
     RotatingShift,
     RotatingShiftAssign,
@@ -536,6 +537,14 @@ class DepartmentForm(ModelForm):
         model = Department
         fields = "__all__"
         exclude = ["is_active"]
+
+
+class OperationalUnitForm(ModelForm):
+    """Configuration form for headquarters departments and stores."""
+
+    class Meta:
+        model = OperationalUnit
+        fields = ("company_id", "type", "name", "short_name", "code")
 
 
 class JobPositionForm(ModelForm):

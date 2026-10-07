@@ -31,6 +31,7 @@ from base.models import (
     EmployeeType,
     JobPosition,
     JobRole,
+    OperationalUnit,
     WorkType,
     validate_time_format,
 )
@@ -785,6 +786,14 @@ class EmployeeWorkInformation(models.Model):
         blank=True,
         verbose_name=_("Employee Type"),
     )
+    operational_unit_id = models.ForeignKey(
+        OperationalUnit,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="employee_work_informations",
+        verbose_name=_("Operational unit"),
+    )
     tags = models.ManyToManyField(
         EmployeeTag, blank=True, verbose_name=_("Employee tag")
     )
@@ -851,23 +860,45 @@ class EmployeeWorkInformation(models.Model):
     def __str__(self) -> str:
         return f"{self.employee_id} - {self.job_position_id}"
 
+    @property
+    def operational_unit_type(self):
+        """Unit type, with a legacy fallback while data is being sanitized."""
+        if self.operational_unit_id:
+            return self.operational_unit_id.type
+        return self.work_area_type
+
+    @property
+    def operational_unit_name(self):
+        """Unit name, preserving the information shown by the old employee view."""
+        if self.operational_unit_id:
+            return self.operational_unit_id.name
+        if self.work_area_type == "SEDE":
+            return str(self.department_id) if self.department_id else None
+        return self.store_name
+
+    @property
+    def operational_unit_short_name(self):
+        if self.operational_unit_id:
+            return self.operational_unit_id.short_name
+        return None
+
+    @property
+    def operational_unit_code(self):
+        if self.operational_unit_id:
+            return self.operational_unit_id.code
+        if self.work_area_type == "SEDE":
+            return self.department_code
+        return self.store_code
+
     def clean(self):
         super().clean()
         errors = {}
 
-        if self.work_area_type == "SEDE":
-            if not self.department_id:
-                errors["department_id"] = _("Department is required when area is SEDE.")
-            if not self.department_code:
-                errors["department_code"] = _(
-                    "Department Code is required when area is SEDE."
+        if self.operational_unit_id and self.company_id:
+            if self.operational_unit_id.company_id_id != self.company_id_id:
+                errors["operational_unit_id"] = _(
+                    "The operational unit must belong to the selected company."
                 )
-
-        if self.work_area_type == "NEGOZI":
-            if not self.store_code:
-                errors["store_code"] = _("Store Code is required when area is NEGOZI.")
-            if not self.store_name:
-                errors["store_name"] = _("Store is required when area is NEGOZI.")
 
         if errors:
             raise ValidationError(errors)

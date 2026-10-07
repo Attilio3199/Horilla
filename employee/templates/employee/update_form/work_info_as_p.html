@@ -4,43 +4,20 @@
 <div class="row">
     <div class="col-lg-6">
         <div class="oh-input__group">
-            <label class="oh-label">{{ form.work_area_type.label }}</label>
-            {{ form.work_area_type }}
-            {{ form.work_area_type.errors }}
+            <label class="oh-label required-star">{{ form.operational_unit_id.label }}</label>
+            {{ form.operational_unit_id }}
+            <small class="text-muted">{% trans "Select the headquarters department or store assigned to this employee." %}</small>
+            {{ form.operational_unit_id.errors }}
         </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-6 work-area-sede-field" {% if form.work_area_type.value != 'SEDE' %}style="display:none"{% endif %}>
-        <div class="oh-input__group">
-            <label class="oh-label">{{ form.department_code.label }}</label>
-            {{ form.department_code }}
-            {{ form.department_code.errors }}
-        </div>
-    </div>
-    <div class="col-lg-6 work-area-sede-field" {% if form.work_area_type.value != 'SEDE' %}style="display:none"{% endif %}>
-        <div class="oh-input__group">
-            <label class="oh-label">{{ form.department_id.label }}</label>
-            {{ form.department_id }}
-            {{ form.department_id.errors }}
-        </div>
-    </div>
-    <div class="col-lg-6 work-area-store-field" {% if form.work_area_type.value != 'NEGOZI' %}style="display:none"{% endif %}>
-        <div class="oh-input__group">
-            <label class="oh-label">{{ form.store_code.label }}</label>
-            {{ form.store_code }}
-            {{ form.store_code.errors }}
-        </div>
-    </div>
-    <div class="col-lg-6 work-area-store-field" {% if form.work_area_type.value != 'NEGOZI' %}style="display:none"{% endif %}>
-        <div class="oh-input__group">
-            <label class="oh-label">{{ form.store_name.label }}</label>
-            {{ form.store_name }}
-            {{ form.store_name.errors }}
-        </div>
-    </div>
-</div>
+{# Preserve legacy fields while existing records are progressively sanitized. #}
+{{ form.work_area_type.as_hidden }}
+{{ form.department_code.as_hidden }}
+{{ form.department_id.as_hidden }}
+{{ form.store_code.as_hidden }}
+{{ form.store_name.as_hidden }}
 
 <div class="row">
     <div class="col-lg-6">
@@ -179,50 +156,3 @@
     </div>
 </div>
 {% endif %}
-
-<script>
-(function () {
-    function getAreaValue() {
-        var areaField = document.getElementById("id_work_area_type");
-        if (!areaField) return "";
-        var value = (areaField.value || "").toString().trim().toUpperCase();
-        if (value === "SEDE" || value === "NEGOZI") {
-            return value;
-        }
-        var selectedOption = areaField.options[areaField.selectedIndex];
-        if (!selectedOption) return "";
-        var text = (selectedOption.text || "").toString().trim().toUpperCase();
-        if (text.indexOf("SEDE") !== -1) return "SEDE";
-        if (text.indexOf("NEGOZI") !== -1 || text.indexOf("NEGOZIO") !== -1) return "NEGOZI";
-        return "";
-    }
-
-    window.toggleWorkAreaFieldsGlobal = function () {
-        var selected = getAreaValue();
-        var sedeFields = document.querySelectorAll('.work-area-sede-field');
-        var storeFields = document.querySelectorAll('.work-area-store-field');
-
-        sedeFields.forEach(function (el) {
-            el.style.display = selected === 'SEDE' ? '' : 'none';
-        });
-        storeFields.forEach(function (el) {
-            el.style.display = selected === 'NEGOZI' ? '' : 'none';
-        });
-    }
-
-    document.addEventListener('change', function (event) {
-        if (event.target && event.target.id === 'id_work_area_type') {
-            window.toggleWorkAreaFieldsGlobal();
-        }
-    });
-
-    if (window.jQuery) {
-        $(document).on('select2:select', '#id_work_area_type', window.toggleWorkAreaFieldsGlobal);
-    }
-
-    document.addEventListener('DOMContentLoaded', window.toggleWorkAreaFieldsGlobal);
-    setTimeout(window.toggleWorkAreaFieldsGlobal, 0);
-    setTimeout(window.toggleWorkAreaFieldsGlobal, 150);
-    setTimeout(window.toggleWorkAreaFieldsGlobal, 400);
-})();
-</script>

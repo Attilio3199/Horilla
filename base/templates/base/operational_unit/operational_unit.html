@@ -1,0 +1,34 @@
+{% extends 'index.html' %}
+{% load i18n %}
+{% block content %}
+<section class="oh-wrapper oh-main__topbar">
+  <div class="oh-main__titlebar">
+    <h1 class="oh-main__titlebar-title">{% trans "Operational units" %}</h1>
+  </div>
+  {% if perms.base.add_operationalunit %}
+  <button class="oh-btn oh-btn--secondary" hx-get="{% url 'operational-unit-create' %}"
+    hx-target="#objectCreateModalTarget" data-toggle="oh-modal-toggle" data-target="#objectCreateModal">
+    <ion-icon name="add-outline"></ion-icon> {% trans "Add unit" %}
+  </button>
+  {% endif %}
+</section>
+<div class="oh-wrapper">
+  <div class="oh-sticky-table">
+    <div class="oh-sticky-table__table">
+      <div class="oh-sticky-table__thead"><div class="oh-sticky-table__tr">
+        <div class="oh-sticky-table__th">{% trans "Type" %}</div><div class="oh-sticky-table__th">{% trans "Name" %}</div>
+        <div class="oh-sticky-table__th">{% trans "Short name" %}</div><div class="oh-sticky-table__th">{% trans "Code" %}</div>
+        <div class="oh-sticky-table__th">{% trans "Company" %}</div><div class="oh-sticky-table__th">{% trans "Actions" %}</div>
+      </div></div>
+      <div class="oh-sticky-table__tbody">{% for unit in units %}<div class="oh-sticky-table__tr" id="operationalUnit{{ unit.id }}">
+        <div class="oh-sticky-table__td">{{ unit.get_type_display }}</div><div class="oh-sticky-table__td">{{ unit.name }}</div>
+        <div class="oh-sticky-table__td">{{ unit.short_name }}</div><div class="oh-sticky-table__td">{{ unit.code }}</div>
+        <div class="oh-sticky-table__td">{{ unit.company_id }}</div><div class="oh-sticky-table__td"><div class="oh-btn-group">
+          {% if perms.base.change_operationalunit %}<a class="oh-btn oh-btn--light-bkg" hx-get="{% url 'operational-unit-update' unit.id %}" hx-target="#objectUpdateModalTarget" data-toggle="oh-modal-toggle" data-target="#objectUpdateModal"><ion-icon name="create-outline"></ion-icon></a>{% endif %}
+          {% if perms.base.delete_operationalunit %}<form hx-post="{% url 'operational-unit-delete' unit.id %}" hx-target="#operationalUnit{{ unit.id }}" hx-confirm="{% trans 'Are you sure you want to delete this unit?' %}">{% csrf_token %}<button class="oh-btn oh-btn--danger-outline" type="submit"><ion-icon name="trash-outline"></ion-icon></button></form>{% endif %}
+        </div></div>
+      </div>{% empty %}<div class="oh-sticky-table__tr"><div class="oh-sticky-table__td" colspan="6">{% trans "No operational units configured." %}</div></div>{% endfor %}</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

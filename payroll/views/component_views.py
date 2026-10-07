@@ -85,8 +85,6 @@ from payroll.models.models import (
     Contract,
     Deduction,
     LoanAccount,
-    PayslipControlloRegola,
-    PayslipControlloRegolaDestinazione,
     Payslip,
     PayslipCorpo,
     PayslipDizionario,
@@ -3839,24 +3837,15 @@ def controllo_cedolini_presenze(request):
     mese_str = (request.POST.get("mese") or request.GET.get("mese", "")).strip()
     anno_str = (request.POST.get("anno") or request.GET.get("anno", "")).strip()
 
-    regole_controllo = []
-    try:
-        regole_controllo = list(
-            PayslipControlloRegola.objects
-            .all()
-            .prefetch_related("destinazioni")
-            .order_by("direzione", "priorita", "sorgente_valore")
-        )
-    except Exception:
-        # La pagina deve restare accessibile anche prima della migration
-        # delle tabelle avanzate di controllo.
-        regole_controllo = []
-
     ctx_base = {
         "periodi": periodi,
         "mappings": mappings,
         "mappings_attivi_count": sum(1 for m in mappings if m.attivo),
-        "regole_controllo": regole_controllo,
+        "tipi_app_disponibili": sorted({
+            m.codice_tipo_orario for m in mappings
+        } | {
+            tipo for m in mappings for tipo in m.tipi_app_ammessi
+        } | {"SMART WORKING", "CORSO AI DIPENDENTI"}),
     }
 
     if not mese_str or not anno_str:
@@ -3962,6 +3951,9 @@ def aggiungi_dizionario(request):
     else:
         PayslipDizionario.objects.create(
             codice_tipo_orario=codice_tipo_orario,
+            tipi_app_ammessi=list(dict.fromkeys(
+                t.strip() for t in request.POST.getlist("tipi_app_ammessi") if t.strip()
+            )) or [codice_tipo_orario],
             cod_voce=cod_voce,
             tipo_ora=tipo_ora,
             attivo=attivo,
@@ -3992,149 +3984,23 @@ def elimina_dizionario(request, mapping_id):
 
 
 @login_required
-def toggle_regola_controllo_attiva(request, regola_id):
-    """HTMX: inverte il flag attiva di una regola avanzata."""
+def aggiorna_dizionario(request, mapping_id):
+    """Aggiorna le equivalenze e la scelta delle ore senza cambiare categoria."""
     if request.method != "POST":
         return HttpResponse(status=405)
-    reg = get_object_or_404(PayslipControlloRegola, pk=regola_id)
-    reg.attivo = not reg.attivo
-    reg.save(update_fields=["attivo"])
-    return HttpResponse(status=204)
-
-
-@login_required
-def aggiungi_regola_controllo(request):
-    """Crea una nuova regola avanzata (tabella payslip_controllo_regole)."""
-    if request.method != "POST":
-        return HttpResponse(status=405)
-
-    direzione = (request.POST.get("direzione") or "").strip()
-    sorgente_valore = (request.POST.get("sorgente_valore") or "").strip()
-    modalita = (request.POST.get("modalita") or "").strip()
-    no_somma_stesso_giorno = request.POST.get("no_somma_stesso_giorno") == "1"
-    attiva = request.POST.get("attiva") == "1"
-    note = (request.POST.get("note") or "").strip() or None
-    priorita_raw = (request.POST.get("priorita") or "").strip() or "100"
-    destinazioni_raw = (request.POST.get("destinazioni") or "").strip()
-
-    if not direzione or not sorgente_valore or not modalita:
-        messages.error(request, _("Direzione, sorgente e modalita sono obbligatorie."))
+    mapping = get_object_or_404(PayslipDizionario, pk=mapping_id)
+    tipi = list(dict.fromkeys(t.strip() for t in request.POST.getlist("tipi_app_ammessi") if t.strip()))
+    tipo_ora = request.POST.get("tipo_ora", mapping.tipo_ora)
+    if not tipi or tipo_ora not in dict(PayslipDizionario.TIPO_ORA_CHOICES):
+        messages.error(request, _("Seleziona almeno un tipo app e un tipo ora valido."))
     else:
-        try:
-            priorita = int(priorita_raw)
-        except (ValueError, TypeError):
-            priorita = 100
-
-        try:
-            regola, created = PayslipControlloRegola.objects.get_or_create(
-                direzione=direzione,
-                sorgente_valore=sorgente_valore,
-                defaults={
-                    "modalita": modalita,
-                    "no_somma_stesso_giorno": no_somma_stesso_giorno,
-                    "attivo": attiva,
-                    "priorita": priorita,
-                    "note": note,
-                },
-            )
-            if not created:
-                regola.modalita = modalita
-                regola.no_somma_stesso_giorno = no_somma_stesso_giorno
-                regola.attivo = attiva
-                regola.priorita = priorita
-                regola.note = note
-                regola.save(
-                    update_fields=[
-                        "modalita",
-                        "no_somma_stesso_giorno",
-                        "attivo",
-                        "priorita",
-                        "note",
-                    ]
-                )
-
-            if destinazioni_raw:
-                valori = [v.strip() for v in destinazioni_raw.split(",") if v.strip()]
-                for val in valori:
-                    PayslipControlloRegolaDestinazione.objects.get_or_create(
-                        regola=regola,
-                        destinazione_valore=val,
-                        defaults={"attivo": True},
-                    )
-            messages.success(request, _("Regola controllo salvata."))
-        except Exception as exc:
-            messages.error(request, _("Errore nel salvataggio della regola: {}" ).format(exc))
-
+        mapping.tipi_app_ammessi = tipi
+        mapping.tipo_ora = tipo_ora
+        mapping.save(update_fields=["tipi_app_ammessi", "tipo_ora"])
+        messages.success(request, _("Equivalenze aggiornate."))
     mese = request.POST.get("mese", "")
     anno = request.POST.get("anno", "")
-    base = reverse("controllo-cedolini-presenze")
-    qs = f"?mese={mese}&anno={anno}" if mese and anno else ""
-    return redirect(f"{base}{qs}")
-
-
-@login_required
-def elimina_regola_controllo(request, regola_id):
-    """Elimina una regola avanzata (e le sue destinazioni)."""
-    if request.method != "POST":
-        return HttpResponse(status=405)
-    reg = get_object_or_404(PayslipControlloRegola, pk=regola_id)
-    reg.delete()
-    messages.success(request, _("Regola eliminata."))
-    mese = request.POST.get("mese", "")
-    anno = request.POST.get("anno", "")
-    base = reverse("controllo-cedolini-presenze")
-    qs = f"?mese={mese}&anno={anno}" if mese and anno else ""
-    return redirect(f"{base}{qs}")
-
-
-@login_required
-def toggle_regola_destinazione_attiva(request, destinazione_id):
-    """HTMX: inverte il flag attiva di una destinazione regola."""
-    if request.method != "POST":
-        return HttpResponse(status=405)
-    d = get_object_or_404(PayslipControlloRegolaDestinazione, pk=destinazione_id)
-    d.attivo = not d.attivo
-    d.save(update_fields=["attivo"])
-    return HttpResponse(status=204)
-
-
-@login_required
-def aggiungi_regola_destinazione(request, regola_id):
-    """Aggiunge una destinazione a una regola esistente."""
-    if request.method != "POST":
-        return HttpResponse(status=405)
-    reg = get_object_or_404(PayslipControlloRegola, pk=regola_id)
-    val = (request.POST.get("destinazione_valore") or "").strip()
-    if not val:
-        messages.error(request, _("Destinazione obbligatoria."))
-    else:
-        PayslipControlloRegolaDestinazione.objects.get_or_create(
-            regola=reg,
-            destinazione_valore=val,
-            defaults={"attivo": True},
-        )
-        messages.success(request, _("Destinazione aggiunta."))
-
-    mese = request.POST.get("mese", "")
-    anno = request.POST.get("anno", "")
-    base = reverse("controllo-cedolini-presenze")
-    qs = f"?mese={mese}&anno={anno}" if mese and anno else ""
-    return redirect(f"{base}{qs}")
-
-
-@login_required
-def elimina_regola_destinazione(request, destinazione_id):
-    """Elimina una destinazione da una regola."""
-    if request.method != "POST":
-        return HttpResponse(status=405)
-    d = get_object_or_404(PayslipControlloRegolaDestinazione, pk=destinazione_id)
-    d.delete()
-    messages.success(request, _("Destinazione eliminata."))
-    mese = request.POST.get("mese", "")
-    anno = request.POST.get("anno", "")
-    base = reverse("controllo-cedolini-presenze")
-    qs = f"?mese={mese}&anno={anno}" if mese and anno else ""
-    return redirect(f"{base}{qs}")
+    return redirect("{}?mese={}&anno={}".format(reverse("controllo-cedolini-presenze"), mese, anno))
 
 
 # ---------------------------------------------------------------------------
@@ -4215,15 +4081,20 @@ def controllo_cedolini_importi(request):
         .filter(mese=mese, anno=anno)
         .values("matricola", "badge_id", "neg", "importo")
     )
+    # Più righe di premi per la stessa matricola concorrono tutte al totale
+    # del periodo: non usare l'ultima riga letta come valore di confronto.
     importi_by_mat = {}
     for r in importi_qs:
         mat = (r["matricola"] or "").strip()
         if mat:
-            importi_by_mat[mat] = {
-                "importo": float(r["importo"] or 0) if r["importo"] is not None else 0.0,
+            record = importi_by_mat.setdefault(mat, {
+                "importo": 0.0,
                 "badge_id": r["badge_id"] or "",
                 "neg": r["neg"] or "",
-            }
+            })
+            record["importo"] += float(r["importo"] or 0)
+            record["badge_id"] = record["badge_id"] or r["badge_id"] or ""
+            record["neg"] = record["neg"] or r["neg"] or ""
 
     # --- Dati da payslip_corpo voce 429 ---
     corpo_429_qs = (
@@ -4231,15 +4102,18 @@ def controllo_cedolini_importi(request):
         .filter(mese=mese, anno=anno, cod_voce=429)
         .values("matricola", "cognome", "nome", "importo_ctr_lav")
     )
+    # Anche le voci 429 possono essere ripartite su più righe di cedolino.
     corpo_429_by_mat = {}
     for r in corpo_429_qs:
         mat = (r["matricola"] or "").strip()
         if mat:
             nome_completo = f"{r['cognome'] or ''} {r['nome'] or ''}".strip()
-            corpo_429_by_mat[mat] = {
-                "importo": float(r["importo_ctr_lav"] or 0) if r["importo_ctr_lav"] is not None else 0.0,
+            record = corpo_429_by_mat.setdefault(mat, {
+                "importo": 0.0,
                 "nome": nome_completo,
-            }
+            })
+            record["importo"] += float(r["importo_ctr_lav"] or 0)
+            record["nome"] = record["nome"] or nome_completo
 
     # --- Matricole con almeno una riga in payslip_corpo (qualsiasi voce) ---
     corpo_all_matricole = set(
@@ -4351,7 +4225,7 @@ def controllo_cedolini_acconti(request):
         mese_prec, anno_prec = mese - 1, anno
 
     def _fetch_acconti(m, a):
-        """Restituisce {matricola: dict} per vo. 800 nel mese/anno m/a."""
+        """Restituisce i totali per matricola della voce 800 nel periodo."""
         qs = (
             PayslipCorpo.objects
             .filter(mese=m, anno=a, cod_voce=800)
@@ -4362,13 +4236,19 @@ def controllo_cedolini_acconti(request):
         for r in qs:
             mat = (r["matricola"] or "").strip()
             if mat:
-                result[mat] = {
+                record = result.setdefault(mat, {
                     "matricola":        mat,
                     "cognome":          r["cognome"] or "",
                     "nome":             r["nome"] or "",
                     "descrizione_voce": r["descrizione_voce"] or "",
-                    "importo":          float(r["importo_ctr_lav"] or 0),
-                }
+                    "importo":          0.0,
+                })
+                record["importo"] += float(r["importo_ctr_lav"] or 0)
+                record["cognome"] = record["cognome"] or r["cognome"] or ""
+                record["nome"] = record["nome"] or r["nome"] or ""
+                record["descrizione_voce"] = (
+                    record["descrizione_voce"] or r["descrizione_voce"] or ""
+                )
         return result
 
     corrente_by_mat  = _fetch_acconti(mese, anno)
@@ -4575,107 +4455,40 @@ def controllo_cedolini_malattie(request):
 
 
 def _build_risultati_for_export(mese, anno, selected_dip):
-    """
-    Ricostruisce i risultati del controllo per un dato periodo e lista dipendenti.
-    Restituisce (risultati, mappings_attivi, n_controllati) nel formato usato dalla view principale.
-
-    Gestisce:
-    - fallback standard da payslip_dizionario (utile per i casi 1:1)
-    - regole avanzate ANY/SUM da payslip_controllo_regole (+ destinazioni)
-      per i casi non 1:1.
-    """
+    """Confronto giornaliero condiviso da schermata, Excel e Word."""
     import calendar
     from datetime import date as _date
-    from collections import defaultdict as _defaultdict
+    from decimal import Decimal
+    from payroll.services.attendance_check import reconcile_hours
 
     num_giorni = calendar.monthrange(anno, mese)[1]
     data_inizio = _date(anno, mese, 1)
-    data_fine   = _date(anno, mese, num_giorni)
-
+    data_fine = _date(anno, mese, num_giorni)
     mappings_attivi = [
-        m
-        for m in PayslipDizionario.objects.filter(attivo=True).order_by("codice_tipo_orario")
-        if m.cod_voce
+        m for m in PayslipDizionario.objects.filter(attivo=True).order_by("id")
+        if m.cod_voce and m.tipi_app_ammessi
     ]
     if not mappings_attivi or not selected_dip:
         return [], mappings_attivi, 0
 
-    # Raggruppa per codice_tipo_orario → lista di mapping (es. ROL → [0303, 0336]).
-    tipo_orario_to_mappings: dict = _defaultdict(list)
-    cod_voce_to_tipi: dict = _defaultdict(set)
-    for _m in mappings_attivi:
-        tipo_orario_to_mappings[_m.codice_tipo_orario].append(_m)
+    # Una voce è letta una sola volta, anche con più righe di dizionario.
+    allowed = defaultdict(set)
+    voice_categories = {}
+    tipo_ora_map = {}
+    for mapping in mappings_attivi:
         try:
-            cod_voce_to_tipi[int(str(_m.cod_voce).strip())].add(_m.codice_tipo_orario)
-        except (TypeError, ValueError):
+            voice = int(mapping.cod_voce)
+        except (ValueError, TypeError):
             continue
-
-    cod_voce_int_set = set()
-    for m in mappings_attivi:
-        try:
-            cod_voce_int_set.add(int(str(m.cod_voce).strip()))
-        except (TypeError, ValueError):
-            continue
-
-    # mappa tipo_orario → usa_prev
-    tipo_ora_map = {m.codice_tipo_orario: (m.tipo_ora == "previsionale") for m in mappings_attivi}
-
-    # Regole avanzate ANY/SUM (se le tabelle non esistono ancora, fallback automatico).
-    regole_attive = []
-    try:
-        regole_attive = list(
-            PayslipControlloRegola.objects
-            .filter(attivo=True)
-            .prefetch_related("destinazioni")
-            .order_by("direzione", "priorita", "sorgente_valore")
-        )
-    except Exception:
-        regole_attive = []
-
-    app_to_ced_rules = {}
-    ced_to_app_rules = {}
-
-    for reg in regole_attive:
-        dest_vals = [
-            (d.destinazione_valore or "").strip()
-            for d in reg.destinazioni.all() if d.attivo and (d.destinazione_valore or "").strip()
-        ]
-        if not dest_vals:
-            continue
-
-        src = (reg.sorgente_valore or "").strip()
-        if not src:
-            continue
-
-        if reg.direzione == PayslipControlloRegola.DIR_APP_TO_CED:
-            cods = []
-            for v in dest_vals:
-                try:
-                    cv = int(v)
-                    cods.append(cv)
-                    cod_voce_int_set.add(cv)
-                except ValueError:
-                    continue
-            if cods:
-                app_to_ced_rules[src] = {
-                    "modalita": reg.modalita,
-                    "no_somma_stesso_giorno": bool(reg.no_somma_stesso_giorno),
-                    "dest_cod_voci": cods,
-                }
-
-        elif reg.direzione == PayslipControlloRegola.DIR_CED_TO_APP:
-            try:
-                cod_src = int(src)
-            except ValueError:
-                continue
-            cod_voce_int_set.add(cod_src)
-            ced_to_app_rules[cod_src] = {
-                "modalita": reg.modalita,
-                "no_somma_stesso_giorno": bool(reg.no_somma_stesso_giorno),
-                "dest_tipi": dest_vals,
-            }
-
-    day_cols = [f"day_{i}" for i in range(1, num_giorni + 1)]
+        voice_categories.setdefault(voice, mapping.codice_tipo_orario)
+        for kind in mapping.tipi_app_ammessi:
+            allowed[voice].add(kind)
+            tipo_ora_map.setdefault(kind, mapping.tipo_ora == "previsionale")
+    # Mantieni la scelta ore del tipo app originario (FERIE previsionali,
+    # ROL consuntive), anche quando entrambi possono usare le stesse voci.
+    for mapping in mappings_attivi:
+        if mapping.codice_tipo_orario in tipo_ora_map:
+            tipo_ora_map[mapping.codice_tipo_orario] = mapping.tipo_ora == "previsionale"
 
     dipendenti_qs = (
         PayslipPresenze.objects
@@ -4684,30 +4497,31 @@ def _build_risultati_for_export(mese, anno, selected_dip):
         .values("cod_dip", "lavoratore", "matricola")
         .distinct().order_by("lavoratore")
     )
-    dipendenti_list = list(dipendenti_qs)
-    all_cod_dip = [d["cod_dip"] for d in dipendenti_list]
+    # Una sola verifica per codice personale, anche con varianti del nominativo.
+    dipendenti_by_cod = {}
+    for dip in dipendenti_qs:
+        dipendenti_by_cod.setdefault(dip["cod_dip"], dip)
+    dipendenti_list = list(dipendenti_by_cod.values())
+    all_cod_dip = list(dipendenti_by_cod)
     if not all_cod_dip:
         return [], mappings_attivi, 0
 
+    day_cols = [f"day_{i}" for i in range(1, num_giorni + 1)]
+    presenze_idx = defaultdict(lambda: Decimal(0))
+    voice_descriptions = {}
     presenze_qs = (
         PayslipPresenze.objects
-        .filter(mese=mese, anno=anno,
-                cod_voce__in=list(cod_voce_int_set),
+        .filter(mese=mese, anno=anno, cod_voce__in=list(allowed),
                 cod_dip__in=all_cod_dip)
-        .values("cod_dip", "cod_voce", *day_cols)
+        .values("cod_dip", "cod_voce", "desc_voce", *day_cols)
     )
-    # Se esistono più righe con stesso (cod_dip, cod_voce) sommiamo i valori giornalieri
-    presenze_idx = {}
-    for r in presenze_qs:
-        key = (r["cod_dip"], r["cod_voce"])
-        if key not in presenze_idx:
-            presenze_idx[key] = dict(r)
-        else:
-            for dc in day_cols:
-                presenze_idx[key][dc] = (
-                    float(presenze_idx[key].get(dc) or 0) +
-                    float(r.get(dc) or 0)
-                )
+    for row in presenze_qs:
+        if row.get("desc_voce"):
+            voice_descriptions[(row["cod_dip"], row["cod_voce"])] = row["desc_voce"].strip()
+        for giorno in range(1, num_giorni + 1):
+            presenze_idx[(row["cod_dip"], row["cod_voce"], giorno)] += (
+                row[f"day_{giorno}"] or Decimal(0)
+            )
 
     # Query PostgreSQL senza filtro tipo → tutti i turni del periodo
     ph_dip = ",".join(["%s"] * len(selected_dip))
@@ -4731,7 +4545,6 @@ def _build_risultati_for_export(mese, anno, selected_dip):
     params = selected_dip + [data_inizio, data_fine]
 
     turni_idx = {}
-    turni_per_day: dict = {}
     with _pg_conn.cursor() as cur:
         cur.execute(sql, params)
         cols = [c[0] for c in cur.description]
@@ -4743,140 +4556,62 @@ def _build_risultati_for_export(mese, anno, selected_dip):
             oc = float(r["ore_cons"] or 0)
             op = float(r["ore_prev"] or 0)
             turni_idx[(cp, tipo, g)] = (oc, op)
-            turni_per_day.setdefault((cp, g), []).append((tipo, oc, op))
 
-    def _tipo_effettivo_exp(cod_dip, giorno, usa_prev):
-        righe = turni_per_day.get((cod_dip, giorno), [])
-        if not righe:
-            return "—"
-        nomi = [tipo for tipo, oc, op in righe
-                if (op if tipo_ora_map.get(tipo, usa_prev) else oc) > 0]
-        return ", ".join(nomi) if nomi else righe[0][0]
-
-    def _ore_turno(cod_dip, tipo_orario, giorno):
-        ore_cons_m, ore_prev_m = turni_idx.get((cod_dip, tipo_orario, giorno), (0.0, 0.0))
-        return ore_prev_m if tipo_ora_map.get(tipo_orario, False) else ore_cons_m
-
-    def _ore_cod_voce(cod_dip, cod_voce_int, giorno):
-        return float((presenze_idx.get((cod_dip, cod_voce_int)) or {}).get(f"day_{giorno}") or 0)
-
-    SOGLIA = 0.05
     risultati = []
-    n_controllati = 0
-
-    # Fallback legacy: tipi non coperti da regola APP_TO_CED
-    fallback_tipi = [
-        t for t in tipo_orario_to_mappings.keys()
-        if t not in app_to_ced_rules
-    ]
-
     for dip in dipendenti_list:
         cod_dip = dip["cod_dip"]
-        discrepanze_dip = []
-
-        # 1) Regole direzionali APP_TO_CED (tipo_orario -> cod_voce)
-        for tipo_orario, reg in app_to_ced_rules.items():
-            cod_voci = reg["dest_cod_voci"]
-            cod_voce_label = " o ".join(f"{cv:04d}" for cv in cod_voci)
-            for giorno in range(1, num_giorni + 1):
-                ore_app = _ore_turno(cod_dip, tipo_orario, giorno)
-                ore_dest = [_ore_cod_voce(cod_dip, cv, giorno) for cv in cod_voci]
-
-                if reg["modalita"] == PayslipControlloRegola.MOD_SUM:
-                    ore_ced = sum(ore_dest)
-                    valido = abs(ore_app - ore_ced) <= SOGLIA
-                else:
-                    ore_ced = max(ore_dest) if ore_dest else 0.0
-                    valido = any(abs(ore_app - v) <= SOGLIA for v in ore_dest)
-
-                if ore_app <= SOGLIA and ore_ced <= SOGLIA:
-                    continue
-
-                if not valido:
-                    discrepanze_dip.append({
-                        "codice_tipo_orario": f"{tipo_orario} ({reg['modalita']})",
-                        "tipo_effettivo_app": _tipo_effettivo_exp(cod_dip, giorno, tipo_ora_map.get(tipo_orario, False)),
-                        "cod_voce": cod_voce_label,
-                        "desc_voce_cedolino": cod_voce_label,
-                        "giorno": giorno,
-                        "ore_cedolino": round(ore_ced, 2),
-                        "ore_turni": round(ore_app, 2),
-                        "delta": round(ore_ced - ore_app, 2),
-                    })
-
-        # 2) Fallback legacy per i tipi non coperti da regola.
-        for tipo_orario in fallback_tipi:
-            tipo_mappings = tipo_orario_to_mappings[tipo_orario]
-            cod_voci = []
-            for m in tipo_mappings:
-                try:
-                    cod_voci.append(int(str(m.cod_voce).strip()))
-                except (TypeError, ValueError):
-                    continue
-            if not cod_voci:
-                continue
-
-            cod_voce_label = " + ".join(f"{cv:04d}" for cv in cod_voci)
-            for giorno in range(1, num_giorni + 1):
-                ore_ced = sum(_ore_cod_voce(cod_dip, cv, giorno) for cv in cod_voci)
-                ore_app = _ore_turno(cod_dip, tipo_orario, giorno)
-                if ore_ced <= SOGLIA and ore_app <= SOGLIA:
-                    continue
-                if abs(ore_ced - ore_app) > SOGLIA:
-                    discrepanze_dip.append({
-                        "codice_tipo_orario": tipo_orario,
-                        "tipo_effettivo_app": _tipo_effettivo_exp(cod_dip, giorno, tipo_ora_map.get(tipo_orario, False)),
-                        "cod_voce": cod_voce_label,
-                        "desc_voce_cedolino": cod_voce_label,
-                        "giorno": giorno,
-                        "ore_cedolino": round(ore_ced, 2),
-                        "ore_turni": round(ore_app, 2),
-                        "delta": round(ore_ced - ore_app, 2),
-                    })
-
-        # 3) Regole direzionali CED_TO_APP (cod_voce -> tipo_orario)
-        for cod_voce_src, reg in ced_to_app_rules.items():
-            dest_tipi = reg["dest_tipi"]
-            if not dest_tipi:
-                continue
-            tipo_label = " + ".join(dest_tipi)
-            for giorno in range(1, num_giorni + 1):
-                ore_ced = _ore_cod_voce(cod_dip, cod_voce_src, giorno)
-                ore_dest = [_ore_turno(cod_dip, t, giorno) for t in dest_tipi]
-
-                if reg["modalita"] == PayslipControlloRegola.MOD_SUM:
-                    ore_app = sum(ore_dest)
-                    valido = abs(ore_ced - ore_app) <= SOGLIA
-                else:
-                    ore_app = max(ore_dest) if ore_dest else 0.0
-                    valido = any(abs(ore_ced - v) <= SOGLIA for v in ore_dest)
-
-                if ore_ced <= SOGLIA and ore_app <= SOGLIA:
-                    continue
-
-                if not valido:
-                    discrepanze_dip.append({
-                        "codice_tipo_orario": f"cod_voce {cod_voce_src:04d} ({reg['modalita']})",
-                        "tipo_effettivo_app": tipo_label,
-                        "cod_voce": f"{cod_voce_src:04d}",
-                        "desc_voce_cedolino": f"{cod_voce_src:04d}",
-                        "giorno": giorno,
-                        "ore_cedolino": round(ore_ced, 2),
-                        "ore_turni": round(ore_app, 2),
-                        "delta": round(ore_ced - ore_app, 2),
-                    })
-
-        n_controllati += 1
-
-        if discrepanze_dip:
+        discrepanze = []
+        for giorno in range(1, num_giorni + 1):
+            app_hours = {}
+            for kind, usa_prev in tipo_ora_map.items():
+                cons, prev = turni_idx.get((cod_dip, kind, giorno), (0, 0))
+                app_hours[kind] = prev if usa_prev else cons
+            payslip_hours = {
+                voice: presenze_idx[(cod_dip, voice, giorno)] for voice in allowed
+            }
+            for diff in reconcile_hours(app_hours, payslip_hours, allowed):
+                app_detail = [
+                    {"causale": kind, "ore": app_hours[kind]}
+                    for kind in diff["types"] if app_hours.get(kind, 0)
+                ]
+                ced_detail = []
+                for voice in diff["voices"]:
+                    if not payslip_hours.get(voice):
+                        continue
+                    category = voice_categories[voice]
+                    description = voice_descriptions.get((cod_dip, voice), "")
+                    name = category
+                    if description and description.casefold() != category.casefold():
+                        name = f"{category} ({description})"
+                    ced_detail.append({"causale": name, "ore": float(payslip_hours[voice])})
+                label = " / ".join(diff["types"])
+                voices = " + ".join(f"{voice:04d}" for voice in diff["voices"])
+                actual = ", ".join(
+                    kind for kind in diff["types"] if app_hours.get(kind, 0) > 0
+                ) or "—"
+                discrepanze.append({
+                    "codice_tipo_orario": label,
+                    "tipo_effettivo_app": actual,
+                    "cod_voce": voices,
+                    "desc_voce_cedolino": ", ".join(d["causale"] for d in ced_detail) or "—",
+                    "dettaglio_app": app_detail,
+                    "dettaglio_cedolino": ced_detail,
+                    "giorno": giorno,
+                    "ore_cedolino": round(float(diff["payslip"]), 2),
+                    "ore_turni": round(float(diff["app"]), 2),
+                    "delta": round(float(diff["payslip"] - diff["app"]), 2),
+                    "ore_app_non_coperte": round(float(diff["missing"]), 2),
+                    "ore_cedolino_eccedenti": round(float(diff["extra"]), 2),
+                })
+        if discrepanze:
             risultati.append({
                 "lavoratore": dip.get("lavoratore") or "",
-                "cod_dip":    cod_dip,
-                "matricola":  dip.get("matricola") or "",
-                "discrepanze": sorted(discrepanze_dip, key=lambda x: (x["giorno"], x["codice_tipo_orario"])),
+                "cod_dip": cod_dip,
+                "matricola": dip.get("matricola") or "",
+                "discrepanze": sorted(discrepanze,
+                    key=lambda d: (d["giorno"], d["codice_tipo_orario"])),
             })
-
-    return risultati, mappings_attivi, n_controllati
+    return risultati, mappings_attivi, len(dipendenti_list)
 
 
 @login_required
@@ -4911,7 +4646,7 @@ def export_controllo_excel(request):
     ws.title = f"Controllo {mese:02d}-{anno}"
 
     # Intestazione
-    headers = ["DIPENDENTE", "GIORNO SETTIMANA", "DATA", "ORE APP", "TURNO APP", "ORE CEDOLINO", "TURNO CEDOLINO"]
+    headers = ["DIPENDENTE", "GIORNO SETTIMANA", "DATA", "ORE APP", "TURNO APP", "ORE CEDOLINO", "VOCI CEDOLINO", "ORE APP NON COPERTE", "ORE CEDOLINO ECCEDENTI"]
     fill_hdr = PatternFill("solid", fgColor="366092")
     font_hdr = Font(bold=True, color="FFFFFF")
     thin = Side(style="thin")
@@ -4943,19 +4678,23 @@ def export_controllo_excel(request):
                 d["ore_turni"],
                 d.get("tipo_effettivo_app", "—"),
                 d["ore_cedolino"],
-                d["codice_tipo_orario"],
+                d["cod_voce"],
+                d["ore_app_non_coperte"],
+                d["ore_cedolino_eccedenti"],
             ]
             row_fill = fill_warn if d["delta"] > 0 else fill_err
             for col_idx, v in enumerate(values, 1):
                 cell = ws.cell(row=row_num, column=col_idx, value=v)
                 cell.border = border
                 cell.fill = row_fill
+                if col_idx in (4, 6, 8, 9):
+                    cell.number_format = "0.##"
                 if col_idx in (2, 5, 7):
                     cell.alignment = Alignment(horizontal="center")
             row_num += 1
 
     # Larghezze colonne
-    col_widths = [30, 16, 14, 12, 30, 14, 26]
+    col_widths = [30, 16, 14, 12, 30, 14, 32, 24, 26]
     for i, w in enumerate(col_widths, 1):
         ws.column_dimensions[get_column_letter(i)].width = w
 
@@ -4995,53 +4734,37 @@ def export_controllo_docx(request):
 
     risultati, _, _ = _build_risultati_for_export(mese, anno, selected_dip)
 
+    from payroll.services.attendance_report import daily_summaries
+
     doc = Document()
-
-    # Titolo
-    title = doc.add_heading(
-        f"Controllo Presenze — {mese:02d}/{anno}", level=1
-    )
+    title = doc.add_heading(f"Controllo Presenze — {mese:02d}/{anno}", level=1)
     title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-
-    mesi_ita = ["", "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
-                "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
+    giorni_totali = sum(len({d["giorno"] for d in r["discrepanze"]}) for r in risultati)
     sub = doc.add_paragraph(
-        f"Periodo: {mesi_ita[mese]} {anno}  —  "
-        f"{sum(len(r['discrepanze']) for r in risultati)} discrepanze su {len(risultati)} dipendenti"
+        f"Periodo: {mese:02d}/{anno} — "
+        f"{giorni_totali} giornate da verificare su {len(risultati)} dipendenti"
     )
     sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
     doc.add_paragraph()
-
     from datetime import date as _date
     giorni_settimana_ita = ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"]
-
     if not risultati:
-        doc.add_paragraph("✅ Nessuna discrepanza rilevata. Tutti i valori coincidono.")
+        doc.add_paragraph("Nessuna discrepanza rilevata. Tutti i valori coincidono.")
     else:
         for ris in risultati:
-            n = len(ris["discrepanze"])
-            p = doc.add_heading(
-                f"{ris['lavoratore']}  (cod_dip: {ris['cod_dip']})", level=2
+            giornate = daily_summaries(ris["discrepanze"])
+            doc.add_heading(f"{ris['lavoratore']} (cod_dip: {ris['cod_dip']})", level=2)
+            doc.add_paragraph(
+                f"{len(giornate)} {'giornata da verificare' if len(giornate) == 1 else 'giornate da verificare'}:"
             )
-            intro = doc.add_paragraph()
-            intro.add_run(
-                f"Il dipendente {ris['lavoratore']} ha {n} "
-                f"{'discrepanza' if n == 1 else 'discrepanze'}:"
-            )
-            for d in ris["discrepanze"]:
-                _wd = _date(anno, mese, d["giorno"]).weekday()
-                data_str = f"{giorni_settimana_ita[_wd]} {d['giorno']:02d}/{mese:02d}/{anno}"
+            for day in giornate:
+                wd = _date(anno, mese, day["giorno"]).weekday()
+                data_str = f"{giorni_settimana_ita[wd]} {day['giorno']:02d}/{mese:02d}/{anno}"
                 bullet = doc.add_paragraph(style="List Bullet")
-                bullet.add_run(f"il {data_str} ").bold = False
-                tipo_app_str = d.get('tipo_effettivo_app', '—')
-                bullet.add_run(
-                    f"sull'app risultano {d['ore_turni']}h di {tipo_app_str}"
-                )
-                bullet.add_run(" mentre ")
-                bullet.add_run(
-                    f"sul cedolino sono segnate {d['ore_cedolino']}h di {d['codice_tipo_orario']}"
-                )
-                bullet.add_run(".")
+                bullet.add_run(data_str).bold = True
+                bullet.add_run(f" — App: {day['app']}.")
+                bullet.add_run(f" Cedolino: {day['cedolino']}.")
+                bullet.add_run(f" {day['esito']}")
             doc.add_paragraph()
 
     buf = io.BytesIO()
@@ -5081,15 +4804,19 @@ def export_acconti_excel(request):
         qs = PayslipCorpo.objects.filter(mese=m, anno=a, cod_voce=800).values(
             "matricola", "cognome", "nome", "descrizione_voce", "importo_ctr_lav"
         )
-        return {
-            (r["matricola"] or "").strip(): {
+        result = {}
+        for r in qs:
+            mat = (r["matricola"] or "").strip()
+            if not mat:
+                continue
+            record = result.setdefault(mat, {
                 "cognome": r["cognome"] or "",
                 "nome": r["nome"] or "",
                 "descrizione_voce": r["descrizione_voce"] or "",
-                "importo": float(r["importo_ctr_lav"] or 0),
-            }
-            for r in qs if (r["matricola"] or "").strip()
-        }
+                "importo": 0.0,
+            })
+            record["importo"] += float(r["importo_ctr_lav"] or 0)
+        return result
 
     corrente  = _fetch(mese, anno)
     precedente = _fetch(mese_prec, anno_prec)
@@ -5215,15 +4942,19 @@ def export_acconti_docx(request):
         qs = PayslipCorpo.objects.filter(mese=m, anno=a, cod_voce=800).values(
             "matricola", "cognome", "nome", "descrizione_voce", "importo_ctr_lav"
         )
-        return {
-            (r["matricola"] or "").strip(): {
+        result = {}
+        for r in qs:
+            mat = (r["matricola"] or "").strip()
+            if not mat:
+                continue
+            record = result.setdefault(mat, {
                 "cognome": r["cognome"] or "",
                 "nome": r["nome"] or "",
                 "descrizione_voce": r["descrizione_voce"] or "",
-                "importo": float(r["importo_ctr_lav"] or 0),
-            }
-            for r in qs if (r["matricola"] or "").strip()
-        }
+                "importo": 0.0,
+            })
+            record["importo"] += float(r["importo_ctr_lav"] or 0)
+        return result
 
     corrente  = _fetch(mese, anno)
     precedente = _fetch(mese_prec, anno_prec)

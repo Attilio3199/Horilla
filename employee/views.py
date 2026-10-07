@@ -1656,7 +1656,9 @@ def employee_view(request):
     page_number = request.GET.get("page")
     error_message = request.session.pop("error_message", None)
 
-    queryset = Employee.objects.filter()
+    queryset = Employee.objects.filter().select_related(
+        "employee_work_info__operational_unit_id"
+    )
     filter_obj = EmployeeFilter(request.GET, queryset=queryset).qs
     if request.GET.get("is_active") != "False":
         filter_obj = filter_obj.filter(is_active=True)
@@ -2413,7 +2415,9 @@ def employee_filter_view(request):
     """
     previous_data = request.GET.urlencode()
     field = request.GET.get("field")
-    queryset = Employee.objects.filter()
+    queryset = Employee.objects.filter().select_related(
+        "employee_work_info__operational_unit_id"
+    )
     selected_company = request.session.get("selected_company")
     employees = EmployeeFilter(request.GET, queryset=queryset).qs
     if request.GET.get("is_active") != "False":
@@ -2465,7 +2469,9 @@ def employee_card(request):
     if isinstance(search, type(None)):
         search = ""
     employees = filtersubordinatesemployeemodel(
-        request, Employee.objects.all(), "employee.view_employee"
+        request,
+        Employee.objects.all().select_related("employee_work_info__operational_unit_id"),
+        "employee.view_employee",
     )
     if request.GET.get("is_active") is None:
         filter_obj = EmployeeFilter(
@@ -2508,12 +2514,14 @@ def employee_list(request):
             request.GET,
             queryset=Employee.objects.filter(
                 employee_first_name__icontains=search, is_active=True
-            ),
+            ).select_related("employee_work_info__operational_unit_id"),
         )
     else:
         filter_obj = EmployeeFilter(
             request.GET,
-            queryset=Employee.objects.filter(employee_first_name__icontains=search),
+            queryset=Employee.objects.filter(
+                employee_first_name__icontains=search
+            ).select_related("employee_work_info__operational_unit_id"),
         )
     employees = filtersubordinatesemployeemodel(
         request, filter_obj.qs, "employee.view_employee"

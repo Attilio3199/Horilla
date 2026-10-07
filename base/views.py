@@ -83,6 +83,7 @@ from base.forms import (
     JobPositionMultiForm,
     JobRoleForm,
     MailTemplateForm,
+    OperationalUnitForm,
     MultipleApproveConditionForm,
     PassWordResetForm,
     ResetPasswordForm,
@@ -140,6 +141,7 @@ from base.models import (
     JobPosition,
     JobRole,
     MultipleApprovalCondition,
+    OperationalUnit,
     MultipleApprovalManagers,
     RotatingShift,
     RotatingWorkType,
@@ -1863,6 +1865,49 @@ def department_update(request, id, **kwargs):
         request,
         "base/department/department_form.html",
         {"form": form, "department": department},
+    )
+
+
+@login_required
+@permission_required("base.view_operationalunit")
+def operational_unit_view(request):
+    """List headquarters departments and stores configured for employees."""
+    units = OperationalUnit.objects.select_related("company_id").order_by(
+        "type", "name"
+    )
+    return render(request, "base/operational_unit/operational_unit.html", {"units": units})
+
+
+@login_required
+@hx_request_required
+@permission_required("base.add_operationalunit")
+def operational_unit_create(request):
+    form = OperationalUnitForm()
+    if request.method == "POST":
+        form = OperationalUnitForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Operational unit created successfully."))
+            return HorillaRedirect(request)
+    return render(request, "base/operational_unit/operational_unit_form.html", {"form": form})
+
+
+@login_required
+@hx_request_required
+@permission_required("base.change_operationalunit")
+def operational_unit_update(request, id, **kwargs):
+    unit = get_object_or_404(OperationalUnit, id=id)
+    form = OperationalUnitForm(instance=unit)
+    if request.method == "POST":
+        form = OperationalUnitForm(request.POST, instance=unit)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Operational unit updated."))
+            return HorillaRedirect(request)
+    return render(
+        request,
+        "base/operational_unit/operational_unit_form.html",
+        {"form": form, "unit": unit},
     )
 
 

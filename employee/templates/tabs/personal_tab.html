@@ -313,26 +313,26 @@
 							<li class="oh-profile__card-info-item">
 								<span class="oh-profile__info-label mb-1">
 									<ion-icon name="business-outline"></ion-icon>
-									<span>{% trans "Area Tipo" %}</span>
+									<span>{% trans "Dipartimento (SEDE/NEGOZI)" %}</span>
 								</span>
-								<span class="oh-profile__info-value">{{employee.employee_work_info.work_area_type|default:_("None")}}</span>
+								<span class="oh-profile__info-value">{{employee.employee_work_info.operational_unit_type|default:_("None")}}</span>
 							</li>
 
 							<li class="oh-profile__card-info-item">
 								<span class="oh-profile__info-label mb-1">
 									<ion-icon name="barcode-outline"></ion-icon>
-									<span>{% trans "Codice Reparto" %}</span>
+									<span>{% trans "Codice Reparto / Negozio" %}</span>
 								</span>
-								<span class="oh-profile__info-value">{{employee.employee_work_info.department_code|default:_("None")}}</span>
+								<span class="oh-profile__info-value">{{employee.employee_work_info.operational_unit_code|default:_("None")}}</span>
 							</li>
 
 							<li class="oh-profile__card-info-item">
 								<span class="oh-profile__info-label mb-1">
 									<ion-icon name="construct-outline"></ion-icon>
-									<span>{% trans "Department" %}</span>
+									<span>{% trans "Reparto / Negozio" %}</span>
 								</span>
 								<span
-									class="oh-profile__info-value">{{employee.employee_work_info.department_id|default:_("None")}}</span>
+									class="oh-profile__info-value">{{employee.employee_work_info.operational_unit_name|default:_("None")}}</span>
 							</li>
 
 							<li class="oh-profile__card-info-item">
@@ -374,17 +374,9 @@
 							<li class="oh-profile__card-info-item">
 								<span class="oh-profile__info-label mb-1">
 									<ion-icon name="storefront-outline"></ion-icon>
-									<span>{% trans "Codice Negozio" %}</span>
+									<span>{% trans "Sigla Reparto / Negozio" %}</span>
 								</span>
-								<span class="oh-profile__info-value">{{employee.employee_work_info.store_code|default:_("None")}}</span>
-							</li>
-
-							<li class="oh-profile__card-info-item">
-								<span class="oh-profile__info-label mb-1">
-									<ion-icon name="storefront-outline"></ion-icon>
-									<span>{% trans "Negozio" %}</span>
-								</span>
-								<span class="oh-profile__info-value">{{employee.employee_work_info.store_name|default:_("None")}}</span>
+								<span class="oh-profile__info-value">{{employee.employee_work_info.operational_unit_short_name|default:_("None")}}</span>
 							</li>
 
 							<li class="oh-profile__card-info-item">

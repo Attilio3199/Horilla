@@ -140,6 +140,43 @@ class Department(HorillaModel):
         return str(self.department)
 
 
+class OperationalUnit(HorillaModel):
+    """A selectable operational unit: a headquarters department or a store."""
+
+    UNIT_TYPES = (
+        ("SEDE", _("SEDE")),
+        ("NEGOZI", _("NEGOZI")),
+    )
+
+    company_id = models.ForeignKey(
+        Company,
+        on_delete=models.PROTECT,
+        related_name="operational_units",
+        verbose_name=_("Company"),
+    )
+    name = models.CharField(max_length=100, verbose_name=_("Name"))
+    short_name = models.CharField(max_length=30, verbose_name=_("Short name"))
+    code = models.CharField(max_length=30, verbose_name=_("Code"))
+    type = models.CharField(max_length=10, choices=UNIT_TYPES, verbose_name=_("Type"))
+
+    class Meta:
+        verbose_name = _("Operational unit")
+        verbose_name_plural = _("Operational units")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["company_id", "type", "code"],
+                name="unique_operational_unit_code_per_company_type",
+            ),
+            models.UniqueConstraint(
+                fields=["company_id", "type", "short_name"],
+                name="unique_operational_unit_short_name_per_company_type",
+            ),
+        ]
+
+    def __str__(self):
+        return f"[{self.type}] {self.name} — {self.short_name} ({self.code})"
+
+
 class JobPosition(HorillaModel):
     """
     JobPosition model

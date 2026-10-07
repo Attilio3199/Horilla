@@ -120,6 +120,8 @@ class EmployeeFilter(HorillaFilterSet):
             "is_active",
             "employee_work_info__job_position_id",
             "employee_work_info__department_id",
+            "employee_work_info__operational_unit_id",
+            "employee_work_info__operational_unit_id__type",
             "department",
             "employee_work_info__work_type_id",
             "employee_work_info__employee_type_id",

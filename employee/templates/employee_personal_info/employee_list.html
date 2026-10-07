@@ -95,6 +95,10 @@
         </div>
         <div class="oh-sticky-table__th" data-cell-index="4" data-cell-title='{% trans "Job Position" %}'>{% trans "Job Position" %}</div>
         <div class="oh-sticky-table__th" data-cell-index="5" data-cell-title='{% trans "Department" %}'>{% trans "Department" %}</div>
+        <div class="oh-sticky-table__th" data-cell-index="13" data-cell-title='{% trans "Dipartimento (SEDE/NEGOZI)" %}'>{% trans "Dipartimento (SEDE/NEGOZI)" %}</div>
+        <div class="oh-sticky-table__th" data-cell-index="14" data-cell-title='{% trans "Reparto / Negozio" %}'>{% trans "Reparto / Negozio" %}</div>
+        <div class="oh-sticky-table__th" data-cell-index="15" data-cell-title='{% trans "Sigla Reparto / Negozio" %}'>{% trans "Sigla Reparto / Negozio" %}</div>
+        <div class="oh-sticky-table__th" data-cell-index="16" data-cell-title='{% trans "Codice Reparto / Negozio" %}'>{% trans "Codice Reparto / Negozio" %}</div>
         <div class="oh-sticky-table__th" data-cell-index="6" data-cell-title='{% trans "Shift" %}'>{% trans "Shift" %}</div>
         <div class="oh-sticky-table__th" data-cell-index="7" data-cell-title='{% trans "Work Type" %}'>{% trans "Work Type" %}</div>
         <div class="oh-sticky-table__th" data-cell-index="8" data-cell-title='{% trans "Job Role" %}'>{% trans "Job Role" %}</div>
@@ -176,6 +180,10 @@
           class="oh-sticky-table__td"
           >{{emp.employee_work_info.department_id}}</a
         >
+        <a data-cell-index="13" href="{% url 'employee-view-individual' emp.id %}" style="color: inherit; text-decoration: none" class="oh-sticky-table__td">{{ emp.employee_work_info.operational_unit_type|default:"—" }}</a>
+        <a data-cell-index="14" href="{% url 'employee-view-individual' emp.id %}" style="color: inherit; text-decoration: none" class="oh-sticky-table__td">{{ emp.employee_work_info.operational_unit_name|default:"—" }}</a>
+        <a data-cell-index="15" href="{% url 'employee-view-individual' emp.id %}" style="color: inherit; text-decoration: none" class="oh-sticky-table__td">{{ emp.employee_work_info.operational_unit_short_name|default:"—" }}</a>
+        <a data-cell-index="16" href="{% url 'employee-view-individual' emp.id %}" style="color: inherit; text-decoration: none" class="oh-sticky-table__td">{{ emp.employee_work_info.operational_unit_code|default:"—" }}</a>
         <a data-cell-index="6"
           href="{% url 'employee-view-individual' emp.id %}"
           style="color: inherit; text-decoration: none"
