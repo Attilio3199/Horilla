@@ -3845,7 +3845,7 @@ def controllo_cedolini_presenze(request):
             m.codice_tipo_orario for m in mappings
         } | {
             tipo for m in mappings for tipo in m.tipi_app_ammessi
-        } | {"SMART WORKING", "CORSO AI DIPENDENTI"}),
+        } | {"SMART WORKING", "CORSI AI DIPENDENTI"}),
     }
 
     if not mese_str or not anno_str:

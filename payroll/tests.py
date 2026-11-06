@@ -28,7 +28,7 @@ class AttendanceControlTests(UnitTestCase):
                             tipo_ora="consuntivo", tipi_app_ammessi=["FERIE", "ROL"]),
             SimpleNamespace(id=3, cod_voce="0300", codice_tipo_orario="LAVORATO",
                             tipo_ora="consuntivo", tipi_app_ammessi=[
-                                "LAVORATO", "SMART WORKING", "CORSO AI DIPENDENTI"]),
+                                "LAVORATO", "SMART WORKING", "CORSI AI DIPENDENTI"]),
         ]
         employees = [{"cod_dip": "B1", "lavoratore": "Test", "matricola": "M1"}]
         employee_qs = MagicMock()
@@ -64,7 +64,7 @@ class AttendanceControlTests(UnitTestCase):
 
     def test_smart_work_and_course_are_covered_by_worked_voice(self):
         results, _, _ = self._run_check([(300, 4), (300, 4)],
-            [("SMART WORKING", 4, 0), ("CORSO AI DIPENDENTI", 4, 0)])
+            [("SMART WORKING", 4, 0), ("CORSI AI DIPENDENTI", 4, 0)])
         self.assertEqual(results, [])
 
     def test_shared_payslip_hours_are_not_reused(self):

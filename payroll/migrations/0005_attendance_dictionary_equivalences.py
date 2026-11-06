@@ -12,7 +12,7 @@ def populate_equivalences(apps, schema_editor):
         if voice in {302, 335, 303, 336, 337, 304}:
             row.tipi_app_ammessi = ["FERIE", "ROL"]
         elif voice == 300:
-            row.tipi_app_ammessi = ["LAVORATO", "SMART WORKING", "CORSO AI DIPENDENTI"]
+            row.tipi_app_ammessi = ["LAVORATO", "SMART WORKING", "CORSI AI DIPENDENTI"]
         else:
             row.tipi_app_ammessi = [category] if category else []
         row.save(update_fields=["tipi_app_ammessi"])

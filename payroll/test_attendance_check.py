@@ -8,7 +8,7 @@ from payroll.services.attendance_report import daily_summaries
 
 class AttendanceEquivalenceTests(unittest.TestCase):
     leave = {v: {"FERIE", "ROL"} for v in (302, 335, 303, 336, 337, 304)}
-    worked = {300: {"LAVORATO", "SMART WORKING", "CORSO AI DIPENDENTI"}}
+    worked = {300: {"LAVORATO", "SMART WORKING", "CORSI AI DIPENDENTI"}}
 
     def test_leave_equivalence_in_both_directions(self):
         for kind in ("FERIE", "ROL"):
@@ -21,7 +21,7 @@ class AttendanceEquivalenceTests(unittest.TestCase):
 
     def test_work_smart_work_and_course_share_one_voice(self):
         self.assertEqual(reconcile_hours(
-            {"LAVORATO": 2, "SMART WORKING": 4, "CORSO AI DIPENDENTI": 2},
+            {"LAVORATO": 2, "SMART WORKING": 4, "CORSI AI DIPENDENTI": 2},
             {300: 8}, self.worked), [])
 
     def test_missing_hours(self):
